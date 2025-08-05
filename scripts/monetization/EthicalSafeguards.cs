@@ -354,12 +354,12 @@ public partial class EthicalSafeguards : Node
         return new SpendingAnalytics
         {
             PlayerId = playerId,
-            TotalSpent = tracker.Purchases.Sum(p => p.UsdAmount),
+            TotalSpent = tracker.Purchases.Sum(p => (float)p.Price),
             DailySpent = tracker.GetSpendingInPeriod(now.Date, now.Date.AddDays(1)),
             WeeklySpent = tracker.GetSpendingInPeriod(now.Date.AddDays(-(int)now.DayOfWeek), now.Date.AddDays(7 - (int)now.DayOfWeek)),
             MonthlySpent = tracker.GetSpendingInPeriod(new DateTime(now.Year, now.Month, 1), new DateTime(now.Year, now.Month, 1).AddMonths(1)),
             TotalPurchases = tracker.Purchases.Count,
-            AveragePurchaseAmount = tracker.Purchases.Count > 0 ? tracker.Purchases.Average(p => p.UsdAmount) : 0,
+            AveragePurchaseAmount = tracker.Purchases.Count > 0 ? tracker.Purchases.Average(p => (float)p.Price) : 0,
             DailyLimitRemaining = _settings.DailySpendingLimitEnabled ? Math.Max(0, _settings.DailySpendingLimit - tracker.GetSpendingInPeriod(now.Date, now.Date.AddDays(1))) : float.MaxValue,
             WeeklyLimitRemaining = _settings.WeeklySpendingLimitEnabled ? Math.Max(0, _settings.WeeklySpendingLimit - tracker.GetSpendingInPeriod(now.Date.AddDays(-(int)now.DayOfWeek), now.Date.AddDays(7 - (int)now.DayOfWeek))) : float.MaxValue,
             MonthlyLimitRemaining = _settings.MonthlySpendingLimitEnabled ? Math.Max(0, _settings.MonthlySpendingLimit - tracker.GetSpendingInPeriod(new DateTime(now.Year, now.Month, 1), new DateTime(now.Year, now.Month, 1).AddMonths(1))) : float.MaxValue
@@ -517,9 +517,9 @@ public class SpendingTracker
     {
         Purchases.Add(new PurchaseRecord
         {
-            UsdAmount = usdAmount,
+            Price = (decimal)usdAmount,
             ItemId = itemId,
-            Description = description,
+            Currency = "USD",
             Timestamp = DateTime.UtcNow
         });
     }
@@ -528,7 +528,7 @@ public class SpendingTracker
     {
         return Purchases
             .Where(p => p.Timestamp >= start && p.Timestamp < end)
-            .Sum(p => p.UsdAmount);
+            .Sum(p => (float)p.Price);
     }
     
     public int GetRecentPurchaseCount(TimeSpan timespan)

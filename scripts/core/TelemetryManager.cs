@@ -247,6 +247,7 @@ public partial class TelemetryManager : Node
     
     // === MONETIZATION ANALYTICS METHODS ===
     
+    /*
     /// <summary>
     /// Record cosmetic purchase for analytics
     /// </summary>
@@ -266,6 +267,7 @@ public partial class TelemetryManager : Node
         
         LogMonetizationEvent(purchaseData);
     }
+    */
     
     /// <summary>
     /// Record Battle Pass purchase and progression
@@ -298,6 +300,7 @@ public partial class TelemetryManager : Node
         LogMonetizationEvent(expData);
     }
     
+    /*
     /// <summary>
     /// Record UGC content purchase
     /// </summary>
@@ -317,6 +320,7 @@ public partial class TelemetryManager : Node
         
         LogMonetizationEvent(ugcData);
     }
+    */
     
     /// <summary>
     /// Record music track purchase
@@ -337,6 +341,7 @@ public partial class TelemetryManager : Node
         LogMonetizationEvent(musicData);
     }
     
+    /*
     /// <summary>
     /// Record affiliate code usage
     /// </summary>
@@ -355,6 +360,7 @@ public partial class TelemetryManager : Node
         
         LogMonetizationEvent(affiliateData);
     }
+    */
     
     /// <summary>
     /// Log monetization event to analytics system
