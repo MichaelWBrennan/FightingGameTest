@@ -349,6 +349,16 @@ public partial class AdaptiveAI : Node
     }
     
     /// <summary>
+    /// Update AI difficulty settings from Dynamic Difficulty System
+    /// </summary>
+    public void UpdateDifficultySettings(int playerId, object settings)
+    {
+        // For now, just log the difficulty update
+        // In a full implementation, this would adjust AI behavior parameters
+        GD.Print($"AI difficulty updated for player {playerId}");
+    }
+    
+    /// <summary>
     /// Get current AI behavior for display
     /// </summary>
     public AIBehaviorData GetCurrentBehavior() => _currentBehavior;
