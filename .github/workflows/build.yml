@@ -1,0 +1,81 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  GODOT_VERSION: 4.4
+  EXPORT_NAME: FightingGameStarter
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.4
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+    
+    - name: Cache Godot templates
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/share/godot/templates
+        key: godot-templates-${{ env.GODOT_VERSION }}
+    
+    - name: Setup Godot templates
+      run: |
+        mkdir -v -p ~/.local/share/godot/templates
+        godot -e -q --headless
+    
+    - name: Build C# project
+      run: |
+        godot --headless --build-solutions --quit
+    
+    - name: Run tests (placeholder)
+      run: |
+        echo "Tests would run here"
+        # godot --headless --run-tests --quit
+    
+    - name: Export game (Linux)
+      run: |
+        mkdir -v -p build/linux
+        godot -v --export-release "Linux/X11" build/linux/$EXPORT_NAME.x86_64 --headless
+    
+    - name: Export game (Windows)
+      run: |
+        mkdir -v -p build/windows  
+        godot -v --export-release "Windows Desktop" build/windows/$EXPORT_NAME.exe --headless
+    
+    - name: Export game (macOS)
+      run: |
+        mkdir -v -p build/macos
+        godot -v --export-release "macOS" build/macos/$EXPORT_NAME.zip --headless
+    
+    - name: Upload Linux build
+      uses: actions/upload-artifact@v3
+      with:
+        name: fighting-game-linux
+        path: build/linux/
+    
+    - name: Upload Windows build
+      uses: actions/upload-artifact@v3
+      with:
+        name: fighting-game-windows
+        path: build/windows/
+    
+    - name: Upload macOS build
+      uses: actions/upload-artifact@v3
+      with:
+        name: fighting-game-macos
+        path: build/macos/
