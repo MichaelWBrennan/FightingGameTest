@@ -16,7 +16,7 @@ public partial class BalanceManager : Node
     private const string REMOTE_BALANCE_URL = "https://api.yourgame.com/balance/current"; // Configure for your service
     
     [Signal]
-    public delegate void BalanceUpdatedEventHandler(BalanceConfig newConfig);
+    public delegate void BalanceUpdatedEventHandler();
     
     public override void _Ready()
     {
