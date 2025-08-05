@@ -57,7 +57,7 @@ public partial class WeeklyRotationManager : Node
                 {
                     using var file = FileAccess.Open(filePath, FileAccess.ModeFlags.Read);
                     var jsonText = file.GetAsText();
-                    var characterData = JsonSerializer.Deserialize<CharacterData>(jsonText);
+                    var characterData = JsonSerializer.Deserialize<RotationCharacterData>(jsonText);
                     
                     _allCharacterIds.Add(characterData.CharacterId);
                     _characterArchetypes[characterData.CharacterId] = characterData.Archetype;
@@ -253,12 +253,13 @@ public partial class WeeklyRotationManager : Node
     private void CheckWeeklyReset()
     {
         var currentWeek = GetCurrentWeekNumber();
-        var lastCheckWeek = GetInt("last_check_week", -1);
+        var lastCheckWeek = ProjectSettings.GetSetting("weekly_rotation/last_check_week", -1).AsInt32();
         
         if (lastCheckWeek != currentWeek)
         {
             GD.Print($"Weekly reset detected. Current week: {currentWeek}");
-            SetInt("last_check_week", currentWeek);
+            ProjectSettings.SetSetting("weekly_rotation/last_check_week", currentWeek);
+            ProjectSettings.Save();
             EmitSignal(SignalName.WeeklyReset);
         }
     }
@@ -410,7 +411,7 @@ public class PlayerRotationAnalytics
     public Dictionary<string, int> ArchetypeDistribution { get; set; } = new();
 }
 
-public class CharacterData
+public class RotationCharacterData
 {
     public string CharacterId { get; set; } = "";
     public string Name { get; set; } = "";

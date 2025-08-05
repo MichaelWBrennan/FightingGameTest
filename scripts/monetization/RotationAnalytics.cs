@@ -15,7 +15,7 @@ public partial class RotationAnalytics : Node
     private const string ANALYTICS_FILE = "user://rotation_analytics.json";
     
     [Signal]
-    public delegate void AnalyticsEventEventHandler(string eventType, Dictionary<string, object> data);
+    public delegate void AnalyticsEventEventHandler();
     
     public override void _Ready()
     {
@@ -57,7 +57,7 @@ public partial class RotationAnalytics : Node
             ["timestamp"] = DateTime.UtcNow
         };
         
-        EmitSignal(SignalName.AnalyticsEvent, "weekly_fighter_accessed", eventData);
+        EmitSignal(SignalName.AnalyticsEvent);
         SaveAnalyticsData();
     }
     
@@ -84,7 +84,7 @@ public partial class RotationAnalytics : Node
             ["timestamp"] = DateTime.UtcNow
         };
         
-        EmitSignal(SignalName.AnalyticsEvent, "conversion", eventData);
+        EmitSignal(SignalName.AnalyticsEvent);
         SaveAnalyticsData();
     }
     
@@ -118,7 +118,7 @@ public partial class RotationAnalytics : Node
             }
         }
         
-        EmitSignal(SignalName.AnalyticsEvent, "engagement", eventData);
+        EmitSignal(SignalName.AnalyticsEvent);
         SaveAnalyticsData();
     }
     

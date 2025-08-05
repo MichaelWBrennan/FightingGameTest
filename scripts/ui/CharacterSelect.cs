@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 
 /// <summary>
 /// Character selection screen
@@ -23,7 +24,7 @@ public partial class CharacterSelect : Control
         // Connect to rotation updates
         if (WeeklyRotationManager.Instance != null)
         {
-            WeeklyRotationManager.Instance.RotationUpdated += OnRotationUpdated;
+            WeeklyRotationManager.Instance.Connect(WeeklyRotationManager.SignalName.RotationUpdated, new Callable(this, nameof(OnRotationUpdated)));
         }
     }
     
