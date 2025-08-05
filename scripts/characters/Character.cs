@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 
 /// <summary>
-/// Base character class with state machine and data-driven moveset
+/// Enhanced character class with archetype system and balance integration
 /// </summary>
 public partial class Character : CharacterBody2D
 {
@@ -28,6 +28,11 @@ public partial class Character : CharacterBody2D
     public int CurrentFrame { get; private set; }
     public int StateFrame { get; private set; }
     
+    // Combat tracking for telemetry
+    private PlayerMatchStats _matchStats = new();
+    private int _comboCounter = 0;
+    private bool _inCombo = false;
+    
     // Movement
     private Vector2 _velocity = Vector2.Zero;
     private bool _isGrounded = true;
@@ -45,6 +50,9 @@ public partial class Character : CharacterBody2D
     
     [Signal]
     public delegate void StateChangedEventHandler(CharacterState newState);
+    
+    [Signal]
+    public delegate void ComboPerformedEventHandler(int damage, int hits);
     
     public override void _Ready()
     {
@@ -74,7 +82,7 @@ public partial class Character : CharacterBody2D
         try
         {
             Data = JsonSerializer.Deserialize<CharacterData>(jsonText);
-            GD.Print($"Loaded character data for {Data.Name}");
+            GD.Print($"Loaded character data for {Data.Name} (Archetype: {Data.Archetype})");
         }
         catch (Exception e)
         {
@@ -97,11 +105,31 @@ public partial class Character : CharacterBody2D
     {
         if (Data != null)
         {
-            Health = Data.Health;
+            // Apply balance adjustments to base stats
+            Health = (int)(Data.Health * GetBalanceMultiplier("health"));
             Meter = 0;
             EmitSignal(SignalName.HealthChanged, Health, Data.Health);
             EmitSignal(SignalName.MeterChanged, Meter, Data.Meter);
         }
+    }
+    
+    private float GetBalanceMultiplier(string statType)
+    {
+        if (BalanceManager.Instance?.GetCurrentConfig() is var config && config != null)
+        {
+            if (config.CharacterAdjustments.ContainsKey(CharacterId))
+            {
+                var adjustment = config.CharacterAdjustments[CharacterId];
+                return statType switch
+                {
+                    "health" => adjustment.HealthMultiplier,
+                    "damage" => adjustment.DamageMultiplier,
+                    "speed" => adjustment.SpeedMultiplier,
+                    _ => 1.0f
+                };
+            }
+        }
+        return 1.0f;
     }
     
     public override void _PhysicsProcess(double delta)
@@ -125,8 +153,11 @@ public partial class Character : CharacterBody2D
             _velocity.Y += (float)(ProjectSettings.GetSetting("physics/2d/default_gravity", 980.0) * delta);
         }
         
+        // Apply speed multiplier from balance system
+        var speedMultiplier = GetBalanceMultiplier("speed");
+        
         // Update velocity
-        Velocity = _velocity;
+        Velocity = _velocity * speedMultiplier;
         
         // Check if grounded
         _isGrounded = IsOnFloor();
@@ -154,7 +185,7 @@ public partial class Character : CharacterBody2D
     
     private void BufferInput(PlayerInputState input)
     {
-        // Simple input buffering - in a real implementation this would be more sophisticated
+        // Enhanced input buffering with motion detection
         if (input.AnyButton)
         {
             string inputString = "";
@@ -164,6 +195,13 @@ public partial class Character : CharacterBody2D
             if (input.LightKick) inputString += "LK";
             if (input.MediumKick) inputString += "MK";
             if (input.HeavyKick) inputString += "HK";
+            
+            // Add motion inputs
+            string motionInput = GetMotionInput(input);
+            if (!string.IsNullOrEmpty(motionInput))
+            {
+                inputString = motionInput + inputString;
+            }
             
             _inputBuffer[inputString] = CurrentFrame;
         }
@@ -181,6 +219,16 @@ public partial class Character : CharacterBody2D
         {
             _inputBuffer.Remove(key);
         }
+    }
+    
+    private string GetMotionInput(PlayerInputState input)
+    {
+        // Simplified motion detection - in production this would be more sophisticated
+        if (input.Down && input.Right) return "236"; // Quarter-circle forward
+        if (input.Down && input.Left) return "214"; // Quarter-circle back
+        if (input.Right && input.Down && input.Right) return "623"; // Dragon punch
+        if (input.Down) return "2"; // Down
+        return "";
     }
     
     private void ProcessMovementInput(PlayerInputState input)
@@ -235,7 +283,10 @@ public partial class Character : CharacterBody2D
     {
         if (CurrentState != CharacterState.Idle && CurrentState != CharacterState.Walking) return;
         
-        // Check for attack inputs
+        // Check for special move inputs first
+        if (CheckSpecialMoves()) return;
+        
+        // Check for normal attacks
         if (InputManager.Instance.IsInputJustPressed(PlayerId, "light_punch"))
         {
             PerformMove("lightPunch");
@@ -262,15 +313,79 @@ public partial class Character : CharacterBody2D
         }
     }
     
+    private bool CheckSpecialMoves()
+    {
+        if (Data?.Moves?.Specials == null) return false;
+        
+        foreach (var special in Data.Moves.Specials)
+        {
+            if (IsInputInBuffer(special.Value.Input))
+            {
+                if (!BalanceManager.Instance?.IsMoveDisabled(CharacterId, special.Key) == true)
+                {
+                    PerformSpecialMove(special.Key, special.Value);
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    private bool IsInputInBuffer(string input)
+    {
+        // Simplified input checking - would be more sophisticated in production
+        return _inputBuffer.ContainsKey(input);
+    }
+    
     private void PerformMove(string moveName)
     {
         if (Data?.Moves?.Normals?.ContainsKey(moveName) == true)
         {
             var moveData = Data.Moves.Normals[moveName];
+            
+            // Check if move is disabled by balance system
+            if (BalanceManager.Instance?.IsMoveDisabled(CharacterId, moveName) == true)
+            {
+                return;
+            }
+            
             ChangeState(CharacterState.Attacking);
-            // Animation and hitbox logic would go here
+            
+            // Track move usage for telemetry
+            TrackMoveUsage(moveName, moveData);
+            
             GD.Print($"Performing {moveData.Name}");
         }
+    }
+    
+    private void PerformSpecialMove(string moveName, MoveData moveData)
+    {
+        // Check meter cost
+        if (moveData.MeterCost > Meter) return;
+        
+        ChangeState(CharacterState.Attacking);
+        
+        // Consume meter
+        if (moveData.MeterCost > 0)
+        {
+            ConsumeMeter(moveData.MeterCost);
+        }
+        
+        // Track move usage
+        TrackMoveUsage(moveName, moveData);
+        
+        GD.Print($"Performing special move: {moveData.Name}");
+    }
+    
+    private void TrackMoveUsage(string moveName, MoveData moveData)
+    {
+        if (!_matchStats.MoveUsage.ContainsKey(moveName))
+        {
+            _matchStats.MoveUsage[moveName] = new MoveUsageStats();
+        }
+        
+        _matchStats.MoveUsage[moveName].TimesUsed++;
     }
     
     private void UpdateState()
@@ -289,6 +404,14 @@ public partial class Character : CharacterBody2D
                 if (StateFrame > 30) // Placeholder
                 {
                     ChangeState(CharacterState.Idle);
+                }
+                break;
+                
+            case CharacterState.Hit:
+                if (StateFrame > 20) // Hitstun duration
+                {
+                    ChangeState(CharacterState.Idle);
+                    EndCombo();
                 }
                 break;
         }
@@ -325,6 +448,8 @@ public partial class Character : CharacterBody2D
             CharacterState.Jumping => Data.Animations.Jump,
             CharacterState.Crouching => Data.Animations.Crouch,
             CharacterState.Attacking => Data.Animations.Idle, // Would be specific to move
+            CharacterState.Hit => Data.Animations.Hit,
+            CharacterState.Blocking => Data.Animations.Block,
             _ => Data.Animations.Idle
         };
         
@@ -339,7 +464,15 @@ public partial class Character : CharacterBody2D
         // Handle taking damage
         if (area.GetParent() is Character attacker && attacker != this)
         {
-            TakeDamage(50); // Placeholder damage
+            int damage = BalanceManager.Instance?.GetAdjustedDamage(attacker.CharacterId, "default", 50) ?? 50;
+            TakeDamage((int)damage);
+            
+            // Track combo
+            if (!_inCombo)
+            {
+                StartCombo();
+            }
+            _comboCounter++;
         }
     }
     
@@ -347,6 +480,9 @@ public partial class Character : CharacterBody2D
     {
         Health = Mathf.Max(0, Health - damage);
         EmitSignal(SignalName.HealthChanged, Health, Data?.Health ?? 1000);
+        
+        // Track damage for telemetry
+        _matchStats.DamageDealt += damage;
         
         if (Health <= 0)
         {
@@ -360,8 +496,41 @@ public partial class Character : CharacterBody2D
     
     public void GainMeter(int amount)
     {
-        Meter = Mathf.Min(Data?.Meter ?? 100, Meter + amount);
+        var adjustedAmount = (int)(amount * BalanceManager.Instance?.GetCurrentConfig()?.GlobalMultipliers?.MeterGainScale ?? 1.0f);
+        Meter = Mathf.Min(Data?.Meter ?? 100, Meter + adjustedAmount);
         EmitSignal(SignalName.MeterChanged, Meter, Data?.Meter ?? 100);
+    }
+    
+    public void ConsumeMeter(int amount)
+    {
+        Meter = Mathf.Max(0, Meter - amount);
+        _matchStats.MeterUsed += amount;
+        EmitSignal(SignalName.MeterChanged, Meter, Data?.Meter ?? 100);
+    }
+    
+    private void StartCombo()
+    {
+        _inCombo = true;
+        _comboCounter = 0;
+    }
+    
+    private void EndCombo()
+    {
+        if (_inCombo && _comboCounter > 1)
+        {
+            _matchStats.CombosPerformed++;
+            EmitSignal(SignalName.ComboPerformed, _comboCounter * 50, _comboCounter); // Estimated damage
+        }
+        
+        _inCombo = false;
+        _comboCounter = 0;
+    }
+    
+    public PlayerMatchStats GetMatchStats() => _matchStats;
+    
+    public void ResetMatchStats()
+    {
+        _matchStats = new PlayerMatchStats();
     }
 }
 

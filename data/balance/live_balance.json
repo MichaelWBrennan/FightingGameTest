@@ -1,0 +1,64 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-08-05T00:00:00Z",
+  "hotfixEnabled": true,
+  "globalMultipliers": {
+    "damageScale": 1.0,
+    "meterGainScale": 1.0,
+    "hitstunScale": 1.0,
+    "blockstunScale": 1.0
+  },
+  "characterAdjustments": {
+    "ryu": {
+      "enabled": true,
+      "healthMultiplier": 1.0,
+      "damageMultiplier": 1.0,
+      "speedMultiplier": 1.0,
+      "moveAdjustments": {
+        "lightPunch": {
+          "damageMultiplier": 1.0,
+          "startupFrameAdjustment": 0,
+          "recoveryFrameAdjustment": 0,
+          "disabled": false
+        },
+        "hadoken": {
+          "damageMultiplier": 1.0,
+          "projectileSpeedMultiplier": 1.0,
+          "disabled": false
+        },
+        "shoryuken": {
+          "damageMultiplier": 1.0,
+          "invincibilityFrames": 0,
+          "disabled": false
+        }
+      }
+    }
+  },
+  "systemAdjustments": {
+    "comboScaling": {
+      "enabled": true,
+      "damageReduction": 0.85,
+      "maxComboLength": 20
+    },
+    "meterSystem": {
+      "enabled": true,
+      "buildRateMultiplier": 1.0,
+      "superCostMultiplier": 1.0
+    },
+    "romanCancel": {
+      "enabled": true,
+      "meterCost": 50,
+      "frameAdvantage": 10
+    }
+  },
+  "changeLog": [
+    {
+      "version": "1.0.0",
+      "date": "2024-08-05T00:00:00Z",
+      "changes": [
+        "Initial balance configuration",
+        "All systems operating at baseline values"
+      ]
+    }
+  ]
+}
