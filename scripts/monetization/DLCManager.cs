@@ -191,12 +191,57 @@ public partial class DLCManager : Node
         
         var dlc = _availableDLC[characterId];
         
+        // Check ethical safeguards first
+        var validation = EthicalSafeguards.Instance?.ValidatePurchase("player1", dlc.Price, dlc.Name);
+        if (validation != null && !validation.IsAllowed)
+        {
+            ShowPurchaseBlockedDialog(validation.UserMessage);
+            return;
+        }
+        
+        // Show confirmation if required
+        if (validation?.RequiresConfirmation == true)
+        {
+            ShowPurchaseConfirmationDialog(characterId, validation.ConfirmationMessage);
+            return;
+        }
+        
         // In a real implementation, this would integrate with Steam API
         // For now, simulate purchase success
         GD.Print($"Initiating purchase for {dlc.Name} (${dlc.Price:F2})");
         
         // Simulate Steam purchase flow
         SimulatePurchaseFlow(characterId);
+    }
+    
+    /// <summary>
+    /// Show purchase blocked dialog
+    /// </summary>
+    private void ShowPurchaseBlockedDialog(string message)
+    {
+        var dialog = new AcceptDialog();
+        dialog.Title = "Purchase Not Allowed";
+        dialog.DialogText = message;
+        
+        GetTree().Root.AddChild(dialog);
+        dialog.PopupCentered();
+    }
+    
+    /// <summary>
+    /// Show purchase confirmation dialog
+    /// </summary>
+    private void ShowPurchaseConfirmationDialog(string characterId, string confirmationMessage)
+    {
+        var dialog = new ConfirmationDialog();
+        dialog.Title = "Confirm Purchase";
+        dialog.DialogText = confirmationMessage;
+        
+        dialog.Confirmed += () => {
+            CompletePurchase(characterId);
+        };
+        
+        GetTree().Root.AddChild(dialog);
+        dialog.PopupCentered();
     }
     
     /// <summary>
@@ -222,15 +267,23 @@ public partial class DLCManager : Node
     /// </summary>
     private void CompletePurchase(string characterId)
     {
+        var dlc = _availableDLC[characterId];
+        
         _ownedCharacters[characterId] = true;
         SaveOwnershipData();
+        
+        // Record purchase in ethical safeguards
+        EthicalSafeguards.Instance?.RecordPurchase("player1", dlc.Price, characterId, dlc.Name);
+        
+        // Award some soft currency as bonus for character purchase
+        CurrencyManager.Instance?.AwardSoftCurrency(500, $"Welcome bonus for {dlc.Name}");
         
         EmitSignal(SignalName.DLCPurchased, characterId);
         
         // Show success message
         var successDialog = new AcceptDialog();
         successDialog.Title = "Purchase Complete";
-        successDialog.DialogText = $"Thank you for purchasing {_availableDLC[characterId].Name}!\n\nThe character is now available for play.";
+        successDialog.DialogText = $"Thank you for purchasing {dlc.Name}!\n\nThe character is now available for play.\n\nBonus: You received 500 Training Tokens!";
         
         GetTree().Root.AddChild(successDialog);
         successDialog.PopupCentered();
