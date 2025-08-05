@@ -1,0 +1,250 @@
+{
+  "characterId": "ryu",
+  "name": "Ryu",
+  "displayName": "Ryu",
+  "description": "A wandering warrior who trains constantly to become a true martial artist.",
+  "health": 1000,
+  "meter": 100,
+  "walkSpeed": 150,
+  "runSpeed": 250,
+  "jumpHeight": 300,
+  "weight": 100,
+  "animations": {
+    "idle": "ryu_idle",
+    "walkForward": "ryu_walk_forward",
+    "walkBackward": "ryu_walk_backward",
+    "jump": "ryu_jump",
+    "crouch": "ryu_crouch",
+    "block": "ryu_block",
+    "crouchBlock": "ryu_crouch_block",
+    "hit": "ryu_hit",
+    "knockdown": "ryu_knockdown"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Jab",
+        "damage": 50,
+        "startupFrames": 4,
+        "activeFrames": 3,
+        "recoveryFrames": 6,
+        "blockAdvantage": 1,
+        "hitAdvantage": 4,
+        "comboType": "opener",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 6,
+            "position": [60, 0],
+            "size": [40, 30],
+            "damage": 50,
+            "hitstun": 12,
+            "blockstun": 8
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Cross",
+        "damage": 80,
+        "startupFrames": 6,
+        "activeFrames": 4,
+        "recoveryFrames": 8,
+        "blockAdvantage": -2,
+        "hitAdvantage": 3,
+        "comboType": "linker",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 6,
+            "endFrame": 9,
+            "position": [70, 0],
+            "size": [50, 35],
+            "damage": 80,
+            "hitstun": 15,
+            "blockstun": 10
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Hook",
+        "damage": 120,
+        "startupFrames": 10,
+        "activeFrames": 5,
+        "recoveryFrames": 15,
+        "blockAdvantage": -5,
+        "hitAdvantage": 0,
+        "comboType": "ender",
+        "properties": ["launcher"],
+        "hitboxes": [
+          {
+            "startFrame": 10,
+            "endFrame": 14,
+            "position": [80, -10],
+            "size": [60, 40],
+            "damage": 120,
+            "hitstun": 20,
+            "blockstun": 12,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Low Kick",
+        "damage": 60,
+        "startupFrames": 5,
+        "activeFrames": 3,
+        "recoveryFrames": 7,
+        "blockAdvantage": 0,
+        "hitAdvantage": 3,
+        "comboType": "opener",
+        "properties": ["low", "cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 7,
+            "position": [50, 40],
+            "size": [45, 25],
+            "damage": 60,
+            "hitstun": 13,
+            "blockstun": 9
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "Mid Kick",
+        "damage": 90,
+        "startupFrames": 8,
+        "activeFrames": 4,
+        "recoveryFrames": 10,
+        "blockAdvantage": -3,
+        "hitAdvantage": 2,
+        "comboType": "linker",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 11,
+            "position": [75, 0],
+            "size": [55, 40],
+            "damage": 90,
+            "hitstun": 16,
+            "blockstun": 11
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Roundhouse",
+        "damage": 140,
+        "startupFrames": 12,
+        "activeFrames": 6,
+        "recoveryFrames": 18,
+        "blockAdvantage": -8,
+        "hitAdvantage": -2,
+        "comboType": "ender",
+        "properties": ["launcher"],
+        "hitboxes": [
+          {
+            "startFrame": 12,
+            "endFrame": 17,
+            "position": [90, -5],
+            "size": [70, 45],
+            "damage": 140,
+            "hitstun": 25,
+            "blockstun": 15,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "hadoken": {
+        "name": "Hadoken",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch",
+        "damage": 100,
+        "startupFrames": 12,
+        "activeFrames": 0,
+        "recoveryFrames": 25,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": ["projectile"],
+        "projectile": {
+          "speed": 300,
+          "lifetime": 120,
+          "size": [40, 20],
+          "damage": 100,
+          "hitstun": 18,
+          "blockstun": 12
+        }
+      },
+      "shoryuken": {
+        "name": "Shoryuken",
+        "input": "623P",
+        "description": "Dragon punch motion + Punch",
+        "damage": 160,
+        "startupFrames": 3,
+        "activeFrames": 8,
+        "recoveryFrames": 30,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": ["invincible", "launcher"],
+        "hitboxes": [
+          {
+            "startFrame": 3,
+            "endFrame": 10,
+            "position": [40, -30],
+            "size": [50, 80],
+            "damage": 160,
+            "hitstun": 30,
+            "blockstun": 20,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "supers": {
+      "shinku_hadoken": {
+        "name": "Shinku Hadoken",
+        "input": "236236P",
+        "description": "Quarter-circle forward x2 + Punch",
+        "damage": 300,
+        "startupFrames": 8,
+        "activeFrames": 0,
+        "recoveryFrames": 45,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": ["super", "projectile"],
+        "projectile": {
+          "speed": 400,
+          "lifetime": 180,
+          "size": [80, 40],
+          "damage": 300,
+          "hitstun": 40,
+          "blockstun": 25,
+          "hits": 5
+        }
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Combo",
+      "inputs": ["lightPunch", "mediumPunch", "hadoken"],
+      "damage": 230,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Launch Combo",
+      "inputs": ["heavyPunch", "shoryuken"],
+      "damage": 280,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Super Combo",
+      "inputs": ["lightPunch", "mediumPunch", "shinku_hadoken"],
+      "damage": 430,
+      "difficulty": "hard"
+    }
+  ]
+}
