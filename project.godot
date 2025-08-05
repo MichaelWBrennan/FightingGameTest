@@ -15,6 +15,11 @@ config/icon="res://assets/ui/icon.svg"
 [autoload]
 
 GameManager="*res://scenes/core/Autoload.tscn"
+BalanceManager="*res://scripts/core/BalanceManager.cs"
+TelemetryManager="*res://scripts/core/TelemetryManager.cs"
+DLCManager="*res://scripts/monetization/DLCManager.cs"
+RomanCancelSystem="*res://scripts/mechanics/RomanCancelSystem.cs"
+ParryDefendSystem="*res://scripts/mechanics/ParryDefendSystem.cs"
 
 [audio]
 

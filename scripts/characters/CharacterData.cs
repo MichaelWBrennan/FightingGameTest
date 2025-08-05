@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 /// <summary>
-/// Data structure for character information loaded from JSON
+/// Enhanced data structure for character information with archetype system
 /// </summary>
 public class CharacterData
 {
@@ -17,6 +17,21 @@ public class CharacterData
     
     [JsonPropertyName("description")]
     public string Description { get; set; } = "";
+    
+    [JsonPropertyName("archetype")]
+    public string Archetype { get; set; } = ""; // shoto, rushdown, grappler, zoner, technical
+    
+    [JsonPropertyName("complexity")]
+    public string Complexity { get; set; } = ""; // easy, medium, hard, expert
+    
+    [JsonPropertyName("counterplayTags")]
+    public List<string> CounterplayTags { get; set; } = new();
+    
+    [JsonPropertyName("meterInteractions")]
+    public List<string> MeterInteractions { get; set; } = new();
+    
+    [JsonPropertyName("uniqueMechanics")]
+    public List<string> UniqueMechanics { get; set; } = new();
     
     [JsonPropertyName("health")]
     public int Health { get; set; } = 1000;
@@ -35,6 +50,15 @@ public class CharacterData
     
     [JsonPropertyName("weight")]
     public int Weight { get; set; } = 100;
+    
+    [JsonPropertyName("dlcCharacter")]
+    public bool DlcCharacter { get; set; } = false;
+    
+    [JsonPropertyName("releaseDate")]
+    public string ReleaseDate { get; set; } = "";
+    
+    [JsonPropertyName("balancePatch")]
+    public string BalancePatch { get; set; } = "";
     
     [JsonPropertyName("animations")]
     public AnimationData Animations { get; set; } = new();
@@ -158,6 +182,9 @@ public class HitboxData
     
     [JsonPropertyName("knockdown")]
     public bool Knockdown { get; set; } = false;
+    
+    [JsonPropertyName("hits")]
+    public int Hits { get; set; } = 1;
 }
 
 public class ProjectileData
