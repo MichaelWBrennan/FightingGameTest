@@ -5,6 +5,30 @@ using System.Linq;
 using System.Text.Json;
 
 /// <summary>
+/// Cosmetic item types available for purchase
+/// </summary>
+public enum CosmeticType
+{
+    Skin,
+    VictoryPose,
+    Intro,
+    Taunt,
+    KOEffect,
+    UITheme,
+    AnnouncerPack
+}
+
+/// <summary>
+/// Cosmetic tier system for meaningful progression
+/// </summary>
+public enum CosmeticTier
+{
+    Standard,    // Basic cosmetics, palette swaps, simple changes
+    Epic,        // Custom VFX, animations, moderate complexity
+    Prestige     // Full thematic overhauls, unique audio, premium quality
+}
+
+/// <summary>
 /// Direct-purchase cosmetic storefront system
 /// Implements transparent, real-currency pricing without gacha or FOMO mechanics
 /// </summary>

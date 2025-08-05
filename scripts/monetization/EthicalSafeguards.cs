@@ -538,14 +538,6 @@ public class SpendingTracker
     }
 }
 
-public class PurchaseRecord
-{
-    public float UsdAmount { get; set; }
-    public string ItemId { get; set; } = "";
-    public string Description { get; set; } = "";
-    public DateTime Timestamp { get; set; }
-}
-
 public class SpendingAnalytics
 {
     public string PlayerId { get; set; } = "";
