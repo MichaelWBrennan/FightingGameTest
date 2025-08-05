@@ -245,6 +245,164 @@ public partial class TelemetryManager : Node
         }
     }
     
+    // === MONETIZATION ANALYTICS METHODS ===
+    
+    /*
+    /// <summary>
+    /// Record cosmetic purchase for analytics
+    /// </summary>
+    public void RecordCosmeticPurchase(CosmeticItem cosmetic)
+    {
+        var purchaseData = new
+        {
+            Type = "cosmetic_purchase",
+            CosmeticId = cosmetic.Id,
+            Price = cosmetic.Price,
+            Rarity = cosmetic.Rarity.ToString(),
+            CosmeticType = cosmetic.Type.ToString(),
+            CharacterId = cosmetic.CharacterId,
+            IsUGC = cosmetic.IsUGC,
+            Timestamp = DateTime.UtcNow
+        };
+        
+        LogMonetizationEvent(purchaseData);
+    }
+    */
+    
+    /// <summary>
+    /// Record Battle Pass purchase and progression
+    /// </summary>
+    public void RecordBattlePassPurchase(int seasonId)
+    {
+        var purchaseData = new
+        {
+            Type = "battle_pass_purchase",
+            SeasonId = seasonId,
+            Timestamp = DateTime.UtcNow
+        };
+        
+        LogMonetizationEvent(purchaseData);
+    }
+    
+    /// <summary>
+    /// Record Battle Pass experience gain
+    /// </summary>
+    public void RecordBattlePassExperience(int amount, string source)
+    {
+        var expData = new
+        {
+            Type = "battle_pass_experience",
+            Amount = amount,
+            Source = source,
+            Timestamp = DateTime.UtcNow
+        };
+        
+        LogMonetizationEvent(expData);
+    }
+    
+    /*
+    /// <summary>
+    /// Record UGC content purchase
+    /// </summary>
+    public void RecordUGCPurchase(UGCItem content, float creatorEarnings, float platformEarnings)
+    {
+        var ugcData = new
+        {
+            Type = "ugc_purchase",
+            ContentId = content.Id,
+            CreatorId = content.CreatorId,
+            Price = content.Price,
+            CreatorEarnings = creatorEarnings,
+            PlatformEarnings = platformEarnings,
+            ContentType = content.Type.ToString(),
+            Timestamp = DateTime.UtcNow
+        };
+        
+        LogMonetizationEvent(ugcData);
+    }
+    */
+    
+    /// <summary>
+    /// Record music track purchase
+    /// </summary>
+    public void RecordMusicPurchase(MusicTrack track)
+    {
+        var musicData = new
+        {
+            Type = "music_purchase",
+            TrackId = track.Id,
+            Artist = track.Artist,
+            Price = track.Price,
+            MusicType = track.Type.ToString(),
+            Genre = track.Genre,
+            Timestamp = DateTime.UtcNow
+        };
+        
+        LogMonetizationEvent(musicData);
+    }
+    
+    /*
+    /// <summary>
+    /// Record affiliate code usage
+    /// </summary>
+    public void RecordAffiliateCodeUsage(AffiliateTransaction transaction)
+    {
+        var affiliateData = new
+        {
+            Type = "affiliate_code_usage",
+            Code = transaction.Code,
+            CreatorId = transaction.CreatorId,
+            OriginalPrice = transaction.OriginalPrice,
+            DiscountAmount = transaction.DiscountAmount,
+            CreatorEarnings = transaction.CreatorEarnings,
+            Timestamp = DateTime.UtcNow
+        };
+        
+        LogMonetizationEvent(affiliateData);
+    }
+    */
+    
+    /// <summary>
+    /// Log monetization event to analytics system
+    /// </summary>
+    private void LogMonetizationEvent(object eventData)
+    {
+        try
+        {
+            // In production, this would send to analytics service
+            // For now, log to file for development purposes
+            var logEntry = new
+            {
+                EventData = eventData,
+                UserId = "anonymous", // Would be actual user ID in production
+                SessionId = GetSessionId(),
+                Timestamp = DateTime.UtcNow
+            };
+            
+            var monetizationLogFile = "user://monetization_analytics.jsonl";
+            using var file = FileAccess.Open(monetizationLogFile, FileAccess.ModeFlags.WriteRead);
+            file.SeekEnd();
+            
+            var jsonLine = JsonSerializer.Serialize(logEntry);
+            file.StoreLine(jsonLine);
+            
+            GD.Print($"Monetization event logged: {eventData}");
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Failed to log monetization event: {ex.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// Get current session ID for analytics
+    /// </summary>
+    private string GetSessionId()
+    {
+        // Simple session ID based on game start time
+        return $"session_{DateTime.UtcNow:yyyyMMdd_HHmmss}";
+    }
+    
     private void LoadTelemetryData()
     {
         try

@@ -175,25 +175,62 @@ Each character should have:
 
 ## 💰 Monetization Strategy
 
-### DLC Character Model
-**Pricing Structure:**
-- **Base game**: 1 character (free with game)
-- **Character DLC**: $5-7 per character
-- **Season passes**: Bundle discounts for multiple characters
-- **Cosmetic DLC**: Optional skins and effects
+### Ethical Cosmetic-Only Model
+**Core Principles:**
+- **No character purchases**: All fighters accessible through weekly rotation
+- **No in-game currency**: Direct real-money transactions only
+- **No loot boxes/gacha**: Transparent à la carte cosmetic pricing
+- **No pay-to-win**: Pure cosmetic monetization maintains competitive integrity
 
-**Release Cadence:**
-- **Major characters**: 2-3 per year
-- **Echo fighters**: Variants of existing characters
-- **Guest characters**: Cross-promotional opportunities
+**Weekly Fighter Rotation:**
+- **One fighter free per week**: Randomized per user (League-style)
+- **Universal access**: All competitive content remains free
+- **Rotation analytics**: Prevent repeat characters within 5-week cooldown
+- **Archetype balancing**: Ensure diverse playstyle representation
+
+### Cosmetic Monetization
+**À La Carte Cosmetics:**
+- **Fighter skins**: Visual character variants ($3-8)
+- **Animations**: Custom intro/outro sequences ($2-5)
+- **KO effects**: Victory screen customizations ($1-3)
+- **Emotes**: In-match expression tools ($1-2)
+- **UI themes**: Personalized interface styling ($2-4)
+
+**Battle Pass System:**
+- **Seasonal cosmetic tracks**: Non-predatory progression
+- **Meaningful rewards**: No filler content
+- **FOMO mitigation**: Previous pass items occasionally available
+- **Free tier included**: Accessible rewards for all players
+
+### User-Generated Content
+**Creator Economy:**
+- **UGC cosmetics**: Community-created skins and effects
+- **Revenue sharing**: 70% creator, 30% platform split
+- **Quality curation**: Approved content maintains game integrity
+- **Creator tools**: Sandboxed modding environment
+
+### Music & Audio Monetization
+**Licensed Content:**
+- **Artist partnerships**: Official music collaborations
+- **OST sales**: Standalone soundtrack purchases
+- **Rhythm cosmetics**: Music-reactive visual effects
+- **Dynamic music**: Adaptive soundtrack systems
+
+### Creator & Esports Integration
+**Influencer Monetization:**
+- **Affiliate skin codes**: Creator-branded cosmetics
+- **Stream integration**: Viewer engagement rewards
+- **Tournament cosmetics**: Event-specific collectibles
+- **VOD monetization**: Ticketed premium tournament content
 
 ### No Exploitative Practices
 **Explicitly avoided:**
+- Character/gameplay purchases
 - Loot boxes or gacha mechanics
-- Pay-to-win advantages
 - Artificial scarcity (FOMO tactics)
-- Predatory pricing for children
-- Required purchases for competitive play
+- Predatory pricing targeting vulnerable users
+- Pay-to-win advantages of any kind
+- Cross-IP licensing dependencies
 
 ## 🏟️ Competitive Design
 
