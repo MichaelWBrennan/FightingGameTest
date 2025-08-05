@@ -4,21 +4,22 @@ using System.Collections.Generic;
 using System.Text.Json;
 
 /// <summary>
-/// Manages DLC character ownership and license validation
+/// Manages ethical cosmetic content delivery and distribution (no character purchases)
+/// All fighters are free through weekly rotation system
 /// </summary>
 public partial class DLCManager : Node
 {
     public static DLCManager Instance { get; private set; }
     
-    private Dictionary<string, bool> _ownedCharacters = new();
-    private Dictionary<string, DLCPackage> _availableDLC = new();
-    private const string OWNERSHIP_FILE = "user://character_ownership.json";
+    private Dictionary<string, bool> _ownedCharacters = new(); // Legacy - all fighters are now free
+    private Dictionary<string, CosmeticContentPack> _availableContentPacks = new();
+    private const string OWNERSHIP_FILE = "user://cosmetic_content_ownership.json";
     
     [Signal]
-    public delegate void DLCPurchasedEventHandler(string characterId);
+    public delegate void ContentPackPurchasedEventHandler(string packId);
     
     [Signal]
-    public delegate void DLCValidatedEventHandler(string characterId, bool isOwned);
+    public delegate void FighterUnlockedEventHandler(string characterId); // Through rotation
     
     public override void _Ready()
     {
@@ -36,38 +37,45 @@ public partial class DLCManager : Node
     }
     
     /// <summary>
-    /// Initialize the DLC catalog with available content
+    /// Initialize cosmetic content packs (no character purchases)
     /// </summary>
     private void InitializeDLCCatalog()
     {
-        // Base game characters (always owned)
+        // All base game characters are permanently available (no purchases needed)
         _ownedCharacters["ryu"] = true;
+        _ownedCharacters["chun_li"] = true;
+        _ownedCharacters["ken"] = true;
+        _ownedCharacters["zangief"] = true;
         
-        // DLC characters
-        _availableDLC["chun_li"] = new DLCPackage
+        // Cosmetic content packs
+        _availableContentPacks["season_1_cosmetics"] = new CosmeticContentPack
         {
-            CharacterId = "chun_li",
-            Name = "Chun-Li Character Pack",
-            Price = 5.99f,
-            Description = "The strongest woman in the world joins the fight!",
-            SteamAppId = "2234567", // Would be actual Steam DLC ID
-            ReleaseDate = DateTime.Parse("2024-08-05"),
-            IsAvailable = true
+            PackId = "season_1_cosmetics",
+            Name = "Season 1 Cosmetic Collection",
+            Description = "Premium cosmetic bundle featuring exclusive skins and effects",
+            Price = 12.99f,
+            ContentIds = new[] { "ryu_premium_gi", "chun_li_qipao", "ken_flame_effects", "stage_cherry_blossom" },
+            PackType = ContentPackType.SeasonalBundle,
+            IsLimitedTime = false,
+            ReleaseDate = DateTime.UtcNow.AddDays(-30)
         };
         
-        // Add more DLC packages as they become available
-        _availableDLC["ken"] = new DLCPackage
+        _availableContentPacks["accessibility_pack"] = new CosmeticContentPack
         {
-            CharacterId = "ken",
-            Name = "Ken Masters Character Pack", 
-            Price = 5.99f,
-            Description = "Ryu's best friend and rival brings flashy combos!",
-            SteamAppId = "2234568",
-            ReleaseDate = DateTime.Parse("2024-09-01"),
-            IsAvailable = false // Not yet released
+            PackId = "accessibility_pack",
+            Name = "Accessibility Enhancement Pack",
+            Description = "UI themes and visual aids for accessibility (always free)",
+            Price = 0.0f,
+            ContentIds = new[] { "colorblind_ui", "high_contrast_theme", "large_text_ui" },
+            PackType = ContentPackType.Accessibility,
+            IsLimitedTime = false,
+            ReleaseDate = DateTime.UtcNow
         };
         
-        GD.Print($"DLC Catalog initialized with {_availableDLC.Count} packages");
+        // Grant accessibility pack automatically
+        _ownedCharacters["accessibility_pack"] = true;
+        
+        GD.Print($"Cosmetic content catalog initialized with {_availableContentPacks.Count} packages");
     }
     
     /// <summary>
@@ -172,11 +180,11 @@ public partial class DLCManager : Node
     /// <summary>
     /// Show coming soon dialog for unreleased content
     /// </summary>
-    private void ShowComingSoonDialog(DLCPackage dlc)
+    private void ShowComingSoonDialog(CosmeticContentPack pack)
     {
         var dialog = new AcceptDialog();
         dialog.Title = "Coming Soon";
-        dialog.DialogText = $"{dlc.Name}\n\nReleasing: {dlc.ReleaseDate:MMMM dd, yyyy}\n\n{dlc.Description}";
+        dialog.DialogText = $"{pack.Name}\n\nReleasing: {pack.ReleaseDate:MMMM dd, yyyy}\n\n{pack.Description}";
         
         GetTree().Root.AddChild(dialog);
         dialog.PopupCentered();
@@ -191,57 +199,12 @@ public partial class DLCManager : Node
         
         var dlc = _availableDLC[characterId];
         
-        // Check ethical safeguards first
-        var validation = EthicalSafeguards.Instance?.ValidatePurchase("player1", dlc.Price, dlc.Name);
-        if (validation != null && !validation.IsAllowed)
-        {
-            ShowPurchaseBlockedDialog(validation.UserMessage);
-            return;
-        }
-        
-        // Show confirmation if required
-        if (validation?.RequiresConfirmation == true)
-        {
-            ShowPurchaseConfirmationDialog(characterId, validation.ConfirmationMessage);
-            return;
-        }
-        
         // In a real implementation, this would integrate with Steam API
         // For now, simulate purchase success
         GD.Print($"Initiating purchase for {dlc.Name} (${dlc.Price:F2})");
         
         // Simulate Steam purchase flow
         SimulatePurchaseFlow(characterId);
-    }
-    
-    /// <summary>
-    /// Show purchase blocked dialog
-    /// </summary>
-    private void ShowPurchaseBlockedDialog(string message)
-    {
-        var dialog = new AcceptDialog();
-        dialog.Title = "Purchase Not Allowed";
-        dialog.DialogText = message;
-        
-        GetTree().Root.AddChild(dialog);
-        dialog.PopupCentered();
-    }
-    
-    /// <summary>
-    /// Show purchase confirmation dialog
-    /// </summary>
-    private void ShowPurchaseConfirmationDialog(string characterId, string confirmationMessage)
-    {
-        var dialog = new ConfirmationDialog();
-        dialog.Title = "Confirm Purchase";
-        dialog.DialogText = confirmationMessage;
-        
-        dialog.Confirmed += () => {
-            CompletePurchase(characterId);
-        };
-        
-        GetTree().Root.AddChild(dialog);
-        dialog.PopupCentered();
     }
     
     /// <summary>
@@ -267,23 +230,15 @@ public partial class DLCManager : Node
     /// </summary>
     private void CompletePurchase(string characterId)
     {
-        var dlc = _availableDLC[characterId];
-        
         _ownedCharacters[characterId] = true;
         SaveOwnershipData();
-        
-        // Record purchase in ethical safeguards
-        EthicalSafeguards.Instance?.RecordPurchase("player1", dlc.Price, characterId, dlc.Name);
-        
-        // Award some soft currency as bonus for character purchase
-        CurrencyManager.Instance?.AwardSoftCurrency(500, $"Welcome bonus for {dlc.Name}");
         
         EmitSignal(SignalName.DLCPurchased, characterId);
         
         // Show success message
         var successDialog = new AcceptDialog();
         successDialog.Title = "Purchase Complete";
-        successDialog.DialogText = $"Thank you for purchasing {dlc.Name}!\n\nThe character is now available for play.\n\nBonus: You received 500 Training Tokens!";
+        successDialog.DialogText = $"Thank you for purchasing {_availableDLC[characterId].Name}!\n\nThe character is now available for play.";
         
         GetTree().Root.AddChild(successDialog);
         successDialog.PopupCentered();
@@ -365,18 +320,16 @@ public partial class DLCManager : Node
     }
     
     /// <summary>
-    /// Get list of available DLC packages
+    /// Get list of available cosmetic content packs
     /// </summary>
-    public List<DLCPackage> GetAvailableDLC()
+    public List<CosmeticContentPack> GetAvailableContentPacks()
     {
-        var available = new List<DLCPackage>();
+        var available = new List<CosmeticContentPack>();
         
-        foreach (var dlc in _availableDLC.Values)
+        foreach (var pack in _availableContentPacks.Values)
         {
-            if (dlc.IsAvailable && !IsCharacterOwned(dlc.CharacterId))
-            {
-                available.Add(dlc);
-            }
+            // For cosmetic content packs, all should be available for purchase
+            available.Add(pack);
         }
         
         return available;
@@ -445,20 +398,32 @@ public partial class DLCManager : Node
     }
 }
 
-// Data structures
-public class DLCPackage
+// Data structures for cosmetic content packs
+public class CosmeticContentPack
 {
-    public string CharacterId { get; set; } = "";
+    public string PackId { get; set; } = "";
     public string Name { get; set; } = "";
-    public float Price { get; set; }
     public string Description { get; set; } = "";
-    public string SteamAppId { get; set; } = "";
+    public float Price { get; set; }
+    public string[] ContentIds { get; set; } = Array.Empty<string>();
+    public ContentPackType PackType { get; set; }
+    public bool IsLimitedTime { get; set; }
     public DateTime ReleaseDate { get; set; }
-    public bool IsAvailable { get; set; }
+    public DateTime? ExpiryDate { get; set; }
+}
+
+public enum ContentPackType
+{
+    SeasonalBundle,
+    CharacterCosmetics,
+    StageThemes,
+    Accessibility,
+    Premium
 }
 
 public class OwnershipData
 {
     public Dictionary<string, bool> OwnedCharacters { get; set; } = new();
+    public Dictionary<string, bool> OwnedContentPacks { get; set; } = new();
     public DateTime LastUpdated { get; set; }
 }

@@ -11,14 +11,15 @@ Create the last fighting game platform a player ever needs—continuously evolvi
 ### Core Platform
 - **Engine**: Godot 4 with C# scripting for MIT license compliance
 - **Architecture**: Data-driven character system with JSON configuration
-- **Monetization**: Individual character DLC model (no loot boxes or soft currencies)
+- **Monetization**: Ethical cosmetic-only system with weekly fighter rotation (no character purchases)
 - **Cross-Platform**: Windows, macOS, Steam Deck (Linux) support
 - **Open Source**: MIT License for community contributions
 
 ### Live-Service Framework
 - **Automated Deployment**: GitHub Actions → SteamPipe integration
 - **Live Balance Hotfixes**: Config-only updates without client patches
-- **Modular DLC System**: Players download only purchased content
+- **Modular Cosmetic System**: Ethical monetization through cosmetics only
+- **Weekly Fighter Rotation**: All characters accessible through rotation
 - **Version Control**: Automated build versioning and hotfix delivery
 
 ### Combat Systems (Best of All-Time Integration)
