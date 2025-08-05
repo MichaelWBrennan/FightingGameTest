@@ -8,7 +8,7 @@ public partial class GameManager : Node
     public static GameManager Instance { get; private set; }
     
     [Signal]
-    public delegate void GameStateChangedEventHandler(GameState newState);
+    public delegate void GameStateChangedEventHandler();
     
     private GameState _currentState = GameState.MainMenu;
     

@@ -1,0 +1,220 @@
+{
+  "characterId": "zangief",
+  "name": "Zangief",
+  "displayName": "Zangief",
+  "description": "The Red Cyclone, a massive Russian wrestler with devastating grappling techniques.",
+  "archetype": "grappler",
+  "complexity": "medium",
+  "counterplayTags": ["keepaway", "neutral"],
+  "meterInteractions": ["ex_specials", "super_meter"],
+  "uniqueMechanics": ["command_grab", "armor"],
+  "health": 1200,
+  "meter": 100,
+  "walkSpeed": 120,
+  "runSpeed": 200,
+  "jumpHeight": 280,
+  "weight": 150,
+  "dlcCharacter": true,
+  "releaseDate": "2024-10-01",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "zangief_idle",
+    "walkForward": "zangief_walk_forward",
+    "walkBackward": "zangief_walk_backward",
+    "jump": "zangief_jump",
+    "crouch": "zangief_crouch",
+    "block": "zangief_block",
+    "crouchBlock": "zangief_crouch_block",
+    "hit": "zangief_hit",
+    "knockdown": "zangief_knockdown"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Jab",
+        "damage": 60,
+        "startupFrames": 5,
+        "activeFrames": 3,
+        "recoveryFrames": 7,
+        "blockAdvantage": 1,
+        "hitAdvantage": 4,
+        "comboType": "opener",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 7,
+            "position": [55, 0],
+            "size": [45, 35],
+            "damage": 60,
+            "hitstun": 11,
+            "blockstun": 8
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Body Blow",
+        "damage": 90,
+        "startupFrames": 8,
+        "activeFrames": 4,
+        "recoveryFrames": 10,
+        "blockAdvantage": -1,
+        "hitAdvantage": 3,
+        "comboType": "linker",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 11,
+            "position": [65, 10],
+            "size": [50, 40],
+            "damage": 90,
+            "hitstun": 14,
+            "blockstun": 10
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Lariat",
+        "damage": 140,
+        "startupFrames": 15,
+        "activeFrames": 8,
+        "recoveryFrames": 20,
+        "blockAdvantage": -6,
+        "hitAdvantage": 0,
+        "comboType": "ender",
+        "properties": ["armor"],
+        "hitboxes": [
+          {
+            "startFrame": 15,
+            "endFrame": 22,
+            "position": [0, 0],
+            "size": [90, 60],
+            "damage": 140,
+            "hitstun": 25,
+            "blockstun": 15,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "spd": {
+        "name": "Screw Piledriver",
+        "input": "360P",
+        "description": "360 motion + Punch",
+        "damage": 200,
+        "startupFrames": 2,
+        "activeFrames": 3,
+        "recoveryFrames": 35,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": ["command_grab", "unblockable"],
+        "hitboxes": [
+          {
+            "startFrame": 2,
+            "endFrame": 4,
+            "position": [30, 0],
+            "size": [60, 80],
+            "damage": 200,
+            "hitstun": 50,
+            "blockstun": 0,
+            "knockdown": true
+          }
+        ]
+      },
+      "green_hand": {
+        "name": "Green Hand",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch",
+        "damage": 100,
+        "startupFrames": 12,
+        "activeFrames": 6,
+        "recoveryFrames": 18,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["armor"],
+        "hitboxes": [
+          {
+            "startFrame": 12,
+            "endFrame": 17,
+            "position": [70, 0],
+            "size": [55, 50],
+            "damage": 100,
+            "hitstun": 18,
+            "blockstun": 12
+          }
+        ]
+      },
+      "banish_flat": {
+        "name": "Banishing Flat",
+        "input": "41236P",
+        "description": "Half-circle forward + Punch",
+        "damage": 80,
+        "startupFrames": 8,
+        "activeFrames": 4,
+        "recoveryFrames": 15,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["overhead"],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 11,
+            "position": [60, -20],
+            "size": [60, 30],
+            "damage": 80,
+            "hitstun": 16,
+            "blockstun": 10
+          }
+        ]
+      }
+    },
+    "supers": {
+      "final_atomic_buster": {
+        "name": "Final Atomic Buster",
+        "input": "720P",
+        "description": "720 motion + Punch",
+        "damage": 400,
+        "startupFrames": 1,
+        "activeFrames": 5,
+        "recoveryFrames": 50,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": ["super", "command_grab", "unblockable"],
+        "hitboxes": [
+          {
+            "startFrame": 1,
+            "endFrame": 5,
+            "position": [40, 0],
+            "size": [80, 100],
+            "damage": 400,
+            "hitstun": 60,
+            "blockstun": 0,
+            "knockdown": true
+          }
+        ]
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Grab",
+      "inputs": ["lightPunch", "spd"],
+      "damage": 260,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Green Hand Combo",
+      "inputs": ["green_hand", "spd"],
+      "damage": 300,
+      "difficulty": "hard"
+    },
+    {
+      "name": "Atomic Devastation",
+      "inputs": ["banish_flat", "final_atomic_buster"],
+      "damage": 480,
+      "difficulty": "expert"
+    }
+  ]
+}

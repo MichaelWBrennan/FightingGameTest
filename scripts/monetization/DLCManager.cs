@@ -79,6 +79,39 @@ public partial class DLCManager : Node
     }
     
     /// <summary>
+    /// Check if player owns a specific character or has access via weekly rotation
+    /// </summary>
+    public bool CanPlayerAccessCharacter(string characterId, string playerId = "player1")
+    {
+        // Check direct ownership first
+        if (IsCharacterOwned(characterId))
+        {
+            return true;
+        }
+        
+        // Check weekly rotation access
+        if (WeeklyRotationManager.Instance != null)
+        {
+            return WeeklyRotationManager.Instance.CanPlayerAccessCharacter(playerId, characterId);
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Get player's current weekly free fighter
+    /// </summary>
+    public string GetWeeklyFreeFighter(string playerId = "player1")
+    {
+        if (WeeklyRotationManager.Instance != null)
+        {
+            return WeeklyRotationManager.Instance.GetPlayerWeeklyFighter(playerId);
+        }
+        
+        return "";
+    }
+    
+    /// <summary>
     /// Validate character ownership for match startup
     /// </summary>
     public bool ValidateCharacterForMatch(string characterId, int playerId)

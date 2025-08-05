@@ -14,7 +14,7 @@ public partial class NetcodeManager : Node
     private const int INPUT_DELAY = 2; // frames of input delay for stability
     
     // Game state management
-    private Queue<GameState> _stateHistory = new();
+    private Queue<NetworkGameState> _stateHistory = new();
     private Dictionary<int, PlayerInputState[]> _inputHistory = new();
     private int _currentFrame = 0;
     private int _confirmedFrame = 0;
@@ -194,7 +194,7 @@ public partial class NetcodeManager : Node
     {
         // This would save the current complete game state
         // Including character positions, health, meter, etc.
-        var gameState = new GameState
+        var gameState = new NetworkGameState
         {
             Frame = _currentFrame,
             // Add all necessary game state data here
@@ -217,7 +217,7 @@ public partial class NetcodeManager : Node
 /// <summary>
 /// Serializable game state for rollback
 /// </summary>
-public class GameState
+public class NetworkGameState
 {
     public int Frame { get; set; }
     public Vector2[] PlayerPositions { get; set; } = new Vector2[2];
@@ -233,9 +233,9 @@ public class GameState
         return new byte[0]; // Placeholder
     }
     
-    public static GameState Deserialize(byte[] data)
+    public static NetworkGameState Deserialize(byte[] data)
     {
         // Implement deserialization
-        return new GameState(); // Placeholder
+        return new NetworkGameState(); // Placeholder
     }
 }
