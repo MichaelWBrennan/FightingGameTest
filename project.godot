@@ -7,35 +7,39 @@
 config/name="Fighting Game Starter"
 config/description="A live-service fighting game starter project inspired by Killer Instinct (2013)"
 config/version="0.1.0"
-run/main_scene="res://scenes/main_menu/MainMenu.tscn"
+# Temporarily using simple main scene while fixing C# script loading
+run/main_scene="res://temp_main.tscn"
+# run/main_scene="res://scenes/main_menu/MainMenu.tscn"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 config/icon="res://assets/ui/icon.svg"
 
 [autoload]
 
-GameManager="*res://scenes/core/Autoload.tscn"
-BalanceManager="*res://scripts/core/BalanceManager.cs"
-TelemetryManager="*res://scripts/core/TelemetryManager.cs"
-DLCManager="*res://scripts/monetization/DLCManager.cs"
-WeeklyRotationManager="*res://scripts/monetization/WeeklyRotationManager.cs"
-RotationAnalytics="*res://scripts/monetization/RotationAnalytics.cs"
-CurrencyManager="*res://scripts/monetization/CurrencyManager.cs"
-CosmeticManager="*res://scripts/monetization/CosmeticManager.cs"
-StorefrontManager="*res://scripts/monetization/StorefrontManager.cs"
-BattlePassManager="*res://scripts/monetization/BattlePassManager.cs"
-EthicalSafeguards="*res://scripts/monetization/EthicalSafeguards.cs"
-InputDiagnosticSystem="*res://scripts/input/InputDiagnosticSystem.cs"
-DynamicDifficultySystem="*res://scripts/mechanics/DynamicDifficultySystem.cs"
-FighterAffinitySystem="*res://scripts/characters/FighterAffinitySystem.cs"
-PlayerReputationSystem="*res://scripts/netcode/PlayerReputationSystem.cs"
-FighterRelationshipEngine="*res://scripts/characters/FighterRelationshipEngine.cs"
-ContentCreatorSystem="*res://scripts/ui/ContentCreatorSystem.cs"
-RomanCancelSystem="*res://scripts/mechanics/RomanCancelSystem.cs"
-ParryDefendSystem="*res://scripts/mechanics/ParryDefendSystem.cs"
-ClashPrioritySystem="*res://scripts/mechanics/ClashPrioritySystem.cs"
-DriveGaugeSystem="*res://scripts/mechanics/DriveGaugeSystem.cs"
-AdaptiveAI="*res://scripts/mechanics/AdaptiveAI.cs"
+# Note: Temporarily disabled most autoloads to isolate loading issues
+# TODO: Re-enable these once C# script loading is working
+#GameManager="*res://scenes/core/Autoload.tscn"
+#BalanceManager="*res://scripts/core/BalanceManager.cs"
+#TelemetryManager="*res://scripts/core/TelemetryManager.cs"
+#DLCManager="*res://scripts/monetization/DLCManager.cs"
+#WeeklyRotationManager="*res://scripts/monetization/WeeklyRotationManager.cs"
+#RotationAnalytics="*res://scripts/monetization/RotationAnalytics.cs"
+#CurrencyManager="*res://scripts/monetization/CurrencyManager.cs"
+#CosmeticManager="*res://scripts/monetization/CosmeticManager.cs"
+#StorefrontManager="*res://scripts/monetization/StorefrontManager.cs"
+#BattlePassManager="*res://scripts/monetization/BattlePassManager.cs"
+#EthicalSafeguards="*res://scripts/monetization/EthicalSafeguards.cs"
+#InputDiagnosticSystem="*res://scripts/input/InputDiagnosticSystem.cs"
+#DynamicDifficultySystem="*res://scripts/mechanics/DynamicDifficultySystem.cs"
+#FighterAffinitySystem="*res://scripts/characters/FighterAffinitySystem.cs"
+#PlayerReputationSystem="*res://scripts/netcode/PlayerReputationSystem.cs"
+#FighterRelationshipEngine="*res://scripts/characters/FighterRelationshipEngine.cs"
+#ContentCreatorSystem="*res://scripts/ui/ContentCreatorSystem.cs"
+#RomanCancelSystem="*res://scripts/mechanics/RomanCancelSystem.cs"
+#ParryDefendSystem="*res://scripts/mechanics/ParryDefendSystem.cs"
+#ClashPrioritySystem="*res://scripts/mechanics/ClashPrioritySystem.cs"
+#DriveGaugeSystem="*res://scripts/mechanics/DriveGaugeSystem.cs"
+#AdaptiveAI="*res://scripts/mechanics/AdaptiveAI.cs"
 
 [audio]
 
