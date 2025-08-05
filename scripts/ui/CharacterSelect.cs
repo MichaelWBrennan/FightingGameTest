@@ -1,5 +1,6 @@
 using Godot;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// Character selection screen
@@ -21,16 +22,16 @@ public partial class CharacterSelect : Control
         SetupUI();
         LoadCharacters();
         
-        // Connect to rotation updates
-        if (WeeklyRotationManager.Instance != null)
+        // Connect to DLC manager updates for new fighters
+        if (DLCManager.Instance != null)
         {
-            WeeklyRotationManager.Instance.Connect(WeeklyRotationManager.SignalName.RotationUpdated, new Callable(this, nameof(OnRotationUpdated)));
+            DLCManager.Instance.Connect(DLCManager.SignalName.FighterUnlocked, new Callable(this, nameof(OnFighterUnlocked)));
         }
     }
     
-    private void OnRotationUpdated()
+    private void OnFighterUnlocked(string fighterId)
     {
-        LoadCharacters(); // Refresh character list when rotation updates
+        LoadCharacters(); // Refresh character list when new fighter is unlocked
     }
     
     private void SetupUI()
@@ -55,8 +56,8 @@ public partial class CharacterSelect : Control
             child.QueueFree();
         }
         
-        // Get all available characters from rotation manager
-        var allCharacters = WeeklyRotationManager.Instance?.GetAllCharacterIds() ?? new List<string> { "ryu" };
+        // Get all available fighters from DLC manager
+        var allCharacters = DLCManager.Instance?.GetAvailableFighters()?.Select(f => f.FighterId).ToList() ?? new List<string> { "ryu" };
         
         foreach (var characterId in allCharacters)
         {
@@ -89,33 +90,22 @@ public partial class CharacterSelect : Control
         nameLabel.Text = characterId.Capitalize();
         nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
         
-        // Check access status
-        var isOwned = DLCManager.Instance?.IsCharacterOwned(characterId) ?? false;
-        var weeklyFighterP1 = DLCManager.Instance?.GetWeeklyFreeFighter("player1") ?? "";
-        var weeklyFighterP2 = DLCManager.Instance?.GetWeeklyFreeFighter("player2") ?? "";
+        // Check access status - all fighters are now free
+        var isAvailable = DLCManager.Instance?.IsFighterAvailable(characterId) ?? false;
+        var fighterInfo = DLCManager.Instance?.GetFighterInfo(characterId);
         
         string statusText = "";
         Color statusColor = Colors.White;
         
-        if (isOwned)
+        if (isAvailable)
         {
-            statusText = "OWNED";
+            statusText = "FREE";
             statusColor = Colors.Green;
-        }
-        else if (weeklyFighterP1 == characterId)
-        {
-            statusText = "FREE (P1)";
-            statusColor = Colors.Cyan;
-        }
-        else if (weeklyFighterP2 == characterId)
-        {
-            statusText = "FREE (P2)";
-            statusColor = Colors.Cyan;
         }
         else
         {
-            statusText = "LOCKED";
-            statusColor = Colors.Red;
+            statusText = "COMING SOON";
+            statusColor = Colors.Yellow;
             button.Disabled = true;
         }
         
@@ -143,22 +133,23 @@ public partial class CharacterSelect : Control
             return;
         }
         
-        // Track analytics for character selection
-        var weeklyFighter = DLCManager.Instance?.GetWeeklyFreeFighter(playerId) ?? "";
-        var isWeeklySelection = weeklyFighter == characterId;
+        // Track analytics for character selection - no weekly rotation anymore
+        var isAvailable = DLCManager.Instance?.IsFighterAvailable(characterId) ?? false;
         
-        if (isWeeklySelection)
+        if (isAvailable)
         {
-            RotationAnalytics.Instance?.TrackWeeklyFighterAccess(playerId, characterId);
-            
-            // Track archetype engagement
-            var archetype = GetCharacterArchetype(characterId);
-            var engagementData = new Dictionary<string, object>
+            // Track fighter mastery engagement
+            if (FighterMasterySystem.Instance != null)
             {
-                ["archetype"] = archetype,
-                ["character"] = characterId
-            };
-            RotationAnalytics.Instance?.TrackEngagement(playerId, "weekly_character_selected", engagementData);
+                FighterMasterySystem.Instance.TrackFighterEvent(playerId, characterId, "character_selected");
+            }
+            
+            // Track cosmetic analytics for character selection
+            if (CosmeticAnalytics.Instance != null)
+            {
+                var archetype = GetCharacterArchetype(characterId);
+                CosmeticAnalytics.Instance.TrackBattlePassEngagement("character_selected", new() { ["character"] = characterId, ["archetype"] = archetype });
+            }
         }
         
         if (_currentPlayer == 1)
