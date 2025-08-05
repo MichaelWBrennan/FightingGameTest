@@ -1,13 +1,22 @@
-name: Release Build
+name: Release Build and Steam Deploy
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      hotfix_mode:
+        description: 'Deploy as hotfix (config-only)'
+        required: false
+        default: 'false'
+        type: boolean
 
 env:
   GODOT_VERSION: 4.4
   EXPORT_NAME: FightingGameStarter
+  STEAM_APP_ID: ${{ secrets.STEAM_APP_ID }}
+  STEAM_DEPOT_ID: ${{ secrets.STEAM_DEPOT_ID }}
 
 jobs:
   release:
@@ -26,6 +35,12 @@ jobs:
       with:
         dotnet-version: '6.0.x'
     
+    - name: Cache Godot templates
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/share/godot/templates
+        key: godot-templates-${{ env.GODOT_VERSION }}
+    
     - name: Setup Godot templates
       run: |
         mkdir -v -p ~/.local/share/godot/templates
@@ -35,80 +50,105 @@ jobs:
       run: |
         godot --headless --build-solutions --quit
     
-    - name: Export for all platforms
+    - name: Generate version info
       run: |
-        mkdir -v -p build/linux build/windows build/macos
-        godot -v --export-release "Linux/X11" build/linux/$EXPORT_NAME.x86_64 --headless
-        godot -v --export-release "Windows Desktop" build/windows/$EXPORT_NAME.exe --headless  
-        godot -v --export-release "macOS" build/macos/$EXPORT_NAME.zip --headless
+        echo "BUILD_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        echo "BUILD_DATE=$(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
+        echo "BUILD_COMMIT=${GITHUB_SHA:0:8}" >> $GITHUB_ENV
     
-    - name: Create release archives
+    - name: Create version file
       run: |
-        cd build
-        zip -r $EXPORT_NAME-linux.zip linux/
-        zip -r $EXPORT_NAME-windows.zip windows/
-        zip -r $EXPORT_NAME-macos.zip macos/
+        mkdir -p data/version
+        cat > data/version/build_info.json << EOF
+        {
+          "version": "${{ env.BUILD_VERSION }}",
+          "buildDate": "${{ env.BUILD_DATE }}",
+          "commit": "${{ env.BUILD_COMMIT }}",
+          "isHotfix": ${{ github.event.inputs.hotfix_mode || 'false' }}
+        }
+        EOF
+    
+    - name: Export for all platforms
+      if: ${{ !github.event.inputs.hotfix_mode || github.event.inputs.hotfix_mode == 'false' }}
+      run: |
+        mkdir -v -p build/linux build/windows build/macos build/steam
+        godot -v --export-release "Linux/X11" build/linux/$EXPORT_NAME.x86_64 --headless
+        godot -v --export-release "Windows Desktop" build/windows/$EXPORT_NAME.exe --headless
+        godot -v --export-release "macOS" build/macos/$EXPORT_NAME.zip --headless
+        # Steam-specific build with all DLC content
+        godot -v --export-release "Steam" build/steam/$EXPORT_NAME.exe --headless
+    
+    - name: Package hotfix (config-only)
+      if: ${{ github.event.inputs.hotfix_mode == 'true' }}
+      run: |
+        mkdir -p build/hotfix
+        # Package only data files for hotfix deployment
+        tar -czf build/hotfix/hotfix-${{ env.BUILD_VERSION }}.tar.gz data/ --exclude="data/characters/dlc/*"
+    
+    - name: Setup SteamCMD
+      if: ${{ env.STEAM_APP_ID && (!github.event.inputs.hotfix_mode || github.event.inputs.hotfix_mode == 'false') }}
+      run: |
+        wget -qO- https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar zxf -
+        chmod +x steamcmd.sh
+    
+    - name: Deploy to Steam
+      if: ${{ env.STEAM_APP_ID && (!github.event.inputs.hotfix_mode || github.event.inputs.hotfix_mode == 'false') }}
+      env:
+        STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+        STEAM_PASSWORD: ${{ secrets.STEAM_PASSWORD }}
+      run: |
+        # Create SteamPipe VDF script
+        cat > app_build.vdf << EOF
+        "appbuild"
+        {
+          "appid" "${{ env.STEAM_APP_ID }}"
+          "desc" "Fighting Game Platform ${{ env.BUILD_VERSION }}"
+          "buildoutput" "./steam_output"
+          "contentroot" "./build/steam"
+          "setlive" "default"
+          "depots"
+          {
+            "${{ env.STEAM_DEPOT_ID }}"
+            {
+              "FileMapping"
+              {
+                "LocalPath" "*"
+                "DepotPath" "."
+                "recursive" "1"
+              }
+            }
+          }
+        }
+        EOF
+        
+        # Deploy to Steam
+        ./steamcmd.sh +login "$STEAM_USERNAME" "$STEAM_PASSWORD" +run_app_build app_build.vdf +quit
+    
+    - name: Deploy hotfix to content delivery
+      if: ${{ github.event.inputs.hotfix_mode == 'true' }}
+      run: |
+        echo "Hotfix package created: build/hotfix/hotfix-${{ env.BUILD_VERSION }}.tar.gz"
+        # In production, this would upload to your CDN/content delivery system
+        # For example: aws s3 cp build/hotfix/ s3://your-game-content-bucket/hotfixes/
     
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Fighting Game Starter ${{ github.ref }}
-        body: |
-          ## What's New
-          
-          * New features and improvements
-          * Bug fixes and optimizations
-          * Character balance updates
-          
-          ## Downloads
-          
-          Choose the appropriate version for your platform:
-          
-          * **Windows**: Download the Windows build
-          * **macOS**: Download the macOS build  
-          * **Linux**: Download the Linux build
-          * **Steam Deck**: Use the Linux build
-          
-          ## Installation
-          
-          1. Download the appropriate build for your platform
-          2. Extract the archive
-          3. Run the executable
-          
-          For detailed instructions, see the [README](README.md).
+        files: |
+          build/linux/*
+          build/windows/*
+          build/macos/*
+          build/hotfix/*
         draft: false
-        prerelease: false
-    
-    - name: Upload Linux Release Asset
-      uses: actions/upload-release-asset@v1
+        prerelease: ${{ github.event.inputs.hotfix_mode == 'true' }}
+        name: ${{ github.event.inputs.hotfix_mode == 'true' && format('Hotfix {0}', env.BUILD_VERSION) || format('Release {0}', env.BUILD_VERSION) }}
+        body: |
+          ${{ github.event.inputs.hotfix_mode == 'true' && '🔧 **Hotfix Release**' || '🚀 **Full Release**' }}
+          
+          **Version:** ${{ env.BUILD_VERSION }}
+          **Build Date:** ${{ env.BUILD_DATE }}
+          **Commit:** ${{ env.BUILD_COMMIT }}
+          
+          ${{ github.event.inputs.hotfix_mode == 'true' && 'This is a configuration-only hotfix that will be automatically applied.' || 'Full platform release with all features and content.' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/${{ env.EXPORT_NAME }}-linux.zip
-        asset_name: ${{ env.EXPORT_NAME }}-linux.zip
-        asset_content_type: application/zip
-    
-    - name: Upload Windows Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/${{ env.EXPORT_NAME }}-windows.zip
-        asset_name: ${{ env.EXPORT_NAME }}-windows.zip
-        asset_content_type: application/zip
-    
-    - name: Upload macOS Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/${{ env.EXPORT_NAME }}-macos.zip
-        asset_name: ${{ env.EXPORT_NAME }}-macos.zip
-        asset_content_type: application/zip
