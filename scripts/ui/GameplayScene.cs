@@ -109,12 +109,12 @@ public partial class GameplayScene : Node2D
         if (_player1 != null && _player2 != null)
         {
             Vector2 midpoint = (_player1.Position + _player2.Position) / 2;
-            _camera.Position = Vector2.Lerp(_camera.Position, midpoint, 0.1f);
+            _camera.Position = _camera.Position.Lerp(midpoint, 0.1f);
             
             // Adjust zoom based on distance
             float distance = _player1.Position.DistanceTo(_player2.Position);
             float targetZoom = Mathf.Clamp(1.0f - (distance / 1000.0f), 0.5f, 1.5f);
-            _camera.Zoom = Vector2.Lerp(_camera.Zoom, Vector2.One * targetZoom, 0.05f);
+            _camera.Zoom = _camera.Zoom.Lerp(Vector2.One * targetZoom, 0.05f);
         }
     }
     

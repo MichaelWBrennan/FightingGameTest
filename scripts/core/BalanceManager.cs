@@ -36,7 +36,7 @@ public partial class BalanceManager : Node
     /// <summary>
     /// Load balance configuration from local file
     /// </summary>
-    private void LoadBalanceConfig()
+    public void LoadBalanceConfig()
     {
         try
         {
@@ -127,7 +127,7 @@ public partial class BalanceManager : Node
         _currentConfig = newConfig;
         
         GD.Print($"Balance updated from v{oldVersion} to v{newConfig.Version}");
-        EmitSignal(SignalName.BalanceUpdated, newConfig);
+        EmitSignal(SignalName.BalanceUpdated);
         
         // Save updated config locally
         SaveBalanceConfig();

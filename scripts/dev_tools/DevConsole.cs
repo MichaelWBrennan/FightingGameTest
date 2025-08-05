@@ -61,7 +61,14 @@ public partial class DevConsole : Control
     {
         // Main container
         _consoleContainer = new VBoxContainer();
-        _consoleContainer.SetAnchorsAndOffsetsPreset(Control.PresetEnum.FullRect);
+        _consoleContainer.AnchorLeft = 0;
+        _consoleContainer.AnchorTop = 0;
+        _consoleContainer.AnchorRight = 1;
+        _consoleContainer.AnchorBottom = 1;
+        _consoleContainer.OffsetLeft = 0;
+        _consoleContainer.OffsetTop = 0;
+        _consoleContainer.OffsetRight = 0;
+        _consoleContainer.OffsetBottom = 0;
         _consoleContainer.AddThemeStyleboxOverride("panel", new StyleBoxFlat());
         
         // Output log
@@ -252,7 +259,7 @@ public partial class DevConsole : Control
         AdvanceOneFrame();
     }
     
-    private void AdvanceOneFrame()
+    private async void AdvanceOneFrame()
     {
         if (_frameStep)
         {

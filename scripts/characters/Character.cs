@@ -150,7 +150,7 @@ public partial class Character : CharacterBody2D
         // Apply gravity
         if (!_isGrounded)
         {
-            _velocity.Y += (float)(ProjectSettings.GetSetting("physics/2d/default_gravity", 980.0) * delta);
+            _velocity.Y += (float)((double)ProjectSettings.GetSetting("physics/2d/default_gravity", 980.0) * delta);
         }
         
         // Apply speed multiplier from balance system
@@ -425,7 +425,7 @@ public partial class Character : CharacterBody2D
         // This would be populated based on move data and current frame
     }
     
-    private void ChangeState(CharacterState newState)
+    public void ChangeState(CharacterState newState)
     {
         if (CurrentState == newState) return;
         
@@ -464,7 +464,7 @@ public partial class Character : CharacterBody2D
         // Handle taking damage
         if (area.GetParent() is Character attacker && attacker != this)
         {
-            int damage = BalanceManager.Instance?.GetAdjustedDamage(attacker.CharacterId, "default", 50) ?? 50;
+            float damage = BalanceManager.Instance?.GetAdjustedDamage(attacker.CharacterId, "default", 50) ?? 50;
             TakeDamage((int)damage);
             
             // Track combo

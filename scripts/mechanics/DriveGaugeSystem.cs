@@ -94,7 +94,7 @@ public partial class DriveGaugeSystem : Node
             else
             {
                 // Regenerate drive gauge over time
-                float timeSinceLastUse = Time.GetUnixTimeFromSystem() - state.LastUsedTime;
+                float timeSinceLastUse = (float)(Time.GetUnixTimeFromSystem() - state.LastUsedTime);
                 if (timeSinceLastUse > 2.0f) // 2 second delay before regeneration
                 {
                     state.DriveGauge = Mathf.Min(MAX_DRIVE_GAUGE, 
@@ -124,7 +124,7 @@ public partial class DriveGaugeSystem : Node
         
         // Consume drive gauge
         state.DriveGauge -= cost;
-        state.LastUsedTime = Time.GetUnixTimeFromSystem();
+        state.LastUsedTime = (float)Time.GetUnixTimeFromSystem();
         
         // Check for burnout
         if (state.DriveGauge <= 0)
