@@ -63,6 +63,8 @@ Complete fighting game roster with major archetypes:
 - **Rushdown**: High-speed pressure (Chun-Li-style) - ✅ **Implemented**
 - **Grappler**: High damage, close-range specialist (Zangief) - ✅ **Implemented**
 - **Balanced**: Technical fighter (Ken-style) - ✅ **Implemented**
+- **Zoner**: Long-range control specialist (Sagat) - ✅ **Implemented**
+- **Technical**: Complex mechanics specialist (Lei Wulong) - ✅ **Implemented**
 
 Each character includes:
 - Archetype classification and complexity tier
@@ -154,7 +156,9 @@ FightingGameTest/
 │       ├── ryu.json              # ✅ Shoto archetype
 │       ├── ken.json              # ✅ Balanced fighter  
 │       ├── chun_li.json          # ✅ Rushdown archetype
-│       └── zangief.json          # ✅ Grappler archetype
+│       ├── zangief.json          # ✅ Grappler archetype
+│       ├── sagat.json            # ✅ Zoner archetype
+│       └── lei_wulong.json       # ✅ Technical archetype
 ├── 📁 scenes/                     # Godot scene files (.tscn)
 │   ├── character_select/         # Character selection UI
 │   ├── characters/               # Character scene templates
@@ -241,6 +245,8 @@ The Fighting Game Platform uses a comprehensive data-driven character system tha
 | **Ken** | Shoto | Easy | 950 | 160 | ✅ Complete |
 | **Chun-Li** | Rushdown | Medium | 900 | 180 | ✅ Complete |
 | **Zangief** | Grappler | Hard | 1200 | 120 | ✅ Complete |
+| **Sagat** | Zoner | Medium | 1100 | 130 | ✅ Complete |
+| **Lei Wulong** | Technical | Expert | 980 | 155 | ✅ Complete |
 
 ### 🎯 Archetype Design
 
@@ -285,6 +291,34 @@ The Fighting Game Platform uses a comprehensive data-driven character system tha
 - **Design Intent**: High damage through command grabs
 - **Key Tools**: Command grabs, armor moves, high health
 - **Playstyle**: Patient, high-damage punishes
+
+#### Technical (Complex mechanics)
+```json
+{
+  "archetype": "technical",
+  "complexity": "expert",
+  "health": 980,
+  "walkSpeed": 155,
+  "uniqueMechanics": ["five_animal_stances", "stance_transitions"]
+}
+```
+- **Design Intent**: Reward mastery of complex systems
+- **Key Tools**: Stance changes, stance-specific moves, evasive options
+- **Playstyle**: High execution, adaptable, mind-game focused
+
+#### Zoner (Keep-away focused)
+```json
+{
+  "archetype": "zoner", 
+  "complexity": "medium",
+  "health": 1100,
+  "walkSpeed": 130,
+  "uniqueMechanics": ["tiger_shot", "long_range_normals"]
+}
+```
+- **Design Intent**: Control space and pace through projectiles
+- **Key Tools**: Multiple projectiles, long-range normals, anti-air specials
+- **Playstyle**: Patient, space control, punish approaches
 
 ### ⚙️ Technical Implementation
 
