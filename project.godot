@@ -40,11 +40,12 @@ MusicManager="*res://scripts/monetization/MusicManager.cs"
 CreatorAffiliateManager="*res://scripts/monetization/CreatorAffiliateManager.cs"
 EsportsManager="*res://scripts/monetization/EsportsManager.cs"
 
-AccessibilityManager="*res://scripts/accessibility/AccessibilityManager.cs"
-AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
-ReplaySystem="*res://scripts/replay/ReplaySystem.cs"
-PerformanceAnalytics="*res://scripts/analytics/PerformanceAnalytics.cs"
-CommunicationSystem="*res://scripts/communication/CommunicationSystem.cs"
+# Temporarily disabled - API compatibility issues
+#AccessibilityManager="*res://scripts/accessibility/AccessibilityManager.cs"
+#AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
+#ReplaySystem="*res://scripts/replay/ReplaySystem.cs"
+#PerformanceAnalytics="*res://scripts/analytics/PerformanceAnalytics.cs"
+#CommunicationSystem="*res://scripts/communication/CommunicationSystem.cs"
 IndustryStandardFeatures="*res://scripts/core/IndustryStandardFeatures.cs"
 
 [audio]
