@@ -686,7 +686,7 @@ public partial class CommunicationSystem : Node
             case GameState.MainMenu:
                 CloseChat();
                 break;
-            case GameState.InMatch:
+            case GameState.Gameplay:
                 // Chat might be limited during matches
                 break;
         }

@@ -45,6 +45,7 @@ AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
 ReplaySystem="*res://scripts/replay/ReplaySystem.cs"
 PerformanceAnalytics="*res://scripts/analytics/PerformanceAnalytics.cs"
 CommunicationSystem="*res://scripts/communication/CommunicationSystem.cs"
+IndustryStandardFeatures="*res://scripts/core/IndustryStandardFeatures.cs"
 
 [audio]
 

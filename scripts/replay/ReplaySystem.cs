@@ -145,7 +145,7 @@ public partial class ReplaySystem : Node
     private void CreateReplayControls()
     {
         _replayControls = new Panel();
-        _replayControls.SetAnchorsAndOffsetsPreset(Control.PresetMode.BottomWide);
+        _replayControls.SetAnchorsAndOffsetsPreset(Control.PresetModeEnum.BottomWide);
         _replayControls.Position = new Vector2(0, -100);
         _replayControls.Size = new Vector2(0, 80);
         
@@ -156,7 +156,7 @@ public partial class ReplaySystem : Node
         _replayControls.AddThemeStyleboxOverride("panel", style);
         
         var hbox = new HBoxContainer();
-        hbox.SetAnchorsAndOffsetsPreset(Control.PresetMode.FullRect);
+        hbox.SetAnchorsAndOffsetsPreset(Control.PresetModeEnum.FullRect);
         hbox.AddThemeConstantOverride("separation", 20);
         _replayControls.AddChild(hbox);
         
@@ -209,7 +209,7 @@ public partial class ReplaySystem : Node
     private void CreateReplayInfoDisplay()
     {
         _replayInfoLabel = new RichTextLabel();
-        _replayInfoLabel.SetAnchorsAndOffsetsPreset(Control.PresetMode.TopLeft);
+        _replayInfoLabel.SetAnchorsAndOffsetsPreset(Control.PresetModeEnum.TopLeft);
         _replayInfoLabel.Position = new Vector2(20, 20);
         _replayInfoLabel.Size = new Vector2(400, 120);
         _replayInfoLabel.BbcodeEnabled = true;
@@ -494,7 +494,7 @@ public partial class ReplaySystem : Node
         try
         {
             var json = JsonSerializer.Serialize(replay, new JsonSerializerOptions { WriteIndented = true });
-            using var file = FileAccess.Open(fileName, FileAccess.ModeFlags.Write);
+            using var file = Godot.FileAccess.Open(fileName, Godot.FileAccess.ModeFlags.Write);
             file.StoreString(json);
             
             _loadedReplays[replay.ReplayId] = replay;
@@ -516,7 +516,7 @@ public partial class ReplaySystem : Node
         
         try
         {
-            using var file = FileAccess.Open(fileName, FileAccess.ModeFlags.Read);
+            using var file = Godot.FileAccess.Open(fileName, Godot.FileAccess.ModeFlags.Read);
             if (file == null) return null;
             
             var json = file.GetAsText();
@@ -590,7 +590,7 @@ public partial class ReplaySystem : Node
     {
         string fileName = $"{ReplayDirectory}{replayId}.json";
         
-        if (FileAccess.FileExists(fileName))
+        if (Godot.FileAccess.FileExists(fileName))
         {
             DirAccess.RemoveAbsolute(fileName);
         }
@@ -709,7 +709,8 @@ public partial class ReplaySystem : Node
         // Initialize game to match replay conditions
         // This would integrate with the game manager to load proper stage, characters, etc.
         GD.Print($"Initializing replay game state for {replay.Player1Name} vs {replay.Player2Name}");
-        await GetTree().ProcessFrame;
+        // Simulate async operation
+        return System.Threading.Tasks.Task.CompletedTask;
     }
     
     private void RestoreGameState(ReplayGameStateSnapshot gameState)
