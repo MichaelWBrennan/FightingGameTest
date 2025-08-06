@@ -169,7 +169,7 @@ public partial class AccessibilityManager : Node
         filterRect.Name = "ColorblindFilter";
         // UI positioning would be handled in scene files in a real implementation
         // This is a simplified version to demonstrate the system structure
-        var style = new StyleBoxFlat();
+        var filterMaterial = _currentColorblindType switch
         {
             ColorblindType.Protanopia => _protanopiaFilter,
             ColorblindType.Deuteranopia => _deuteranopiaFilter,

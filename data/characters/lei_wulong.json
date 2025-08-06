@@ -1,0 +1,361 @@
+{
+  "characterId": "lei_wulong",
+  "name": "Lei Wulong",
+  "displayName": "Lei Wulong",
+  "description": "A Hong Kong police detective who masters multiple animal-inspired fighting stances. High execution, high reward.",
+  "archetype": "technical",
+  "complexity": "expert",
+  "counterplayTags": ["pressure", "grappling", "patient_play"],
+  "meterInteractions": ["ex_specials", "super_meter", "stance_meter"],
+  "uniqueMechanics": ["five_animal_stances", "stance_transitions", "mixup_master", "evasive_options"],
+  "health": 980,
+  "meter": 100,
+  "walkSpeed": 155,
+  "runSpeed": 270,
+  "jumpHeight": 310,
+  "weight": 95,
+  "dlcCharacter": false,
+  "releaseDate": "2024-12-01",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "lei_idle_neutral_stance",
+    "walkForward": "lei_walk_forward_fluid",
+    "walkBackward": "lei_walk_backward_evasive",
+    "jump": "lei_jump_acrobatic",
+    "crouch": "lei_crouch_snake_stance",
+    "block": "lei_block_defensive",
+    "crouchBlock": "lei_crouch_block_low",
+    "hit": "lei_hit_recovery",
+    "knockdown": "lei_knockdown_roll"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Quick Jab",
+        "damage": 45,
+        "startupFrames": 3,
+        "activeFrames": 2,
+        "recoveryFrames": 6,
+        "blockAdvantage": 2,
+        "hitAdvantage": 5,
+        "comboType": "opener",
+        "properties": ["cancelable", "stance_cancel"],
+        "hitboxes": [
+          {
+            "startFrame": 3,
+            "endFrame": 4,
+            "position": [55, 0],
+            "size": [35, 25],
+            "damage": 45,
+            "hitstun": 11,
+            "blockstun": 7
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Crane Wing",
+        "damage": 75,
+        "startupFrames": 6,
+        "activeFrames": 3,
+        "recoveryFrames": 8,
+        "blockAdvantage": 0,
+        "hitAdvantage": 3,
+        "comboType": "linker",
+        "properties": ["cancelable", "stance_cancel"],
+        "hitboxes": [
+          {
+            "startFrame": 6,
+            "endFrame": 8,
+            "position": [65, -5],
+            "size": [50, 35],
+            "damage": 75,
+            "hitstun": 14,
+            "blockstun": 9
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Tiger Claw",
+        "damage": 110,
+        "startupFrames": 10,
+        "activeFrames": 4,
+        "recoveryFrames": 14,
+        "blockAdvantage": -4,
+        "hitAdvantage": 1,
+        "comboType": "ender",
+        "properties": ["launcher", "stance_cancel"],
+        "hitboxes": [
+          {
+            "startFrame": 10,
+            "endFrame": 13,
+            "position": [75, -10],
+            "size": [60, 40],
+            "damage": 110,
+            "hitstun": 20,
+            "blockstun": 12,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Snake Bite",
+        "damage": 50,
+        "startupFrames": 5,
+        "activeFrames": 3,
+        "recoveryFrames": 7,
+        "blockAdvantage": 1,
+        "hitAdvantage": 4,
+        "comboType": "opener",
+        "properties": ["low", "cancelable", "stance_cancel"],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 7,
+            "position": [50, 35],
+            "size": [45, 20],
+            "damage": 50,
+            "hitstun": 12,
+            "blockstun": 8
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "Leopard Strike",
+        "damage": 85,
+        "startupFrames": 8,
+        "activeFrames": 4,
+        "recoveryFrames": 10,
+        "blockAdvantage": -2,
+        "hitAdvantage": 2,
+        "comboType": "linker",
+        "properties": ["cancelable", "stance_cancel"],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 11,
+            "position": [70, 0],
+            "size": [55, 40],
+            "damage": 85,
+            "hitstun": 15,
+            "blockstun": 10
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Dragon Tail",
+        "damage": 125,
+        "startupFrames": 12,
+        "activeFrames": 5,
+        "recoveryFrames": 16,
+        "blockAdvantage": -6,
+        "hitAdvantage": 0,
+        "comboType": "ender",
+        "properties": ["launcher", "stance_cancel"],
+        "hitboxes": [
+          {
+            "startFrame": 12,
+            "endFrame": 16,
+            "position": [80, -15],
+            "size": [65, 50],
+            "damage": 125,
+            "hitstun": 24,
+            "blockstun": 14,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "dragon_stance": {
+        "name": "Dragon Stance",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch - Enter Dragon stance",
+        "damage": 0,
+        "startupFrames": 8,
+        "activeFrames": 0,
+        "recoveryFrames": 12,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["stance_change", "dragon"],
+        "stanceData": {
+          "stanceType": "dragon",
+          "duration": 300,
+          "bonuses": ["armor", "launcher_enhanced"],
+          "newMoves": ["dragon_punch", "dragon_sweep"]
+        }
+      },
+      "snake_stance": {
+        "name": "Snake Stance",
+        "input": "214P",
+        "description": "Quarter-circle back + Punch - Enter Snake stance",
+        "damage": 0,
+        "startupFrames": 6,
+        "activeFrames": 0,
+        "recoveryFrames": 10,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["stance_change", "snake"],
+        "stanceData": {
+          "stanceType": "snake",
+          "duration": 300,
+          "bonuses": ["low_profile", "counter_hit"],
+          "newMoves": ["snake_strike", "snake_fang"]
+        }
+      },
+      "crane_stance": {
+        "name": "Crane Stance",
+        "input": "236K",
+        "description": "Quarter-circle forward + Kick - Enter Crane stance",
+        "damage": 0,
+        "startupFrames": 10,
+        "activeFrames": 0,
+        "recoveryFrames": 14,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["stance_change", "crane"],
+        "stanceData": {
+          "stanceType": "crane",
+          "duration": 300,
+          "bonuses": ["air_mobility", "overhead_enhanced"],
+          "newMoves": ["crane_kick", "flying_crane"]
+        }
+      },
+      "tiger_stance": {
+        "name": "Tiger Stance",
+        "input": "214K",
+        "description": "Quarter-circle back + Kick - Enter Tiger stance",
+        "damage": 0,
+        "startupFrames": 12,
+        "activeFrames": 0,
+        "recoveryFrames": 16,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["stance_change", "tiger"],
+        "stanceData": {
+          "stanceType": "tiger",
+          "duration": 300,
+          "bonuses": ["damage_boost", "rage_mode"],
+          "newMoves": ["tiger_maul", "tiger_pounce"]
+        }
+      },
+      "leopard_stance": {
+        "name": "Leopard Stance",
+        "input": "22P",
+        "description": "Down, Down + Punch - Enter Leopard stance",
+        "damage": 0,
+        "startupFrames": 7,
+        "activeFrames": 0,
+        "recoveryFrames": 11,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["stance_change", "leopard"],
+        "stanceData": {
+          "stanceType": "leopard",
+          "duration": 300,
+          "bonuses": ["speed_boost", "rush_down"],
+          "newMoves": ["leopard_rush", "leopard_claw"]
+        }
+      },
+      "drunken_fist": {
+        "name": "Drunken Fist",
+        "input": "22K",
+        "description": "Down, Down + Kick - Evasive counter attack",
+        "damage": 100,
+        "startupFrames": 5,
+        "activeFrames": 8,
+        "recoveryFrames": 18,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": ["invincible", "counter", "evasive"],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 12,
+            "position": [45, 0],
+            "size": [70, 50],
+            "damage": 100,
+            "hitstun": 18,
+            "blockstun": 12,
+            "knockdown": false
+          }
+        ]
+      }
+    },
+    "supers": {
+      "five_animal_frenzy": {
+        "name": "Five Animal Frenzy",
+        "input": "236236P",
+        "description": "Quarter-circle forward x2 + Punch - Rapid stance transitions",
+        "damage": 300,
+        "startupFrames": 6,
+        "activeFrames": 20,
+        "recoveryFrames": 40,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": ["super", "multi_hit", "stance_super"],
+        "hitboxes": [
+          {
+            "startFrame": 6,
+            "endFrame": 25,
+            "position": [60, 0],
+            "size": [80, 60],
+            "damage": 60,
+            "hitstun": 8,
+            "blockstun": 6,
+            "hits": 5
+          }
+        ]
+      },
+      "ultimate_technique": {
+        "name": "Ultimate Technique",
+        "input": "214214P",
+        "description": "Quarter-circle back x2 + Punch - Master's demonstration",
+        "damage": 350,
+        "startupFrames": 8,
+        "activeFrames": 12,
+        "recoveryFrames": 50,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": ["super", "unblockable", "cinematic"],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 19,
+            "position": [0, 0],
+            "size": [120, 80],
+            "damage": 350,
+            "hitstun": 50,
+            "blockstun": 0,
+            "knockdown": true
+          }
+        ]
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Stance Combo",
+      "inputs": ["lightPunch", "mediumPunch", "dragon_stance"],
+      "damage": 120,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Animal Flow",
+      "inputs": ["lightKick", "snake_stance", "crane_stance"],
+      "damage": 50,
+      "difficulty": "hard"
+    },
+    {
+      "name": "Master Combo",
+      "inputs": ["mediumKick", "tiger_stance", "five_animal_frenzy"],
+      "damage": 385,
+      "difficulty": "expert"
+    },
+    {
+      "name": "Perfect Execution",
+      "inputs": ["heavyPunch", "dragon_stance", "ultimate_technique"],
+      "damage": 460,
+      "difficulty": "expert"
+    }
+  ]
+}
