@@ -1,7 +1,7 @@
 using Godot;
 
 /// <summary>
-/// Main gameplay scene controller
+/// Main gameplay scene controller with cutting-edge graphics integration
 /// </summary>
 public partial class GameplayScene : Node2D
 {
@@ -10,6 +10,11 @@ public partial class GameplayScene : Node2D
     private Character _player2;
     private Camera2D _camera;
     private CanvasLayer _ui;
+    
+    // Graphics system references
+    private CuttingEdgeGraphicsManager _graphicsManager;
+    private DynamicLightingSystem _lightingSystem;
+    private AdvancedParticleSystem _particleSystem;
     
     // UI elements
     private ProgressBar _player1HealthBar;
@@ -29,6 +34,7 @@ public partial class GameplayScene : Node2D
     public override void _Ready()
     {
         SetupScene();
+        SetupGraphics();
         SetupUI();
         StartRound();
     }
@@ -40,6 +46,41 @@ public partial class GameplayScene : Node2D
         
         // Create characters
         SpawnCharacters();
+    }
+    
+    private void SetupGraphics()
+    {
+        // Get graphics system references
+        _graphicsManager = CuttingEdgeGraphicsManager.Instance;
+        _lightingSystem = DynamicLightingSystem.Instance;
+        _particleSystem = AdvancedParticleSystem.Instance;
+        
+        // Configure graphics for gameplay
+        if (_graphicsManager != null)
+        {
+            _graphicsManager.SetGraphicsQuality(CuttingEdgeGraphicsManager.GraphicsQuality.Ultra);
+            GD.Print("Cutting-edge graphics enabled for gameplay");
+        }
+        
+        // Setup dynamic lighting for characters
+        if (_lightingSystem != null)
+        {
+            _lightingSystem.SetLightingMode(DynamicLightingSystem.LightingMode.Normal);
+            GD.Print("Dynamic lighting system active");
+        }
+        
+        // Add environment effects
+        if (_particleSystem != null)
+        {
+            // Create subtle ambient particle effects
+            _particleSystem.CreateParticleEffect(
+                AdvancedParticleSystem.ParticleType.Dust, 
+                new Vector2(0, 200), 
+                0.3f, 
+                2.0f
+            );
+            GD.Print("Advanced particle system initialized");
+        }
     }
     
     private void SpawnCharacters()
@@ -89,6 +130,7 @@ public partial class GameplayScene : Node2D
         {
             UpdateTimer(delta);
             UpdateCamera();
+            UpdateGraphicsEffects();
         }
     }
     
@@ -240,6 +282,130 @@ public partial class GameplayScene : Node2D
         {
             // Pause menu or return to main menu
             GameManager.Instance?.ChangeState(GameState.MainMenu);
+        }
+    }
+    
+    /// <summary>
+    /// Handle combat impact with cutting-edge graphics
+    /// </summary>
+    public void OnCombatImpact(Vector2 position, float power = 1.0f, string moveType = "normal")
+    {
+        // Create impact particle effects
+        if (_particleSystem != null)
+        {
+            switch (moveType.ToLower())
+            {
+                case "fire":
+                    _particleSystem.CreateParticleEffect(AdvancedParticleSystem.ParticleType.Fire, position, power);
+                    break;
+                case "lightning":
+                    _particleSystem.CreateParticleEffect(AdvancedParticleSystem.ParticleType.Lightning, position, power);
+                    break;
+                case "ice":
+                    _particleSystem.CreateParticleEffect(AdvancedParticleSystem.ParticleType.Ice, position, power);
+                    break;
+                default:
+                    _particleSystem.CreateImpactEffect(position, power, Colors.Orange);
+                    break;
+            }
+        }
+        
+        // Apply graphics effects
+        if (_graphicsManager != null)
+        {
+            _graphicsManager.ApplyImpactEffect(this, position, power);
+        }
+        
+        // Adjust lighting for dramatic effect
+        if (_lightingSystem != null && power >= 1.5f)
+        {
+            _lightingSystem.SetLightingMode(DynamicLightingSystem.LightingMode.Intense, 0.5f);
+            
+            // Return to normal lighting after effect
+            var timer = new Timer { WaitTime = 1.0f, OneShot = true };
+            AddChild(timer);
+            timer.Timeout += () =>
+            {
+                _lightingSystem.SetLightingMode(DynamicLightingSystem.LightingMode.Normal, 1.0f);
+                timer.QueueFree();
+            };
+            timer.Start();
+        }
+    }
+    
+    /// <summary>
+    /// Handle special move activation with enhanced visuals
+    /// </summary>
+    public void OnSpecialMoveActivated(Node2D character, string moveName, Color effectColor)
+    {
+        if (_graphicsManager != null)
+        {
+            _graphicsManager.ApplyCharacterHighlight(character, effectColor, 1.5f);
+        }
+        
+        if (_particleSystem != null)
+        {
+            var position = character.Position;
+            
+            // Create special move particles based on move name
+            if (moveName.ToLower().Contains("fire"))
+            {
+                _particleSystem.CreateParticleEffect(AdvancedParticleSystem.ParticleType.Fire, position, 1.5f);
+            }
+            else if (moveName.ToLower().Contains("lightning"))
+            {
+                _particleSystem.CreateParticleEffect(AdvancedParticleSystem.ParticleType.Lightning, position, 1.5f);
+                _lightingSystem?.CreateLightningFlash();
+            }
+            else
+            {
+                _particleSystem.CreateParticleEffect(AdvancedParticleSystem.ParticleType.Energy, position, 1.2f);
+            }
+        }
+        
+        if (_lightingSystem != null)
+        {
+            _lightingSystem.SetLightingMode(DynamicLightingSystem.LightingMode.EpicMoment, 0.3f);
+        }
+    }
+    
+    private void UpdateGraphicsEffects()
+    {
+        // Update dynamic lighting based on character positions
+        if (_lightingSystem != null && _player1 != null && _player2 != null)
+        {
+            _lightingSystem.UpdateDynamicLighting(_player1.Position, _player2.Position);
+        }
+        
+        // Add low health visual effects
+        if (_player1 != null && _player1.Health <= 20)
+        {
+            ApplyLowHealthEffect(_player1);
+        }
+        
+        if (_player2 != null && _player2.Health <= 20)
+        {
+            ApplyLowHealthEffect(_player2);
+        }
+    }
+    
+    private void ApplyLowHealthEffect(Node2D character)
+    {
+        // Add dramatic lighting for low health
+        if (_lightingSystem != null)
+        {
+            _lightingSystem.AttachCharacterLighting(character, Colors.Red, 0.8f);
+        }
+        
+        // Periodic red particle effects
+        if (_particleSystem != null && ((int)(Time.GetTicksMsec() / 1000)) % 3 == 0)
+        {
+            _particleSystem.CreateParticleEffect(
+                AdvancedParticleSystem.ParticleType.Sparks, 
+                character.Position, 
+                0.5f, 
+                0.8f
+            );
         }
     }
 }

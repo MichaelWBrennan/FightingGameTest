@@ -53,6 +53,11 @@ EVOMomentSystem="*res://scripts/tournaments/EVOMomentSystem.cs"
 EVOStreamIntegration="*res://scripts/tournaments/EVOStreamIntegration.cs"
 EVOAntiCheatSystem="*res://scripts/tournaments/EVOAntiCheatSystem.cs"
 
+# Cutting-Edge Graphics Systems
+CuttingEdgeGraphicsManager="*res://scripts/graphics/CuttingEdgeGraphicsManager.cs"
+DynamicLightingSystem="*res://scripts/graphics/DynamicLightingSystem.cs"
+AdvancedParticleSystem="*res://scripts/graphics/AdvancedParticleSystem.cs"
+
 # Temporarily disabled - API compatibility issues
 #AccessibilityManager="*res://scripts/accessibility/AccessibilityManager.cs"
 #AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
@@ -349,7 +354,49 @@ quick_command_4={
 
 [rendering]
 
-textures/canvas_textures/default_texture_filter=0
+# Advanced Graphics Settings for Cutting-Edge Visuals
+textures/canvas_textures/default_texture_filter=3
 renderer/rendering_method="forward_plus"
 renderer/rendering_method.mobile="mobile"
-anti_aliasing/quality/msaa_2d=2
+
+# Anti-Aliasing and Quality Enhancements
+anti_aliasing/quality/msaa_2d=3
+anti_aliasing/quality/msaa_3d=2
+anti_aliasing/quality/use_taa=true
+anti_aliasing/quality/use_debanding=true
+
+# Advanced Lighting and Shadows
+lights_and_shadows/directional_shadow/size=4096
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
+lights_and_shadows/use_physical_light_units=true
+
+# Post-Processing Effects
+environment/defaults/default_clear_color=Color(0.1, 0.1, 0.1, 1.0)
+environment/glow/upscale_mode=1
+environment/glow/use_high_quality=true
+environment/ssao/enabled=true
+environment/ssao/radius=2.0
+environment/ssao/intensity=1.0
+environment/ssao/power=2.0
+environment/ssao/detail=1.0
+environment/ssao/horizon=0.15
+environment/ssao/sharpness=1.0
+
+# Screen Space Reflections
+environment/ssr/enabled=true
+environment/ssr/max_steps=64
+environment/ssr/fade_in=0.15
+environment/ssr/fade_out=2.0
+environment/ssr/depth_tolerance=0.2
+environment/ssr/use_half_res=false
+
+# Enhanced Material Quality
+global_illumination/use_occlusion_culling=true
+global_illumination/gi/use_half_resolution=false
+mesh_lod/lod_change/threshold_pixels=1.0
+
+# Performance Optimizations
+occlusion_culling/use_occlusion_culling=true
+occlusion_culling/bvh_build_quality=2
+mesh_lod/lod_change/threshold_pixels=1.0
