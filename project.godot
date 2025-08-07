@@ -47,6 +47,12 @@ TournamentManager="*res://scripts/tournaments/TournamentManager.cs"
 CompetitiveIntegritySystem="*res://scripts/security/CompetitiveIntegritySystem.cs"
 SpectatorStreamingSystem="*res://scripts/streaming/SpectatorStreamingSystem.cs"
 
+# EVO Mainstage Guarantee Features
+EVOTournamentManager="*res://scripts/tournaments/EVOTournamentManager.cs"
+EVOMomentSystem="*res://scripts/tournaments/EVOMomentSystem.cs"
+EVOStreamIntegration="*res://scripts/tournaments/EVOStreamIntegration.cs"
+EVOAntiCheatSystem="*res://scripts/tournaments/EVOAntiCheatSystem.cs"
+
 # Temporarily disabled - API compatibility issues
 #AccessibilityManager="*res://scripts/accessibility/AccessibilityManager.cs"
 #AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
