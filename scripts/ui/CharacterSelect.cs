@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// Character selection screen
+/// Multi-player character selection screen with team support
 /// </summary>
 public partial class CharacterSelect : Control
 {
     private GridContainer _characterGrid;
     private Button _confirmButton;
     private Button _backButton;
-    private Label _player1SelectLabel;
-    private Label _player2SelectLabel;
+    private VBoxContainer _playersContainer;
+    private Label _titleLabel;
     
-    private string _player1Selection = "";
-    private string _player2Selection = "";
-    private int _currentPlayer = 1;
+    private List<PlayerSelectionData> _playerSelections;
+    private int _currentPlayerIndex = 0;
+    private string[] _availableCharacters;
     
     public override void _Ready()
     {
         SetupUI();
+        InitializePlayerSelections();
         LoadCharacters();
         
         // Connect to DLC manager updates for new fighters
@@ -39,13 +40,77 @@ public partial class CharacterSelect : Control
         _characterGrid = GetNode<GridContainer>("CharacterGrid");
         _confirmButton = GetNode<Button>("ConfirmButton");
         _backButton = GetNode<Button>("BackButton");
-        _player1SelectLabel = GetNode<Label>("Player1Select");
-        _player2SelectLabel = GetNode<Label>("Player2Select");
+        _playersContainer = GetNode<VBoxContainer>("PlayersContainer");
+        _titleLabel = GetNode<Label>("Title");
         
         _confirmButton.Pressed += OnConfirmPressed;
         _backButton.Pressed += OnBackPressed;
         
+        UpdateTitle();
+    }
+    
+    private void InitializePlayerSelections()
+    {
+        _playerSelections = new List<PlayerSelectionData>();
+        
+        for (int i = 0; i < MatchConfiguration.PlayerCount; i++)
+        {
+            var playerData = new PlayerSelectionData
+            {
+                PlayerId = $"player{i + 1}",
+                PlayerNumber = i + 1,
+                SelectedCharacter = "",
+                Team = GetTeamAssignment(i)
+            };
+            _playerSelections.Add(playerData);
+        }
+        
+        CreatePlayerLabels();
         UpdatePlayerLabels();
+    }
+    
+    private int GetTeamAssignment(int playerIndex)
+    {
+        return MatchConfiguration.Mode switch
+        {
+            MatchMode.OneVOne => playerIndex == 0 ? 1 : 2,
+            MatchMode.TwoVTwo => playerIndex < 2 ? 1 : 2,
+            MatchMode.ThreeVThree => playerIndex < 3 ? 1 : 2,
+            MatchMode.FourVFour => playerIndex < 4 ? 1 : 2,
+            MatchMode.FreeForAll => playerIndex + 1, // Each player is their own team
+            _ => 1
+        };
+    }
+    
+    private void CreatePlayerLabels()
+    {
+        // Clear existing labels
+        foreach (Node child in _playersContainer.GetChildren())
+        {
+            child.QueueFree();
+        }
+        
+        foreach (var player in _playerSelections)
+        {
+            var label = new Label();
+            label.Name = $"Player{player.PlayerNumber}Label";
+            label.AddThemeStyleboxOverride("normal", new StyleBoxFlat());
+            _playersContainer.AddChild(label);
+        }
+    }
+    
+    private void UpdateTitle()
+    {
+        string modeText = MatchConfiguration.Mode switch
+        {
+            MatchMode.OneVOne => "1v1 Character Select",
+            MatchMode.TwoVTwo => "2v2 Team Character Select",
+            MatchMode.ThreeVThree => "3v3 Team Character Select", 
+            MatchMode.FourVFour => "4v4 Team Character Select",
+            MatchMode.FreeForAll => "Free For All Character Select",
+            _ => "Character Select"
+        };
+        _titleLabel.Text = modeText;
     }
     
     private void LoadCharacters()
@@ -57,16 +122,19 @@ public partial class CharacterSelect : Control
         }
         
         // Get all available fighters from DLC manager
-        var allCharacters = DLCManager.Instance?.GetAvailableFighters()?.Select(f => f.FighterId).ToList() ?? new List<string> { "ryu" };
+        var allCharacters = DLCManager.Instance?.GetAvailableFighters()?.Select(f => f.FighterId).ToList() ?? 
+                           new List<string> { "ryu", "chun_li", "ken", "luke", "jamie", "manon", "kimberly", "marisa", "lily", "jp", "juri", "dee_jay", "cammy", "zangief", "guile", "blanka" };
         
-        foreach (var characterId in allCharacters)
+        _availableCharacters = allCharacters.ToArray();
+        
+        foreach (var characterId in _availableCharacters)
         {
             CreateCharacterButton(characterId);
         }
         
         // Add placeholders for future characters
-        var totalSlots = 8;
-        var currentCount = allCharacters.Count;
+        var totalSlots = 16;
+        var currentCount = _availableCharacters.Length;
         for (int i = currentCount; i < totalSlots; i++)
         {
             var placeholder = new Button();
@@ -82,40 +150,60 @@ public partial class CharacterSelect : Control
         var button = new Button();
         button.CustomMinimumSize = new Vector2(150, 150);
         
-        // Create vertical layout for character info
-        var vbox = new VBoxContainer();
-        var nameLabel = new Label();
-        var statusLabel = new Label();
-        
-        nameLabel.Text = characterId.Capitalize();
-        nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
-        
-        // Check access status - all fighters are now free
-        var isAvailable = DLCManager.Instance?.IsFighterAvailable(characterId) ?? false;
-        var fighterInfo = DLCManager.Instance?.GetFighterInfo(characterId);
-        
-        string statusText = "";
-        Color statusColor = Colors.White;
-        
-        if (isAvailable)
+        // Try to load character portrait
+        var portraitPath = $"res://assets/ui/character_portraits/{characterId}.png";
+        if (ResourceLoader.Exists(portraitPath))
         {
-            statusText = "FREE";
-            statusColor = Colors.Green;
+            var texture = GD.Load<Texture2D>(portraitPath);
+            if (texture != null)
+            {
+                var textureRect = new TextureRect();
+                textureRect.Texture = texture;
+                textureRect.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
+                textureRect.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+                textureRect.AnchorLeft = 0;
+                textureRect.AnchorTop = 0;
+                textureRect.AnchorRight = 1;
+                textureRect.AnchorBottom = 1;
+                textureRect.OffsetLeft = 0;
+                textureRect.OffsetTop = 0;
+                textureRect.OffsetRight = 0;
+                textureRect.OffsetBottom = 0;
+                button.AddChild(textureRect);
+                
+                // Add name label overlay
+                var nameLabel = new Label();
+                nameLabel.Text = characterId.Replace("_", " ").Capitalize();
+                nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                nameLabel.VerticalAlignment = VerticalAlignment.Bottom;
+                nameLabel.AnchorLeft = 0;
+                nameLabel.AnchorRight = 1;
+                nameLabel.AnchorTop = 0.8f;
+                nameLabel.AnchorBottom = 1;
+                nameLabel.OffsetLeft = 0;
+                nameLabel.OffsetRight = 0;
+                nameLabel.OffsetTop = 0;
+                nameLabel.OffsetBottom = 0;
+                nameLabel.AddThemeColorOverride("font_color", Colors.White);
+                nameLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
+                nameLabel.AddThemeConstantOverride("shadow_offset_x", 1);
+                nameLabel.AddThemeConstantOverride("shadow_offset_y", 1);
+                button.AddChild(nameLabel);
+            }
         }
         else
         {
-            statusText = "COMING SOON";
-            statusColor = Colors.Yellow;
-            button.Disabled = true;
+            // Fallback text button
+            button.Text = characterId.Replace("_", " ").Capitalize();
         }
         
-        statusLabel.Text = statusText;
-        statusLabel.HorizontalAlignment = HorizontalAlignment.Center;
-        statusLabel.AddThemeColorOverride("font_color", statusColor);
-        
-        vbox.AddChild(nameLabel);
-        vbox.AddChild(statusLabel);
-        button.AddChild(vbox);
+        // Check if character is already selected by another player
+        bool isAlreadySelected = _playerSelections.Any(p => p.SelectedCharacter == characterId && _playerSelections.IndexOf(p) != _currentPlayerIndex);
+        if (isAlreadySelected)
+        {
+            button.Disabled = true;
+            button.Modulate = new Color(0.5f, 0.5f, 0.5f, 1.0f);
+        }
         
         button.Pressed += () => OnCharacterSelected(characterId);
         _characterGrid.AddChild(button);
@@ -124,8 +212,8 @@ public partial class CharacterSelect : Control
     private void OnCharacterSelected(string characterId)
     {
         // Validate character access for current player
-        string playerId = _currentPlayer == 1 ? "player1" : "player2";
-        bool canAccess = DLCManager.Instance?.CanPlayerAccessCharacter(characterId, playerId) ?? false;
+        string playerId = _playerSelections[_currentPlayerIndex].PlayerId;
+        bool canAccess = DLCManager.Instance?.CanPlayerAccessCharacter(characterId, playerId) ?? true;
         
         if (!canAccess)
         {
@@ -133,8 +221,8 @@ public partial class CharacterSelect : Control
             return;
         }
         
-        // Track analytics for character selection - no weekly rotation anymore
-        var isAvailable = DLCManager.Instance?.IsFighterAvailable(characterId) ?? false;
+        // Track analytics for character selection
+        var isAvailable = DLCManager.Instance?.IsFighterAvailable(characterId) ?? true;
         
         if (isAvailable)
         {
@@ -152,23 +240,30 @@ public partial class CharacterSelect : Control
             }
         }
         
-        if (_currentPlayer == 1)
+        // Set selection for current player
+        _playerSelections[_currentPlayerIndex].SelectedCharacter = characterId;
+        
+        // Move to next player or finish
+        _currentPlayerIndex++;
+        if (_currentPlayerIndex >= _playerSelections.Count)
         {
-            _player1Selection = characterId;
-            _currentPlayer = 2;
-        }
-        else
-        {
-            _player2Selection = characterId;
+            _currentPlayerIndex = _playerSelections.Count - 1; // Stay on last player
         }
         
         UpdatePlayerLabels();
+        RefreshCharacterButtons();
         
-        // If both players have selected, enable confirm
-        if (!string.IsNullOrEmpty(_player1Selection) && !string.IsNullOrEmpty(_player2Selection))
+        // If all players have selected, enable confirm
+        if (_playerSelections.All(p => !string.IsNullOrEmpty(p.SelectedCharacter)))
         {
             _confirmButton.Disabled = false;
         }
+    }
+    
+    private void RefreshCharacterButtons()
+    {
+        // Refresh character buttons to show availability
+        LoadCharacters();
     }
     
     private string GetCharacterArchetype(string characterId)
@@ -179,7 +274,11 @@ public partial class CharacterSelect : Control
             ["ryu"] = "shoto",
             ["chun_li"] = "rushdown", 
             ["ken"] = "rushdown",
-            ["zangief"] = "grappler"
+            ["zangief"] = "grappler",
+            ["guile"] = "charge",
+            ["cammy"] = "rushdown",
+            ["luke"] = "balanced",
+            ["jamie"] = "setup"
         };
         
         return archetypeMap.GetValueOrDefault(characterId, "unknown");
@@ -190,14 +289,12 @@ public partial class CharacterSelect : Control
         var dialog = new AcceptDialog();
         dialog.Title = "Character Access";
         
-        var isOwned = DLCManager.Instance?.IsCharacterOwned(characterId) ?? false;
-        var weeklyFighter = DLCManager.Instance?.GetWeeklyFreeFighter(playerId) ?? "";
+        var isOwned = DLCManager.Instance?.IsCharacterOwned(characterId) ?? true;
         
-        if (!isOwned && weeklyFighter != characterId)
+        if (!isOwned)
         {
             dialog.DialogText = $"You don't have access to {characterId.Capitalize()}.\n\n" +
-                              $"Purchase this character or wait for it to appear in your weekly rotation.\n" +
-                              $"Your current free fighter: {(weeklyFighter.Length > 0 ? weeklyFighter.Capitalize() : "None")}";
+                              $"Purchase this character to unlock it.";
         }
         else
         {
@@ -210,32 +307,47 @@ public partial class CharacterSelect : Control
     
     private void UpdatePlayerLabels()
     {
-        _player1SelectLabel.Text = $"Player 1: {(_player1Selection.Length > 0 ? _player1Selection : "Select Character")}";
-        _player2SelectLabel.Text = $"Player 2: {(_player2Selection.Length > 0 ? _player2Selection : "Select Character")}";
-        
-        if (_currentPlayer == 1)
+        for (int i = 0; i < _playerSelections.Count; i++)
         {
-            _player1SelectLabel.AddThemeColorOverride("font_color", Colors.Yellow);
-            _player2SelectLabel.AddThemeColorOverride("font_color", Colors.White);
-        }
-        else
-        {
-            _player1SelectLabel.AddThemeColorOverride("font_color", Colors.White);
-            _player2SelectLabel.AddThemeColorOverride("font_color", Colors.Yellow);
+            var player = _playerSelections[i];
+            var label = _playersContainer.GetNode<Label>($"Player{player.PlayerNumber}Label");
+            
+            string teamText = MatchConfiguration.Mode == MatchMode.FreeForAll ? "" : $" (Team {player.Team})";
+            string selectionText = string.IsNullOrEmpty(player.SelectedCharacter) ? "Select Character" : player.SelectedCharacter.Replace("_", " ").Capitalize();
+            
+            label.Text = $"Player {player.PlayerNumber}{teamText}: {selectionText}";
+            
+            // Highlight current player
+            if (i == _currentPlayerIndex)
+            {
+                label.AddThemeColorOverride("font_color", Colors.Yellow);
+            }
+            else if (!string.IsNullOrEmpty(player.SelectedCharacter))
+            {
+                label.AddThemeColorOverride("font_color", Colors.Green);
+            }
+            else
+            {
+                label.AddThemeColorOverride("font_color", Colors.White);
+            }
         }
     }
     
     private void OnConfirmPressed()
     {
         // Store selections for the gameplay scene
-        // This would be better handled through a proper data manager
-        GD.Print($"Starting match: {_player1Selection} vs {_player2Selection}");
+        GD.Print("Starting match with selections:");
+        foreach (var player in _playerSelections)
+        {
+            GD.Print($"  {player.PlayerId} (Team {player.Team}): {player.SelectedCharacter}");
+        }
+        
         GameManager.Instance?.ChangeState(GameState.Gameplay);
     }
     
     private void OnBackPressed()
     {
-        GameManager.Instance?.ChangeState(GameState.MainMenu);
+        GameManager.Instance?.ChangeState(GameState.MatchSetup);
     }
     
     public override void _Input(InputEvent @event)
@@ -245,4 +357,12 @@ public partial class CharacterSelect : Control
             OnBackPressed();
         }
     }
+}
+
+public class PlayerSelectionData
+{
+    public string PlayerId { get; set; }
+    public int PlayerNumber { get; set; }
+    public string SelectedCharacter { get; set; }
+    public int Team { get; set; }
 }
