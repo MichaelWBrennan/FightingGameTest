@@ -40,11 +40,18 @@ MusicManager="*res://scripts/monetization/MusicManager.cs"
 CreatorAffiliateManager="*res://scripts/monetization/CreatorAffiliateManager.cs"
 EsportsManager="*res://scripts/monetization/EsportsManager.cs"
 
-AccessibilityManager="*res://scripts/accessibility/AccessibilityManager.cs"
-AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
-ReplaySystem="*res://scripts/replay/ReplaySystem.cs"
-PerformanceAnalytics="*res://scripts/analytics/PerformanceAnalytics.cs"
-CommunicationSystem="*res://scripts/communication/CommunicationSystem.cs"
+# Industry-leading features
+RollbackNetcode="*res://scripts/netcode/RollbackNetcode.cs"
+TournamentManager="*res://scripts/tournaments/TournamentManager.cs"
+CompetitiveIntegritySystem="*res://scripts/security/CompetitiveIntegritySystem.cs"
+SpectatorStreamingSystem="*res://scripts/streaming/SpectatorStreamingSystem.cs"
+
+# Temporarily disabled - API compatibility issues
+#AccessibilityManager="*res://scripts/accessibility/AccessibilityManager.cs"
+#AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
+#ReplaySystem="*res://scripts/replay/ReplaySystem.cs"
+#PerformanceAnalytics="*res://scripts/analytics/PerformanceAnalytics.cs"
+#CommunicationSystem="*res://scripts/communication/CommunicationSystem.cs"
 IndustryStandardFeatures="*res://scripts/core/IndustryStandardFeatures.cs"
 
 [audio]
