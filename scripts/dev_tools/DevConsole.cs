@@ -114,7 +114,12 @@ public partial class DevConsole : Control
             { "reload", ReloadCommand },
             { "subarchetypes", SubArchetypeCommand },
             { "setsubarchetype", SetSubArchetypeCommand },
-            { "testsubarchetypes", TestSubArchetypesCommand }
+            { "testsubarchetypes", TestSubArchetypesCommand },
+            { "archetypes", ArchetypesCommand },
+            { "archetype", ArchetypeInfoCommand },
+            { "substyle", SubStyleInfoCommand },
+            { "matchup", MatchupCommand },
+            { "roster", RosterSuggestionCommand }
         };
         
         LogMessage("[color=yellow]Developer Console Initialized[/color]");
@@ -186,6 +191,11 @@ public partial class DevConsole : Control
         LogMessage("subarchetypes [character] - List available sub-archetypes");
         LogMessage("setsubarchetype [character] [subArchetypeId] - Apply sub-archetype");
         LogMessage("testsubarchetypes - Test all character sub-archetypes");
+        LogMessage("archetypes - List all available archetypes");
+        LogMessage("archetype [archetypeId] - Show detailed archetype information");
+        LogMessage("substyle [archetypeId] [subStyleId] - Show sub-style details");
+        LogMessage("matchup [archetype1] [archetype2] - Show archetype matchup");
+        LogMessage("roster [size] - Generate balanced roster suggestion");
     }
     
     private void ClearLog(string[] args)
@@ -490,6 +500,142 @@ public partial class DevConsole : Control
         }
         
         LogMessage("\n[color=green]Sub-archetype test complete![/color]");
+    }
+    
+    private void ArchetypesCommand(string[] args)
+    {
+        LogMessage("[color=cyan]Available Fighting Game Archetypes:[/color]");
+        
+        var archetypes = ArchetypeSystem.Instance.GetAllArchetypes();
+        foreach (var archetypePair in archetypes)
+        {
+            var id = archetypePair.Key;
+            var definition = archetypePair.Value;
+            LogMessage($"[color=yellow]{id}[/color]: {definition.Name}");
+            LogMessage($"  {definition.Description}");
+            LogMessage($"  Sub-styles: {definition.SubStyles.Count}");
+            LogMessage("");
+        }
+    }
+    
+    private void ArchetypeInfoCommand(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            LogError("Usage: archetype [archetypeId]");
+            LogMessage("Available archetypes: shoto, rushdown, grappler, zoner, mixup, setplay, puppet, counter, stance, big_body");
+            return;
+        }
+        
+        string archetypeId = args[0];
+        var info = ArchetypeSystem.Instance.GetArchetypeInfo(archetypeId);
+        
+        if (info == null)
+        {
+            LogError($"Unknown archetype: {archetypeId}");
+            return;
+        }
+        
+        LogMessage($"[color=cyan]Archetype: {info.Name}[/color]");
+        LogMessage($"Description: {info.Description}");
+        LogMessage($"Sub-styles ({info.SubStyleCount}):");
+        
+        for (int i = 0; i < info.SubStyleIds.Count; i++)
+        {
+            LogMessage($"  [color=yellow]{info.SubStyleIds[i]}[/color]: {info.SubStyleNames[i]}");
+        }
+    }
+    
+    private void SubStyleInfoCommand(string[] args)
+    {
+        if (args.Length < 2)
+        {
+            LogError("Usage: substyle [archetypeId] [subStyleId]");
+            return;
+        }
+        
+        string archetypeId = args[0];
+        string subStyleId = args[1];
+        
+        var info = ArchetypeSystem.Instance.GetSubStyleInfo(archetypeId, subStyleId);
+        
+        if (info == null)
+        {
+            LogError($"Unknown sub-style: {subStyleId} for archetype {archetypeId}");
+            return;
+        }
+        
+        LogMessage($"[color=cyan]{info.Name}[/color]");
+        LogMessage($"Archetype: {archetypeId}");
+        LogMessage($"Description: {info.Description}");
+        LogMessage($"Play Style: {info.PlayStyle}");
+        LogMessage($"Strength Focus: {info.StrengthFocus}");
+        LogMessage($"Weakness Focus: {info.WeaknessFocus}");
+        LogMessage($"Design Intent: {info.DesignIntent}");
+        
+        if (info.Examples.Count > 0)
+        {
+            LogMessage($"Examples: {string.Join(", ", info.Examples)}");
+        }
+    }
+    
+    private void MatchupCommand(string[] args)
+    {
+        if (args.Length < 2)
+        {
+            LogError("Usage: matchup [archetype1] [archetype2]");
+            return;
+        }
+        
+        string archetype1 = args[0];
+        string archetype2 = args[1];
+        
+        var matchup = ArchetypeSystem.Instance.GetArchetypeMatchup(archetype1, archetype2);
+        
+        if (matchup == null)
+        {
+            LogError($"Could not calculate matchup between {archetype1} and {archetype2}");
+            return;
+        }
+        
+        LogMessage($"[color=cyan]Archetype Matchup Analysis[/color]");
+        LogMessage($"{matchup.Archetype1} vs {matchup.Archetype2}");
+        
+        string advantageText;
+        if (matchup.Advantage > 0.55f)
+            advantageText = $"[color=green]{matchup.Archetype1} advantage[/color]";
+        else if (matchup.Advantage < 0.45f)
+            advantageText = $"[color=red]{matchup.Archetype2} advantage[/color]";
+        else
+            advantageText = "[color=yellow]Even matchup[/color]";
+            
+        LogMessage($"Advantage: {advantageText} ({matchup.Advantage:F2})");
+        LogMessage($"Notes: {matchup.Notes}");
+    }
+    
+    private void RosterSuggestionCommand(string[] args)
+    {
+        int targetSize = 12;
+        
+        if (args.Length > 0 && int.TryParse(args[0], out int size))
+        {
+            targetSize = Math.Max(4, Math.Min(20, size)); // Clamp between 4 and 20
+        }
+        
+        var suggestions = ArchetypeSystem.Instance.SuggestBalancedRoster(targetSize);
+        
+        LogMessage($"[color=cyan]Balanced Roster Suggestion ({targetSize} characters)[/color]");
+        LogMessage("");
+        
+        foreach (var suggestion in suggestions)
+        {
+            var info = ArchetypeSystem.Instance.GetArchetypeInfo(suggestion.ArchetypeId);
+            string priorityColor = suggestion.Priority == "High" ? "green" : suggestion.Priority == "Medium" ? "yellow" : "gray";
+            
+            LogMessage($"[color={priorityColor}]{suggestion.Priority} Priority[/color]: {info?.Name ?? suggestion.ArchetypeId}");
+            LogMessage($"  Reason: {suggestion.Reason}");
+            LogMessage("");
+        }
     }
     
     private void LogMessage(string message)
