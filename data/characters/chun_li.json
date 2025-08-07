@@ -239,9 +239,9 @@
   ],
   "subArchetypes": [
     {
-      "subArchetypeId": "pressure",
-      "name": "Pressure Rushdown",
-      "description": "Frame advantage focused rushdown. Maintains pressure with safe attacks.",
+      "subArchetypeId": "brawler",
+      "name": "Brawler",
+      "description": "High priority normals, frame traps, and raw damage.",
       "isDefault": true,
       "statModifiers": {
         "healthMultiplier": 1.0,
@@ -255,9 +255,9 @@
       "additionalMoves": {}
     },
     {
-      "subArchetypeId": "mixup",
-      "name": "Mix-up Rushdown",
-      "description": "High-low mix-up specialist with enhanced overhead and low attacks.",
+      "subArchetypeId": "mixup_demon",
+      "name": "Mix-up Demon", 
+      "description": "Low/throw or left/right vortex-focused pressure.",
       "isDefault": false,
       "statModifiers": {
         "healthMultiplier": 0.95,
@@ -335,6 +335,51 @@
           "meterCost": 0,
           "comboType": "linker",
           "properties": ["mobility", "air_only"],
+          "hitboxes": []
+        }
+      }
+    },
+    {
+      "subArchetypeId": "speedster",
+      "name": "Speedster",
+      "description": "Overwhelms with sheer movement and frame advantage.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.85,
+        "walkSpeedMultiplier": 1.2,
+        "runSpeedMultiplier": 1.25,
+        "jumpHeightMultiplier": 1.1,
+        "weightMultiplier": 0.8
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "startupFrameBonus": -1,
+          "hitAdvantageBonus": 2,
+          "addedProperties": ["speed_boost"],
+          "removedProperties": []
+        },
+        "lightKick": {
+          "startupFrameBonus": -1,
+          "recoveryFrameBonus": -2,
+          "addedProperties": ["speed_boost"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+enhanced_mobility", "+frame_advantage", "+speed_boost"],
+      "additionalMoves": {
+        "special_speed_dash": {
+          "name": "Speed Dash",
+          "input": "66",
+          "description": "Enhanced forward dash with reduced recovery",
+          "damage": 0,
+          "startupFrames": 5,
+          "activeFrames": 8,
+          "recoveryFrames": 4,
+          "blockAdvantage": 0,
+          "hitAdvantage": 0,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": ["movement", "cancelable"],
           "hitboxes": []
         }
       }

@@ -34,6 +34,7 @@ ParryDefendSystem="*res://scripts/mechanics/ParryDefendSystem.cs"
 ClashPrioritySystem="*res://scripts/mechanics/ClashPrioritySystem.cs"
 DriveGaugeSystem="*res://scripts/mechanics/DriveGaugeSystem.cs"
 AdaptiveAI="*res://scripts/mechanics/AdaptiveAI.cs"
+ArchetypeSystem="*res://scripts/characters/ArchetypeSystem.cs"
 
 UGCManager="*res://scripts/monetization/UGCManager.cs"
 MusicManager="*res://scripts/monetization/MusicManager.cs"
