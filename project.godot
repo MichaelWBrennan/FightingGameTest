@@ -58,6 +58,10 @@ CuttingEdgeGraphicsManager="*res://scripts/graphics/CuttingEdgeGraphicsManager.c
 DynamicLightingSystem="*res://scripts/graphics/DynamicLightingSystem.cs"
 AdvancedParticleSystem="*res://scripts/graphics/AdvancedParticleSystem.cs"
 
+# Pseudo 2.5D Graphics Enhancement Systems
+Pseudo2D5Manager="*res://scripts/graphics/Pseudo2D5Manager.cs"
+Enhanced2D5ParticleSystem="*res://scripts/graphics/Enhanced2D5ParticleSystem.cs"
+
 # Temporarily disabled - API compatibility issues
 #AccessibilityManager="*res://scripts/accessibility/AccessibilityManager.cs"
 #AdvancedTrainingMode="*res://scripts/training/AdvancedTrainingMode.cs"
