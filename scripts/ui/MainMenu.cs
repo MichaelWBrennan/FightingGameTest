@@ -8,6 +8,7 @@ public partial class MainMenu : Control
     private VBoxContainer _menuContainer;
     private Button _startGameButton;
     private Button _trainingButton;
+    private Button _gothicStageDemoButton;
     private Button _optionsButton;
     private Button _exitButton;
     
@@ -25,6 +26,7 @@ public partial class MainMenu : Control
         _menuContainer = GetNode<VBoxContainer>("MenuContainer");
         _startGameButton = GetNode<Button>("MenuContainer/StartGameButton");
         _trainingButton = GetNode<Button>("MenuContainer/TrainingButton");
+        _gothicStageDemoButton = GetNode<Button>("MenuContainer/GothicStageDemo");
         _optionsButton = GetNode<Button>("MenuContainer/OptionsButton");
         _exitButton = GetNode<Button>("MenuContainer/ExitButton");
     }
@@ -33,6 +35,7 @@ public partial class MainMenu : Control
     {
         _startGameButton.Pressed += OnStartGamePressed;
         _trainingButton.Pressed += OnTrainingPressed;
+        _gothicStageDemoButton.Pressed += OnGothicStageDemoPressed;
         _optionsButton.Pressed += OnOptionsPressed;
         _exitButton.Pressed += OnExitPressed;
     }
@@ -47,6 +50,25 @@ public partial class MainMenu : Control
     {
         GD.Print("Training pressed");
         GameManager.Instance?.ChangeState(GameState.Training);
+    }
+    
+    private void OnGothicStageDemoPressed()
+    {
+        GD.Print("Gothic Stage Demo pressed");
+        
+        // Create and show the Gothic stage demo scene
+        var demoScene = new GothicStageDemo();
+        GetTree().Root.AddChild(demoScene);
+        
+        // Hide the main menu
+        Visible = false;
+        
+        // Connect to return signal (when demo exits)
+        demoScene.TreeExiting += () =>
+        {
+            Visible = true;
+            _startGameButton?.GrabFocus();
+        };
     }
     
     private void OnOptionsPressed()

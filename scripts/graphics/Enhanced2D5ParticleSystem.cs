@@ -398,6 +398,37 @@ public partial class Enhanced2D5ParticleSystem : Node2D
     {
         Instance = null;
     }
+    
+    // Additional methods for StageManager integration
+    public void CreateContinuousEffect(ParticleType type, Vector2 position, float rate, float duration, Color color)
+    {
+        var config = GetParticleConfig(type, 1.0f);
+        config.Color = color;
+        config.Lifetime = duration;
+        
+        CreateParticleEffect(position, config, color, DepthLayer.MidGround);
+    }
+    
+    public void CreateBurstEffect(ParticleType type, Vector2 position, float intensity, float duration)
+    {
+        var config = GetParticleConfig(type, intensity);
+        config.Lifetime = duration;
+        config.Amount = Mathf.RoundToInt(config.Amount * 2.0f); // More particles for burst
+        
+        CreateParticleEffect(position, config, config.Color, DepthLayer.MidGround);
+    }
+    
+    // Additional particle type for stage effects
+    public enum StageParticleType
+    {
+        Dust,
+        Smoke,
+        Ash,
+        Mist,
+        Embers,
+        LightRay,
+        MysticalWisp
+    }
 }
 
 /// <summary>

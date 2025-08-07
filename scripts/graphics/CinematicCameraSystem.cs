@@ -334,4 +334,67 @@ public partial class CinematicCameraSystem : Camera2D
     {
         Instance = null;
     }
+    
+    // Additional methods for StageManager integration
+    public void SetCameraBounds(float left, float right, float top, float bottom)
+    {
+        // Store camera boundaries for stage constraints
+        _cameraBounds = new Rect2(left, top, right - left, bottom - top);
+        GD.Print($"Camera bounds set: left={left}, right={right}, top={top}, bottom={bottom}");
+    }
+    
+    public void SetZoomLimits(float minZoom, float maxZoom)
+    {
+        MinZoom = minZoom;
+        MaxZoom = maxZoom;
+        GD.Print($"Zoom limits set: min={minZoom}, max={maxZoom}");
+    }
+    
+    public void SetFollowSmoothness(float smoothness)
+    {
+        CameraResponsiveness = smoothness;
+        GD.Print($"Camera follow smoothness set to: {smoothness}");
+    }
+    
+    public void CreateScreenFlash(Color flashColor, float duration)
+    {
+        if (!EnableCinematicEffects) return;
+        
+        // Create a screen flash effect using a ColorRect overlay
+        var flashOverlay = new ColorRect
+        {
+            Name = "ScreenFlash",
+            Color = flashColor,
+            MouseFilter = Control.MouseFilterEnum.Ignore
+        };
+        
+        // Make it cover the entire screen
+        flashOverlay.AnchorLeft = 0.0f;
+        flashOverlay.AnchorTop = 0.0f;
+        flashOverlay.AnchorRight = 1.0f;
+        flashOverlay.AnchorBottom = 1.0f;
+        flashOverlay.OffsetLeft = 0.0f;
+        flashOverlay.OffsetTop = 0.0f;
+        flashOverlay.OffsetRight = 0.0f;
+        flashOverlay.OffsetBottom = 0.0f;
+        
+        // Add to the UI layer (assuming it exists)
+        var gameplayScene = GetNode("/root/GameplayScene");
+        var uiLayer = gameplayScene?.GetNode("UI") as CanvasLayer;
+        
+        if (uiLayer != null)
+        {
+            uiLayer.AddChild(flashOverlay);
+            
+            // Animate the flash
+            var tween = CreateTween();
+            tween.TweenProperty(flashOverlay, "color:a", 0.0f, duration);
+            tween.TweenCallback(Callable.From(() => flashOverlay.QueueFree()));
+        }
+        
+        GD.Print($"Screen flash created: color={flashColor}, duration={duration}");
+    }
+    
+    // Store camera bounds
+    private Rect2 _cameraBounds = new Rect2(-800, -400, 1600, 800);
 }
