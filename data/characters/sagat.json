@@ -325,5 +325,115 @@
       "damage": 460,
       "difficulty": "hard"
     }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "pure",
+      "name": "Pure Zoner",
+      "description": "Maximum projectile effectiveness and keep-away potential.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "trap",
+      "name": "Trap Zoner",
+      "description": "Setup-focused zoning with enhanced setups and okizeme options.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.95,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.9,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05
+      },
+      "moveModifiers": {
+        "tiger_shot": {
+          "recoveryFrameBonus": 3,
+          "addedProperties": ["trap_setup", "delayed_explosion"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+trap_setups", "+okizeme_options"],
+      "additionalMoves": {
+        "special_tiger_trap": {
+          "name": "Tiger Trap",
+          "input": "214214P",
+          "description": "Places a delayed tiger shot that explodes after a few seconds",
+          "damage": 110,
+          "startupFrames": 20,
+          "activeFrames": 0,
+          "recoveryFrames": 30,
+          "meterCost": 25,
+          "comboType": "ender",
+          "properties": ["trap", "delayed", "setup"],
+          "projectile": {
+            "speed": 0,
+            "lifetime": 300,
+            "size": [60, 30],
+            "damage": 110,
+            "hitstun": 20,
+            "blockstun": 15,
+            "hits": 1
+          }
+        }
+      }
+    },
+    {
+      "subArchetypeId": "mobile",
+      "name": "Mobile Zoner",
+      "description": "Movement-based zoning with enhanced mobility and repositioning tools.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.2,
+        "runSpeedMultiplier": 1.25,
+        "jumpHeightMultiplier": 1.1,
+        "weightMultiplier": 0.9
+      },
+      "moveModifiers": {
+        "tiger_knee": {
+          "startupFrameBonus": -3,
+          "recoveryFrameBonus": -5,
+          "addedProperties": ["mobility", "repositioning"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+enhanced_mobility", "+air_projectiles", "+repositioning"],
+      "additionalMoves": {
+        "special_tiger_dash": {
+          "name": "Tiger Dash",
+          "input": "66P",
+          "description": "Quick forward movement with attack option",
+          "damage": 60,
+          "startupFrames": 8,
+          "activeFrames": 12,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": ["mobility", "advancing", "cancelable"],
+          "hitboxes": [
+            {
+              "startFrame": 8,
+              "endFrame": 19,
+              "position": [80, 0],
+              "size": [50, 35],
+              "damage": 60,
+              "hitstun": 10,
+              "blockstun": 8,
+              "knockdown": false
+            }
+          ]
+        }
+      }
+    }
   ]
 }

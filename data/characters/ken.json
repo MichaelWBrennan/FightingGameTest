@@ -214,5 +214,130 @@
       "damage": 455,
       "difficulty": "hard"
     }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "fundamental",
+      "name": "Fundamental Ken",
+      "description": "Well-rounded and balanced approach. Classic Ken fundamentals.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "aggressive",
+      "name": "Aggressive Ken",
+      "description": "Rushdown-focused with enhanced pressure tools and offensive capabilities.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.95,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.2,
+        "jumpHeightMultiplier": 1.1,
+        "weightMultiplier": 0.95
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "startupFrameBonus": -1,
+          "hitAdvantageBonus": 2,
+          "addedProperties": ["rushdown", "pressure"],
+          "removedProperties": []
+        },
+        "tatsumaki": {
+          "recoveryFrameBonus": -3,
+          "addedProperties": ["enhanced_mobility"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+rushdown_pressure", "+enhanced_mobility"],
+      "additionalMoves": {
+        "special_step_kick": {
+          "name": "Step Kick",
+          "input": "6MK",
+          "description": "Forward stepping kick with good range",
+          "damage": 85,
+          "startupFrames": 12,
+          "activeFrames": 4,
+          "recoveryFrames": 14,
+          "blockAdvantage": -1,
+          "hitAdvantage": 5,
+          "meterCost": 0,
+          "comboType": "opener",
+          "properties": ["advancing", "overhead", "cancelable"],
+          "hitboxes": [
+            {
+              "startFrame": 12,
+              "endFrame": 15,
+              "position": [85, -10],
+              "size": [55, 40],
+              "damage": 85,
+              "hitstun": 16,
+              "blockstun": 11,
+              "knockdown": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "subArchetypeId": "technical",
+      "name": "Technical Ken",
+      "description": "Complex combo routes and advanced techniques for high-level play.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 0.95,
+        "runSpeedMultiplier": 0.9,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05
+      },
+      "moveModifiers": {
+        "shoryuken": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["technical_cancel", "advanced_combo"],
+          "removedProperties": []
+        },
+        "shinryuken": {
+          "damageMultiplier": 1.15,
+          "addedProperties": ["technical_execution"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+advanced_combos", "+technical_cancels", "+complex_execution"],
+      "additionalMoves": {
+        "special_kara_throw": {
+          "name": "Kara Throw",
+          "input": "MK~LP+LK",
+          "description": "Extended range throw using kara-cancel technique",
+          "damage": 120,
+          "startupFrames": 3,
+          "activeFrames": 2,
+          "recoveryFrames": 18,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": ["throw", "kara_cancel", "extended_range"],
+          "hitboxes": [
+            {
+              "startFrame": 3,
+              "endFrame": 4,
+              "position": [45, 0],
+              "size": [60, 50],
+              "damage": 120,
+              "hitstun": 0,
+              "blockstun": 0,
+              "knockdown": true
+            }
+          ]
+        }
+      }
+    }
   ]
 }
