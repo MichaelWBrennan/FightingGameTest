@@ -11,6 +11,9 @@ public partial class GameplayScene : Node2D
     private Camera2D _camera;
     private CanvasLayer _ui;
     
+    // Stage management
+    private StageManager _stageManager;
+    
     // Graphics system references
     private CuttingEdgeGraphicsManager _graphicsManager;
     private DynamicLightingSystem _lightingSystem;
@@ -43,6 +46,14 @@ public partial class GameplayScene : Node2D
     {
         _camera = GetNode<Camera2D>("Camera2D");
         _ui = GetNode<CanvasLayer>("UI");
+        _stageManager = StageManager.Instance;
+        
+        // Load a Gothic stage - default to cathedral
+        if (_stageManager != null)
+        {
+            _stageManager.LoadStage("gothic_cathedral", this);
+            GD.Print("Loaded Gothic cathedral stage");
+        }
         
         // Create characters
         SpawnCharacters();
@@ -286,7 +297,7 @@ public partial class GameplayScene : Node2D
     }
     
     /// <summary>
-    /// Handle combat impact with cutting-edge graphics
+    /// Handle combat impact with cutting-edge graphics and stage effects
     /// </summary>
     public void OnCombatImpact(Vector2 position, float power = 1.0f, string moveType = "normal")
     {
@@ -316,6 +327,19 @@ public partial class GameplayScene : Node2D
             _graphicsManager.ApplyImpactEffect(this, position, power);
         }
         
+        // Trigger stage-specific effects
+        if (_stageManager != null)
+        {
+            if (power >= 1.5f)
+            {
+                _stageManager.TriggerStageEffect("heavy_hit", position, power);
+            }
+            else
+            {
+                _stageManager.TriggerStageEffect("combo_hit", position, power);
+            }
+        }
+        
         // Adjust lighting for dramatic effect
         if (_lightingSystem != null && power >= 1.5f)
         {
@@ -334,7 +358,7 @@ public partial class GameplayScene : Node2D
     }
     
     /// <summary>
-    /// Handle special move activation with enhanced visuals
+    /// Handle special move activation with enhanced visuals and stage effects
     /// </summary>
     public void OnSpecialMoveActivated(Node2D character, string moveName, Color effectColor)
     {
@@ -361,6 +385,12 @@ public partial class GameplayScene : Node2D
             {
                 _particleSystem.CreateParticleEffect(AdvancedParticleSystem.ParticleType.Energy, position, 1.2f);
             }
+        }
+        
+        // Trigger stage special effects for super moves
+        if (_stageManager != null)
+        {
+            _stageManager.TriggerStageEffect("super_move", character.Position, 1.5f);
         }
         
         if (_lightingSystem != null)
@@ -397,6 +427,12 @@ public partial class GameplayScene : Node2D
             _lightingSystem.AttachCharacterLighting(character, Colors.Red, 0.8f);
         }
         
+        // Trigger stage low health effects (like glowing gargoyle eyes)
+        if (_stageManager != null)
+        {
+            _stageManager.TriggerStageEffect("low_health", character.Position, 0.8f);
+        }
+        
         // Periodic red particle effects
         if (_particleSystem != null && ((int)(Time.GetTicksMsec() / 1000)) % 3 == 0)
         {
@@ -407,6 +443,21 @@ public partial class GameplayScene : Node2D
                 0.8f
             );
         }
+    }
+    
+    // Additional methods for stage interaction
+    public void SwitchStage(string stageId)
+    {
+        if (_stageManager != null && !string.IsNullOrEmpty(stageId))
+        {
+            _stageManager.LoadStage(stageId, this);
+            GD.Print($"Switched to stage: {stageId}");
+        }
+    }
+    
+    public string[] GetAvailableStages()
+    {
+        return _stageManager?.GetAvailableStageIds() ?? new string[0];
     }
 }
 

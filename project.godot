@@ -47,6 +47,9 @@ TournamentManager="*res://scripts/tournaments/TournamentManager.cs"
 CompetitiveIntegritySystem="*res://scripts/security/CompetitiveIntegritySystem.cs"
 SpectatorStreamingSystem="*res://scripts/streaming/SpectatorStreamingSystem.cs"
 
+# Gothic 2.5D Stage System
+StageManager="*res://scripts/stages/StageManager.cs"
+
 # EVO Mainstage Guarantee Features
 EVOTournamentManager="*res://scripts/tournaments/EVOTournamentManager.cs"
 EVOMomentSystem="*res://scripts/tournaments/EVOMomentSystem.cs"

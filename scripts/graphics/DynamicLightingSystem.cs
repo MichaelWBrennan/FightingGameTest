@@ -252,4 +252,42 @@ public partial class DynamicLightingSystem : Node2D
     {
         Instance = null;
     }
+    
+    // Additional methods for StageManager integration
+    public void SetAmbientLighting(Color ambientColor)
+    {
+        if (!EnableDynamicLighting) return;
+        
+        // Apply ambient lighting to all stage lights
+        foreach (var stageLight in _stageLights)
+        {
+            var sprite = stageLight.GetChild<Sprite2D>(0);
+            if (sprite != null)
+            {
+                sprite.Modulate = sprite.Modulate * ambientColor;
+            }
+        }
+        
+        GD.Print($"Ambient lighting set to: {ambientColor}");
+    }
+    
+    public void SetMainDirectionalLight(Color lightColor, Vector3 lightDirection)
+    {
+        if (!EnableDynamicLighting) return;
+        
+        // Create or update main directional light
+        if (_stageLights.Count > 0)
+        {
+            var mainLight = _stageLights[0];
+            var sprite = mainLight.GetChild<Sprite2D>(0);
+            if (sprite != null)
+            {
+                sprite.Modulate = lightColor;
+                // Position based on direction (simplified 2D positioning)
+                mainLight.Position = new Vector2(lightDirection.X * 300, lightDirection.Y * 200);
+            }
+        }
+        
+        GD.Print($"Main directional light set: color={lightColor}, direction={lightDirection}");
+    }
 }
