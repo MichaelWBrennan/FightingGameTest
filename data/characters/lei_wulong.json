@@ -357,5 +357,96 @@
       "damage": 460,
       "difficulty": "expert"
     }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "stance",
+      "name": "Stance Master",
+      "description": "Maximum stance variety and transition options. True five-animal mastery.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "setup",
+      "name": "Setup Fighter",
+      "description": "Trap and okizeme specialist with enhanced knockdown options and setups.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.05,
+        "walkSpeedMultiplier": 0.95,
+        "runSpeedMultiplier": 0.9,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {
+        "snake_slide": {
+          "recoveryFrameBonus": -5,
+          "addedProperties": ["setup", "okizeme"],
+          "hitAdvantageBonus": 3,
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+trap_setups", "+okizeme_mastery", "+knockdown_advantage"],
+      "additionalMoves": {
+        "special_animal_trap": {
+          "name": "Animal Trap",
+          "input": "22P (in stance)",
+          "description": "Sets up delayed attack based on current stance",
+          "damage": 80,
+          "startupFrames": 15,
+          "activeFrames": 0,
+          "recoveryFrames": 25,
+          "meterCost": 25,
+          "comboType": "ender",
+          "properties": ["trap", "stance_dependent", "setup"],
+          "hitboxes": []
+        }
+      }
+    },
+    {
+      "subArchetypeId": "evasive",
+      "name": "Evasive Fighter",
+      "description": "Enhanced defensive options with superior evasion and counter-attack tools.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.95,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.2,
+        "jumpHeightMultiplier": 1.15,
+        "weightMultiplier": 0.9
+      },
+      "moveModifiers": {
+        "play_dead": {
+          "recoveryFrameBonus": -8,
+          "addedProperties": ["enhanced_evasion", "counter_attack"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+enhanced_evasion", "+counter_attacks", "+defensive_mastery"],
+      "additionalMoves": {
+        "special_phantom_step": {
+          "name": "Phantom Step",
+          "input": "214214K",
+          "description": "Quick evasive movement with follow-up options",
+          "damage": 0,
+          "startupFrames": 3,
+          "activeFrames": 8,
+          "recoveryFrames": 12,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": ["evasion", "invincible", "cancelable"],
+          "hitboxes": []
+        }
+      }
+    }
   ]
 }

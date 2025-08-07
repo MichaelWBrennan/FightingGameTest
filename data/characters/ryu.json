@@ -254,5 +254,110 @@
       "damage": 430,
       "difficulty": "hard"
     }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "traditional",
+      "name": "Traditional Shoto",
+      "description": "Balanced fundamentals-focused playstyle. The classic Ryu approach to fighting.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "aggressive",
+      "name": "Aggressive Shoto",
+      "description": "Faster, more offensive playstyle with enhanced pressure tools but reduced health.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.15,
+        "jumpHeightMultiplier": 1.05,
+        "weightMultiplier": 0.95
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "startupFrameBonus": -1,
+          "hitAdvantageBonus": 1,
+          "addedProperties": ["frame_trap"],
+          "removedProperties": []
+        },
+        "mediumPunch": {
+          "startupFrameBonus": -1,
+          "blockAdvantageBonus": 1,
+          "addedProperties": [],
+          "removedProperties": []
+        },
+        "hadoken": {
+          "recoveryFrameBonus": -3,
+          "addedProperties": ["enhanced_speed"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+aggressive_meter_build"],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "technical",
+      "name": "Technical Shoto",
+      "description": "Complex execution with advanced techniques. Higher damage potential for skilled players.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.05,
+        "walkSpeedMultiplier": 0.95,
+        "runSpeedMultiplier": 0.9,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05
+      },
+      "moveModifiers": {
+        "shoryuken": {
+          "damageMultiplier": 1.15,
+          "startupFrameBonus": 1,
+          "addedProperties": ["just_frame_bonus"],
+          "removedProperties": []
+        },
+        "shinku_hadoken": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["technical_input"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+advanced_cancels", "+just_frame_timing"],
+      "additionalMoves": {
+        "special_focus_attack": {
+          "name": "Focus Attack",
+          "input": "MP+MK",
+          "description": "Technical focus attack with armor properties",
+          "damage": 80,
+          "startupFrames": 15,
+          "activeFrames": 4,
+          "recoveryFrames": 20,
+          "meterCost": 0,
+          "comboType": "opener",
+          "properties": ["armor", "crumple", "cancelable"],
+          "hitboxes": [
+            {
+              "startFrame": 15,
+              "endFrame": 18,
+              "position": [70, 0],
+              "size": [60, 40],
+              "damage": 80,
+              "hitstun": 25,
+              "blockstun": 15,
+              "knockdown": false
+            }
+          ]
+        }
+      }
+    }
   ]
 }

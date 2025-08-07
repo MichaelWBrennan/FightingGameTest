@@ -216,5 +216,113 @@
       "damage": 480,
       "difficulty": "expert"
     }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "pure",
+      "name": "Pure Grappler",
+      "description": "Maximum grappling power with enhanced command grabs and damage.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "strike",
+      "name": "Strike Grappler",
+      "description": "Enhanced normal attacks and strike-grab mixups with better footsies.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.95,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.15,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 0.95
+      },
+      "moveModifiers": {
+        "heavyPunch": {
+          "damageMultiplier": 1.2,
+          "startupFrameBonus": -2,
+          "addedProperties": ["enhanced_range"],
+          "removedProperties": []
+        },
+        "mediumKick": {
+          "damageMultiplier": 1.1,
+          "blockAdvantageBonus": 2,
+          "addedProperties": ["strike_mixup"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+enhanced_normals", "+strike_mixups"],
+      "additionalMoves": {
+        "special_muscle_bomber": {
+          "name": "Muscle Bomber",
+          "input": "41236K",
+          "description": "Striking command grab with forward momentum",
+          "damage": 180,
+          "startupFrames": 8,
+          "activeFrames": 6,
+          "recoveryFrames": 22,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": ["command_grab", "strike_grab", "armor"],
+          "hitboxes": [
+            {
+              "startFrame": 8,
+              "endFrame": 13,
+              "position": [60, 0],
+              "size": [70, 50],
+              "damage": 180,
+              "hitstun": 0,
+              "blockstun": 0,
+              "knockdown": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "subArchetypeId": "technical",
+      "name": "Technical Grappler",
+      "description": "Complex command grab setups and mix-up options with stance transitions.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.05,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.85,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "spd": {
+          "damageMultiplier": 1.15,
+          "addedProperties": ["technical_grab", "meter_gain"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+grab_mixups", "+stance_transitions", "+technical_setups"],
+      "additionalMoves": {
+        "special_grab_feint": {
+          "name": "Grab Feint",
+          "input": "63214P~K",
+          "description": "Fake command grab that leads into mix-up options",
+          "damage": 0,
+          "startupFrames": 5,
+          "activeFrames": 3,
+          "recoveryFrames": 8,
+          "meterCost": 0,
+          "comboType": "opener",
+          "properties": ["feint", "mixup", "cancelable"],
+          "hitboxes": []
+        }
+      }
+    }
   ]
 }

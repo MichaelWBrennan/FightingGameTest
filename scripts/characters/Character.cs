@@ -11,6 +11,7 @@ public partial class Character : CharacterBody2D
     [Export] public string CharacterId { get; set; } = "";
     [Export] public int PlayerId { get; set; } = 0;
     [Export] public bool FacingRight { get; set; } = true;
+    [Export] public string SelectedSubArchetype { get; set; } = ""; // Empty means default
     
     // Character data
     public CharacterData Data { get; private set; }
@@ -81,8 +82,37 @@ public partial class Character : CharacterBody2D
         
         try
         {
-            Data = JsonSerializer.Deserialize<CharacterData>(jsonText);
-            GD.Print($"Loaded character data for {Data.Name} (Archetype: {Data.Archetype})");
+            var baseData = JsonSerializer.Deserialize<CharacterData>(jsonText);
+            
+            // Apply sub-archetype if specified
+            if (!string.IsNullOrEmpty(SelectedSubArchetype) && SubArchetypeManager.Instance != null)
+            {
+                Data = SubArchetypeManager.Instance.ApplySubArchetype(baseData, SelectedSubArchetype);
+                GD.Print($"Loaded character data for {Data.Name} (Archetype: {Data.Archetype}, Sub-archetype: {SelectedSubArchetype})");
+            }
+            else
+            {
+                // Use default sub-archetype
+                if (SubArchetypeManager.Instance != null && baseData.SubArchetypes.Count > 0)
+                {
+                    var defaultSubArchetype = SubArchetypeManager.Instance.GetDefaultSubArchetype(baseData);
+                    if (defaultSubArchetype != null)
+                    {
+                        Data = SubArchetypeManager.Instance.ApplySubArchetype(baseData, defaultSubArchetype.SubArchetypeId);
+                        GD.Print($"Loaded character data for {Data.Name} (Archetype: {Data.Archetype}, Default Sub-archetype: {defaultSubArchetype.Name})");
+                    }
+                    else
+                    {
+                        Data = baseData;
+                        GD.Print($"Loaded character data for {Data.Name} (Archetype: {Data.Archetype}, No sub-archetype)");
+                    }
+                }
+                else
+                {
+                    Data = baseData;
+                    GD.Print($"Loaded character data for {Data.Name} (Archetype: {Data.Archetype})");
+                }
+            }
         }
         catch (Exception e)
         {
@@ -531,6 +561,42 @@ public partial class Character : CharacterBody2D
     public void ResetMatchStats()
     {
         _matchStats = new PlayerMatchStats();
+    }
+    
+    /// <summary>
+    /// Get available sub-archetypes for this character
+    /// </summary>
+    public static List<SubArchetypeData> GetAvailableSubArchetypes(string characterId)
+    {
+        string dataPath = $"res://data/characters/{characterId}.json";
+        if (!FileAccess.FileExists(dataPath))
+        {
+            return new List<SubArchetypeData>();
+        }
+        
+        using var file = FileAccess.Open(dataPath, FileAccess.ModeFlags.Read);
+        string jsonText = file.GetAsText();
+        
+        try
+        {
+            var characterData = JsonSerializer.Deserialize<CharacterData>(jsonText);
+            return characterData?.SubArchetypes ?? new List<SubArchetypeData>();
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"Failed to parse character data for sub-archetypes: {e.Message}");
+            return new List<SubArchetypeData>();
+        }
+    }
+    
+    /// <summary>
+    /// Set the selected sub-archetype and reload character data
+    /// </summary>
+    public void SetSubArchetype(string subArchetypeId)
+    {
+        SelectedSubArchetype = subArchetypeId;
+        LoadCharacterData();
+        InitializeCharacter();
     }
 }
 

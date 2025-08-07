@@ -68,6 +68,9 @@ public class CharacterData
     
     [JsonPropertyName("comboRoutes")]
     public List<ComboRoute> ComboRoutes { get; set; } = new();
+    
+    [JsonPropertyName("subArchetypes")]
+    public List<SubArchetypeData> SubArchetypes { get; set; } = new();
 }
 
 public class AnimationData
@@ -224,4 +227,82 @@ public class ComboRoute
     
     [JsonPropertyName("difficulty")]
     public string Difficulty { get; set; } = ""; // easy, medium, hard
+}
+
+/// <summary>
+/// Represents a sub-archetype variation of a character (e.g., Traditional Shoto, Aggressive Shoto, Technical Shoto)
+/// </summary>
+public class SubArchetypeData
+{
+    [JsonPropertyName("subArchetypeId")]
+    public string SubArchetypeId { get; set; } = "";
+    
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = "";
+    
+    [JsonPropertyName("description")]
+    public string Description { get; set; } = "";
+    
+    [JsonPropertyName("isDefault")]
+    public bool IsDefault { get; set; } = false;
+    
+    [JsonPropertyName("statModifiers")]
+    public StatModifiers StatModifiers { get; set; } = new();
+    
+    [JsonPropertyName("moveModifiers")]
+    public Dictionary<string, MoveModifiers> MoveModifiers { get; set; } = new();
+    
+    [JsonPropertyName("uniqueMechanicChanges")]
+    public List<string> UniqueMechanicChanges { get; set; } = new();
+    
+    [JsonPropertyName("additionalMoves")]
+    public Dictionary<string, MoveData> AdditionalMoves { get; set; } = new();
+}
+
+/// <summary>
+/// Stat modifications for sub-archetypes (applied as multipliers or flat bonuses)
+/// </summary>
+public class StatModifiers
+{
+    [JsonPropertyName("healthMultiplier")]
+    public float HealthMultiplier { get; set; } = 1.0f;
+    
+    [JsonPropertyName("walkSpeedMultiplier")]
+    public float WalkSpeedMultiplier { get; set; } = 1.0f;
+    
+    [JsonPropertyName("runSpeedMultiplier")]
+    public float RunSpeedMultiplier { get; set; } = 1.0f;
+    
+    [JsonPropertyName("jumpHeightMultiplier")]
+    public float JumpHeightMultiplier { get; set; } = 1.0f;
+    
+    [JsonPropertyName("weightMultiplier")]
+    public float WeightMultiplier { get; set; } = 1.0f;
+}
+
+/// <summary>
+/// Move-specific modifications for sub-archetypes
+/// </summary>
+public class MoveModifiers
+{
+    [JsonPropertyName("damageMultiplier")]
+    public float DamageMultiplier { get; set; } = 1.0f;
+    
+    [JsonPropertyName("startupFrameBonus")]
+    public int StartupFrameBonus { get; set; } = 0; // Negative makes move faster
+    
+    [JsonPropertyName("recoveryFrameBonus")]
+    public int RecoveryFrameBonus { get; set; } = 0; // Negative makes move safer
+    
+    [JsonPropertyName("blockAdvantageBonus")]
+    public int BlockAdvantageBonus { get; set; } = 0;
+    
+    [JsonPropertyName("hitAdvantageBonus")]
+    public int HitAdvantageBonus { get; set; } = 0;
+    
+    [JsonPropertyName("addedProperties")]
+    public List<string> AddedProperties { get; set; } = new();
+    
+    [JsonPropertyName("removedProperties")]
+    public List<string> RemovedProperties { get; set; } = new();
 }

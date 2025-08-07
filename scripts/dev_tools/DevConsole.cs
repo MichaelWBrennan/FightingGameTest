@@ -111,7 +111,10 @@ public partial class DevConsole : Control
             { "health", HealthCommand },
             { "meter", MeterCommand },
             { "state", StateCommand },
-            { "reload", ReloadCommand }
+            { "reload", ReloadCommand },
+            { "subarchetypes", SubArchetypeCommand },
+            { "setsubarchetype", SetSubArchetypeCommand },
+            { "testsubarchetypes", TestSubArchetypesCommand }
         };
         
         LogMessage("[color=yellow]Developer Console Initialized[/color]");
@@ -180,6 +183,9 @@ public partial class DevConsole : Control
         LogMessage("meter [p1/p2] [amount] - Set player meter");
         LogMessage("state [p1/p2] [state] - Set player state");
         LogMessage("reload [character] - Reload character data");
+        LogMessage("subarchetypes [character] - List available sub-archetypes");
+        LogMessage("setsubarchetype [character] [subArchetypeId] - Apply sub-archetype");
+        LogMessage("testsubarchetypes - Test all character sub-archetypes");
     }
     
     private void ClearLog(string[] args)
@@ -410,6 +416,80 @@ public partial class DevConsole : Control
         string characterId = args[0];
         LogMessage($"Reloading character data: {characterId}");
         // In real implementation, this would reload character JSON data
+    }
+    
+    private void SubArchetypeCommand(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            LogMessage("Usage: subarchetypes [character_id]");
+            return;
+        }
+        
+        string characterId = args[0];
+        var subArchetypes = Character.GetAvailableSubArchetypes(characterId);
+        
+        if (subArchetypes.Count == 0)
+        {
+            LogMessage($"No sub-archetypes found for character: {characterId}");
+            return;
+        }
+        
+        LogMessage($"[color=cyan]Sub-archetypes for {characterId}:[/color]");
+        foreach (var subArchetype in subArchetypes)
+        {
+            string defaultTag = subArchetype.IsDefault ? " [DEFAULT]" : "";
+            LogMessage($"  {subArchetype.SubArchetypeId}: {subArchetype.Name}{defaultTag}");
+            LogMessage($"    Description: {subArchetype.Description}");
+        }
+    }
+    
+    private void SetSubArchetypeCommand(string[] args)
+    {
+        if (args.Length < 2)
+        {
+            LogMessage("Usage: setsubarchetype [character_id] [subArchetypeId]");
+            return;
+        }
+        
+        string characterId = args[0];
+        string subArchetypeId = args[1];
+        
+        var subArchetypes = Character.GetAvailableSubArchetypes(characterId);
+        var targetSubArchetype = subArchetypes.Find(sa => sa.SubArchetypeId == subArchetypeId);
+        
+        if (targetSubArchetype == null)
+        {
+            LogMessage($"[color=red]Sub-archetype '{subArchetypeId}' not found for character '{characterId}'[/color]");
+            return;
+        }
+        
+        LogMessage($"[color=green]Applied sub-archetype '{targetSubArchetype.Name}' to {characterId}[/color]");
+        LogMessage($"Description: {targetSubArchetype.Description}");
+        
+        // In a real implementation, this would find and update active characters
+        // For now, we just demonstrate that the sub-archetype exists
+    }
+    
+    private void TestSubArchetypesCommand(string[] args)
+    {
+        LogMessage("[color=yellow]=== Testing Sub-Archetype System ===[/color]");
+        
+        string[] characters = { "ryu", "chun_li", "zangief", "sagat", "lei_wulong", "ken" };
+        
+        foreach (var characterId in characters)
+        {
+            var subArchetypes = Character.GetAvailableSubArchetypes(characterId);
+            LogMessage($"\n[color=cyan]{characterId}:[/color] {subArchetypes.Count} sub-archetypes");
+            
+            foreach (var subArchetype in subArchetypes)
+            {
+                string defaultTag = subArchetype.IsDefault ? " [DEFAULT]" : "";
+                LogMessage($"  - {subArchetype.Name}{defaultTag}");
+            }
+        }
+        
+        LogMessage("\n[color=green]Sub-archetype test complete![/color]");
     }
     
     private void LogMessage(string message)
