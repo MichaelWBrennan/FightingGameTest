@@ -5,9 +5,18 @@
   "description": "Ryu's best friend and rival who fights with a flashy, aggressive style.",
   "archetype": "rushdown",
   "complexity": "easy",
-  "counterplayTags": ["anti-air", "neutral"],
-  "meterInteractions": ["ex_specials", "super_meter"],
-  "uniqueMechanics": ["run", "overhead"],
+  "counterplayTags": [
+    "anti-air",
+    "neutral"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter"
+  ],
+  "uniqueMechanics": [
+    "run",
+    "overhead"
+  ],
   "health": 1000,
   "meter": 100,
   "walkSpeed": 160,
@@ -39,13 +48,21 @@
         "blockAdvantage": 2,
         "hitAdvantage": 5,
         "comboType": "opener",
-        "properties": ["cancelable"],
+        "properties": [
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 3,
             "endFrame": 5,
-            "position": [60, 0],
-            "size": [40, 30],
+            "position": [
+              60,
+              0
+            ],
+            "size": [
+              40,
+              30
+            ],
             "damage": 55,
             "hitstun": 12,
             "blockstun": 8
@@ -61,13 +78,21 @@
         "blockAdvantage": -1,
         "hitAdvantage": 4,
         "comboType": "linker",
-        "properties": ["cancelable"],
+        "properties": [
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 7,
             "endFrame": 10,
-            "position": [75, 0],
-            "size": [55, 35],
+            "position": [
+              75,
+              0
+            ],
+            "size": [
+              55,
+              35
+            ],
             "damage": 85,
             "hitstun": 16,
             "blockstun": 11
@@ -83,13 +108,21 @@
         "blockAdvantage": -4,
         "hitAdvantage": 1,
         "comboType": "ender",
-        "properties": ["launcher"],
+        "properties": [
+          "launcher"
+        ],
         "hitboxes": [
           {
             "startFrame": 12,
             "endFrame": 16,
-            "position": [85, -5],
-            "size": [65, 45],
+            "position": [
+              85,
+              -5
+            ],
+            "size": [
+              65,
+              45
+            ],
             "damage": 130,
             "hitstun": 22,
             "blockstun": 14,
@@ -109,11 +142,16 @@
         "recoveryFrames": 28,
         "meterCost": 0,
         "comboType": "ender",
-        "properties": ["projectile"],
+        "properties": [
+          "projectile"
+        ],
         "projectile": {
           "speed": 320,
           "lifetime": 110,
-          "size": [38, 18],
+          "size": [
+            38,
+            18
+          ],
           "damage": 90,
           "hitstun": 16,
           "blockstun": 11
@@ -129,13 +167,22 @@
         "recoveryFrames": 32,
         "meterCost": 0,
         "comboType": "ender",
-        "properties": ["invincible", "launcher"],
+        "properties": [
+          "invincible",
+          "launcher"
+        ],
         "hitboxes": [
           {
             "startFrame": 4,
             "endFrame": 11,
-            "position": [40, -35],
-            "size": [50, 85],
+            "position": [
+              40,
+              -35
+            ],
+            "size": [
+              50,
+              85
+            ],
             "damage": 150,
             "hitstun": 28,
             "blockstun": 18,
@@ -153,13 +200,22 @@
         "recoveryFrames": 22,
         "meterCost": 0,
         "comboType": "linker",
-        "properties": ["multi_hit", "air_ok"],
+        "properties": [
+          "multi_hit",
+          "air_ok"
+        ],
         "hitboxes": [
           {
             "startFrame": 9,
             "endFrame": 20,
-            "position": [45, 0],
-            "size": [70, 50],
+            "position": [
+              45,
+              0
+            ],
+            "size": [
+              70,
+              50
+            ],
             "damage": 35,
             "hitstun": 10,
             "blockstun": 7,
@@ -179,13 +235,22 @@
         "recoveryFrames": 40,
         "meterCost": 100,
         "comboType": "ender",
-        "properties": ["super", "invincible"],
+        "properties": [
+          "super",
+          "invincible"
+        ],
         "hitboxes": [
           {
             "startFrame": 5,
             "endFrame": 16,
-            "position": [50, -40],
-            "size": [60, 100],
+            "position": [
+              50,
+              -40
+            ],
+            "size": [
+              60,
+              100
+            ],
             "damage": 320,
             "hitstun": 45,
             "blockstun": 25,
@@ -198,19 +263,30 @@
   "comboRoutes": [
     {
       "name": "Basic Rushdown",
-      "inputs": ["lightPunch", "mediumPunch", "hadoken"],
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "hadoken"
+      ],
       "damage": 230,
       "difficulty": "easy"
     },
     {
       "name": "Hurricane Combo",
-      "inputs": ["mediumPunch", "tatsumaki"],
+      "inputs": [
+        "mediumPunch",
+        "tatsumaki"
+      ],
       "damage": 195,
       "difficulty": "medium"
     },
     {
       "name": "Dragon Fist",
-      "inputs": ["lightPunch", "mediumPunch", "shinryuken"],
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "shinryuken"
+      ],
       "damage": 455,
       "difficulty": "hard"
     }
@@ -248,16 +324,24 @@
         "lightPunch": {
           "startupFrameBonus": -1,
           "hitAdvantageBonus": 2,
-          "addedProperties": ["rushdown", "pressure"],
+          "addedProperties": [
+            "rushdown",
+            "pressure"
+          ],
           "removedProperties": []
         },
         "tatsumaki": {
           "recoveryFrameBonus": -3,
-          "addedProperties": ["enhanced_mobility"],
+          "addedProperties": [
+            "enhanced_mobility"
+          ],
           "removedProperties": []
         }
       },
-      "uniqueMechanicChanges": ["+rushdown_pressure", "+enhanced_mobility"],
+      "uniqueMechanicChanges": [
+        "+rushdown_pressure",
+        "+enhanced_mobility"
+      ],
       "additionalMoves": {
         "special_step_kick": {
           "name": "Step Kick",
@@ -271,13 +355,23 @@
           "hitAdvantage": 5,
           "meterCost": 0,
           "comboType": "opener",
-          "properties": ["advancing", "overhead", "cancelable"],
+          "properties": [
+            "advancing",
+            "overhead",
+            "cancelable"
+          ],
           "hitboxes": [
             {
               "startFrame": 12,
               "endFrame": 15,
-              "position": [85, -10],
-              "size": [55, 40],
+              "position": [
+                85,
+                -10
+              ],
+              "size": [
+                55,
+                40
+              ],
               "damage": 85,
               "hitstun": 16,
               "blockstun": 11,
@@ -302,16 +396,25 @@
       "moveModifiers": {
         "shoryuken": {
           "damageMultiplier": 1.2,
-          "addedProperties": ["technical_cancel", "advanced_combo"],
+          "addedProperties": [
+            "technical_cancel",
+            "advanced_combo"
+          ],
           "removedProperties": []
         },
         "shinryuken": {
           "damageMultiplier": 1.15,
-          "addedProperties": ["technical_execution"],
+          "addedProperties": [
+            "technical_execution"
+          ],
           "removedProperties": []
         }
       },
-      "uniqueMechanicChanges": ["+advanced_combos", "+technical_cancels", "+complex_execution"],
+      "uniqueMechanicChanges": [
+        "+advanced_combos",
+        "+technical_cancels",
+        "+complex_execution"
+      ],
       "additionalMoves": {
         "special_kara_throw": {
           "name": "Kara Throw",
@@ -323,13 +426,23 @@
           "recoveryFrames": 18,
           "meterCost": 0,
           "comboType": "ender",
-          "properties": ["throw", "kara_cancel", "extended_range"],
+          "properties": [
+            "throw",
+            "kara_cancel",
+            "extended_range"
+          ],
           "hitboxes": [
             {
               "startFrame": 3,
               "endFrame": 4,
-              "position": [45, 0],
-              "size": [60, 50],
+              "position": [
+                45,
+                0
+              ],
+              "size": [
+                60,
+                50
+              ],
               "damage": 120,
               "hitstun": 0,
               "blockstun": 0,
@@ -339,5 +452,53 @@
         }
       }
     }
-  ]
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Ken - Character Sprites",
+        "file_name": "street_fighter_6_ken_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Ken - Victory Sprites",
+        "file_name": "street_fighter_6_ken_victory_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Ken - Special Move Effects",
+        "file_name": "street_fighter_6_ken_special_move_effects",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Ken - Portrait",
+        "file_name": "street_fighter_6_ken_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Ken - Character Select Icon",
+        "file_name": "street_fighter_6_ken_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
 }

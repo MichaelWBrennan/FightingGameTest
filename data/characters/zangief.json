@@ -5,9 +5,18 @@
   "description": "The Red Cyclone, a massive Russian wrestler with devastating grappling techniques.",
   "archetype": "grappler",
   "complexity": "medium",
-  "counterplayTags": ["keepaway", "neutral"],
-  "meterInteractions": ["ex_specials", "super_meter"],
-  "uniqueMechanics": ["command_grab", "armor"],
+  "counterplayTags": [
+    "keepaway",
+    "neutral"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter"
+  ],
+  "uniqueMechanics": [
+    "command_grab",
+    "armor"
+  ],
   "health": 1200,
   "meter": 100,
   "walkSpeed": 120,
@@ -39,13 +48,21 @@
         "blockAdvantage": 1,
         "hitAdvantage": 4,
         "comboType": "opener",
-        "properties": ["cancelable"],
+        "properties": [
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 5,
             "endFrame": 7,
-            "position": [55, 0],
-            "size": [45, 35],
+            "position": [
+              55,
+              0
+            ],
+            "size": [
+              45,
+              35
+            ],
             "damage": 60,
             "hitstun": 11,
             "blockstun": 8
@@ -61,13 +78,21 @@
         "blockAdvantage": -1,
         "hitAdvantage": 3,
         "comboType": "linker",
-        "properties": ["cancelable"],
+        "properties": [
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 8,
             "endFrame": 11,
-            "position": [65, 10],
-            "size": [50, 40],
+            "position": [
+              65,
+              10
+            ],
+            "size": [
+              50,
+              40
+            ],
             "damage": 90,
             "hitstun": 14,
             "blockstun": 10
@@ -83,13 +108,21 @@
         "blockAdvantage": -6,
         "hitAdvantage": 0,
         "comboType": "ender",
-        "properties": ["armor"],
+        "properties": [
+          "armor"
+        ],
         "hitboxes": [
           {
             "startFrame": 15,
             "endFrame": 22,
-            "position": [0, 0],
-            "size": [90, 60],
+            "position": [
+              0,
+              0
+            ],
+            "size": [
+              90,
+              60
+            ],
             "damage": 140,
             "hitstun": 25,
             "blockstun": 15,
@@ -109,13 +142,22 @@
         "recoveryFrames": 35,
         "meterCost": 0,
         "comboType": "ender",
-        "properties": ["command_grab", "unblockable"],
+        "properties": [
+          "command_grab",
+          "unblockable"
+        ],
         "hitboxes": [
           {
             "startFrame": 2,
             "endFrame": 4,
-            "position": [30, 0],
-            "size": [60, 80],
+            "position": [
+              30,
+              0
+            ],
+            "size": [
+              60,
+              80
+            ],
             "damage": 200,
             "hitstun": 50,
             "blockstun": 0,
@@ -133,13 +175,21 @@
         "recoveryFrames": 18,
         "meterCost": 0,
         "comboType": "linker",
-        "properties": ["armor"],
+        "properties": [
+          "armor"
+        ],
         "hitboxes": [
           {
             "startFrame": 12,
             "endFrame": 17,
-            "position": [70, 0],
-            "size": [55, 50],
+            "position": [
+              70,
+              0
+            ],
+            "size": [
+              55,
+              50
+            ],
             "damage": 100,
             "hitstun": 18,
             "blockstun": 12
@@ -156,13 +206,21 @@
         "recoveryFrames": 15,
         "meterCost": 0,
         "comboType": "linker",
-        "properties": ["overhead"],
+        "properties": [
+          "overhead"
+        ],
         "hitboxes": [
           {
             "startFrame": 8,
             "endFrame": 11,
-            "position": [60, -20],
-            "size": [60, 30],
+            "position": [
+              60,
+              -20
+            ],
+            "size": [
+              60,
+              30
+            ],
             "damage": 80,
             "hitstun": 16,
             "blockstun": 10
@@ -181,13 +239,23 @@
         "recoveryFrames": 50,
         "meterCost": 100,
         "comboType": "ender",
-        "properties": ["super", "command_grab", "unblockable"],
+        "properties": [
+          "super",
+          "command_grab",
+          "unblockable"
+        ],
         "hitboxes": [
           {
             "startFrame": 1,
             "endFrame": 5,
-            "position": [40, 0],
-            "size": [80, 100],
+            "position": [
+              40,
+              0
+            ],
+            "size": [
+              80,
+              100
+            ],
             "damage": 400,
             "hitstun": 60,
             "blockstun": 0,
@@ -200,19 +268,28 @@
   "comboRoutes": [
     {
       "name": "Basic Grab",
-      "inputs": ["lightPunch", "spd"],
+      "inputs": [
+        "lightPunch",
+        "spd"
+      ],
       "damage": 260,
       "difficulty": "medium"
     },
     {
       "name": "Green Hand Combo",
-      "inputs": ["green_hand", "spd"],
+      "inputs": [
+        "green_hand",
+        "spd"
+      ],
       "damage": 300,
       "difficulty": "hard"
     },
     {
       "name": "Atomic Devastation",
-      "inputs": ["banish_flat", "final_atomic_buster"],
+      "inputs": [
+        "banish_flat",
+        "final_atomic_buster"
+      ],
       "damage": 480,
       "difficulty": "expert"
     }
@@ -250,17 +327,24 @@
         "heavyPunch": {
           "damageMultiplier": 1.2,
           "startupFrameBonus": -2,
-          "addedProperties": ["enhanced_range"],
+          "addedProperties": [
+            "enhanced_range"
+          ],
           "removedProperties": []
         },
         "mediumKick": {
           "damageMultiplier": 1.1,
           "blockAdvantageBonus": 2,
-          "addedProperties": ["strike_mixup"],
+          "addedProperties": [
+            "strike_mixup"
+          ],
           "removedProperties": []
         }
       },
-      "uniqueMechanicChanges": ["+enhanced_normals", "+strike_mixups"],
+      "uniqueMechanicChanges": [
+        "+enhanced_normals",
+        "+strike_mixups"
+      ],
       "additionalMoves": {
         "special_muscle_bomber": {
           "name": "Muscle Bomber",
@@ -272,13 +356,23 @@
           "recoveryFrames": 22,
           "meterCost": 0,
           "comboType": "ender",
-          "properties": ["command_grab", "strike_grab", "armor"],
+          "properties": [
+            "command_grab",
+            "strike_grab",
+            "armor"
+          ],
           "hitboxes": [
             {
               "startFrame": 8,
               "endFrame": 13,
-              "position": [60, 0],
-              "size": [70, 50],
+              "position": [
+                60,
+                0
+              ],
+              "size": [
+                70,
+                50
+              ],
               "damage": 180,
               "hitstun": 0,
               "blockstun": 0,
@@ -303,11 +397,18 @@
       "moveModifiers": {
         "spd": {
           "damageMultiplier": 1.15,
-          "addedProperties": ["technical_grab", "meter_gain"],
+          "addedProperties": [
+            "technical_grab",
+            "meter_gain"
+          ],
           "removedProperties": []
         }
       },
-      "uniqueMechanicChanges": ["+grab_mixups", "+stance_transitions", "+technical_setups"],
+      "uniqueMechanicChanges": [
+        "+grab_mixups",
+        "+stance_transitions",
+        "+technical_setups"
+      ],
       "additionalMoves": {
         "special_grab_feint": {
           "name": "Grab Feint",
@@ -319,10 +420,62 @@
           "recoveryFrames": 8,
           "meterCost": 0,
           "comboType": "opener",
-          "properties": ["feint", "mixup", "cancelable"],
+          "properties": [
+            "feint",
+            "mixup",
+            "cancelable"
+          ],
           "hitboxes": []
         }
       }
     }
-  ]
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Zangief - Character Sprites",
+        "file_name": "street_fighter_6_zangief_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Zangief - Victory Sprites",
+        "file_name": "street_fighter_6_zangief_victory_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Zangief - Special Move Effects",
+        "file_name": "street_fighter_6_zangief_special_move_effects",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Zangief - Portrait",
+        "file_name": "street_fighter_6_zangief_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Zangief - Character Select Icon",
+        "file_name": "street_fighter_6_zangief_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
 }

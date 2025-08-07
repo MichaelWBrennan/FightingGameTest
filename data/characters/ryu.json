@@ -5,9 +5,18 @@
   "description": "A wandering warrior who trains constantly to become a true martial artist.",
   "archetype": "shoto",
   "complexity": "easy",
-  "counterplayTags": ["fundamentals", "neutral"],
-  "meterInteractions": ["ex_specials", "super_meter"],
-  "uniqueMechanics": ["fireball", "shoryuken"],
+  "counterplayTags": [
+    "fundamentals",
+    "neutral"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter"
+  ],
+  "uniqueMechanics": [
+    "fireball",
+    "shoryuken"
+  ],
   "health": 1000,
   "meter": 100,
   "walkSpeed": 150,
@@ -39,13 +48,21 @@
         "blockAdvantage": 1,
         "hitAdvantage": 4,
         "comboType": "opener",
-        "properties": ["cancelable"],
+        "properties": [
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 4,
             "endFrame": 6,
-            "position": [60, 0],
-            "size": [40, 30],
+            "position": [
+              60,
+              0
+            ],
+            "size": [
+              40,
+              30
+            ],
             "damage": 50,
             "hitstun": 12,
             "blockstun": 8
@@ -61,13 +78,21 @@
         "blockAdvantage": -2,
         "hitAdvantage": 3,
         "comboType": "linker",
-        "properties": ["cancelable"],
+        "properties": [
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 6,
             "endFrame": 9,
-            "position": [70, 0],
-            "size": [50, 35],
+            "position": [
+              70,
+              0
+            ],
+            "size": [
+              50,
+              35
+            ],
             "damage": 80,
             "hitstun": 15,
             "blockstun": 10
@@ -83,13 +108,21 @@
         "blockAdvantage": -5,
         "hitAdvantage": 0,
         "comboType": "ender",
-        "properties": ["launcher"],
+        "properties": [
+          "launcher"
+        ],
         "hitboxes": [
           {
             "startFrame": 10,
             "endFrame": 14,
-            "position": [80, -10],
-            "size": [60, 40],
+            "position": [
+              80,
+              -10
+            ],
+            "size": [
+              60,
+              40
+            ],
             "damage": 120,
             "hitstun": 20,
             "blockstun": 12,
@@ -106,13 +139,22 @@
         "blockAdvantage": 0,
         "hitAdvantage": 3,
         "comboType": "opener",
-        "properties": ["low", "cancelable"],
+        "properties": [
+          "low",
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 5,
             "endFrame": 7,
-            "position": [50, 40],
-            "size": [45, 25],
+            "position": [
+              50,
+              40
+            ],
+            "size": [
+              45,
+              25
+            ],
             "damage": 60,
             "hitstun": 13,
             "blockstun": 9
@@ -128,13 +170,21 @@
         "blockAdvantage": -3,
         "hitAdvantage": 2,
         "comboType": "linker",
-        "properties": ["cancelable"],
+        "properties": [
+          "cancelable"
+        ],
         "hitboxes": [
           {
             "startFrame": 8,
             "endFrame": 11,
-            "position": [75, 0],
-            "size": [55, 40],
+            "position": [
+              75,
+              0
+            ],
+            "size": [
+              55,
+              40
+            ],
             "damage": 90,
             "hitstun": 16,
             "blockstun": 11
@@ -150,13 +200,21 @@
         "blockAdvantage": -8,
         "hitAdvantage": -2,
         "comboType": "ender",
-        "properties": ["launcher"],
+        "properties": [
+          "launcher"
+        ],
         "hitboxes": [
           {
             "startFrame": 12,
             "endFrame": 17,
-            "position": [90, -5],
-            "size": [70, 45],
+            "position": [
+              90,
+              -5
+            ],
+            "size": [
+              70,
+              45
+            ],
             "damage": 140,
             "hitstun": 25,
             "blockstun": 15,
@@ -176,11 +234,16 @@
         "recoveryFrames": 25,
         "meterCost": 0,
         "comboType": "ender",
-        "properties": ["projectile"],
+        "properties": [
+          "projectile"
+        ],
         "projectile": {
           "speed": 300,
           "lifetime": 120,
-          "size": [40, 20],
+          "size": [
+            40,
+            20
+          ],
           "damage": 100,
           "hitstun": 18,
           "blockstun": 12
@@ -196,13 +259,22 @@
         "recoveryFrames": 30,
         "meterCost": 0,
         "comboType": "ender",
-        "properties": ["invincible", "launcher"],
+        "properties": [
+          "invincible",
+          "launcher"
+        ],
         "hitboxes": [
           {
             "startFrame": 3,
             "endFrame": 10,
-            "position": [40, -30],
-            "size": [50, 80],
+            "position": [
+              40,
+              -30
+            ],
+            "size": [
+              50,
+              80
+            ],
             "damage": 160,
             "hitstun": 30,
             "blockstun": 20,
@@ -222,11 +294,17 @@
         "recoveryFrames": 45,
         "meterCost": 100,
         "comboType": "ender",
-        "properties": ["super", "projectile"],
+        "properties": [
+          "super",
+          "projectile"
+        ],
         "projectile": {
           "speed": 400,
           "lifetime": 180,
-          "size": [80, 40],
+          "size": [
+            80,
+            40
+          ],
           "damage": 300,
           "hitstun": 40,
           "blockstun": 25,
@@ -238,19 +316,30 @@
   "comboRoutes": [
     {
       "name": "Basic Combo",
-      "inputs": ["lightPunch", "mediumPunch", "hadoken"],
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "hadoken"
+      ],
       "damage": 230,
       "difficulty": "easy"
     },
     {
       "name": "Launch Combo",
-      "inputs": ["heavyPunch", "shoryuken"],
+      "inputs": [
+        "heavyPunch",
+        "shoryuken"
+      ],
       "damage": 280,
       "difficulty": "medium"
     },
     {
       "name": "Super Combo",
-      "inputs": ["lightPunch", "mediumPunch", "shinku_hadoken"],
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "shinku_hadoken"
+      ],
       "damage": 430,
       "difficulty": "hard"
     }
@@ -288,7 +377,9 @@
         "lightPunch": {
           "startupFrameBonus": -1,
           "hitAdvantageBonus": 1,
-          "addedProperties": ["frame_trap"],
+          "addedProperties": [
+            "frame_trap"
+          ],
           "removedProperties": []
         },
         "mediumPunch": {
@@ -299,11 +390,15 @@
         },
         "hadoken": {
           "recoveryFrameBonus": -3,
-          "addedProperties": ["enhanced_speed"],
+          "addedProperties": [
+            "enhanced_speed"
+          ],
           "removedProperties": []
         }
       },
-      "uniqueMechanicChanges": ["+aggressive_meter_build"],
+      "uniqueMechanicChanges": [
+        "+aggressive_meter_build"
+      ],
       "additionalMoves": {}
     },
     {
@@ -322,16 +417,23 @@
         "shoryuken": {
           "damageMultiplier": 1.15,
           "startupFrameBonus": 1,
-          "addedProperties": ["just_frame_bonus"],
+          "addedProperties": [
+            "just_frame_bonus"
+          ],
           "removedProperties": []
         },
         "shinku_hadoken": {
           "damageMultiplier": 1.2,
-          "addedProperties": ["technical_input"],
+          "addedProperties": [
+            "technical_input"
+          ],
           "removedProperties": []
         }
       },
-      "uniqueMechanicChanges": ["+advanced_cancels", "+just_frame_timing"],
+      "uniqueMechanicChanges": [
+        "+advanced_cancels",
+        "+just_frame_timing"
+      ],
       "additionalMoves": {
         "special_focus_attack": {
           "name": "Focus Attack",
@@ -343,13 +445,23 @@
           "recoveryFrames": 20,
           "meterCost": 0,
           "comboType": "opener",
-          "properties": ["armor", "crumple", "cancelable"],
+          "properties": [
+            "armor",
+            "crumple",
+            "cancelable"
+          ],
           "hitboxes": [
             {
               "startFrame": 15,
               "endFrame": 18,
-              "position": [70, 0],
-              "size": [60, 40],
+              "position": [
+                70,
+                0
+              ],
+              "size": [
+                60,
+                40
+              ],
               "damage": 80,
               "hitstun": 25,
               "blockstun": 15,
@@ -359,5 +471,53 @@
         }
       }
     }
-  ]
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Ryu - Character Sprites",
+        "file_name": "street_fighter_6_ryu_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Ryu - Victory Sprites",
+        "file_name": "street_fighter_6_ryu_victory_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Ryu - Special Move Effects",
+        "file_name": "street_fighter_6_ryu_special_move_effects",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Ryu - Portrait",
+        "file_name": "street_fighter_6_ryu_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Ryu - Character Select Icon",
+        "file_name": "street_fighter_6_ryu_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
 }

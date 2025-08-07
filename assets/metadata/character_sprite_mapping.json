@@ -1,0 +1,3660 @@
+{
+  "Street Fighter 6": {
+    "Ryu": {
+      "sprites": [
+        {
+          "name": "Ryu - Character Sprites",
+          "file_name": "street_fighter_6_ryu_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ryu - Victory Sprites",
+          "file_name": "street_fighter_6_ryu_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ryu - Special Move Effects",
+          "file_name": "street_fighter_6_ryu_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ryu - Portrait",
+          "file_name": "street_fighter_6_ryu_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ryu - Character Select Icon",
+          "file_name": "street_fighter_6_ryu_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Chun-Li": {
+      "sprites": [
+        {
+          "name": "Chun-Li - Character Sprites",
+          "file_name": "street_fighter_6_chun-li_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/chun-li/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Chun-Li - Victory Sprites",
+          "file_name": "street_fighter_6_chun-li_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/chun-li/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Chun-Li - Special Move Effects",
+          "file_name": "street_fighter_6_chun-li_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/chun-li/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Chun-Li - Portrait",
+          "file_name": "street_fighter_6_chun-li_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/chun-li/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Chun-Li - Character Select Icon",
+          "file_name": "street_fighter_6_chun-li_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/chun-li/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Luke": {
+      "sprites": [
+        {
+          "name": "Luke - Character Sprites",
+          "file_name": "street_fighter_6_luke_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/luke/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Luke - Victory Sprites",
+          "file_name": "street_fighter_6_luke_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/luke/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Luke - Special Move Effects",
+          "file_name": "street_fighter_6_luke_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/luke/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Luke - Portrait",
+          "file_name": "street_fighter_6_luke_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/luke/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Luke - Character Select Icon",
+          "file_name": "street_fighter_6_luke_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/luke/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Jamie": {
+      "sprites": [
+        {
+          "name": "Jamie - Character Sprites",
+          "file_name": "street_fighter_6_jamie_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jamie/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Jamie - Victory Sprites",
+          "file_name": "street_fighter_6_jamie_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jamie/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Jamie - Special Move Effects",
+          "file_name": "street_fighter_6_jamie_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jamie/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Jamie - Portrait",
+          "file_name": "street_fighter_6_jamie_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jamie/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Jamie - Character Select Icon",
+          "file_name": "street_fighter_6_jamie_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jamie/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Manon": {
+      "sprites": [
+        {
+          "name": "Manon - Character Sprites",
+          "file_name": "street_fighter_6_manon_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/manon/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Manon - Victory Sprites",
+          "file_name": "street_fighter_6_manon_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/manon/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Manon - Special Move Effects",
+          "file_name": "street_fighter_6_manon_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/manon/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Manon - Portrait",
+          "file_name": "street_fighter_6_manon_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/manon/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Manon - Character Select Icon",
+          "file_name": "street_fighter_6_manon_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/manon/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Kimberly": {
+      "sprites": [
+        {
+          "name": "Kimberly - Character Sprites",
+          "file_name": "street_fighter_6_kimberly_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/kimberly/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kimberly - Victory Sprites",
+          "file_name": "street_fighter_6_kimberly_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/kimberly/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kimberly - Special Move Effects",
+          "file_name": "street_fighter_6_kimberly_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/kimberly/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Kimberly - Portrait",
+          "file_name": "street_fighter_6_kimberly_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/kimberly/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Kimberly - Character Select Icon",
+          "file_name": "street_fighter_6_kimberly_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/kimberly/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Marisa": {
+      "sprites": [
+        {
+          "name": "Marisa - Character Sprites",
+          "file_name": "street_fighter_6_marisa_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/marisa/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Marisa - Victory Sprites",
+          "file_name": "street_fighter_6_marisa_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/marisa/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Marisa - Special Move Effects",
+          "file_name": "street_fighter_6_marisa_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/marisa/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Marisa - Portrait",
+          "file_name": "street_fighter_6_marisa_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/marisa/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Marisa - Character Select Icon",
+          "file_name": "street_fighter_6_marisa_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/marisa/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Lily": {
+      "sprites": [
+        {
+          "name": "Lily - Character Sprites",
+          "file_name": "street_fighter_6_lily_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/lily/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Lily - Victory Sprites",
+          "file_name": "street_fighter_6_lily_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/lily/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Lily - Special Move Effects",
+          "file_name": "street_fighter_6_lily_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/lily/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Lily - Portrait",
+          "file_name": "street_fighter_6_lily_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/lily/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Lily - Character Select Icon",
+          "file_name": "street_fighter_6_lily_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/lily/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "JP": {
+      "sprites": [
+        {
+          "name": "JP - Character Sprites",
+          "file_name": "street_fighter_6_jp_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jp/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "JP - Victory Sprites",
+          "file_name": "street_fighter_6_jp_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jp/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "JP - Special Move Effects",
+          "file_name": "street_fighter_6_jp_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jp/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "JP - Portrait",
+          "file_name": "street_fighter_6_jp_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jp/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "JP - Character Select Icon",
+          "file_name": "street_fighter_6_jp_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/jp/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Juri": {
+      "sprites": [
+        {
+          "name": "Juri - Character Sprites",
+          "file_name": "street_fighter_6_juri_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/juri/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Juri - Victory Sprites",
+          "file_name": "street_fighter_6_juri_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/juri/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Juri - Special Move Effects",
+          "file_name": "street_fighter_6_juri_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/juri/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Juri - Portrait",
+          "file_name": "street_fighter_6_juri_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/juri/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Juri - Character Select Icon",
+          "file_name": "street_fighter_6_juri_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/juri/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Dee Jay": {
+      "sprites": [
+        {
+          "name": "Dee Jay - Character Sprites",
+          "file_name": "street_fighter_6_dee_jay_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dee_jay/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Dee Jay - Victory Sprites",
+          "file_name": "street_fighter_6_dee_jay_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dee_jay/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Dee Jay - Special Move Effects",
+          "file_name": "street_fighter_6_dee_jay_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dee_jay/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Dee Jay - Portrait",
+          "file_name": "street_fighter_6_dee_jay_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dee_jay/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Dee Jay - Character Select Icon",
+          "file_name": "street_fighter_6_dee_jay_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dee_jay/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Cammy": {
+      "sprites": [
+        {
+          "name": "Cammy - Character Sprites",
+          "file_name": "street_fighter_6_cammy_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Cammy - Victory Sprites",
+          "file_name": "street_fighter_6_cammy_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Cammy - Special Move Effects",
+          "file_name": "street_fighter_6_cammy_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Cammy - Portrait",
+          "file_name": "street_fighter_6_cammy_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Cammy - Character Select Icon",
+          "file_name": "street_fighter_6_cammy_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Ken": {
+      "sprites": [
+        {
+          "name": "Ken - Character Sprites",
+          "file_name": "street_fighter_6_ken_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ken - Victory Sprites",
+          "file_name": "street_fighter_6_ken_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ken - Special Move Effects",
+          "file_name": "street_fighter_6_ken_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ken - Portrait",
+          "file_name": "street_fighter_6_ken_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ken - Character Select Icon",
+          "file_name": "street_fighter_6_ken_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Blanka": {
+      "sprites": [
+        {
+          "name": "Blanka - Character Sprites",
+          "file_name": "street_fighter_6_blanka_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/blanka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Blanka - Victory Sprites",
+          "file_name": "street_fighter_6_blanka_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/blanka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Blanka - Special Move Effects",
+          "file_name": "street_fighter_6_blanka_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/blanka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Blanka - Portrait",
+          "file_name": "street_fighter_6_blanka_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/blanka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Blanka - Character Select Icon",
+          "file_name": "street_fighter_6_blanka_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/blanka/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Guile": {
+      "sprites": [
+        {
+          "name": "Guile - Character Sprites",
+          "file_name": "street_fighter_6_guile_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/guile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Guile - Victory Sprites",
+          "file_name": "street_fighter_6_guile_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/guile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Guile - Special Move Effects",
+          "file_name": "street_fighter_6_guile_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/guile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Guile - Portrait",
+          "file_name": "street_fighter_6_guile_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/guile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Guile - Character Select Icon",
+          "file_name": "street_fighter_6_guile_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/guile/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Zangief": {
+      "sprites": [
+        {
+          "name": "Zangief - Character Sprites",
+          "file_name": "street_fighter_6_zangief_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Zangief - Victory Sprites",
+          "file_name": "street_fighter_6_zangief_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Zangief - Special Move Effects",
+          "file_name": "street_fighter_6_zangief_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Zangief - Portrait",
+          "file_name": "street_fighter_6_zangief_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Zangief - Character Select Icon",
+          "file_name": "street_fighter_6_zangief_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    }
+  },
+  "Tekken 8": {
+    "Jin Kazama": {
+      "sprites": [
+        {
+          "name": "Jin Kazama - Character Sprites",
+          "file_name": "tekken_8_jin_kazama_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jin_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Jin Kazama - Victory Sprites",
+          "file_name": "tekken_8_jin_kazama_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jin_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Jin Kazama - Special Move Effects",
+          "file_name": "tekken_8_jin_kazama_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jin_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Jin Kazama - Portrait",
+          "file_name": "tekken_8_jin_kazama_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jin_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Jin Kazama - Character Select Icon",
+          "file_name": "tekken_8_jin_kazama_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jin_kazama/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Kazuya Mishima": {
+      "sprites": [
+        {
+          "name": "Kazuya Mishima - Character Sprites",
+          "file_name": "tekken_8_kazuya_mishima_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/kazuya_mishima/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kazuya Mishima - Victory Sprites",
+          "file_name": "tekken_8_kazuya_mishima_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/kazuya_mishima/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kazuya Mishima - Special Move Effects",
+          "file_name": "tekken_8_kazuya_mishima_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/kazuya_mishima/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Kazuya Mishima - Portrait",
+          "file_name": "tekken_8_kazuya_mishima_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/kazuya_mishima/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Kazuya Mishima - Character Select Icon",
+          "file_name": "tekken_8_kazuya_mishima_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/kazuya_mishima/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Paul Phoenix": {
+      "sprites": [
+        {
+          "name": "Paul Phoenix - Character Sprites",
+          "file_name": "tekken_8_paul_phoenix_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/paul_phoenix/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Paul Phoenix - Victory Sprites",
+          "file_name": "tekken_8_paul_phoenix_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/paul_phoenix/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Paul Phoenix - Special Move Effects",
+          "file_name": "tekken_8_paul_phoenix_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/paul_phoenix/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Paul Phoenix - Portrait",
+          "file_name": "tekken_8_paul_phoenix_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/paul_phoenix/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Paul Phoenix - Character Select Icon",
+          "file_name": "tekken_8_paul_phoenix_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/paul_phoenix/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "King": {
+      "sprites": [
+        {
+          "name": "King - Character Sprites",
+          "file_name": "tekken_8_king_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/king/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "King - Victory Sprites",
+          "file_name": "tekken_8_king_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/king/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "King - Special Move Effects",
+          "file_name": "tekken_8_king_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/king/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "King - Portrait",
+          "file_name": "tekken_8_king_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/king/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "King - Character Select Icon",
+          "file_name": "tekken_8_king_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/king/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Lars Alexandersson": {
+      "sprites": [
+        {
+          "name": "Lars Alexandersson - Character Sprites",
+          "file_name": "tekken_8_lars_alexandersson_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lars_alexandersson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Lars Alexandersson - Victory Sprites",
+          "file_name": "tekken_8_lars_alexandersson_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lars_alexandersson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Lars Alexandersson - Special Move Effects",
+          "file_name": "tekken_8_lars_alexandersson_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lars_alexandersson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Lars Alexandersson - Portrait",
+          "file_name": "tekken_8_lars_alexandersson_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lars_alexandersson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Lars Alexandersson - Character Select Icon",
+          "file_name": "tekken_8_lars_alexandersson_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lars_alexandersson/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Jack-8": {
+      "sprites": [
+        {
+          "name": "Jack-8 - Character Sprites",
+          "file_name": "tekken_8_jack-8_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jack-8/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Jack-8 - Victory Sprites",
+          "file_name": "tekken_8_jack-8_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jack-8/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Jack-8 - Special Move Effects",
+          "file_name": "tekken_8_jack-8_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jack-8/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Jack-8 - Portrait",
+          "file_name": "tekken_8_jack-8_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jack-8/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Jack-8 - Character Select Icon",
+          "file_name": "tekken_8_jack-8_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/jack-8/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Nina Williams": {
+      "sprites": [
+        {
+          "name": "Nina Williams - Character Sprites",
+          "file_name": "tekken_8_nina_williams_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/nina_williams/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Nina Williams - Victory Sprites",
+          "file_name": "tekken_8_nina_williams_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/nina_williams/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Nina Williams - Special Move Effects",
+          "file_name": "tekken_8_nina_williams_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/nina_williams/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Nina Williams - Portrait",
+          "file_name": "tekken_8_nina_williams_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/nina_williams/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Nina Williams - Character Select Icon",
+          "file_name": "tekken_8_nina_williams_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/nina_williams/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Ling Xiaoyu": {
+      "sprites": [
+        {
+          "name": "Ling Xiaoyu - Character Sprites",
+          "file_name": "tekken_8_ling_xiaoyu_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/ling_xiaoyu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ling Xiaoyu - Victory Sprites",
+          "file_name": "tekken_8_ling_xiaoyu_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/ling_xiaoyu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ling Xiaoyu - Special Move Effects",
+          "file_name": "tekken_8_ling_xiaoyu_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/ling_xiaoyu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ling Xiaoyu - Portrait",
+          "file_name": "tekken_8_ling_xiaoyu_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/ling_xiaoyu/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ling Xiaoyu - Character Select Icon",
+          "file_name": "tekken_8_ling_xiaoyu_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/ling_xiaoyu/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Leroy Smith": {
+      "sprites": [
+        {
+          "name": "Leroy Smith - Character Sprites",
+          "file_name": "tekken_8_leroy_smith_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/leroy_smith/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Leroy Smith - Victory Sprites",
+          "file_name": "tekken_8_leroy_smith_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/leroy_smith/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Leroy Smith - Special Move Effects",
+          "file_name": "tekken_8_leroy_smith_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/leroy_smith/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Leroy Smith - Portrait",
+          "file_name": "tekken_8_leroy_smith_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/leroy_smith/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Leroy Smith - Character Select Icon",
+          "file_name": "tekken_8_leroy_smith_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/leroy_smith/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Asuka Kazama": {
+      "sprites": [
+        {
+          "name": "Asuka Kazama - Character Sprites",
+          "file_name": "tekken_8_asuka_kazama_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/asuka_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Asuka Kazama - Victory Sprites",
+          "file_name": "tekken_8_asuka_kazama_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/asuka_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Asuka Kazama - Special Move Effects",
+          "file_name": "tekken_8_asuka_kazama_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/asuka_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Asuka Kazama - Portrait",
+          "file_name": "tekken_8_asuka_kazama_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/asuka_kazama/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Asuka Kazama - Character Select Icon",
+          "file_name": "tekken_8_asuka_kazama_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/asuka_kazama/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Lili": {
+      "sprites": [
+        {
+          "name": "Lili - Character Sprites",
+          "file_name": "tekken_8_lili_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lili/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Lili - Victory Sprites",
+          "file_name": "tekken_8_lili_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lili/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Lili - Special Move Effects",
+          "file_name": "tekken_8_lili_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lili/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Lili - Portrait",
+          "file_name": "tekken_8_lili_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lili/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Lili - Character Select Icon",
+          "file_name": "tekken_8_lili_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/lili/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Hwoarang": {
+      "sprites": [
+        {
+          "name": "Hwoarang - Character Sprites",
+          "file_name": "tekken_8_hwoarang_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/hwoarang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Hwoarang - Victory Sprites",
+          "file_name": "tekken_8_hwoarang_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/hwoarang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Hwoarang - Special Move Effects",
+          "file_name": "tekken_8_hwoarang_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/hwoarang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Hwoarang - Portrait",
+          "file_name": "tekken_8_hwoarang_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/hwoarang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Hwoarang - Character Select Icon",
+          "file_name": "tekken_8_hwoarang_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/hwoarang/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Bryan Fury": {
+      "sprites": [
+        {
+          "name": "Bryan Fury - Character Sprites",
+          "file_name": "tekken_8_bryan_fury_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/bryan_fury/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Bryan Fury - Victory Sprites",
+          "file_name": "tekken_8_bryan_fury_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/bryan_fury/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Bryan Fury - Special Move Effects",
+          "file_name": "tekken_8_bryan_fury_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/bryan_fury/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Bryan Fury - Portrait",
+          "file_name": "tekken_8_bryan_fury_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/bryan_fury/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Bryan Fury - Character Select Icon",
+          "file_name": "tekken_8_bryan_fury_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/bryan_fury/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Claudio Serafino": {
+      "sprites": [
+        {
+          "name": "Claudio Serafino - Character Sprites",
+          "file_name": "tekken_8_claudio_serafino_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/claudio_serafino/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Claudio Serafino - Victory Sprites",
+          "file_name": "tekken_8_claudio_serafino_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/claudio_serafino/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Claudio Serafino - Special Move Effects",
+          "file_name": "tekken_8_claudio_serafino_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/claudio_serafino/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Claudio Serafino - Portrait",
+          "file_name": "tekken_8_claudio_serafino_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/claudio_serafino/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Claudio Serafino - Character Select Icon",
+          "file_name": "tekken_8_claudio_serafino_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/claudio_serafino/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Azucena": {
+      "sprites": [
+        {
+          "name": "Azucena - Character Sprites",
+          "file_name": "tekken_8_azucena_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/azucena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Azucena - Victory Sprites",
+          "file_name": "tekken_8_azucena_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/azucena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Azucena - Special Move Effects",
+          "file_name": "tekken_8_azucena_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/azucena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Azucena - Portrait",
+          "file_name": "tekken_8_azucena_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/azucena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Azucena - Character Select Icon",
+          "file_name": "tekken_8_azucena_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/azucena/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Raven": {
+      "sprites": [
+        {
+          "name": "Raven - Character Sprites",
+          "file_name": "tekken_8_raven_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/raven/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Raven - Victory Sprites",
+          "file_name": "tekken_8_raven_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/raven/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Raven - Special Move Effects",
+          "file_name": "tekken_8_raven_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/raven/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Raven - Portrait",
+          "file_name": "tekken_8_raven_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/raven/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Raven - Character Select Icon",
+          "file_name": "tekken_8_raven_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/tekken8/sheet/raven/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    }
+  },
+  "Guilty Gear Strive": {
+    "Sol Badguy": {
+      "sprites": [
+        {
+          "name": "Sol Badguy - Character Sprites",
+          "file_name": "guilty_gear_strive_sol_badguy_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/sol_badguy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Sol Badguy - Victory Sprites",
+          "file_name": "guilty_gear_strive_sol_badguy_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/sol_badguy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Sol Badguy - Special Move Effects",
+          "file_name": "guilty_gear_strive_sol_badguy_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/sol_badguy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Sol Badguy - Portrait",
+          "file_name": "guilty_gear_strive_sol_badguy_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/sol_badguy/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Sol Badguy - Character Select Icon",
+          "file_name": "guilty_gear_strive_sol_badguy_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/sol_badguy/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Ky Kiske": {
+      "sprites": [
+        {
+          "name": "Ky Kiske - Character Sprites",
+          "file_name": "guilty_gear_strive_ky_kiske_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ky_kiske/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ky Kiske - Victory Sprites",
+          "file_name": "guilty_gear_strive_ky_kiske_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ky_kiske/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ky Kiske - Special Move Effects",
+          "file_name": "guilty_gear_strive_ky_kiske_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ky_kiske/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ky Kiske - Portrait",
+          "file_name": "guilty_gear_strive_ky_kiske_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ky_kiske/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ky Kiske - Character Select Icon",
+          "file_name": "guilty_gear_strive_ky_kiske_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ky_kiske/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "May": {
+      "sprites": [
+        {
+          "name": "May - Character Sprites",
+          "file_name": "guilty_gear_strive_may_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/may/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "May - Victory Sprites",
+          "file_name": "guilty_gear_strive_may_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/may/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "May - Special Move Effects",
+          "file_name": "guilty_gear_strive_may_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/may/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "May - Portrait",
+          "file_name": "guilty_gear_strive_may_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/may/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "May - Character Select Icon",
+          "file_name": "guilty_gear_strive_may_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/may/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Axl Low": {
+      "sprites": [
+        {
+          "name": "Axl Low - Character Sprites",
+          "file_name": "guilty_gear_strive_axl_low_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/axl_low/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Axl Low - Victory Sprites",
+          "file_name": "guilty_gear_strive_axl_low_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/axl_low/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Axl Low - Special Move Effects",
+          "file_name": "guilty_gear_strive_axl_low_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/axl_low/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Axl Low - Portrait",
+          "file_name": "guilty_gear_strive_axl_low_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/axl_low/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Axl Low - Character Select Icon",
+          "file_name": "guilty_gear_strive_axl_low_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/axl_low/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Chipp Zanuff": {
+      "sprites": [
+        {
+          "name": "Chipp Zanuff - Character Sprites",
+          "file_name": "guilty_gear_strive_chipp_zanuff_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/chipp_zanuff/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Chipp Zanuff - Victory Sprites",
+          "file_name": "guilty_gear_strive_chipp_zanuff_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/chipp_zanuff/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Chipp Zanuff - Special Move Effects",
+          "file_name": "guilty_gear_strive_chipp_zanuff_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/chipp_zanuff/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Chipp Zanuff - Portrait",
+          "file_name": "guilty_gear_strive_chipp_zanuff_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/chipp_zanuff/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Chipp Zanuff - Character Select Icon",
+          "file_name": "guilty_gear_strive_chipp_zanuff_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/chipp_zanuff/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Potemkin": {
+      "sprites": [
+        {
+          "name": "Potemkin - Character Sprites",
+          "file_name": "guilty_gear_strive_potemkin_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/potemkin/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Potemkin - Victory Sprites",
+          "file_name": "guilty_gear_strive_potemkin_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/potemkin/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Potemkin - Special Move Effects",
+          "file_name": "guilty_gear_strive_potemkin_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/potemkin/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Potemkin - Portrait",
+          "file_name": "guilty_gear_strive_potemkin_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/potemkin/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Potemkin - Character Select Icon",
+          "file_name": "guilty_gear_strive_potemkin_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/potemkin/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Faust": {
+      "sprites": [
+        {
+          "name": "Faust - Character Sprites",
+          "file_name": "guilty_gear_strive_faust_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/faust/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Faust - Victory Sprites",
+          "file_name": "guilty_gear_strive_faust_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/faust/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Faust - Special Move Effects",
+          "file_name": "guilty_gear_strive_faust_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/faust/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Faust - Portrait",
+          "file_name": "guilty_gear_strive_faust_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/faust/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Faust - Character Select Icon",
+          "file_name": "guilty_gear_strive_faust_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/faust/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Millia Rage": {
+      "sprites": [
+        {
+          "name": "Millia Rage - Character Sprites",
+          "file_name": "guilty_gear_strive_millia_rage_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/millia_rage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Millia Rage - Victory Sprites",
+          "file_name": "guilty_gear_strive_millia_rage_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/millia_rage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Millia Rage - Special Move Effects",
+          "file_name": "guilty_gear_strive_millia_rage_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/millia_rage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Millia Rage - Portrait",
+          "file_name": "guilty_gear_strive_millia_rage_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/millia_rage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Millia Rage - Character Select Icon",
+          "file_name": "guilty_gear_strive_millia_rage_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/millia_rage/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Zato-1": {
+      "sprites": [
+        {
+          "name": "Zato-1 - Character Sprites",
+          "file_name": "guilty_gear_strive_zato-1_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/zato-1/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Zato-1 - Victory Sprites",
+          "file_name": "guilty_gear_strive_zato-1_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/zato-1/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Zato-1 - Special Move Effects",
+          "file_name": "guilty_gear_strive_zato-1_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/zato-1/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Zato-1 - Portrait",
+          "file_name": "guilty_gear_strive_zato-1_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/zato-1/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Zato-1 - Character Select Icon",
+          "file_name": "guilty_gear_strive_zato-1_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/zato-1/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Ramlethal Valentine": {
+      "sprites": [
+        {
+          "name": "Ramlethal Valentine - Character Sprites",
+          "file_name": "guilty_gear_strive_ramlethal_valentine_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ramlethal_valentine/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ramlethal Valentine - Victory Sprites",
+          "file_name": "guilty_gear_strive_ramlethal_valentine_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ramlethal_valentine/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ramlethal Valentine - Special Move Effects",
+          "file_name": "guilty_gear_strive_ramlethal_valentine_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ramlethal_valentine/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ramlethal Valentine - Portrait",
+          "file_name": "guilty_gear_strive_ramlethal_valentine_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ramlethal_valentine/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ramlethal Valentine - Character Select Icon",
+          "file_name": "guilty_gear_strive_ramlethal_valentine_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/ramlethal_valentine/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Leo Whitefang": {
+      "sprites": [
+        {
+          "name": "Leo Whitefang - Character Sprites",
+          "file_name": "guilty_gear_strive_leo_whitefang_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/leo_whitefang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Leo Whitefang - Victory Sprites",
+          "file_name": "guilty_gear_strive_leo_whitefang_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/leo_whitefang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Leo Whitefang - Special Move Effects",
+          "file_name": "guilty_gear_strive_leo_whitefang_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/leo_whitefang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Leo Whitefang - Portrait",
+          "file_name": "guilty_gear_strive_leo_whitefang_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/leo_whitefang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Leo Whitefang - Character Select Icon",
+          "file_name": "guilty_gear_strive_leo_whitefang_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/leo_whitefang/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Nagoriyuki": {
+      "sprites": [
+        {
+          "name": "Nagoriyuki - Character Sprites",
+          "file_name": "guilty_gear_strive_nagoriyuki_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/nagoriyuki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Nagoriyuki - Victory Sprites",
+          "file_name": "guilty_gear_strive_nagoriyuki_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/nagoriyuki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Nagoriyuki - Special Move Effects",
+          "file_name": "guilty_gear_strive_nagoriyuki_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/nagoriyuki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Nagoriyuki - Portrait",
+          "file_name": "guilty_gear_strive_nagoriyuki_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/nagoriyuki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Nagoriyuki - Character Select Icon",
+          "file_name": "guilty_gear_strive_nagoriyuki_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/nagoriyuki/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Giovanna": {
+      "sprites": [
+        {
+          "name": "Giovanna - Character Sprites",
+          "file_name": "guilty_gear_strive_giovanna_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/giovanna/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Giovanna - Victory Sprites",
+          "file_name": "guilty_gear_strive_giovanna_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/giovanna/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Giovanna - Special Move Effects",
+          "file_name": "guilty_gear_strive_giovanna_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/giovanna/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Giovanna - Portrait",
+          "file_name": "guilty_gear_strive_giovanna_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/giovanna/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Giovanna - Character Select Icon",
+          "file_name": "guilty_gear_strive_giovanna_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/giovanna/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Anji Mito": {
+      "sprites": [
+        {
+          "name": "Anji Mito - Character Sprites",
+          "file_name": "guilty_gear_strive_anji_mito_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/anji_mito/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Anji Mito - Victory Sprites",
+          "file_name": "guilty_gear_strive_anji_mito_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/anji_mito/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Anji Mito - Special Move Effects",
+          "file_name": "guilty_gear_strive_anji_mito_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/anji_mito/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Anji Mito - Portrait",
+          "file_name": "guilty_gear_strive_anji_mito_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/anji_mito/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Anji Mito - Character Select Icon",
+          "file_name": "guilty_gear_strive_anji_mito_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/anji_mito/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "I-No": {
+      "sprites": [
+        {
+          "name": "I-No - Character Sprites",
+          "file_name": "guilty_gear_strive_i-no_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/i-no/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "I-No - Victory Sprites",
+          "file_name": "guilty_gear_strive_i-no_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/i-no/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "I-No - Special Move Effects",
+          "file_name": "guilty_gear_strive_i-no_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/i-no/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "I-No - Portrait",
+          "file_name": "guilty_gear_strive_i-no_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/i-no/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "I-No - Character Select Icon",
+          "file_name": "guilty_gear_strive_i-no_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/i-no/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Goldlewis Dickinson": {
+      "sprites": [
+        {
+          "name": "Goldlewis Dickinson - Character Sprites",
+          "file_name": "guilty_gear_strive_goldlewis_dickinson_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/goldlewis_dickinson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Goldlewis Dickinson - Victory Sprites",
+          "file_name": "guilty_gear_strive_goldlewis_dickinson_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/goldlewis_dickinson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Goldlewis Dickinson - Special Move Effects",
+          "file_name": "guilty_gear_strive_goldlewis_dickinson_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/goldlewis_dickinson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Goldlewis Dickinson - Portrait",
+          "file_name": "guilty_gear_strive_goldlewis_dickinson_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/goldlewis_dickinson/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Goldlewis Dickinson - Character Select Icon",
+          "file_name": "guilty_gear_strive_goldlewis_dickinson_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/guiltygearstrive/sheet/goldlewis_dickinson/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    }
+  },
+  "King of Fighters XV": {
+    "Kyo Kusanagi": {
+      "sprites": [
+        {
+          "name": "Kyo Kusanagi - Character Sprites",
+          "file_name": "king_of_fighters_xv_kyo_kusanagi_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/kyo_kusanagi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kyo Kusanagi - Victory Sprites",
+          "file_name": "king_of_fighters_xv_kyo_kusanagi_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/kyo_kusanagi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kyo Kusanagi - Special Move Effects",
+          "file_name": "king_of_fighters_xv_kyo_kusanagi_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/kyo_kusanagi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Kyo Kusanagi - Portrait",
+          "file_name": "king_of_fighters_xv_kyo_kusanagi_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/kyo_kusanagi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Kyo Kusanagi - Character Select Icon",
+          "file_name": "king_of_fighters_xv_kyo_kusanagi_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/kyo_kusanagi/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Iori Yagami": {
+      "sprites": [
+        {
+          "name": "Iori Yagami - Character Sprites",
+          "file_name": "king_of_fighters_xv_iori_yagami_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/iori_yagami/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Iori Yagami - Victory Sprites",
+          "file_name": "king_of_fighters_xv_iori_yagami_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/iori_yagami/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Iori Yagami - Special Move Effects",
+          "file_name": "king_of_fighters_xv_iori_yagami_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/iori_yagami/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Iori Yagami - Portrait",
+          "file_name": "king_of_fighters_xv_iori_yagami_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/iori_yagami/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Iori Yagami - Character Select Icon",
+          "file_name": "king_of_fighters_xv_iori_yagami_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/iori_yagami/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Terry Bogard": {
+      "sprites": [
+        {
+          "name": "Terry Bogard - Character Sprites",
+          "file_name": "king_of_fighters_xv_terry_bogard_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/terry_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Terry Bogard - Victory Sprites",
+          "file_name": "king_of_fighters_xv_terry_bogard_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/terry_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Terry Bogard - Special Move Effects",
+          "file_name": "king_of_fighters_xv_terry_bogard_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/terry_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Terry Bogard - Portrait",
+          "file_name": "king_of_fighters_xv_terry_bogard_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/terry_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Terry Bogard - Character Select Icon",
+          "file_name": "king_of_fighters_xv_terry_bogard_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/terry_bogard/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Andy Bogard": {
+      "sprites": [
+        {
+          "name": "Andy Bogard - Character Sprites",
+          "file_name": "king_of_fighters_xv_andy_bogard_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/andy_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Andy Bogard - Victory Sprites",
+          "file_name": "king_of_fighters_xv_andy_bogard_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/andy_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Andy Bogard - Special Move Effects",
+          "file_name": "king_of_fighters_xv_andy_bogard_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/andy_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Andy Bogard - Portrait",
+          "file_name": "king_of_fighters_xv_andy_bogard_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/andy_bogard/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Andy Bogard - Character Select Icon",
+          "file_name": "king_of_fighters_xv_andy_bogard_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/andy_bogard/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Joe Higashi": {
+      "sprites": [
+        {
+          "name": "Joe Higashi - Character Sprites",
+          "file_name": "king_of_fighters_xv_joe_higashi_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/joe_higashi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Joe Higashi - Victory Sprites",
+          "file_name": "king_of_fighters_xv_joe_higashi_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/joe_higashi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Joe Higashi - Special Move Effects",
+          "file_name": "king_of_fighters_xv_joe_higashi_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/joe_higashi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Joe Higashi - Portrait",
+          "file_name": "king_of_fighters_xv_joe_higashi_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/joe_higashi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Joe Higashi - Character Select Icon",
+          "file_name": "king_of_fighters_xv_joe_higashi_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/joe_higashi/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Ryo Sakazaki": {
+      "sprites": [
+        {
+          "name": "Ryo Sakazaki - Character Sprites",
+          "file_name": "king_of_fighters_xv_ryo_sakazaki_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ryo_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ryo Sakazaki - Victory Sprites",
+          "file_name": "king_of_fighters_xv_ryo_sakazaki_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ryo_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ryo Sakazaki - Special Move Effects",
+          "file_name": "king_of_fighters_xv_ryo_sakazaki_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ryo_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ryo Sakazaki - Portrait",
+          "file_name": "king_of_fighters_xv_ryo_sakazaki_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ryo_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ryo Sakazaki - Character Select Icon",
+          "file_name": "king_of_fighters_xv_ryo_sakazaki_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ryo_sakazaki/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Robert Garcia": {
+      "sprites": [
+        {
+          "name": "Robert Garcia - Character Sprites",
+          "file_name": "king_of_fighters_xv_robert_garcia_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/robert_garcia/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Robert Garcia - Victory Sprites",
+          "file_name": "king_of_fighters_xv_robert_garcia_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/robert_garcia/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Robert Garcia - Special Move Effects",
+          "file_name": "king_of_fighters_xv_robert_garcia_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/robert_garcia/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Robert Garcia - Portrait",
+          "file_name": "king_of_fighters_xv_robert_garcia_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/robert_garcia/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Robert Garcia - Character Select Icon",
+          "file_name": "king_of_fighters_xv_robert_garcia_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/robert_garcia/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Yuri Sakazaki": {
+      "sprites": [
+        {
+          "name": "Yuri Sakazaki - Character Sprites",
+          "file_name": "king_of_fighters_xv_yuri_sakazaki_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/yuri_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Yuri Sakazaki - Victory Sprites",
+          "file_name": "king_of_fighters_xv_yuri_sakazaki_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/yuri_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Yuri Sakazaki - Special Move Effects",
+          "file_name": "king_of_fighters_xv_yuri_sakazaki_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/yuri_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Yuri Sakazaki - Portrait",
+          "file_name": "king_of_fighters_xv_yuri_sakazaki_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/yuri_sakazaki/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Yuri Sakazaki - Character Select Icon",
+          "file_name": "king_of_fighters_xv_yuri_sakazaki_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/yuri_sakazaki/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Leona Heidern": {
+      "sprites": [
+        {
+          "name": "Leona Heidern - Character Sprites",
+          "file_name": "king_of_fighters_xv_leona_heidern_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/leona_heidern/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Leona Heidern - Victory Sprites",
+          "file_name": "king_of_fighters_xv_leona_heidern_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/leona_heidern/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Leona Heidern - Special Move Effects",
+          "file_name": "king_of_fighters_xv_leona_heidern_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/leona_heidern/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Leona Heidern - Portrait",
+          "file_name": "king_of_fighters_xv_leona_heidern_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/leona_heidern/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Leona Heidern - Character Select Icon",
+          "file_name": "king_of_fighters_xv_leona_heidern_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/leona_heidern/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Ralf Jones": {
+      "sprites": [
+        {
+          "name": "Ralf Jones - Character Sprites",
+          "file_name": "king_of_fighters_xv_ralf_jones_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ralf_jones/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ralf Jones - Victory Sprites",
+          "file_name": "king_of_fighters_xv_ralf_jones_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ralf_jones/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ralf Jones - Special Move Effects",
+          "file_name": "king_of_fighters_xv_ralf_jones_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ralf_jones/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ralf Jones - Portrait",
+          "file_name": "king_of_fighters_xv_ralf_jones_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ralf_jones/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ralf Jones - Character Select Icon",
+          "file_name": "king_of_fighters_xv_ralf_jones_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/ralf_jones/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Clark Still": {
+      "sprites": [
+        {
+          "name": "Clark Still - Character Sprites",
+          "file_name": "king_of_fighters_xv_clark_still_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/clark_still/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Clark Still - Victory Sprites",
+          "file_name": "king_of_fighters_xv_clark_still_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/clark_still/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Clark Still - Special Move Effects",
+          "file_name": "king_of_fighters_xv_clark_still_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/clark_still/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Clark Still - Portrait",
+          "file_name": "king_of_fighters_xv_clark_still_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/clark_still/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Clark Still - Character Select Icon",
+          "file_name": "king_of_fighters_xv_clark_still_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/clark_still/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Athena Asamiya": {
+      "sprites": [
+        {
+          "name": "Athena Asamiya - Character Sprites",
+          "file_name": "king_of_fighters_xv_athena_asamiya_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/athena_asamiya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Athena Asamiya - Victory Sprites",
+          "file_name": "king_of_fighters_xv_athena_asamiya_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/athena_asamiya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Athena Asamiya - Special Move Effects",
+          "file_name": "king_of_fighters_xv_athena_asamiya_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/athena_asamiya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Athena Asamiya - Portrait",
+          "file_name": "king_of_fighters_xv_athena_asamiya_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/athena_asamiya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Athena Asamiya - Character Select Icon",
+          "file_name": "king_of_fighters_xv_athena_asamiya_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/kingoffightersxv/sheet/athena_asamiya/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    }
+  },
+  "Mortal Kombat 1": {
+    "Liu Kang": {
+      "sprites": [
+        {
+          "name": "Liu Kang - Character Sprites",
+          "file_name": "mortal_kombat_1_liu_kang_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/liu_kang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Liu Kang - Victory Sprites",
+          "file_name": "mortal_kombat_1_liu_kang_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/liu_kang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Liu Kang - Special Move Effects",
+          "file_name": "mortal_kombat_1_liu_kang_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/liu_kang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Liu Kang - Portrait",
+          "file_name": "mortal_kombat_1_liu_kang_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/liu_kang/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Liu Kang - Character Select Icon",
+          "file_name": "mortal_kombat_1_liu_kang_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/liu_kang/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Sub-Zero": {
+      "sprites": [
+        {
+          "name": "Sub-Zero - Character Sprites",
+          "file_name": "mortal_kombat_1_sub-zero_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/sub-zero/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Sub-Zero - Victory Sprites",
+          "file_name": "mortal_kombat_1_sub-zero_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/sub-zero/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Sub-Zero - Special Move Effects",
+          "file_name": "mortal_kombat_1_sub-zero_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/sub-zero/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Sub-Zero - Portrait",
+          "file_name": "mortal_kombat_1_sub-zero_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/sub-zero/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Sub-Zero - Character Select Icon",
+          "file_name": "mortal_kombat_1_sub-zero_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/sub-zero/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Scorpion": {
+      "sprites": [
+        {
+          "name": "Scorpion - Character Sprites",
+          "file_name": "mortal_kombat_1_scorpion_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/scorpion/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Scorpion - Victory Sprites",
+          "file_name": "mortal_kombat_1_scorpion_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/scorpion/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Scorpion - Special Move Effects",
+          "file_name": "mortal_kombat_1_scorpion_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/scorpion/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Scorpion - Portrait",
+          "file_name": "mortal_kombat_1_scorpion_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/scorpion/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Scorpion - Character Select Icon",
+          "file_name": "mortal_kombat_1_scorpion_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/scorpion/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Kitana": {
+      "sprites": [
+        {
+          "name": "Kitana - Character Sprites",
+          "file_name": "mortal_kombat_1_kitana_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kitana/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kitana - Victory Sprites",
+          "file_name": "mortal_kombat_1_kitana_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kitana/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kitana - Special Move Effects",
+          "file_name": "mortal_kombat_1_kitana_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kitana/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Kitana - Portrait",
+          "file_name": "mortal_kombat_1_kitana_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kitana/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Kitana - Character Select Icon",
+          "file_name": "mortal_kombat_1_kitana_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kitana/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Kung Lao": {
+      "sprites": [
+        {
+          "name": "Kung Lao - Character Sprites",
+          "file_name": "mortal_kombat_1_kung_lao_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kung_lao/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kung Lao - Victory Sprites",
+          "file_name": "mortal_kombat_1_kung_lao_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kung_lao/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kung Lao - Special Move Effects",
+          "file_name": "mortal_kombat_1_kung_lao_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kung_lao/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Kung Lao - Portrait",
+          "file_name": "mortal_kombat_1_kung_lao_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kung_lao/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Kung Lao - Character Select Icon",
+          "file_name": "mortal_kombat_1_kung_lao_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kung_lao/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Johnny Cage": {
+      "sprites": [
+        {
+          "name": "Johnny Cage - Character Sprites",
+          "file_name": "mortal_kombat_1_johnny_cage_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/johnny_cage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Johnny Cage - Victory Sprites",
+          "file_name": "mortal_kombat_1_johnny_cage_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/johnny_cage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Johnny Cage - Special Move Effects",
+          "file_name": "mortal_kombat_1_johnny_cage_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/johnny_cage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Johnny Cage - Portrait",
+          "file_name": "mortal_kombat_1_johnny_cage_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/johnny_cage/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Johnny Cage - Character Select Icon",
+          "file_name": "mortal_kombat_1_johnny_cage_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/johnny_cage/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Kenshi": {
+      "sprites": [
+        {
+          "name": "Kenshi - Character Sprites",
+          "file_name": "mortal_kombat_1_kenshi_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kenshi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kenshi - Victory Sprites",
+          "file_name": "mortal_kombat_1_kenshi_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kenshi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Kenshi - Special Move Effects",
+          "file_name": "mortal_kombat_1_kenshi_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kenshi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Kenshi - Portrait",
+          "file_name": "mortal_kombat_1_kenshi_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kenshi/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Kenshi - Character Select Icon",
+          "file_name": "mortal_kombat_1_kenshi_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/kenshi/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Mileena": {
+      "sprites": [
+        {
+          "name": "Mileena - Character Sprites",
+          "file_name": "mortal_kombat_1_mileena_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/mileena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Mileena - Victory Sprites",
+          "file_name": "mortal_kombat_1_mileena_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/mileena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Mileena - Special Move Effects",
+          "file_name": "mortal_kombat_1_mileena_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/mileena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Mileena - Portrait",
+          "file_name": "mortal_kombat_1_mileena_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/mileena/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Mileena - Character Select Icon",
+          "file_name": "mortal_kombat_1_mileena_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/mileena/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Raiden": {
+      "sprites": [
+        {
+          "name": "Raiden - Character Sprites",
+          "file_name": "mortal_kombat_1_raiden_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/raiden/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Raiden - Victory Sprites",
+          "file_name": "mortal_kombat_1_raiden_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/raiden/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Raiden - Special Move Effects",
+          "file_name": "mortal_kombat_1_raiden_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/raiden/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Raiden - Portrait",
+          "file_name": "mortal_kombat_1_raiden_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/raiden/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Raiden - Character Select Icon",
+          "file_name": "mortal_kombat_1_raiden_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/raiden/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Tanya": {
+      "sprites": [
+        {
+          "name": "Tanya - Character Sprites",
+          "file_name": "mortal_kombat_1_tanya_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/tanya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Tanya - Victory Sprites",
+          "file_name": "mortal_kombat_1_tanya_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/tanya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Tanya - Special Move Effects",
+          "file_name": "mortal_kombat_1_tanya_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/tanya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Tanya - Portrait",
+          "file_name": "mortal_kombat_1_tanya_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/tanya/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Tanya - Character Select Icon",
+          "file_name": "mortal_kombat_1_tanya_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/tanya/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Baraka": {
+      "sprites": [
+        {
+          "name": "Baraka - Character Sprites",
+          "file_name": "mortal_kombat_1_baraka_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/baraka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Baraka - Victory Sprites",
+          "file_name": "mortal_kombat_1_baraka_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/baraka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Baraka - Special Move Effects",
+          "file_name": "mortal_kombat_1_baraka_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/baraka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Baraka - Portrait",
+          "file_name": "mortal_kombat_1_baraka_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/baraka/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Baraka - Character Select Icon",
+          "file_name": "mortal_kombat_1_baraka_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/baraka/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Geras": {
+      "sprites": [
+        {
+          "name": "Geras - Character Sprites",
+          "file_name": "mortal_kombat_1_geras_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/geras/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Geras - Victory Sprites",
+          "file_name": "mortal_kombat_1_geras_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/geras/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Geras - Special Move Effects",
+          "file_name": "mortal_kombat_1_geras_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/geras/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Geras - Portrait",
+          "file_name": "mortal_kombat_1_geras_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/geras/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Geras - Character Select Icon",
+          "file_name": "mortal_kombat_1_geras_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/geras/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Reptile": {
+      "sprites": [
+        {
+          "name": "Reptile - Character Sprites",
+          "file_name": "mortal_kombat_1_reptile_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/reptile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Reptile - Victory Sprites",
+          "file_name": "mortal_kombat_1_reptile_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/reptile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Reptile - Special Move Effects",
+          "file_name": "mortal_kombat_1_reptile_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/reptile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Reptile - Portrait",
+          "file_name": "mortal_kombat_1_reptile_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/reptile/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Reptile - Character Select Icon",
+          "file_name": "mortal_kombat_1_reptile_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/reptile/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Ashrah": {
+      "sprites": [
+        {
+          "name": "Ashrah - Character Sprites",
+          "file_name": "mortal_kombat_1_ashrah_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/ashrah/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ashrah - Victory Sprites",
+          "file_name": "mortal_kombat_1_ashrah_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/ashrah/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Ashrah - Special Move Effects",
+          "file_name": "mortal_kombat_1_ashrah_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/ashrah/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Ashrah - Portrait",
+          "file_name": "mortal_kombat_1_ashrah_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/ashrah/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Ashrah - Character Select Icon",
+          "file_name": "mortal_kombat_1_ashrah_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/ashrah/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Havik": {
+      "sprites": [
+        {
+          "name": "Havik - Character Sprites",
+          "file_name": "mortal_kombat_1_havik_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/havik/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Havik - Victory Sprites",
+          "file_name": "mortal_kombat_1_havik_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/havik/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Havik - Special Move Effects",
+          "file_name": "mortal_kombat_1_havik_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/havik/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Havik - Portrait",
+          "file_name": "mortal_kombat_1_havik_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/havik/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Havik - Character Select Icon",
+          "file_name": "mortal_kombat_1_havik_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/havik/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    },
+    "Shang Tsung": {
+      "sprites": [
+        {
+          "name": "Shang Tsung - Character Sprites",
+          "file_name": "mortal_kombat_1_shang_tsung_character_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/shang_tsung/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Shang Tsung - Victory Sprites",
+          "file_name": "mortal_kombat_1_shang_tsung_victory_sprites",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/shang_tsung/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        },
+        {
+          "name": "Shang Tsung - Special Move Effects",
+          "file_name": "mortal_kombat_1_shang_tsung_special_move_effects",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/shang_tsung/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "portraits": [
+        {
+          "name": "Shang Tsung - Portrait",
+          "file_name": "mortal_kombat_1_shang_tsung_portrait",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/shang_tsung/",
+          "is_hd": true,
+          "file_size": 1024000,
+          "resolution": "1920x1080"
+        }
+      ],
+      "icons": [
+        {
+          "name": "Shang Tsung - Character Select Icon",
+          "file_name": "mortal_kombat_1_shang_tsung_character_select_icon",
+          "url": "https://www.spriters-resource.com/pc_computer/mortalkombat1/sheet/shang_tsung/",
+          "is_hd": false,
+          "file_size": 256000,
+          "resolution": "640x480"
+        }
+      ]
+    }
+  }
+}
