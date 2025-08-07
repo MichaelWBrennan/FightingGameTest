@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fighting Game Character Select Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .screen {
+            min-height: 100vh;
+            padding: 20px;
+            display: none;
+            position: relative;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 3em;
+            margin: 20px 0;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .match-setup {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            min-height: 60vh;
+        }
+        
+        .section {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid #4a4a6a;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        .section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #ffd700;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .player-count-btn, .mode-btn {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: 2px solid #4a4a6a;
+            background: rgba(32, 32, 50, 0.8);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+        
+        .mode-btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .player-count-btn:hover, .mode-btn:hover {
+            background: rgba(64, 64, 100, 0.9);
+            border-color: #ffd700;
+        }
+        
+        .player-count-btn.active, .mode-btn.active {
+            background: #ffd700;
+            color: #1a1a2e;
+            border-color: #ffd700;
+        }
+        
+        .character-select {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .players-info {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #4a4a6a;
+        }
+        
+        .player-info {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+        
+        .player-info.current {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+        }
+        
+        .player-info.selected {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+        
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .character-btn {
+            width: 150px;
+            height: 150px;
+            border: 3px solid #4a4a6a;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .character-btn:hover {
+            border-color: #ffd700;
+            transform: scale(1.05);
+        }
+        
+        .character-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .character-btn.selected {
+            border-color: #ff4500;
+            border-width: 4px;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .control-btn {
+            padding: 15px 30px;
+            font-size: 1.3em;
+            margin: 0 10px;
+            border: 2px solid #4a4a6a;
+            background: rgba(32, 32, 50, 0.8);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover:not(.disabled) {
+            background: rgba(64, 64, 100, 0.9);
+            border-color: #ffd700;
+        }
+        
+        .control-btn.primary {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+        
+        .control-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #ffd700;
+        }
+        
+        /* Character colors */
+        .ryu { background-color: #E8E8E8; color: #000; }
+        .chun_li { background-color: #4169E1; color: #fff; }
+        .ken { background-color: #FF4500; color: #fff; }
+        .luke { background-color: #32CD32; color: #000; }
+        .jamie { background-color: #8A2BE2; color: #fff; }
+        .manon { background-color: #FF1493; color: #fff; }
+        .kimberly { background-color: #00CED1; color: #000; }
+        .marisa { background-color: #B22222; color: #fff; }
+        .lily { background-color: #9ACD32; color: #000; }
+        .jp { background-color: #8B4513; color: #fff; }
+        .juri { background-color: #9370DB; color: #fff; }
+        .dee_jay { background-color: #FFD700; color: #000; }
+        .cammy { background-color: #228B22; color: #fff; }
+        .zangief { background-color: #DC143C; color: #fff; }
+        .guile { background-color: #4682B4; color: #fff; }
+        .blanka { background-color: #ADFF2F; color: #000; }
+    </style>
+</head>
+<body>
+    <!-- Match Setup Screen -->
+    <div class="screen active" id="matchSetup">
+        <h1 class="title">Match Setup</h1>
+        <div class="match-setup">
+            <div class="section">
+                <h2>Number of Players</h2>
+                <div class="button-group">
+                    <button class="player-count-btn" onclick="selectPlayerCount(2)">2</button>
+                    <button class="player-count-btn" onclick="selectPlayerCount(3)">3</button>
+                    <button class="player-count-btn" onclick="selectPlayerCount(4)">4</button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Match Type</h2>
+                <div class="button-group">
+                    <button class="mode-btn" id="mode-1v1" onclick="selectMode('1v1')">1v1 (Individual)</button>
+                    <button class="mode-btn" id="mode-2v2" onclick="selectMode('2v2')">2v2 (Team)</button>
+                    <button class="mode-btn" id="mode-3v3" onclick="selectMode('3v3')">3v3 (Team)</button>
+                    <button class="mode-btn" id="mode-4v4" onclick="selectMode('4v4')">4v4 (Team)</button>
+                    <button class="mode-btn" id="mode-ffa" onclick="selectMode('ffa')">Free For All</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status" id="setupStatus">Select players and match type</div>
+        
+        <div class="controls">
+            <button class="control-btn disabled" id="proceedBtn" onclick="proceedToCharacterSelect()">Proceed to Character Select</button>
+            <button class="control-btn" onclick="goBack()">Back</button>
+        </div>
+    </div>
+    
+    <!-- Character Select Screen -->
+    <div class="screen" id="characterSelect">
+        <h1 class="title" id="selectTitle">Character Select</h1>
+        
+        <div class="players-info" id="playersInfo">
+            <!-- Player info will be generated here -->
+        </div>
+        
+        <div class="character-select">
+            <div class="character-grid" id="characterGrid">
+                <!-- Character buttons will be generated here -->
+            </div>
+        </div>
+        
+        <div class="status" id="selectStatus">Player 1: Select your character</div>
+        
+        <div class="controls">
+            <button class="control-btn primary disabled" id="startFightBtn" onclick="startFight()">Start Fight</button>
+            <button class="control-btn" onclick="backToSetup()">Back</button>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            playerCount: 0,
+            matchMode: '',
+            currentPlayer: 0,
+            playerSelections: []
+        };
+        
+        const characters = [
+            'ryu', 'chun_li', 'ken', 'luke', 'jamie', 'manon', 'kimberly', 'marisa',
+            'lily', 'jp', 'juri', 'dee_jay', 'cammy', 'zangief', 'guile', 'blanka'
+        ];
+        
+        function selectPlayerCount(count) {
+            // Remove active class from all player count buttons
+            document.querySelectorAll('.player-count-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to selected button
+            event.target.classList.add('active');
+            
+            gameState.playerCount = count;
+            updateModeAvailability();
+            updateSetupStatus();
+        }
+        
+        function updateModeAvailability() {
+            // Enable/disable modes based on player count
+            document.getElementById('mode-1v1').disabled = gameState.playerCount !== 2;
+            document.getElementById('mode-2v2').disabled = gameState.playerCount !== 4;
+            document.getElementById('mode-3v3').disabled = gameState.playerCount !== 6;
+            document.getElementById('mode-4v4').disabled = gameState.playerCount !== 8;
+            document.getElementById('mode-ffa').disabled = gameState.playerCount < 3;
+            
+            // Reset mode if it becomes invalid
+            if ((gameState.matchMode === '1v1' && gameState.playerCount !== 2) ||
+                (gameState.matchMode === '2v2' && gameState.playerCount !== 4) ||
+                (gameState.matchMode === 'ffa' && gameState.playerCount < 3)) {
+                gameState.matchMode = '';
+                document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            }
+        }
+        
+        function selectMode(mode) {
+            // Remove active class from all mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to selected button
+            event.target.classList.add('active');
+            
+            gameState.matchMode = mode;
+            updateSetupStatus();
+        }
+        
+        function updateSetupStatus() {
+            const status = document.getElementById('setupStatus');
+            const proceedBtn = document.getElementById('proceedBtn');
+            
+            if (gameState.playerCount === 0) {
+                status.textContent = 'Select number of players';
+                proceedBtn.classList.add('disabled');
+            } else if (gameState.matchMode === '') {
+                status.textContent = 'Select match type';
+                proceedBtn.classList.add('disabled');
+            } else {
+                const modeText = {
+                    '1v1': '1v1',
+                    '2v2': '2v2 Team Battle',
+                    '3v3': '3v3 Team Battle',
+                    '4v4': '4v4 Team Battle',
+                    'ffa': 'Free For All'
+                };
+                status.textContent = `Ready: ${gameState.playerCount} players, ${modeText[gameState.matchMode]}`;
+                proceedBtn.classList.remove('disabled');
+            }
+        }
+        
+        function proceedToCharacterSelect() {
+            if (gameState.playerCount === 0 || gameState.matchMode === '') return;
+            
+            // Initialize player selections
+            gameState.playerSelections = [];
+            gameState.currentPlayer = 0;
+            
+            for (let i = 0; i < gameState.playerCount; i++) {
+                let team = 1;
+                if (gameState.matchMode === '1v1') team = i === 0 ? 1 : 2;
+                else if (gameState.matchMode === '2v2') team = i < 2 ? 1 : 2;
+                else if (gameState.matchMode === 'ffa') team = i + 1;
+                
+                gameState.playerSelections.push({
+                    playerNumber: i + 1,
+                    character: '',
+                    team: team
+                });
+            }
+            
+            // Switch to character select screen
+            document.getElementById('matchSetup').classList.remove('active');
+            document.getElementById('characterSelect').classList.add('active');
+            
+            // Update title
+            const modeText = {
+                '1v1': '1v1 Character Select',
+                '2v2': '2v2 Team Character Select',
+                '3v3': '3v3 Team Character Select',
+                '4v4': '4v4 Team Character Select',
+                'ffa': 'Free For All Character Select'
+            };
+            document.getElementById('selectTitle').textContent = modeText[gameState.matchMode];
+            
+            generatePlayerInfo();
+            generateCharacterGrid();
+            updateSelectStatus();
+        }
+        
+        function generatePlayerInfo() {
+            const container = document.getElementById('playersInfo');
+            container.innerHTML = '<h3>Players</h3>';
+            
+            gameState.playerSelections.forEach((player, index) => {
+                const div = document.createElement('div');
+                div.className = 'player-info';
+                div.id = `player-${index}`;
+                
+                let teamText = gameState.matchMode === 'ffa' ? '' : ` (Team ${player.team})`;
+                let selectionText = player.character || 'Select Character';
+                
+                div.innerHTML = `Player ${player.playerNumber}${teamText}: ${selectionText}`;
+                
+                if (index === gameState.currentPlayer) {
+                    div.classList.add('current');
+                } else if (player.character) {
+                    div.classList.add('selected');
+                }
+                
+                container.appendChild(div);
+            });
+        }
+        
+        function generateCharacterGrid() {
+            const grid = document.getElementById('characterGrid');
+            grid.innerHTML = '';
+            
+            characters.forEach(character => {
+                const btn = document.createElement('button');
+                btn.className = `character-btn ${character}`;
+                btn.textContent = character.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                // Check if character is already selected
+                const isSelected = gameState.playerSelections.some((p, i) => 
+                    p.character === character && i !== gameState.currentPlayer
+                );
+                
+                if (isSelected) {
+                    btn.classList.add('disabled');
+                    btn.onclick = null;
+                } else {
+                    btn.onclick = () => selectCharacter(character);
+                }
+                
+                grid.appendChild(btn);
+            });
+        }
+        
+        function selectCharacter(character) {
+            // Set selection for current player
+            gameState.playerSelections[gameState.currentPlayer].character = character;
+            
+            // Move to next player
+            gameState.currentPlayer++;
+            if (gameState.currentPlayer >= gameState.playerSelections.length) {
+                gameState.currentPlayer = gameState.playerSelections.length - 1;
+            }
+            
+            // Update UI
+            generatePlayerInfo();
+            generateCharacterGrid();
+            updateSelectStatus();
+            
+            // Check if all players have selected
+            const allSelected = gameState.playerSelections.every(p => p.character !== '');
+            if (allSelected) {
+                document.getElementById('startFightBtn').classList.remove('disabled');
+            }
+        }
+        
+        function updateSelectStatus() {
+            const status = document.getElementById('selectStatus');
+            if (gameState.currentPlayer < gameState.playerSelections.length) {
+                const currentPlayerNum = gameState.playerSelections[gameState.currentPlayer].playerNumber;
+                status.textContent = `Player ${currentPlayerNum}: Select your character`;
+            } else {
+                status.textContent = 'All players ready!';
+            }
+        }
+        
+        function startFight() {
+            const allSelected = gameState.playerSelections.every(p => p.character !== '');
+            if (!allSelected) return;
+            
+            alert('Starting fight!\n\n' + 
+                  gameState.playerSelections.map(p => 
+                      `Player ${p.playerNumber} (Team ${p.team}): ${p.character.replace('_', ' ')}`
+                  ).join('\n')
+            );
+        }
+        
+        function backToSetup() {
+            document.getElementById('characterSelect').classList.remove('active');
+            document.getElementById('matchSetup').classList.add('active');
+        }
+        
+        function goBack() {
+            alert('Would return to main menu');
+        }
+    </script>
+</body>
+</html>
