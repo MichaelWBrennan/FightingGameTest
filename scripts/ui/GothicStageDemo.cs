@@ -8,7 +8,7 @@ public partial class GothicStageDemo : Control
     private StageManager _stageManager;
     private Node2D _stageContainer;
     private Label _infoLabel;
-    private Label _instructionLabel;
+    private RichTextLabel _instructionLabel;
     
     private string[] _availableStages;
     private int _currentStageIndex = 0;
@@ -30,7 +30,11 @@ public partial class GothicStageDemo : Control
             Color = new Color(0.05f, 0.05f, 0.1f),
             MouseFilter = Control.MouseFilterEnum.Ignore
         };
-        background.SetAnchorsAndOffsetsPreset(Control.PresetMode.FullRect);
+        // Set background to cover entire screen manually
+        background.AnchorLeft = 0.0f;
+        background.AnchorTop = 0.0f;
+        background.AnchorRight = 1.0f;
+        background.AnchorBottom = 1.0f;
         AddChild(background);
         
         // Create stage container
@@ -144,7 +148,7 @@ public partial class GothicStageDemo : Control
             GD.RandRange(-100, 100)
         );
         
-        _stageManager.TriggerStageEffect(randomEffect, randomPosition, GD.RandRange(0.5f, 1.5f));
+        _stageManager.TriggerStageEffect(randomEffect, randomPosition, (float)GD.RandRange(0.5f, 1.5f));
     }
     
     public override void _Input(InputEvent @event)
@@ -163,7 +167,7 @@ public partial class GothicStageDemo : Control
         else if (Input.IsKeyPressed(Key.Enter))
         {
             // Toggle stage effects
-            var currentIntensity = GD.RandRange(0.5f, 2.0f);
+            var currentIntensity = (float)GD.RandRange(0.5f, 2.0f);
             _stageManager?.SetStageEffectIntensity(currentIntensity);
             GD.Print($"Stage effect intensity set to: {currentIntensity}");
         }

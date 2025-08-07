@@ -10,7 +10,7 @@ public partial class StageSelectScene : Control
     // UI References
     private GridContainer _stageGrid;
     private Label _stageNameLabel;
-    private Label _stageDescriptionLabel;
+    private RichTextLabel _stageDescriptionLabel;
     private ColorRect _stagePreview;
     private Button _confirmButton;
     private Button _backButton;
