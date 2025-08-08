@@ -128,9 +128,9 @@
         
         .character-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 20px;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -207,23 +207,7 @@
             color: #ffd700;
         }
         
-        /* Character colors */
-        .ryu { background-color: #E8E8E8; color: #000; }
-        .chun_li { background-color: #4169E1; color: #fff; }
-        .ken { background-color: #FF4500; color: #fff; }
-        .luke { background-color: #32CD32; color: #000; }
-        .jamie { background-color: #8A2BE2; color: #fff; }
-        .manon { background-color: #FF1493; color: #fff; }
-        .kimberly { background-color: #00CED1; color: #000; }
-        .marisa { background-color: #B22222; color: #fff; }
-        .lily { background-color: #9ACD32; color: #000; }
-        .jp { background-color: #8B4513; color: #fff; }
-        .juri { background-color: #9370DB; color: #fff; }
-        .dee_jay { background-color: #FFD700; color: #000; }
-        .cammy { background-color: #228B22; color: #fff; }
-        .zangief { background-color: #DC143C; color: #fff; }
-        .guile { background-color: #4682B4; color: #fff; }
-        .blanka { background-color: #ADFF2F; color: #000; }
+        /* Archetype colors are now handled dynamically in JavaScript */
     </style>
 </head>
 <body>
@@ -245,8 +229,8 @@
                 <div class="button-group">
                     <button class="mode-btn" id="mode-1v1" onclick="selectMode('1v1')">1v1 (Individual)</button>
                     <button class="mode-btn" id="mode-2v2" onclick="selectMode('2v2')">2v2 (Team)</button>
-                    <button class="mode-btn" id="mode-3v3" onclick="selectMode('3v3')">3v3 (Team)</button>
-                    <button class="mode-btn" id="mode-4v4" onclick="selectMode('4v4')">4v4 (Team)</button>
+                    <button class="mode-btn" id="mode-2v1" onclick="selectMode('2v1')">2v1 (Asymmetric)</button>
+                    <button class="mode-btn" id="mode-3v1" onclick="selectMode('3v1')">3v1 (Asymmetric)</button>
                     <button class="mode-btn" id="mode-ffa" onclick="selectMode('ffa')">Free For All</button>
                 </div>
             </div>
@@ -290,9 +274,31 @@
             playerSelections: []
         };
         
-        const characters = [
-            'fighter1', 'fighter2', 'fighter3', 'fighter4', 'fighter5', 'fighter6', 'fighter7', 'fighter8',
-            'fighter9', 'fighter10', 'fighter11', 'fighter12', 'fighter13', 'fighter14', 'fighter15', 'fighter16'
+        const archetypeRoster = [
+            // Balanced Archetype - All-rounders
+            { id: 'balanced_a', archetype: 'Balanced', variation: 'Standard', color: '#4169E1' },
+            { id: 'balanced_b', archetype: 'Balanced', variation: 'Hybrid', color: '#6495ED' },
+            { id: 'balanced_c', archetype: 'Balanced', variation: 'Versatile', color: '#1E90FF' },
+            
+            // Rushdown Archetype - Fast and aggressive
+            { id: 'rushdown_a', archetype: 'Rushdown', variation: 'Pressure', color: '#DC143C' },
+            { id: 'rushdown_b', archetype: 'Rushdown', variation: 'Blitz', color: '#DC143C' },
+            { id: 'rushdown_c', archetype: 'Rushdown', variation: 'Berserker', color: '#FF4500' },
+            
+            // Grappler Archetype - Command throws and power
+            { id: 'grappler_a', archetype: 'Grappler', variation: 'Wrestler', color: '#228B22' },
+            { id: 'grappler_b', archetype: 'Grappler', variation: 'Bruiser', color: '#006400' },
+            { id: 'grappler_c', archetype: 'Grappler', variation: 'Colossus', color: '#228B22' },
+            
+            // Zoner Archetype - Projectiles and keep-away
+            { id: 'zoner_a', archetype: 'Zoner', variation: 'Sniper', color: '#9370DB' },
+            { id: 'zoner_b', archetype: 'Zoner', variation: 'Trapper', color: '#8A2BE2' },
+            { id: 'zoner_c', archetype: 'Zoner', variation: 'Artillery', color: '#4B0082' },
+            
+            // Technical Archetype - Complex combos and execution
+            { id: 'technical_a', archetype: 'Technical', variation: 'Combo', color: '#FF8C00' },
+            { id: 'technical_b', archetype: 'Technical', variation: 'Setup', color: '#FF8C00' },
+            { id: 'technical_c', archetype: 'Technical', variation: 'Master', color: '#FFD700' }
         ];
         
         function selectPlayerCount(count) {
@@ -311,13 +317,15 @@
             // Enable/disable modes based on player count
             document.getElementById('mode-1v1').disabled = gameState.playerCount !== 2;
             document.getElementById('mode-2v2').disabled = gameState.playerCount !== 4;
-            document.getElementById('mode-3v3').disabled = gameState.playerCount !== 6;
-            document.getElementById('mode-4v4').disabled = gameState.playerCount !== 8;
+            document.getElementById('mode-2v1').disabled = gameState.playerCount !== 3; // 2v1 needs 3 players
+            document.getElementById('mode-3v1').disabled = gameState.playerCount !== 4; // 3v1 needs 4 players
             document.getElementById('mode-ffa').disabled = gameState.playerCount < 3;
             
             // Reset mode if it becomes invalid
             if ((gameState.matchMode === '1v1' && gameState.playerCount !== 2) ||
                 (gameState.matchMode === '2v2' && gameState.playerCount !== 4) ||
+                (gameState.matchMode === '2v1' && gameState.playerCount !== 3) ||
+                (gameState.matchMode === '3v1' && gameState.playerCount !== 4) ||
                 (gameState.matchMode === 'ffa' && gameState.playerCount < 3)) {
                 gameState.matchMode = '';
                 document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
@@ -349,8 +357,8 @@
                 const modeText = {
                     '1v1': '1v1',
                     '2v2': '2v2 Team Battle',
-                    '3v3': '3v3 Team Battle',
-                    '4v4': '4v4 Team Battle',
+                    '2v1': '2v1 Asymmetric',
+                    '3v1': '3v1 Asymmetric',
                     'ffa': 'Free For All'
                 };
                 status.textContent = `Ready: ${gameState.playerCount} players, ${modeText[gameState.matchMode]}`;
@@ -369,6 +377,8 @@
                 let team = 1;
                 if (gameState.matchMode === '1v1') team = i === 0 ? 1 : 2;
                 else if (gameState.matchMode === '2v2') team = i < 2 ? 1 : 2;
+                else if (gameState.matchMode === '2v1') team = i < 2 ? 1 : 2; // First 2 players on team 1, last player on team 2
+                else if (gameState.matchMode === '3v1') team = i < 3 ? 1 : 2; // First 3 players on team 1, last player on team 2
                 else if (gameState.matchMode === 'ffa') team = i + 1;
                 
                 gameState.playerSelections.push({
@@ -386,8 +396,8 @@
             const modeText = {
                 '1v1': '1v1 Character Select',
                 '2v2': '2v2 Team Character Select',
-                '3v3': '3v3 Team Character Select',
-                '4v4': '4v4 Team Character Select',
+                '2v1': '2v1 Asymmetric Character Select',
+                '3v1': '3v1 Asymmetric Character Select',
                 'ffa': 'Free For All Character Select'
             };
             document.getElementById('selectTitle').textContent = modeText[gameState.matchMode];
@@ -421,54 +431,49 @@
             });
         }
         
-        function getDisplayName(characterId) {
-            // Convert generic fighter IDs to display names
-            if (characterId.startsWith('fighter')) {
-                const number = characterId.replace('fighter', '');
-                return `Fighter ${number}`;
+        function getDisplayName(fighter) {
+            // Check if it's one of the archetype fighters
+            if (typeof fighter === 'object') {
+                return `${fighter.archetype}\n${fighter.variation}`;
             }
-            return characterId.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            
+            // Find the fighter in our roster
+            const archetypeFighter = archetypeRoster.find(f => f.id === fighter);
+            if (archetypeFighter) {
+                return `${archetypeFighter.archetype}\n${archetypeFighter.variation}`;
+            }
+            
+            // Fallback
+            return fighter.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
         }
         
-        function getCharacterColor(characterId) {
-            // Generate a unique color for each character based on simple hash
-            let hash = 0;
-            for (let i = 0; i < characterId.length; i++) {
-                const char = characterId.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convert to 32-bit integer
-            }
-            
-            // Generate bright, distinguishable colors
-            const hue = Math.abs(hash) % 360;
-            const saturation = 70 + (Math.abs(hash) % 30); // 70-100%
-            const lightness = 40 + (Math.abs(hash) % 20);  // 40-60%
-            
-            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        function getCharacterColor(fighterId) {
+            const fighter = archetypeRoster.find(f => f.id === fighterId);
+            return fighter ? fighter.color : '#666666';
         }
         
         function generateCharacterGrid() {
             const grid = document.getElementById('characterGrid');
             grid.innerHTML = '';
             
-            characters.forEach(character => {
+            archetypeRoster.forEach(fighter => {
                 const btn = document.createElement('button');
-                btn.className = `character-btn ${character}`;
-                btn.textContent = getDisplayName(character);
-                btn.style.backgroundColor = getCharacterColor(character);
+                btn.className = `character-btn ${fighter.id}`;
+                btn.innerHTML = `<div style="font-size: 0.9em; line-height: 1.2; text-align: center;">${fighter.archetype}<br><strong>${fighter.variation}</strong></div>`;
+                btn.style.backgroundColor = fighter.color;
                 btn.style.color = 'white';
                 btn.style.textShadow = '1px 1px 2px rgba(0,0,0,0.8)';
                 
                 // Check if character is already selected
                 const isSelected = gameState.playerSelections.some((p, i) => 
-                    p.character === character && i !== gameState.currentPlayer
+                    p.character === fighter.id && i !== gameState.currentPlayer
                 );
                 
                 if (isSelected) {
                     btn.classList.add('disabled');
                     btn.onclick = null;
                 } else {
-                    btn.onclick = () => selectCharacter(character);
+                    btn.onclick = () => selectCharacter(fighter.id);
                 }
                 
                 grid.appendChild(btn);
