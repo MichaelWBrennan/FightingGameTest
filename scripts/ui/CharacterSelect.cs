@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -123,7 +124,7 @@ public partial class CharacterSelect : Control
         
         // Get all available fighters from DLC manager
         var allCharacters = DLCManager.Instance?.GetAvailableFighters()?.Select(f => f.FighterId).ToList() ?? 
-                           new List<string> { "ryu", "chun_li", "ken", "luke", "jamie", "manon", "kimberly", "marisa", "lily", "jp", "juri", "dee_jay", "cammy", "zangief", "guile", "blanka" };
+                           new List<string> { "fighter1", "fighter2", "fighter3", "fighter4", "fighter5", "fighter6", "fighter7", "fighter8", "fighter9", "fighter10", "fighter11", "fighter12", "fighter13", "fighter14", "fighter15", "fighter16" };
         
         _availableCharacters = allCharacters.ToArray();
         
@@ -150,52 +151,38 @@ public partial class CharacterSelect : Control
         var button = new Button();
         button.CustomMinimumSize = new Vector2(150, 150);
         
-        // Try to load character portrait
-        var portraitPath = $"res://assets/ui/character_portraits/{characterId}.png";
-        if (ResourceLoader.Exists(portraitPath))
-        {
-            var texture = GD.Load<Texture2D>(portraitPath);
-            if (texture != null)
-            {
-                var textureRect = new TextureRect();
-                textureRect.Texture = texture;
-                textureRect.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
-                textureRect.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
-                textureRect.AnchorLeft = 0;
-                textureRect.AnchorTop = 0;
-                textureRect.AnchorRight = 1;
-                textureRect.AnchorBottom = 1;
-                textureRect.OffsetLeft = 0;
-                textureRect.OffsetTop = 0;
-                textureRect.OffsetRight = 0;
-                textureRect.OffsetBottom = 0;
-                button.AddChild(textureRect);
-                
-                // Add name label overlay
-                var nameLabel = new Label();
-                nameLabel.Text = characterId.Replace("_", " ").Capitalize();
-                nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
-                nameLabel.VerticalAlignment = VerticalAlignment.Bottom;
-                nameLabel.AnchorLeft = 0;
-                nameLabel.AnchorRight = 1;
-                nameLabel.AnchorTop = 0.8f;
-                nameLabel.AnchorBottom = 1;
-                nameLabel.OffsetLeft = 0;
-                nameLabel.OffsetRight = 0;
-                nameLabel.OffsetTop = 0;
-                nameLabel.OffsetBottom = 0;
-                nameLabel.AddThemeColorOverride("font_color", Colors.White);
-                nameLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
-                nameLabel.AddThemeConstantOverride("shadow_offset_x", 1);
-                nameLabel.AddThemeConstantOverride("shadow_offset_y", 1);
-                button.AddChild(nameLabel);
-            }
-        }
-        else
-        {
-            // Fallback text button
-            button.Text = characterId.Replace("_", " ").Capitalize();
-        }
+        // Create a colored rectangle as portrait background
+        var colorRect = new ColorRect();
+        colorRect.Color = GetCharacterColor(characterId);
+        colorRect.AnchorLeft = 0;
+        colorRect.AnchorTop = 0;
+        colorRect.AnchorRight = 1;
+        colorRect.AnchorBottom = 1;
+        colorRect.OffsetLeft = 5;
+        colorRect.OffsetTop = 5;
+        colorRect.OffsetRight = -5;
+        colorRect.OffsetBottom = -5;
+        button.AddChild(colorRect);
+        
+        // Add name label
+        var nameLabel = new Label();
+        nameLabel.Text = GetDisplayName(characterId);
+        nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        nameLabel.VerticalAlignment = VerticalAlignment.Center;
+        nameLabel.AnchorLeft = 0;
+        nameLabel.AnchorRight = 1;
+        nameLabel.AnchorTop = 0;
+        nameLabel.AnchorBottom = 1;
+        nameLabel.OffsetLeft = 0;
+        nameLabel.OffsetRight = 0;
+        nameLabel.OffsetTop = 0;
+        nameLabel.OffsetBottom = 0;
+        nameLabel.AddThemeColorOverride("font_color", Colors.White);
+        nameLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
+        nameLabel.AddThemeConstantOverride("shadow_offset_x", 1);
+        nameLabel.AddThemeConstantOverride("shadow_offset_y", 1);
+        nameLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+        button.AddChild(nameLabel);
         
         // Check if character is already selected by another player
         bool isAlreadySelected = _playerSelections.Any(p => p.SelectedCharacter == characterId && _playerSelections.IndexOf(p) != _currentPlayerIndex);
@@ -207,6 +194,31 @@ public partial class CharacterSelect : Control
         
         button.Pressed += () => OnCharacterSelected(characterId);
         _characterGrid.AddChild(button);
+    }
+    
+    private Color GetCharacterColor(string characterId)
+    {
+        // Generate a unique color for each character based on hash
+        var hash = characterId.GetHashCode();
+        var random = new Random(hash);
+        
+        // Generate bright, distinguishable colors
+        var hue = random.NextSingle();
+        var saturation = 0.7f + (random.NextSingle() * 0.3f); // 0.7 - 1.0
+        var value = 0.8f + (random.NextSingle() * 0.2f); // 0.8 - 1.0
+        
+        return Color.FromHsv(hue, saturation, value);
+    }
+    
+    private string GetDisplayName(string characterId)
+    {
+        // Convert generic fighter IDs to display names
+        if (characterId.StartsWith("fighter"))
+        {
+            var number = characterId.Replace("fighter", "");
+            return $"Fighter {number}";
+        }
+        return characterId.Replace("_", " ").Capitalize();
     }
     
     private void OnCharacterSelected(string characterId)
@@ -268,17 +280,25 @@ public partial class CharacterSelect : Control
     
     private string GetCharacterArchetype(string characterId)
     {
-        // Simple archetype mapping - in a real implementation this would come from character data
+        // Simple archetype mapping - assign archetypes to generic fighters
         var archetypeMap = new Dictionary<string, string>
         {
-            ["ryu"] = "shoto",
-            ["chun_li"] = "rushdown", 
-            ["ken"] = "rushdown",
-            ["zangief"] = "grappler",
-            ["guile"] = "charge",
-            ["cammy"] = "rushdown",
-            ["luke"] = "balanced",
-            ["jamie"] = "setup"
+            ["fighter1"] = "balanced",
+            ["fighter2"] = "rushdown", 
+            ["fighter3"] = "rushdown",
+            ["fighter4"] = "grappler",
+            ["fighter5"] = "charge",
+            ["fighter6"] = "rushdown",
+            ["fighter7"] = "balanced",
+            ["fighter8"] = "setup",
+            ["fighter9"] = "zoner",
+            ["fighter10"] = "mixup",
+            ["fighter11"] = "technical",
+            ["fighter12"] = "powerhouse",
+            ["fighter13"] = "defensive",
+            ["fighter14"] = "aggressive",
+            ["fighter15"] = "versatile",
+            ["fighter16"] = "specialist"
         };
         
         return archetypeMap.GetValueOrDefault(characterId, "unknown");
@@ -313,7 +333,7 @@ public partial class CharacterSelect : Control
             var label = _playersContainer.GetNode<Label>($"Player{player.PlayerNumber}Label");
             
             string teamText = MatchConfiguration.Mode == MatchMode.FreeForAll ? "" : $" (Team {player.Team})";
-            string selectionText = string.IsNullOrEmpty(player.SelectedCharacter) ? "Select Character" : player.SelectedCharacter.Replace("_", " ").Capitalize();
+            string selectionText = string.IsNullOrEmpty(player.SelectedCharacter) ? "Select Character" : GetDisplayName(player.SelectedCharacter);
             
             label.Text = $"Player {player.PlayerNumber}{teamText}: {selectionText}";
             

@@ -291,8 +291,8 @@
         };
         
         const characters = [
-            'ryu', 'chun_li', 'ken', 'luke', 'jamie', 'manon', 'kimberly', 'marisa',
-            'lily', 'jp', 'juri', 'dee_jay', 'cammy', 'zangief', 'guile', 'blanka'
+            'fighter1', 'fighter2', 'fighter3', 'fighter4', 'fighter5', 'fighter6', 'fighter7', 'fighter8',
+            'fighter9', 'fighter10', 'fighter11', 'fighter12', 'fighter13', 'fighter14', 'fighter15', 'fighter16'
         ];
         
         function selectPlayerCount(count) {
@@ -407,7 +407,7 @@
                 div.id = `player-${index}`;
                 
                 let teamText = gameState.matchMode === 'ffa' ? '' : ` (Team ${player.team})`;
-                let selectionText = player.character || 'Select Character';
+                let selectionText = player.character ? getDisplayName(player.character) : 'Select Character';
                 
                 div.innerHTML = `Player ${player.playerNumber}${teamText}: ${selectionText}`;
                 
@@ -421,6 +421,32 @@
             });
         }
         
+        function getDisplayName(characterId) {
+            // Convert generic fighter IDs to display names
+            if (characterId.startsWith('fighter')) {
+                const number = characterId.replace('fighter', '');
+                return `Fighter ${number}`;
+            }
+            return characterId.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+        
+        function getCharacterColor(characterId) {
+            // Generate a unique color for each character based on simple hash
+            let hash = 0;
+            for (let i = 0; i < characterId.length; i++) {
+                const char = characterId.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            
+            // Generate bright, distinguishable colors
+            const hue = Math.abs(hash) % 360;
+            const saturation = 70 + (Math.abs(hash) % 30); // 70-100%
+            const lightness = 40 + (Math.abs(hash) % 20);  // 40-60%
+            
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+        
         function generateCharacterGrid() {
             const grid = document.getElementById('characterGrid');
             grid.innerHTML = '';
@@ -428,7 +454,10 @@
             characters.forEach(character => {
                 const btn = document.createElement('button');
                 btn.className = `character-btn ${character}`;
-                btn.textContent = character.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                btn.textContent = getDisplayName(character);
+                btn.style.backgroundColor = getCharacterColor(character);
+                btn.style.color = 'white';
+                btn.style.textShadow = '1px 1px 2px rgba(0,0,0,0.8)';
                 
                 // Check if character is already selected
                 const isSelected = gameState.playerSelections.some((p, i) => 
@@ -484,7 +513,7 @@
             
             alert('Starting fight!\n\n' + 
                   gameState.playerSelections.map(p => 
-                      `Player ${p.playerNumber} (Team ${p.team}): ${p.character.replace('_', ' ')}`
+                      `Player ${p.playerNumber} (Team ${p.team}): ${getDisplayName(p.character)}`
                   ).join('\n')
             );
         }
