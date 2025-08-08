@@ -150,22 +150,26 @@
             font-size: 1.1em;
             font-weight: bold;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(255,255,255,0.1) 100%);
         }
         
         .character-btn:hover {
             border-color: #ffd700;
             transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
         
         .character-btn.disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            filter: grayscale(50%);
         }
         
         .character-btn.selected {
             border-color: #ff4500;
             border-width: 4px;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
         }
         
         .controls {
@@ -452,6 +456,221 @@
             return fighter ? fighter.color : '#666666';
         }
         
+        function generateCharacterPortrait(fighter) {
+            // Get pattern based on fighter archetype
+            const archetypePatterns = {
+                'Balanced': ['shield', 'diamond', 'hexagon'],
+                'Rushdown': ['lightning', 'zigzag', 'spikes'],
+                'Grappler': ['mountain', 'blocks', 'fortress'],
+                'Zoner': ['crosshair', 'web', 'rays'],
+                'Technical': ['gears', 'circuit', 'star']
+            };
+            
+            const archetypeEmojis = {
+                'Balanced': ['⚖️', '🛡️', '⚔️'],
+                'Rushdown': ['⚡', '🔥', '💥'],
+                'Grappler': ['💪', '🏔️', '🏋️'],
+                'Zoner': ['🎯', '🕸️', '🌟'],
+                'Technical': ['⚙️', '🔧', '👑']
+            };
+            
+            // Determine variation index (Standard/Pressure/Wrestler/Sniper/Combo = 0, etc.)
+            const variations = ['Standard', 'Hybrid', 'Versatile', 'Pressure', 'Blitz', 'Berserker', 'Wrestler', 'Bruiser', 'Colossus', 'Sniper', 'Trapper', 'Artillery', 'Combo', 'Setup', 'Master'];
+            const variationsByArchetype = {
+                'Balanced': ['Standard', 'Hybrid', 'Versatile'],
+                'Rushdown': ['Pressure', 'Blitz', 'Berserker'],
+                'Grappler': ['Wrestler', 'Bruiser', 'Colossus'],
+                'Zoner': ['Sniper', 'Trapper', 'Artillery'],
+                'Technical': ['Combo', 'Setup', 'Master']
+            };
+            
+            const variationIndex = variationsByArchetype[fighter.archetype]?.indexOf(fighter.variation) || 0;
+            const pattern = archetypePatterns[fighter.archetype]?.[variationIndex] || 'circle';
+            const emoji = archetypeEmojis[fighter.archetype]?.[variationIndex] || '?';
+            
+            return createPortraitSVG(fighter.color, getSecondaryColor(fighter.color), pattern, emoji, fighter);
+        }
+        
+        function getSecondaryColor(primaryColor) {
+            // Generate a lighter/darker secondary color based on the primary
+            const colorMap = {
+                '#4169E1': '#6495ED',
+                '#6495ED': '#4169E1', 
+                '#1E90FF': '#87CEEB',
+                '#DC143C': '#FF6B6B',
+                '#FF4500': '#FF8C00',
+                '#228B22': '#32CD32',
+                '#006400': '#228B22',
+                '#9370DB': '#BA55D3',
+                '#8A2BE2': '#9370DB',
+                '#4B0082': '#8A2BE2',
+                '#FF8C00': '#FFD700',
+                '#FFD700': '#FFFF00'
+            };
+            return colorMap[primaryColor] || primaryColor;
+        }
+        
+        function createPortraitSVG(primaryColor, secondaryColor, pattern, emoji, fighter) {
+            const patterns = {
+                shield: `
+                    <defs>
+                        <linearGradient id="grad${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M75 30 L45 45 L45 105 L75 120 L105 105 L105 45 Z" fill="url(#grad${Date.now()})" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="70" r="15" fill="#fff" opacity="0.3"/>`,
+                
+                diamond: `
+                    <defs>
+                        <radialGradient id="radial${Date.now()}" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${primaryColor};stop-opacity:1" />
+                        </radialGradient>
+                    </defs>
+                    <polygon points="75,25 110,75 75,125 40,75" fill="url(#radial${Date.now()})" stroke="#fff" stroke-width="2"/>
+                    <polygon points="75,45 90,75 75,105 60,75" fill="#fff" opacity="0.2"/>`,
+                
+                hexagon: `
+                    <defs>
+                        <linearGradient id="hex${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="75,30 100,50 100,100 75,120 50,100 50,50" fill="url(#hex${Date.now()})" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="20" fill="none" stroke="#fff" stroke-width="2" opacity="0.4"/>`,
+                
+                lightning: `
+                    <defs>
+                        <linearGradient id="lightning${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="15" fill="url(#lightning${Date.now()})"/>
+                    <path d="M60 40 L90 40 L70 75 L85 75 L55 110 L75 75 L60 75 Z" fill="#fff" opacity="0.8"/>`,
+                
+                zigzag: `
+                    <defs>
+                        <linearGradient id="zigzag${Date.now()}" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${primaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="10" fill="url(#zigzag${Date.now()})"/>
+                    <path d="M35 50 L65 35 L65 65 L95 50 L95 80 L65 95 L65 65 L35 80 Z" fill="#fff" opacity="0.6"/>`,
+                
+                spikes: `
+                    <circle cx="75" cy="75" r="50" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="40" fill="${secondaryColor}"/>
+                    <polygon points="75,25 85,45 65,45" fill="#fff" opacity="0.8"/>
+                    <polygon points="125,75 105,85 105,65" fill="#fff" opacity="0.8"/>
+                    <polygon points="75,125 65,105 85,105" fill="#fff" opacity="0.8"/>
+                    <polygon points="25,75 45,65 45,85" fill="#fff" opacity="0.8"/>`,
+                
+                mountain: `
+                    <defs>
+                        <linearGradient id="mountain${Date.now()}" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="8" fill="url(#mountain${Date.now()})"/>
+                    <polygon points="40,115 75,45 110,115" fill="#fff" opacity="0.3"/>
+                    <polygon points="55,115 75,70 95,115" fill="#fff" opacity="0.5"/>`,
+                
+                blocks: `
+                    <rect x="35" y="35" width="80" height="80" rx="5" fill="${primaryColor}"/>
+                    <rect x="40" y="40" width="25" height="25" fill="${secondaryColor}"/>
+                    <rect x="70" y="40" width="25" height="25" fill="#fff" opacity="0.4"/>
+                    <rect x="40" y="70" width="25" height="25" fill="#fff" opacity="0.4"/>
+                    <rect x="70" y="70" width="25" height="25" fill="${secondaryColor}"/>
+                    <rect x="55" y="55" width="10" height="10" fill="#fff"/>`,
+                
+                fortress: `
+                    <rect x="30" y="50" width="90" height="70" fill="${primaryColor}"/>
+                    <rect x="35" y="55" width="80" height="60" fill="${secondaryColor}"/>
+                    <rect x="40" y="30" width="15" height="25" fill="${primaryColor}"/>
+                    <rect x="60" y="25" width="20" height="30" fill="${primaryColor}"/>
+                    <rect x="85" y="30" width="15" height="25" fill="${primaryColor}"/>
+                    <rect x="65" y="70" width="10" height="25" fill="#fff" opacity="0.6"/>`,
+                
+                crosshair: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="30" fill="${secondaryColor}"/>
+                    <line x1="75" y1="35" x2="75" y2="115" stroke="#fff" stroke-width="3"/>
+                    <line x1="35" y1="75" x2="115" y2="75" stroke="#fff" stroke-width="3"/>
+                    <circle cx="75" cy="75" r="8" fill="#fff"/>`,
+                
+                web: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="35" fill="none" stroke="${secondaryColor}" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="25" fill="none" stroke="${secondaryColor}" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="15" fill="none" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="75" y1="30" x2="75" y2="120" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="30" y1="75" x2="120" y2="75" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="48" y1="48" x2="102" y2="102" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="102" y1="48" x2="48" y2="102" stroke="${secondaryColor}" stroke-width="2"/>`,
+                
+                rays: `
+                    <circle cx="75" cy="75" r="40" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="20" fill="${secondaryColor}"/>
+                    <polygon points="75,25 78,50 72,50" fill="#fff" opacity="0.8"/>
+                    <polygon points="106,43 81,61 85,55" fill="#fff" opacity="0.8"/>
+                    <polygon points="106,107 81,89 85,95" fill="#fff" opacity="0.8"/>
+                    <polygon points="75,125 72,100 78,100" fill="#fff" opacity="0.8"/>
+                    <polygon points="44,107 69,89 65,95" fill="#fff" opacity="0.8"/>
+                    <polygon points="44,43 69,61 65,55" fill="#fff" opacity="0.8"/>`,
+                
+                gears: `
+                    <circle cx="75" cy="75" r="40" fill="${primaryColor}"/>
+                    <circle cx="60" cy="60" r="15" fill="${secondaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="90" cy="90" r="15" fill="${secondaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="60" cy="60" r="8" fill="#fff"/>
+                    <circle cx="90" cy="90" r="8" fill="#fff"/>
+                    <rect x="55" y="45" width="10" height="8" fill="#fff" opacity="0.8"/>
+                    <rect x="85" y="75" width="10" height="8" fill="#fff" opacity="0.8"/>`,
+                
+                circuit: `
+                    <rect x="30" y="30" width="90" height="90" rx="5" fill="${primaryColor}"/>
+                    <rect x="35" y="35" width="80" height="80" rx="3" fill="${secondaryColor}"/>
+                    <line x1="45" y1="55" x2="105" y2="55" stroke="#fff" stroke-width="3"/>
+                    <line x1="45" y1="75" x2="105" y2="75" stroke="#fff" stroke-width="3"/>
+                    <line x1="45" y1="95" x2="105" y2="95" stroke="#fff" stroke-width="3"/>
+                    <circle cx="55" cy="55" r="3" fill="#fff"/>
+                    <circle cx="95" cy="75" r="3" fill="#fff"/>
+                    <circle cx="75" cy="95" r="3" fill="#fff"/>`,
+                
+                star: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <polygon points="75,35 81,57 105,57 87,71 93,93 75,79 57,93 63,71 45,57 69,57" fill="${secondaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="12" fill="#fff"/>`,
+                
+                circle: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="25" fill="${secondaryColor}"/>
+                    <circle cx="75" cy="75" r="10" fill="#fff"/>`
+            };
+            
+            return `
+                <div style="position: relative; width: 100%; height: 100%;">
+                    <svg width="150" height="150" viewBox="0 0 150 150" style="position: absolute; top: 0; left: 0;">
+                        ${patterns[pattern] || patterns.circle}
+                    </svg>
+                    <div style="position: absolute; top: 8px; right: 8px; font-size: 1.5em;">${emoji}</div>
+                    <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; font-size: 0.7em; line-height: 1.1; text-align: center; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                        <div style="font-weight: bold;">${fighter.archetype}</div>
+                        <div style="opacity: 0.9;">${fighter.variation}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+
         function generateCharacterGrid() {
             const grid = document.getElementById('characterGrid');
             grid.innerHTML = '';
@@ -459,10 +678,11 @@
             archetypeRoster.forEach(fighter => {
                 const btn = document.createElement('button');
                 btn.className = `character-btn ${fighter.id}`;
-                btn.innerHTML = `<div style="font-size: 0.9em; line-height: 1.2; text-align: center;">${fighter.archetype}<br><strong>${fighter.variation}</strong></div>`;
-                btn.style.backgroundColor = fighter.color;
-                btn.style.color = 'white';
-                btn.style.textShadow = '1px 1px 2px rgba(0,0,0,0.8)';
+                btn.innerHTML = generateCharacterPortrait(fighter);
+                btn.style.backgroundColor = 'transparent';
+                btn.style.border = '3px solid #4a4a6a';
+                btn.style.position = 'relative';
+                btn.style.overflow = 'hidden';
                 
                 // Check if character is already selected
                 const isSelected = gameState.playerSelections.some((p, i) => 
