@@ -4,36 +4,46 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// Multi-player character selection screen with team support
+/// Street Fighter 2 style character selection screen
 /// </summary>
 public partial class CharacterSelect : Control
 {
     private GridContainer _characterGrid;
     private Button _confirmButton;
     private Button _backButton;
-    private VBoxContainer _playersContainer;
     private Label _titleLabel;
+    private ColorRect _selectionCursor;
     
-    private List<PlayerSelectionData> _playerSelections;
-    private int _currentPlayerIndex = 0;
-    private string[] _availableCharacters;
+    // Player selection display elements
+    private TextureRect _player1Portrait;
+    private TextureRect _player2Portrait;
+    private Label _player1Name;
+    private Label _player2Name;
+    private Label _vsLabel;
+    
+    // Selection state
+    private int _currentPlayer = 1; // 1 or 2
+    private int _cursorX = 0;
+    private int _cursorY = 0;
+    private string _player1Selection = "";
+    private string _player2Selection = "";
+    
+    // Street Fighter 2 roster - 6 characters in 2x3 grid
+    private readonly SF2Character[] _sf2Roster = new SF2Character[]
+    {
+        new("ryu", "RYU", "Japan"),
+        new("ken", "KEN", "USA"),
+        new("chun_li", "CHUN-LI", "China"),
+        new("zangief", "ZANGIEF", "USSR"),
+        new("sagat", "SAGAT", "Thailand"),
+        new("lei_wulong", "LEI WULONG", "Hong Kong")
+    };
     
     public override void _Ready()
     {
         SetupUI();
-        InitializePlayerSelections();
-        LoadCharacters();
-        
-        // Connect to DLC manager updates for new fighters
-        if (DLCManager.Instance != null)
-        {
-            DLCManager.Instance.Connect(DLCManager.SignalName.FighterUnlocked, new Callable(this, nameof(OnFighterUnlocked)));
-        }
-    }
-    
-    private void OnFighterUnlocked(string fighterId)
-    {
-        LoadCharacters(); // Refresh character list when new fighter is unlocked
+        LoadCharacterPortraits();
+        UpdateCursorPosition();
     }
     
     private void SetupUI()
@@ -41,80 +51,23 @@ public partial class CharacterSelect : Control
         _characterGrid = GetNode<GridContainer>("CharacterGrid");
         _confirmButton = GetNode<Button>("ConfirmButton");
         _backButton = GetNode<Button>("BackButton");
-        _playersContainer = GetNode<VBoxContainer>("PlayersContainer");
         _titleLabel = GetNode<Label>("Title");
+        _selectionCursor = GetNode<ColorRect>("SelectionCursor");
+        
+        _player1Portrait = GetNode<TextureRect>("Player1Selection/Player1Portrait");
+        _player2Portrait = GetNode<TextureRect>("Player2Selection/Player2Portrait");
+        _player1Name = GetNode<Label>("Player1Selection/Player1Name");
+        _player2Name = GetNode<Label>("Player2Selection/Player2Name");
+        _vsLabel = GetNode<Label>("VSLabel");
         
         _confirmButton.Pressed += OnConfirmPressed;
         _backButton.Pressed += OnBackPressed;
         
-        UpdateTitle();
+        // Initially hide VS label until both players select
+        _vsLabel.Visible = false;
     }
     
-    private void InitializePlayerSelections()
-    {
-        _playerSelections = new List<PlayerSelectionData>();
-        
-        for (int i = 0; i < MatchConfiguration.PlayerCount; i++)
-        {
-            var playerData = new PlayerSelectionData
-            {
-                PlayerId = $"player{i + 1}",
-                PlayerNumber = i + 1,
-                SelectedCharacter = "",
-                Team = GetTeamAssignment(i)
-            };
-            _playerSelections.Add(playerData);
-        }
-        
-        CreatePlayerLabels();
-        UpdatePlayerLabels();
-    }
-    
-    private int GetTeamAssignment(int playerIndex)
-    {
-        return MatchConfiguration.Mode switch
-        {
-            MatchMode.OneVOne => playerIndex == 0 ? 1 : 2,
-            MatchMode.TwoVTwo => playerIndex < 2 ? 1 : 2,
-            MatchMode.TwoVOne => playerIndex < 2 ? 1 : 2, // First 2 players on team 1, last player on team 2
-            MatchMode.ThreeVOne => playerIndex < 3 ? 1 : 2, // First 3 players on team 1, last player on team 2
-            MatchMode.FreeForAll => playerIndex + 1, // Each player is their own team
-            _ => 1
-        };
-    }
-    
-    private void CreatePlayerLabels()
-    {
-        // Clear existing labels
-        foreach (Node child in _playersContainer.GetChildren())
-        {
-            child.QueueFree();
-        }
-        
-        foreach (var player in _playerSelections)
-        {
-            var label = new Label();
-            label.Name = $"Player{player.PlayerNumber}Label";
-            label.AddThemeStyleboxOverride("normal", new StyleBoxFlat());
-            _playersContainer.AddChild(label);
-        }
-    }
-    
-    private void UpdateTitle()
-    {
-        string modeText = MatchConfiguration.Mode switch
-        {
-            MatchMode.OneVOne => "1v1 Character Select",
-            MatchMode.TwoVTwo => "2v2 Team Character Select",
-            MatchMode.TwoVOne => "2v1 Asymmetric Character Select",
-            MatchMode.ThreeVOne => "3v1 Asymmetric Character Select",
-            MatchMode.FreeForAll => "Free For All Character Select",
-            _ => "Character Select"
-        };
-        _titleLabel.Text = modeText;
-    }
-    
-    private void LoadCharacters()
+    private void LoadCharacterPortraits()
     {
         // Clear existing children
         foreach (Node child in _characterGrid.GetChildren())
@@ -122,259 +75,204 @@ public partial class CharacterSelect : Control
             child.QueueFree();
         }
         
-        // Define archetype-based roster with 3 variations each
-        var archetypeRoster = GetArchetypeRoster();
-        _availableCharacters = archetypeRoster.Select(f => f.FighterId).ToArray();
-        
-        foreach (var fighter in archetypeRoster)
+        foreach (var character in _sf2Roster)
         {
-            CreateCharacterButton(fighter);
+            CreateCharacterPortrait(character);
         }
     }
     
-    private List<ArchetypeFighter> GetArchetypeRoster()
+    private void CreateCharacterPortrait(SF2Character character)
     {
-        return new List<ArchetypeFighter>
+        var container = new VBoxContainer();
+        container.CustomMinimumSize = new Vector2(200, 180);
+        
+        // Load character sprite as portrait
+        var portrait = new TextureRect();
+        portrait.CustomMinimumSize = new Vector2(200, 150);
+        portrait.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
+        portrait.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+        
+        // Try to load the character's idle sprite
+        string spritePath = $"res://assets/sprites/street_fighter_6/{character.Id}/sprites/{character.Id}_idle.png";
+        var texture = GD.Load<Texture2D>(spritePath);
+        if (texture != null)
         {
-            // Balanced Archetype - All-rounders
-            new("balanced_a", "Balanced", "Standard", "All-around fighter with no weaknesses", Colors.Blue),
-            new("balanced_b", "Balanced", "Hybrid", "Adaptable with shifting fighting styles", Colors.CornflowerBlue),
-            new("balanced_c", "Balanced", "Versatile", "Master of fundamentals", Colors.DodgerBlue),
-            
-            // Rushdown Archetype - Fast and aggressive
-            new("rushdown_a", "Rushdown", "Pressure", "Relentless offense and mixups", Colors.Red),
-            new("rushdown_b", "Rushdown", "Blitz", "Lightning-fast combo chains", Colors.Crimson),
-            new("rushdown_c", "Rushdown", "Berserker", "All-out aggressive assault", Colors.OrangeRed),
-            
-            // Grappler Archetype - Command throws and power
-            new("grappler_a", "Grappler", "Wrestler", "Classic command throw specialist", Colors.Green),
-            new("grappler_b", "Grappler", "Bruiser", "Heavy hits with reach", Colors.DarkGreen),
-            new("grappler_c", "Grappler", "Colossus", "Unstoppable powerhouse", Colors.ForestGreen),
-            
-            // Zoner Archetype - Projectiles and keep-away
-            new("zoner_a", "Zoner", "Sniper", "Precise long-range attacks", Colors.Purple),
-            new("zoner_b", "Zoner", "Trapper", "Area control specialist", Colors.MediumPurple),
-            new("zoner_c", "Zoner", "Artillery", "Maximum screen control", Colors.DarkViolet),
-            
-            // Technical Archetype - Complex combos and execution
-            new("technical_a", "Technical", "Combo", "Intricate combo sequences", Colors.Orange),
-            new("technical_b", "Technical", "Setup", "Advanced combo setups", Colors.DarkOrange),
-            new("technical_c", "Technical", "Master", "Ultimate execution challenge", Colors.Gold)
-        };
-    }
-    
-    private void CreateCharacterButton(ArchetypeFighter fighter)
-    {
-        var button = new Button();
-        button.CustomMinimumSize = new Vector2(150, 150);
-        
-        // Create a colored rectangle as portrait background
-        var colorRect = new ColorRect();
-        colorRect.Color = fighter.Color;
-        colorRect.AnchorLeft = 0;
-        colorRect.AnchorTop = 0;
-        colorRect.AnchorRight = 1;
-        colorRect.AnchorBottom = 1;
-        colorRect.OffsetLeft = 5;
-        colorRect.OffsetTop = 5;
-        colorRect.OffsetRight = -5;
-        colorRect.OffsetBottom = -5;
-        button.AddChild(colorRect);
-        
-        // Add archetype label (top)
-        var archetypeLabel = new Label();
-        archetypeLabel.Text = fighter.Archetype;
-        archetypeLabel.HorizontalAlignment = HorizontalAlignment.Center;
-        archetypeLabel.AnchorLeft = 0;
-        archetypeLabel.AnchorRight = 1;
-        archetypeLabel.AnchorTop = 0;
-        archetypeLabel.AnchorBottom = 0;
-        archetypeLabel.OffsetLeft = 0;
-        archetypeLabel.OffsetRight = 0;
-        archetypeLabel.OffsetTop = 10;
-        archetypeLabel.OffsetBottom = 25;
-        archetypeLabel.AddThemeColorOverride("font_color", Colors.White);
-        archetypeLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
-        archetypeLabel.AddThemeConstantOverride("shadow_offset_x", 1);
-        archetypeLabel.AddThemeConstantOverride("shadow_offset_y", 1);
-        button.AddChild(archetypeLabel);
-        
-        // Add variation label (center)
-        var variationLabel = new Label();
-        variationLabel.Text = fighter.Variation;
-        variationLabel.HorizontalAlignment = HorizontalAlignment.Center;
-        variationLabel.VerticalAlignment = VerticalAlignment.Center;
-        variationLabel.AnchorLeft = 0;
-        variationLabel.AnchorRight = 1;
-        variationLabel.AnchorTop = 0;
-        variationLabel.AnchorBottom = 1;
-        variationLabel.OffsetLeft = 0;
-        variationLabel.OffsetRight = 0;
-        variationLabel.OffsetTop = 0;
-        variationLabel.OffsetBottom = 0;
-        variationLabel.AddThemeColorOverride("font_color", Colors.White);
-        variationLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
-        variationLabel.AddThemeConstantOverride("shadow_offset_x", 1);
-        variationLabel.AddThemeConstantOverride("shadow_offset_y", 1);
-        button.AddChild(variationLabel);
-        
-        // Check if character is already selected by another player
-        bool isAlreadySelected = _playerSelections.Any(p => p.SelectedCharacter == fighter.FighterId && _playerSelections.IndexOf(p) != _currentPlayerIndex);
-        if (isAlreadySelected)
+            portrait.Texture = texture;
+        }
+        else
         {
-            button.Disabled = true;
-            button.Modulate = new Color(0.5f, 0.5f, 0.5f, 1.0f);
+            GD.PrintErr($"Could not load sprite: {spritePath}");
+            // Create a colored placeholder
+            var colorRect = new ColorRect();
+            colorRect.CustomMinimumSize = new Vector2(200, 150);
+            colorRect.Color = GetCharacterColor(character.Id);
+            container.AddChild(colorRect);
         }
         
-        button.Pressed += () => OnCharacterSelected(fighter.FighterId);
-        _characterGrid.AddChild(button);
+        container.AddChild(portrait);
+        
+        // Add character name
+        var nameLabel = new Label();
+        nameLabel.Text = character.Name;
+        nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        nameLabel.AddThemeColorOverride("font_color", Colors.White);
+        nameLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
+        nameLabel.AddThemeConstantOverride("shadow_offset_x", 1);
+        nameLabel.AddThemeConstantOverride("shadow_offset_y", 1);
+        nameLabel.AddThemeFontSizeOverride("font_size", 16);
+        container.AddChild(nameLabel);
+        
+        _characterGrid.AddChild(container);
+    }
+    
+    private void UpdateCursorPosition()
+    {
+        if (_characterGrid.GetChildCount() == 0) return;
+        
+        // Calculate cursor position based on grid
+        int gridColumns = 3;
+        int index = _cursorY * gridColumns + _cursorX;
+        
+        if (index >= _characterGrid.GetChildCount())
+        {
+            index = _characterGrid.GetChildCount() - 1;
+            _cursorY = index / gridColumns;
+            _cursorX = index % gridColumns;
+        }
+        
+        var selectedChild = _characterGrid.GetChild(index) as Control;
+        if (selectedChild != null)
+        {
+            var globalRect = selectedChild.GetGlobalRect();
+            _selectionCursor.Position = globalRect.Position - new Vector2(5, 5);
+            _selectionCursor.Size = globalRect.Size + new Vector2(10, 10);
+            _selectionCursor.Visible = true;
+        }
+    }
+    
+    private SF2Character GetSelectedCharacter()
+    {
+        int gridColumns = 3;
+        int index = _cursorY * gridColumns + _cursorX;
+        
+        if (index >= 0 && index < _sf2Roster.Length)
+        {
+            return _sf2Roster[index];
+        }
+        
+        return _sf2Roster[0]; // Default to Ryu
+    }
+    
+    private void SelectCharacter()
+    {
+        var selectedCharacter = GetSelectedCharacter();
+        
+        if (_currentPlayer == 1)
+        {
+            _player1Selection = selectedCharacter.Id;
+            UpdatePlayerDisplay(1, selectedCharacter);
+            _currentPlayer = 2; // Switch to player 2
+        }
+        else if (_currentPlayer == 2)
+        {
+            _player2Selection = selectedCharacter.Id;
+            UpdatePlayerDisplay(2, selectedCharacter);
+        }
+        
+        // Check if both players have selected
+        if (!string.IsNullOrEmpty(_player1Selection) && !string.IsNullOrEmpty(_player2Selection))
+        {
+            _confirmButton.Disabled = false;
+            _vsLabel.Visible = true;
+        }
+    }
+    
+    private void UpdatePlayerDisplay(int player, SF2Character character)
+    {
+        TextureRect portrait = player == 1 ? _player1Portrait : _player2Portrait;
+        Label nameLabel = player == 1 ? _player1Name : _player2Name;
+        
+        // Load character portrait
+        string spritePath = $"res://assets/sprites/street_fighter_6/{character.Id}/sprites/{character.Id}_idle.png";
+        var texture = GD.Load<Texture2D>(spritePath);
+        if (texture != null)
+        {
+            portrait.Texture = texture;
+            portrait.ExpandMode = TextureRect.ExpandModeEnum.FitWidthProportional;
+            portrait.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
+        }
+        
+        nameLabel.Text = character.Name;
     }
     
     private Color GetCharacterColor(string characterId)
     {
-        // Get color from archetype roster
-        var archetypeRoster = GetArchetypeRoster();
-        var fighter = archetypeRoster.FirstOrDefault(f => f.FighterId == characterId);
-        return fighter?.Color ?? Colors.White;
+        return characterId switch
+        {
+            "ryu" => Colors.White,
+            "ken" => Colors.Yellow,
+            "chun_li" => Colors.Blue,
+            "zangief" => Colors.Red,
+            "sagat" => Colors.Orange,
+            "lei_wulong" => Colors.Purple,
+            _ => Colors.Gray
+        };
     }
     
-    private string GetDisplayName(string characterId)
+    public override void _Input(InputEvent @event)
     {
-        // Get display name from archetype roster
-        var archetypeRoster = GetArchetypeRoster();
-        var fighter = archetypeRoster.FirstOrDefault(f => f.FighterId == characterId);
-        if (fighter != null)
+        if (@event.IsActionPressed("ui_left"))
         {
-            return $"{fighter.Archetype}\n{fighter.Variation}";
+            _cursorX = Math.Max(0, _cursorX - 1);
+            UpdateCursorPosition();
         }
-        return characterId.Replace("_", " ").Capitalize();
-    }
-    
-    private void OnCharacterSelected(string characterId)
-    {
-        // Validate character access for current player
-        string playerId = _playerSelections[_currentPlayerIndex].PlayerId;
-        bool canAccess = DLCManager.Instance?.CanPlayerAccessCharacter(characterId, playerId) ?? true;
-        
-        if (!canAccess)
+        else if (@event.IsActionPressed("ui_right"))
         {
-            ShowAccessDeniedDialog(characterId, playerId);
-            return;
+            _cursorX = Math.Min(2, _cursorX + 1); // 3 columns max
+            UpdateCursorPosition();
         }
-        
-        // Track analytics for character selection
-        var isAvailable = DLCManager.Instance?.IsFighterAvailable(characterId) ?? true;
-        
-        if (isAvailable)
+        else if (@event.IsActionPressed("ui_up"))
         {
-            // Track fighter mastery engagement
-            if (FighterMasterySystem.Instance != null)
+            _cursorY = Math.Max(0, _cursorY - 1);
+            UpdateCursorPosition();
+        }
+        else if (@event.IsActionPressed("ui_down"))
+        {
+            _cursorY = Math.Min(1, _cursorY + 1); // 2 rows max
+            UpdateCursorPosition();
+        }
+        else if (@event.IsActionPressed("ui_accept"))
+        {
+            SelectCharacter();
+        }
+        else if (@event.IsActionPressed("ui_cancel"))
+        {
+            if (_currentPlayer == 2 && !string.IsNullOrEmpty(_player1Selection))
             {
-                FighterMasterySystem.Instance.TrackFighterEvent(playerId, characterId, "character_selected");
-            }
-            
-            // Track cosmetic analytics for character selection
-            if (CosmeticAnalytics.Instance != null)
-            {
-                var archetype = GetCharacterArchetype(characterId);
-                CosmeticAnalytics.Instance.TrackBattlePassEngagement("character_selected", new() { ["character"] = characterId, ["archetype"] = archetype });
-            }
-        }
-        
-        // Set selection for current player
-        _playerSelections[_currentPlayerIndex].SelectedCharacter = characterId;
-        
-        // Move to next player or finish
-        _currentPlayerIndex++;
-        if (_currentPlayerIndex >= _playerSelections.Count)
-        {
-            _currentPlayerIndex = _playerSelections.Count - 1; // Stay on last player
-        }
-        
-        UpdatePlayerLabels();
-        RefreshCharacterButtons();
-        
-        // If all players have selected, enable confirm
-        if (_playerSelections.All(p => !string.IsNullOrEmpty(p.SelectedCharacter)))
-        {
-            _confirmButton.Disabled = false;
-        }
-    }
-    
-    private void RefreshCharacterButtons()
-    {
-        // Refresh character buttons to show availability
-        LoadCharacters();
-    }
-    
-    private string GetCharacterArchetype(string characterId)
-    {
-        // Extract archetype from fighter ID
-        if (characterId.Contains("_"))
-        {
-            return characterId.Split('_')[0];
-        }
-        return "unknown";
-    }
-    
-    private void ShowAccessDeniedDialog(string characterId, string playerId)
-    {
-        var dialog = new AcceptDialog();
-        dialog.Title = "Character Access";
-        
-        var isOwned = DLCManager.Instance?.IsCharacterOwned(characterId) ?? true;
-        
-        if (!isOwned)
-        {
-            dialog.DialogText = $"You don't have access to {characterId.Capitalize()}.\n\n" +
-                              $"Purchase this character to unlock it.";
-        }
-        else
-        {
-            dialog.DialogText = $"Character access error for {characterId.Capitalize()}.";
-        }
-        
-        GetTree().Root.AddChild(dialog);
-        dialog.PopupCentered();
-    }
-    
-    private void UpdatePlayerLabels()
-    {
-        for (int i = 0; i < _playerSelections.Count; i++)
-        {
-            var player = _playerSelections[i];
-            var label = _playersContainer.GetNode<Label>($"Player{player.PlayerNumber}Label");
-            
-            string teamText = MatchConfiguration.Mode == MatchMode.FreeForAll ? "" : $" (Team {player.Team})";
-            string selectionText = string.IsNullOrEmpty(player.SelectedCharacter) ? "Select Character" : GetDisplayName(player.SelectedCharacter);
-            
-            label.Text = $"Player {player.PlayerNumber}{teamText}: {selectionText}";
-            
-            // Highlight current player
-            if (i == _currentPlayerIndex)
-            {
-                label.AddThemeColorOverride("font_color", Colors.Yellow);
-            }
-            else if (!string.IsNullOrEmpty(player.SelectedCharacter))
-            {
-                label.AddThemeColorOverride("font_color", Colors.Green);
+                // Allow going back to player 1 selection
+                _currentPlayer = 1;
+                _player1Selection = "";
+                _player1Portrait.Texture = null;
+                _player1Name.Text = "";
+                _confirmButton.Disabled = true;
+                _vsLabel.Visible = false;
             }
             else
             {
-                label.AddThemeColorOverride("font_color", Colors.White);
+                OnBackPressed();
             }
         }
     }
     
     private void OnConfirmPressed()
     {
-        // Store selections for the gameplay scene
-        GD.Print("Starting match with selections:");
-        foreach (var player in _playerSelections)
-        {
-            GD.Print($"  {player.PlayerId} (Team {player.Team}): {player.SelectedCharacter}");
-        }
+        if (string.IsNullOrEmpty(_player1Selection) || string.IsNullOrEmpty(_player2Selection))
+            return;
+            
+        GD.Print($"Fight! Player 1: {_player1Selection} vs Player 2: {_player2Selection}");
         
+        // Store selections for gameplay
+        // This would integrate with the existing game state management
         GameManager.Instance?.ChangeState(GameState.Gameplay);
     }
     
@@ -382,41 +280,21 @@ public partial class CharacterSelect : Control
     {
         GameManager.Instance?.ChangeState(GameState.MatchSetup);
     }
-    
-    public override void _Input(InputEvent @event)
-    {
-        if (@event.IsActionPressed("ui_cancel"))
-        {
-            OnBackPressed();
-        }
-    }
-}
-
-public class PlayerSelectionData
-{
-    public string PlayerId { get; set; }
-    public int PlayerNumber { get; set; }
-    public string SelectedCharacter { get; set; }
-    public int Team { get; set; }
 }
 
 /// <summary>
-/// Represents a fighter with archetype classification and variation
+/// Represents a Street Fighter 2 character
 /// </summary>
-public class ArchetypeFighter
+public class SF2Character
 {
-    public string FighterId { get; }
-    public string Archetype { get; }
-    public string Variation { get; }
-    public string Description { get; }
-    public Color Color { get; }
+    public string Id { get; }
+    public string Name { get; }
+    public string Country { get; }
     
-    public ArchetypeFighter(string fighterId, string archetype, string variation, string description, Color color)
+    public SF2Character(string id, string name, string country)
     {
-        FighterId = fighterId;
-        Archetype = archetype;
-        Variation = variation;
-        Description = description;
-        Color = color;
+        Id = id;
+        Name = name;
+        Country = country;
     }
 }
