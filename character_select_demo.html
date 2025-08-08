@@ -266,7 +266,8 @@
         
         <div class="controls">
             <button class="control-btn primary disabled" id="startFightBtn" onclick="startFight()">Start Fight</button>
-            <button class="control-btn" onclick="backToSetup()">Back</button>
+            <button class="control-btn" id="backVariationBtn" onclick="backToArchetypeSelection()" style="display: none;">Back to Archetypes</button>
+            <button class="control-btn" onclick="backToSetup()">Back to Setup</button>
         </div>
     </div>
 
@@ -275,34 +276,94 @@
             playerCount: 0,
             matchMode: '',
             currentPlayer: 0,
-            playerSelections: []
+            playerSelections: [],
+            selectionStep: 'archetype', // 'archetype' or 'variation'
+            selectedArchetype: null
         };
+        
+        const archetypes = [
+            { 
+                id: 'balanced', 
+                name: 'Balanced', 
+                color: '#4169E1',
+                description: 'All-around fighters with balanced offense and defense',
+                variations: [
+                    { id: 'balanced_standard', name: 'Standard', color: '#4169E1' },
+                    { id: 'balanced_hybrid', name: 'Hybrid', color: '#6495ED' },
+                    { id: 'balanced_versatile', name: 'Versatile', color: '#1E90FF' }
+                ]
+            },
+            { 
+                id: 'rushdown', 
+                name: 'Rushdown', 
+                color: '#DC143C',
+                description: 'Fast, aggressive fighters focused on pressure',
+                variations: [
+                    { id: 'rushdown_pressure', name: 'Pressure', color: '#DC143C' },
+                    { id: 'rushdown_blitz', name: 'Blitz', color: '#DC143C' },
+                    { id: 'rushdown_berserker', name: 'Berserker', color: '#FF4500' }
+                ]
+            },
+            { 
+                id: 'grappler', 
+                name: 'Grappler', 
+                color: '#228B22',
+                description: 'Powerful fighters with command throws',
+                variations: [
+                    { id: 'grappler_wrestler', name: 'Wrestler', color: '#228B22' },
+                    { id: 'grappler_bruiser', name: 'Bruiser', color: '#006400' },
+                    { id: 'grappler_colossus', name: 'Colossus', color: '#228B22' }
+                ]
+            },
+            { 
+                id: 'zoner', 
+                name: 'Zoner', 
+                color: '#9370DB',
+                description: 'Projectile specialists and keep-away experts',
+                variations: [
+                    { id: 'zoner_sniper', name: 'Sniper', color: '#9370DB' },
+                    { id: 'zoner_trapper', name: 'Trapper', color: '#8A2BE2' },
+                    { id: 'zoner_artillery', name: 'Artillery', color: '#4B0082' }
+                ]
+            },
+            { 
+                id: 'technical', 
+                name: 'Technical', 
+                color: '#FF8C00',
+                description: 'Complex fighters requiring high execution',
+                variations: [
+                    { id: 'technical_combo', name: 'Combo', color: '#FF8C00' },
+                    { id: 'technical_setup', name: 'Setup', color: '#FF8C00' },
+                    { id: 'technical_master', name: 'Master', color: '#FFD700' }
+                ]
+            }
+        ];
         
         const archetypeRoster = [
             // Balanced Archetype - All-rounders
-            { id: 'balanced_a', archetype: 'Balanced', variation: 'Standard', color: '#4169E1' },
-            { id: 'balanced_b', archetype: 'Balanced', variation: 'Hybrid', color: '#6495ED' },
-            { id: 'balanced_c', archetype: 'Balanced', variation: 'Versatile', color: '#1E90FF' },
+            { id: 'balanced_standard', archetype: 'Balanced', variation: 'Standard', color: '#4169E1' },
+            { id: 'balanced_hybrid', archetype: 'Balanced', variation: 'Hybrid', color: '#6495ED' },
+            { id: 'balanced_versatile', archetype: 'Balanced', variation: 'Versatile', color: '#1E90FF' },
             
             // Rushdown Archetype - Fast and aggressive
-            { id: 'rushdown_a', archetype: 'Rushdown', variation: 'Pressure', color: '#DC143C' },
-            { id: 'rushdown_b', archetype: 'Rushdown', variation: 'Blitz', color: '#DC143C' },
-            { id: 'rushdown_c', archetype: 'Rushdown', variation: 'Berserker', color: '#FF4500' },
+            { id: 'rushdown_pressure', archetype: 'Rushdown', variation: 'Pressure', color: '#DC143C' },
+            { id: 'rushdown_blitz', archetype: 'Rushdown', variation: 'Blitz', color: '#DC143C' },
+            { id: 'rushdown_berserker', archetype: 'Rushdown', variation: 'Berserker', color: '#FF4500' },
             
             // Grappler Archetype - Command throws and power
-            { id: 'grappler_a', archetype: 'Grappler', variation: 'Wrestler', color: '#228B22' },
-            { id: 'grappler_b', archetype: 'Grappler', variation: 'Bruiser', color: '#006400' },
-            { id: 'grappler_c', archetype: 'Grappler', variation: 'Colossus', color: '#228B22' },
+            { id: 'grappler_wrestler', archetype: 'Grappler', variation: 'Wrestler', color: '#228B22' },
+            { id: 'grappler_bruiser', archetype: 'Grappler', variation: 'Bruiser', color: '#006400' },
+            { id: 'grappler_colossus', archetype: 'Grappler', variation: 'Colossus', color: '#228B22' },
             
             // Zoner Archetype - Projectiles and keep-away
-            { id: 'zoner_a', archetype: 'Zoner', variation: 'Sniper', color: '#9370DB' },
-            { id: 'zoner_b', archetype: 'Zoner', variation: 'Trapper', color: '#8A2BE2' },
-            { id: 'zoner_c', archetype: 'Zoner', variation: 'Artillery', color: '#4B0082' },
+            { id: 'zoner_sniper', archetype: 'Zoner', variation: 'Sniper', color: '#9370DB' },
+            { id: 'zoner_trapper', archetype: 'Zoner', variation: 'Trapper', color: '#8A2BE2' },
+            { id: 'zoner_artillery', archetype: 'Zoner', variation: 'Artillery', color: '#4B0082' },
             
             // Technical Archetype - Complex combos and execution
-            { id: 'technical_a', archetype: 'Technical', variation: 'Combo', color: '#FF8C00' },
-            { id: 'technical_b', archetype: 'Technical', variation: 'Setup', color: '#FF8C00' },
-            { id: 'technical_c', archetype: 'Technical', variation: 'Master', color: '#FFD700' }
+            { id: 'technical_combo', archetype: 'Technical', variation: 'Combo', color: '#FF8C00' },
+            { id: 'technical_setup', archetype: 'Technical', variation: 'Setup', color: '#FF8C00' },
+            { id: 'technical_master', archetype: 'Technical', variation: 'Master', color: '#FFD700' }
         ];
         
         function selectPlayerCount(count) {
@@ -373,9 +434,11 @@
         function proceedToCharacterSelect() {
             if (gameState.playerCount === 0 || gameState.matchMode === '') return;
             
-            // Initialize player selections
+            // Initialize player selections and selection state
             gameState.playerSelections = [];
             gameState.currentPlayer = 0;
+            gameState.selectionStep = 'archetype';
+            gameState.selectedArchetype = null;
             
             for (let i = 0; i < gameState.playerCount; i++) {
                 let team = 1;
@@ -409,6 +472,7 @@
             generatePlayerInfo();
             generateCharacterGrid();
             updateSelectStatus();
+            updateControlsVisibility();
         }
         
         function generatePlayerInfo() {
@@ -675,34 +739,174 @@
             const grid = document.getElementById('characterGrid');
             grid.innerHTML = '';
             
-            archetypeRoster.forEach(fighter => {
-                const btn = document.createElement('button');
-                btn.className = `character-btn ${fighter.id}`;
-                btn.innerHTML = generateCharacterPortrait(fighter);
-                btn.style.backgroundColor = 'transparent';
-                btn.style.border = '3px solid #4a4a6a';
-                btn.style.position = 'relative';
-                btn.style.overflow = 'hidden';
+            if (gameState.selectionStep === 'archetype') {
+                // Show the 5 main archetypes
+                archetypes.forEach(archetype => {
+                    const btn = document.createElement('button');
+                    btn.className = `character-btn archetype-btn`;
+                    btn.innerHTML = generateArchetypePortrait(archetype);
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.border = '3px solid #4a4a6a';
+                    btn.style.position = 'relative';
+                    btn.style.overflow = 'hidden';
+                    
+                    btn.onclick = () => selectArchetype(archetype);
+                    grid.appendChild(btn);
+                });
                 
-                // Check if character is already selected
-                const isSelected = gameState.playerSelections.some((p, i) => 
-                    p.character === fighter.id && i !== gameState.currentPlayer
-                );
+                // Adjust grid for 5 archetypes (5 columns)
+                grid.style.gridTemplateColumns = 'repeat(5, 1fr)';
                 
-                if (isSelected) {
-                    btn.classList.add('disabled');
-                    btn.onclick = null;
-                } else {
-                    btn.onclick = () => selectCharacter(fighter.id);
-                }
+            } else if (gameState.selectionStep === 'variation' && gameState.selectedArchetype) {
+                // Show the 3 variations for the selected archetype
+                const archetype = gameState.selectedArchetype;
+                archetype.variations.forEach(variation => {
+                    const btn = document.createElement('button');
+                    btn.className = `character-btn variation-btn`;
+                    
+                    // Create fighter object for portrait generation
+                    const fighter = {
+                        archetype: archetype.name,
+                        variation: variation.name,
+                        color: variation.color
+                    };
+                    
+                    btn.innerHTML = generateCharacterPortrait(fighter);
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.border = '3px solid #4a4a6a';
+                    btn.style.position = 'relative';
+                    btn.style.overflow = 'hidden';
+                    
+                    // Check if this variation is already selected by another player
+                    const isSelected = gameState.playerSelections.some((p, i) => 
+                        p.character === variation.id && i !== gameState.currentPlayer
+                    );
+                    
+                    if (isSelected) {
+                        btn.classList.add('disabled');
+                        btn.onclick = null;
+                    } else {
+                        btn.onclick = () => selectVariation(variation.id);
+                    }
+                    
+                    grid.appendChild(btn);
+                });
                 
-                grid.appendChild(btn);
-            });
+                // Adjust grid for 3 variations (3 columns)
+                grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                grid.style.maxWidth = '600px';
+            }
         }
         
-        function selectCharacter(character) {
+        function generateArchetypePortrait(archetype) {
+            // Get main pattern and emoji for the archetype
+            const archetypePatterns = {
+                'Balanced': 'shield',
+                'Rushdown': 'lightning', 
+                'Grappler': 'mountain',
+                'Zoner': 'crosshair',
+                'Technical': 'gears'
+            };
+            
+            const archetypeEmojis = {
+                'Balanced': '⚖️',
+                'Rushdown': '⚡',
+                'Grappler': '💪',
+                'Zoner': '🎯', 
+                'Technical': '⚙️'
+            };
+            
+            const pattern = archetypePatterns[archetype.name] || 'circle';
+            const emoji = archetypeEmojis[archetype.name] || '?';
+            const secondaryColor = getSecondaryColor(archetype.color);
+            
+            return createArchetypePortraitSVG(archetype.color, secondaryColor, pattern, emoji, archetype);
+        }
+        
+        function createArchetypePortraitSVG(primaryColor, secondaryColor, pattern, emoji, archetype) {
+            const patterns = {
+                shield: `
+                    <defs>
+                        <linearGradient id="gradShield${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M75 30 L45 45 L45 105 L75 120 L105 105 L105 45 Z" fill="url(#gradShield${Date.now()})" stroke="#fff" stroke-width="3"/>
+                    <circle cx="75" cy="70" r="20" fill="#fff" opacity="0.3"/>`,
+                
+                lightning: `
+                    <defs>
+                        <linearGradient id="gradLightning${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="15" fill="url(#gradLightning${Date.now()})"/>
+                    <path d="M55 35 L95 35 L70 75 L90 75 L50 115 L75 75 L55 75 Z" fill="#fff" opacity="0.9"/>`,
+                
+                mountain: `
+                    <defs>
+                        <linearGradient id="gradMountain${Date.now()}" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="8" fill="url(#gradMountain${Date.now()})"/>
+                    <polygon points="35,115 75,40 115,115" fill="#fff" opacity="0.4"/>
+                    <polygon points="50,115 75,65 100,115" fill="#fff" opacity="0.6"/>`,
+                
+                crosshair: `
+                    <circle cx="75" cy="75" r="50" fill="${primaryColor}" stroke="#fff" stroke-width="3"/>
+                    <circle cx="75" cy="75" r="35" fill="${secondaryColor}"/>
+                    <line x1="75" y1="30" x2="75" y2="120" stroke="#fff" stroke-width="4"/>
+                    <line x1="30" y1="75" x2="120" y2="75" stroke="#fff" stroke-width="4"/>
+                    <circle cx="75" cy="75" r="10" fill="#fff"/>`,
+                
+                gears: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <circle cx="60" cy="60" r="18" fill="${secondaryColor}" stroke="#fff" stroke-width="3"/>
+                    <circle cx="90" cy="90" r="18" fill="${secondaryColor}" stroke="#fff" stroke-width="3"/>
+                    <circle cx="60" cy="60" r="10" fill="#fff"/>
+                    <circle cx="90" cy="90" r="10" fill="#fff"/>
+                    <rect x="54" y="42" width="12" height="10" fill="#fff" opacity="0.8"/>
+                    <rect x="84" y="72" width="12" height="10" fill="#fff" opacity="0.8"/>`,
+                
+                circle: `
+                    <circle cx="75" cy="75" r="50" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="30" fill="${secondaryColor}"/>
+                    <circle cx="75" cy="75" r="15" fill="#fff"/>`
+            };
+            
+            return `
+                <div style="position: relative; width: 100%; height: 100%;">
+                    <svg width="150" height="150" viewBox="0 0 150 150" style="position: absolute; top: 0; left: 0;">
+                        ${patterns[pattern] || patterns.circle}
+                    </svg>
+                    <div style="position: absolute; top: 8px; right: 8px; font-size: 2em;">${emoji}</div>
+                    <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; font-size: 0.9em; line-height: 1.2; text-align: center; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                        <div style="font-weight: bold; font-size: 1.1em;">${archetype.name}</div>
+                        <div style="opacity: 0.8; font-size: 0.8em; margin-top: 2px;">${archetype.description}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function selectArchetype(archetype) {
+            gameState.selectedArchetype = archetype;
+            gameState.selectionStep = 'variation';
+            generateCharacterGrid();
+            updateSelectStatus();
+            updateControlsVisibility();
+        }
+        
+        function selectVariation(variationId) {
             // Set selection for current player
-            gameState.playerSelections[gameState.currentPlayer].character = character;
+            gameState.playerSelections[gameState.currentPlayer].character = variationId;
+            
+            // Reset selection state for next player
+            gameState.selectedArchetype = null;
+            gameState.selectionStep = 'archetype';
             
             // Move to next player
             gameState.currentPlayer++;
@@ -714,6 +918,7 @@
             generatePlayerInfo();
             generateCharacterGrid();
             updateSelectStatus();
+            updateControlsVisibility();
             
             // Check if all players have selected
             const allSelected = gameState.playerSelections.every(p => p.character !== '');
@@ -722,11 +927,33 @@
             }
         }
         
+        function backToArchetypeSelection() {
+            gameState.selectedArchetype = null;
+            gameState.selectionStep = 'archetype';
+            generateCharacterGrid();
+            updateSelectStatus();
+            updateControlsVisibility();
+        }
+        
+        function updateControlsVisibility() {
+            const backVariationBtn = document.getElementById('backVariationBtn');
+            if (gameState.selectionStep === 'variation') {
+                backVariationBtn.style.display = 'inline-block';
+            } else {
+                backVariationBtn.style.display = 'none';
+            }
+        }
+        
         function updateSelectStatus() {
             const status = document.getElementById('selectStatus');
             if (gameState.currentPlayer < gameState.playerSelections.length) {
                 const currentPlayerNum = gameState.playerSelections[gameState.currentPlayer].playerNumber;
-                status.textContent = `Player ${currentPlayerNum}: Select your character`;
+                if (gameState.selectionStep === 'archetype') {
+                    status.textContent = `Player ${currentPlayerNum}: Select your archetype`;
+                } else if (gameState.selectionStep === 'variation') {
+                    const archetypeName = gameState.selectedArchetype.name;
+                    status.textContent = `Player ${currentPlayerNum}: Select ${archetypeName} variation`;
+                }
             } else {
                 status.textContent = 'All players ready!';
             }
