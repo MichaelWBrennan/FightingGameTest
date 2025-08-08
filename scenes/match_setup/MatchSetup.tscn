@@ -1,0 +1,180 @@
+[gd_scene load_steps=3 format=3 uid="uid://b5k6l8m9n0p1q"]
+
+[ext_resource type="Script" path="res://scripts/ui/MatchSetup.cs" id="1_setup"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.2, 0.2, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.5, 0.7, 1)
+
+[node name="MatchSetup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_setup")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.1, 0.1, 0.2, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 48
+text = "Match Setup"
+horizontal_alignment = 1
+
+[node name="PlayerCountSection" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 50.0
+offset_top = -150.0
+offset_right = 350.0
+offset_bottom = 150.0
+theme_override_constants/separation = 20
+
+[node name="PlayerCountLabel" type="Label" parent="PlayerCountSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Number of Players"
+horizontal_alignment = 1
+
+[node name="PlayerCountButtons" type="HBoxContainer" parent="PlayerCountSection"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TwoPlayerButton" type="Button" parent="PlayerCountSection/PlayerCountButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "2"
+
+[node name="ThreePlayerButton" type="Button" parent="PlayerCountSection/PlayerCountButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "3"
+
+[node name="FourPlayerButton" type="Button" parent="PlayerCountSection/PlayerCountButtons"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "4"
+
+[node name="MatchModeSection" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -150.0
+offset_right = -50.0
+offset_bottom = 150.0
+theme_override_constants/separation = 20
+
+[node name="MatchModeLabel" type="Label" parent="MatchModeSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Match Type"
+horizontal_alignment = 1
+
+[node name="MatchModeButtons" type="VBoxContainer" parent="MatchModeSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="OneVOneButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "1v1 (Individual)"
+
+[node name="TwoVTwoButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "2v2 (Team)"
+
+[node name="TwoVOneButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "2v1 (Asymmetric)"
+
+[node name="ThreeVOneButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "3v1 (Asymmetric)"
+
+[node name="FreeForAllButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "Free For All"
+
+[node name="StatusLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 200.0
+offset_right = 200.0
+offset_bottom = 250.0
+theme_override_font_sizes/font_size = 24
+text = "Select players and match type"
+horizontal_alignment = 1
+
+[node name="ProceedButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = -50.0
+disabled = true
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "Proceed to Character Select"
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -50.0
+offset_right = -50.0
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_1")
+text = "Back"

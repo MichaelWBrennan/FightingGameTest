@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fighting Game Character Select Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .screen {
+            min-height: 100vh;
+            padding: 20px;
+            display: none;
+            position: relative;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 3em;
+            margin: 20px 0;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .match-setup {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            min-height: 60vh;
+        }
+        
+        .section {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid #4a4a6a;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        .section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #ffd700;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .player-count-btn, .mode-btn {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: 2px solid #4a4a6a;
+            background: rgba(32, 32, 50, 0.8);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+        
+        .mode-btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .player-count-btn:hover, .mode-btn:hover {
+            background: rgba(64, 64, 100, 0.9);
+            border-color: #ffd700;
+        }
+        
+        .player-count-btn.active, .mode-btn.active {
+            background: #ffd700;
+            color: #1a1a2e;
+            border-color: #ffd700;
+        }
+        
+        .character-select {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .players-info {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #4a4a6a;
+        }
+        
+        .player-info {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+        
+        .player-info.current {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+        }
+        
+        .player-info.selected {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+        
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .character-btn {
+            width: 150px;
+            height: 150px;
+            border: 3px solid #4a4a6a;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(255,255,255,0.1) 100%);
+        }
+        
+        .character-btn:hover {
+            border-color: #ffd700;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .character-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            filter: grayscale(50%);
+        }
+        
+        .character-btn.selected {
+            border-color: #ff4500;
+            border-width: 4px;
+            box-shadow: 0 0 20px rgba(255, 69, 0, 0.5);
+        }
+        
+        .controls {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .control-btn {
+            padding: 15px 30px;
+            font-size: 1.3em;
+            margin: 0 10px;
+            border: 2px solid #4a4a6a;
+            background: rgba(32, 32, 50, 0.8);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover:not(.disabled) {
+            background: rgba(64, 64, 100, 0.9);
+            border-color: #ffd700;
+        }
+        
+        .control-btn.primary {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+        
+        .control-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #ffd700;
+        }
+        
+        /* Archetype colors are now handled dynamically in JavaScript */
+    </style>
+</head>
+<body>
+    <!-- Match Setup Screen -->
+    <div class="screen active" id="matchSetup">
+        <h1 class="title">Match Setup</h1>
+        <div class="match-setup">
+            <div class="section">
+                <h2>Number of Players</h2>
+                <div class="button-group">
+                    <button class="player-count-btn" onclick="selectPlayerCount(2)">2</button>
+                    <button class="player-count-btn" onclick="selectPlayerCount(3)">3</button>
+                    <button class="player-count-btn" onclick="selectPlayerCount(4)">4</button>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Match Type</h2>
+                <div class="button-group">
+                    <button class="mode-btn" id="mode-1v1" onclick="selectMode('1v1')">1v1 (Individual)</button>
+                    <button class="mode-btn" id="mode-2v2" onclick="selectMode('2v2')">2v2 (Team)</button>
+                    <button class="mode-btn" id="mode-2v1" onclick="selectMode('2v1')">2v1 (Asymmetric)</button>
+                    <button class="mode-btn" id="mode-3v1" onclick="selectMode('3v1')">3v1 (Asymmetric)</button>
+                    <button class="mode-btn" id="mode-ffa" onclick="selectMode('ffa')">Free For All</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status" id="setupStatus">Select players and match type</div>
+        
+        <div class="controls">
+            <button class="control-btn disabled" id="proceedBtn" onclick="proceedToCharacterSelect()">Proceed to Character Select</button>
+            <button class="control-btn" onclick="goBack()">Back</button>
+        </div>
+    </div>
+    
+    <!-- Character Select Screen -->
+    <div class="screen" id="characterSelect">
+        <h1 class="title" id="selectTitle">Character Select</h1>
+        
+        <div class="players-info" id="playersInfo">
+            <!-- Player info will be generated here -->
+        </div>
+        
+        <div class="character-select">
+            <div class="character-grid" id="characterGrid">
+                <!-- Character buttons will be generated here -->
+            </div>
+        </div>
+        
+        <div class="status" id="selectStatus">Player 1: Select your character</div>
+        
+        <div class="controls">
+            <button class="control-btn primary disabled" id="startFightBtn" onclick="startFight()">Start Fight</button>
+            <button class="control-btn" id="backVariationBtn" onclick="backToArchetypeSelection()" style="display: none;">Back to Archetypes</button>
+            <button class="control-btn" onclick="backToSetup()">Back to Setup</button>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            playerCount: 0,
+            matchMode: '',
+            currentPlayer: 0,
+            playerSelections: [],
+            selectionStep: 'archetype', // 'archetype' or 'variation'
+            selectedArchetype: null
+        };
+        
+        const archetypes = [
+            { 
+                id: 'balanced', 
+                name: 'Balanced', 
+                color: '#4169E1',
+                description: 'All-around fighters with balanced offense and defense',
+                variations: [
+                    { id: 'balanced_standard', name: 'Standard', color: '#4169E1' },
+                    { id: 'balanced_hybrid', name: 'Hybrid', color: '#6495ED' },
+                    { id: 'balanced_versatile', name: 'Versatile', color: '#1E90FF' }
+                ]
+            },
+            { 
+                id: 'rushdown', 
+                name: 'Rushdown', 
+                color: '#DC143C',
+                description: 'Fast, aggressive fighters focused on pressure',
+                variations: [
+                    { id: 'rushdown_pressure', name: 'Pressure', color: '#DC143C' },
+                    { id: 'rushdown_blitz', name: 'Blitz', color: '#DC143C' },
+                    { id: 'rushdown_berserker', name: 'Berserker', color: '#FF4500' }
+                ]
+            },
+            { 
+                id: 'grappler', 
+                name: 'Grappler', 
+                color: '#228B22',
+                description: 'Powerful fighters with command throws',
+                variations: [
+                    { id: 'grappler_wrestler', name: 'Wrestler', color: '#228B22' },
+                    { id: 'grappler_bruiser', name: 'Bruiser', color: '#006400' },
+                    { id: 'grappler_colossus', name: 'Colossus', color: '#228B22' }
+                ]
+            },
+            { 
+                id: 'zoner', 
+                name: 'Zoner', 
+                color: '#9370DB',
+                description: 'Projectile specialists and keep-away experts',
+                variations: [
+                    { id: 'zoner_sniper', name: 'Sniper', color: '#9370DB' },
+                    { id: 'zoner_trapper', name: 'Trapper', color: '#8A2BE2' },
+                    { id: 'zoner_artillery', name: 'Artillery', color: '#4B0082' }
+                ]
+            },
+            { 
+                id: 'technical', 
+                name: 'Technical', 
+                color: '#FF8C00',
+                description: 'Complex fighters requiring high execution',
+                variations: [
+                    { id: 'technical_combo', name: 'Combo', color: '#FF8C00' },
+                    { id: 'technical_setup', name: 'Setup', color: '#FF8C00' },
+                    { id: 'technical_master', name: 'Master', color: '#FFD700' }
+                ]
+            }
+        ];
+        
+        const archetypeRoster = [
+            // Balanced Archetype - All-rounders
+            { id: 'balanced_standard', archetype: 'Balanced', variation: 'Standard', color: '#4169E1' },
+            { id: 'balanced_hybrid', archetype: 'Balanced', variation: 'Hybrid', color: '#6495ED' },
+            { id: 'balanced_versatile', archetype: 'Balanced', variation: 'Versatile', color: '#1E90FF' },
+            
+            // Rushdown Archetype - Fast and aggressive
+            { id: 'rushdown_pressure', archetype: 'Rushdown', variation: 'Pressure', color: '#DC143C' },
+            { id: 'rushdown_blitz', archetype: 'Rushdown', variation: 'Blitz', color: '#DC143C' },
+            { id: 'rushdown_berserker', archetype: 'Rushdown', variation: 'Berserker', color: '#FF4500' },
+            
+            // Grappler Archetype - Command throws and power
+            { id: 'grappler_wrestler', archetype: 'Grappler', variation: 'Wrestler', color: '#228B22' },
+            { id: 'grappler_bruiser', archetype: 'Grappler', variation: 'Bruiser', color: '#006400' },
+            { id: 'grappler_colossus', archetype: 'Grappler', variation: 'Colossus', color: '#228B22' },
+            
+            // Zoner Archetype - Projectiles and keep-away
+            { id: 'zoner_sniper', archetype: 'Zoner', variation: 'Sniper', color: '#9370DB' },
+            { id: 'zoner_trapper', archetype: 'Zoner', variation: 'Trapper', color: '#8A2BE2' },
+            { id: 'zoner_artillery', archetype: 'Zoner', variation: 'Artillery', color: '#4B0082' },
+            
+            // Technical Archetype - Complex combos and execution
+            { id: 'technical_combo', archetype: 'Technical', variation: 'Combo', color: '#FF8C00' },
+            { id: 'technical_setup', archetype: 'Technical', variation: 'Setup', color: '#FF8C00' },
+            { id: 'technical_master', archetype: 'Technical', variation: 'Master', color: '#FFD700' }
+        ];
+        
+        function selectPlayerCount(count) {
+            // Remove active class from all player count buttons
+            document.querySelectorAll('.player-count-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to selected button
+            event.target.classList.add('active');
+            
+            gameState.playerCount = count;
+            updateModeAvailability();
+            updateSetupStatus();
+        }
+        
+        function updateModeAvailability() {
+            // Enable/disable modes based on player count
+            document.getElementById('mode-1v1').disabled = gameState.playerCount !== 2;
+            document.getElementById('mode-2v2').disabled = gameState.playerCount !== 4;
+            document.getElementById('mode-2v1').disabled = gameState.playerCount !== 3; // 2v1 needs 3 players
+            document.getElementById('mode-3v1').disabled = gameState.playerCount !== 4; // 3v1 needs 4 players
+            document.getElementById('mode-ffa').disabled = gameState.playerCount < 3;
+            
+            // Reset mode if it becomes invalid
+            if ((gameState.matchMode === '1v1' && gameState.playerCount !== 2) ||
+                (gameState.matchMode === '2v2' && gameState.playerCount !== 4) ||
+                (gameState.matchMode === '2v1' && gameState.playerCount !== 3) ||
+                (gameState.matchMode === '3v1' && gameState.playerCount !== 4) ||
+                (gameState.matchMode === 'ffa' && gameState.playerCount < 3)) {
+                gameState.matchMode = '';
+                document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            }
+        }
+        
+        function selectMode(mode) {
+            // Remove active class from all mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to selected button
+            event.target.classList.add('active');
+            
+            gameState.matchMode = mode;
+            updateSetupStatus();
+        }
+        
+        function updateSetupStatus() {
+            const status = document.getElementById('setupStatus');
+            const proceedBtn = document.getElementById('proceedBtn');
+            
+            if (gameState.playerCount === 0) {
+                status.textContent = 'Select number of players';
+                proceedBtn.classList.add('disabled');
+            } else if (gameState.matchMode === '') {
+                status.textContent = 'Select match type';
+                proceedBtn.classList.add('disabled');
+            } else {
+                const modeText = {
+                    '1v1': '1v1',
+                    '2v2': '2v2 Team Battle',
+                    '2v1': '2v1 Asymmetric',
+                    '3v1': '3v1 Asymmetric',
+                    'ffa': 'Free For All'
+                };
+                status.textContent = `Ready: ${gameState.playerCount} players, ${modeText[gameState.matchMode]}`;
+                proceedBtn.classList.remove('disabled');
+            }
+        }
+        
+        function proceedToCharacterSelect() {
+            if (gameState.playerCount === 0 || gameState.matchMode === '') return;
+            
+            // Initialize player selections and selection state
+            gameState.playerSelections = [];
+            gameState.currentPlayer = 0;
+            gameState.selectionStep = 'archetype';
+            gameState.selectedArchetype = null;
+            
+            for (let i = 0; i < gameState.playerCount; i++) {
+                let team = 1;
+                if (gameState.matchMode === '1v1') team = i === 0 ? 1 : 2;
+                else if (gameState.matchMode === '2v2') team = i < 2 ? 1 : 2;
+                else if (gameState.matchMode === '2v1') team = i < 2 ? 1 : 2; // First 2 players on team 1, last player on team 2
+                else if (gameState.matchMode === '3v1') team = i < 3 ? 1 : 2; // First 3 players on team 1, last player on team 2
+                else if (gameState.matchMode === 'ffa') team = i + 1;
+                
+                gameState.playerSelections.push({
+                    playerNumber: i + 1,
+                    character: '',
+                    team: team
+                });
+            }
+            
+            // Switch to character select screen
+            document.getElementById('matchSetup').classList.remove('active');
+            document.getElementById('characterSelect').classList.add('active');
+            
+            // Update title
+            const modeText = {
+                '1v1': '1v1 Character Select',
+                '2v2': '2v2 Team Character Select',
+                '2v1': '2v1 Asymmetric Character Select',
+                '3v1': '3v1 Asymmetric Character Select',
+                'ffa': 'Free For All Character Select'
+            };
+            document.getElementById('selectTitle').textContent = modeText[gameState.matchMode];
+            
+            generatePlayerInfo();
+            generateCharacterGrid();
+            updateSelectStatus();
+            updateControlsVisibility();
+        }
+        
+        function generatePlayerInfo() {
+            const container = document.getElementById('playersInfo');
+            container.innerHTML = '<h3>Players</h3>';
+            
+            gameState.playerSelections.forEach((player, index) => {
+                const div = document.createElement('div');
+                div.className = 'player-info';
+                div.id = `player-${index}`;
+                
+                let teamText = gameState.matchMode === 'ffa' ? '' : ` (Team ${player.team})`;
+                let selectionText = player.character ? getDisplayName(player.character) : 'Select Character';
+                
+                div.innerHTML = `Player ${player.playerNumber}${teamText}: ${selectionText}`;
+                
+                if (index === gameState.currentPlayer) {
+                    div.classList.add('current');
+                } else if (player.character) {
+                    div.classList.add('selected');
+                }
+                
+                container.appendChild(div);
+            });
+        }
+        
+        function getDisplayName(fighter) {
+            // Check if it's one of the archetype fighters
+            if (typeof fighter === 'object') {
+                return `${fighter.archetype}\n${fighter.variation}`;
+            }
+            
+            // Find the fighter in our roster
+            const archetypeFighter = archetypeRoster.find(f => f.id === fighter);
+            if (archetypeFighter) {
+                return `${archetypeFighter.archetype}\n${archetypeFighter.variation}`;
+            }
+            
+            // Fallback
+            return fighter.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+        
+        function getCharacterColor(fighterId) {
+            const fighter = archetypeRoster.find(f => f.id === fighterId);
+            return fighter ? fighter.color : '#666666';
+        }
+        
+        function generateCharacterPortrait(fighter) {
+            // Get pattern based on fighter archetype
+            const archetypePatterns = {
+                'Balanced': ['shield', 'diamond', 'hexagon'],
+                'Rushdown': ['lightning', 'zigzag', 'spikes'],
+                'Grappler': ['mountain', 'blocks', 'fortress'],
+                'Zoner': ['crosshair', 'web', 'rays'],
+                'Technical': ['gears', 'circuit', 'star']
+            };
+            
+            const archetypeEmojis = {
+                'Balanced': ['⚖️', '🛡️', '⚔️'],
+                'Rushdown': ['⚡', '🔥', '💥'],
+                'Grappler': ['💪', '🏔️', '🏋️'],
+                'Zoner': ['🎯', '🕸️', '🌟'],
+                'Technical': ['⚙️', '🔧', '👑']
+            };
+            
+            // Determine variation index (Standard/Pressure/Wrestler/Sniper/Combo = 0, etc.)
+            const variations = ['Standard', 'Hybrid', 'Versatile', 'Pressure', 'Blitz', 'Berserker', 'Wrestler', 'Bruiser', 'Colossus', 'Sniper', 'Trapper', 'Artillery', 'Combo', 'Setup', 'Master'];
+            const variationsByArchetype = {
+                'Balanced': ['Standard', 'Hybrid', 'Versatile'],
+                'Rushdown': ['Pressure', 'Blitz', 'Berserker'],
+                'Grappler': ['Wrestler', 'Bruiser', 'Colossus'],
+                'Zoner': ['Sniper', 'Trapper', 'Artillery'],
+                'Technical': ['Combo', 'Setup', 'Master']
+            };
+            
+            const variationIndex = variationsByArchetype[fighter.archetype]?.indexOf(fighter.variation) || 0;
+            const pattern = archetypePatterns[fighter.archetype]?.[variationIndex] || 'circle';
+            const emoji = archetypeEmojis[fighter.archetype]?.[variationIndex] || '?';
+            
+            return createPortraitSVG(fighter.color, getSecondaryColor(fighter.color), pattern, emoji, fighter);
+        }
+        
+        function getSecondaryColor(primaryColor) {
+            // Generate a lighter/darker secondary color based on the primary
+            const colorMap = {
+                '#4169E1': '#6495ED',
+                '#6495ED': '#4169E1', 
+                '#1E90FF': '#87CEEB',
+                '#DC143C': '#FF6B6B',
+                '#FF4500': '#FF8C00',
+                '#228B22': '#32CD32',
+                '#006400': '#228B22',
+                '#9370DB': '#BA55D3',
+                '#8A2BE2': '#9370DB',
+                '#4B0082': '#8A2BE2',
+                '#FF8C00': '#FFD700',
+                '#FFD700': '#FFFF00'
+            };
+            return colorMap[primaryColor] || primaryColor;
+        }
+        
+        function createPortraitSVG(primaryColor, secondaryColor, pattern, emoji, fighter) {
+            const patterns = {
+                shield: `
+                    <defs>
+                        <linearGradient id="grad${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M75 30 L45 45 L45 105 L75 120 L105 105 L105 45 Z" fill="url(#grad${Date.now()})" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="70" r="15" fill="#fff" opacity="0.3"/>`,
+                
+                diamond: `
+                    <defs>
+                        <radialGradient id="radial${Date.now()}" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${primaryColor};stop-opacity:1" />
+                        </radialGradient>
+                    </defs>
+                    <polygon points="75,25 110,75 75,125 40,75" fill="url(#radial${Date.now()})" stroke="#fff" stroke-width="2"/>
+                    <polygon points="75,45 90,75 75,105 60,75" fill="#fff" opacity="0.2"/>`,
+                
+                hexagon: `
+                    <defs>
+                        <linearGradient id="hex${Date.now()}" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="75,30 100,50 100,100 75,120 50,100 50,50" fill="url(#hex${Date.now()})" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="20" fill="none" stroke="#fff" stroke-width="2" opacity="0.4"/>`,
+                
+                lightning: `
+                    <defs>
+                        <linearGradient id="lightning${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="15" fill="url(#lightning${Date.now()})"/>
+                    <path d="M60 40 L90 40 L70 75 L85 75 L55 110 L75 75 L60 75 Z" fill="#fff" opacity="0.8"/>`,
+                
+                zigzag: `
+                    <defs>
+                        <linearGradient id="zigzag${Date.now()}" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${primaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="10" fill="url(#zigzag${Date.now()})"/>
+                    <path d="M35 50 L65 35 L65 65 L95 50 L95 80 L65 95 L65 65 L35 80 Z" fill="#fff" opacity="0.6"/>`,
+                
+                spikes: `
+                    <circle cx="75" cy="75" r="50" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="40" fill="${secondaryColor}"/>
+                    <polygon points="75,25 85,45 65,45" fill="#fff" opacity="0.8"/>
+                    <polygon points="125,75 105,85 105,65" fill="#fff" opacity="0.8"/>
+                    <polygon points="75,125 65,105 85,105" fill="#fff" opacity="0.8"/>
+                    <polygon points="25,75 45,65 45,85" fill="#fff" opacity="0.8"/>`,
+                
+                mountain: `
+                    <defs>
+                        <linearGradient id="mountain${Date.now()}" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="8" fill="url(#mountain${Date.now()})"/>
+                    <polygon points="40,115 75,45 110,115" fill="#fff" opacity="0.3"/>
+                    <polygon points="55,115 75,70 95,115" fill="#fff" opacity="0.5"/>`,
+                
+                blocks: `
+                    <rect x="35" y="35" width="80" height="80" rx="5" fill="${primaryColor}"/>
+                    <rect x="40" y="40" width="25" height="25" fill="${secondaryColor}"/>
+                    <rect x="70" y="40" width="25" height="25" fill="#fff" opacity="0.4"/>
+                    <rect x="40" y="70" width="25" height="25" fill="#fff" opacity="0.4"/>
+                    <rect x="70" y="70" width="25" height="25" fill="${secondaryColor}"/>
+                    <rect x="55" y="55" width="10" height="10" fill="#fff"/>`,
+                
+                fortress: `
+                    <rect x="30" y="50" width="90" height="70" fill="${primaryColor}"/>
+                    <rect x="35" y="55" width="80" height="60" fill="${secondaryColor}"/>
+                    <rect x="40" y="30" width="15" height="25" fill="${primaryColor}"/>
+                    <rect x="60" y="25" width="20" height="30" fill="${primaryColor}"/>
+                    <rect x="85" y="30" width="15" height="25" fill="${primaryColor}"/>
+                    <rect x="65" y="70" width="10" height="25" fill="#fff" opacity="0.6"/>`,
+                
+                crosshair: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="30" fill="${secondaryColor}"/>
+                    <line x1="75" y1="35" x2="75" y2="115" stroke="#fff" stroke-width="3"/>
+                    <line x1="35" y1="75" x2="115" y2="75" stroke="#fff" stroke-width="3"/>
+                    <circle cx="75" cy="75" r="8" fill="#fff"/>`,
+                
+                web: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="35" fill="none" stroke="${secondaryColor}" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="25" fill="none" stroke="${secondaryColor}" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="15" fill="none" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="75" y1="30" x2="75" y2="120" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="30" y1="75" x2="120" y2="75" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="48" y1="48" x2="102" y2="102" stroke="${secondaryColor}" stroke-width="2"/>
+                    <line x1="102" y1="48" x2="48" y2="102" stroke="${secondaryColor}" stroke-width="2"/>`,
+                
+                rays: `
+                    <circle cx="75" cy="75" r="40" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="20" fill="${secondaryColor}"/>
+                    <polygon points="75,25 78,50 72,50" fill="#fff" opacity="0.8"/>
+                    <polygon points="106,43 81,61 85,55" fill="#fff" opacity="0.8"/>
+                    <polygon points="106,107 81,89 85,95" fill="#fff" opacity="0.8"/>
+                    <polygon points="75,125 72,100 78,100" fill="#fff" opacity="0.8"/>
+                    <polygon points="44,107 69,89 65,95" fill="#fff" opacity="0.8"/>
+                    <polygon points="44,43 69,61 65,55" fill="#fff" opacity="0.8"/>`,
+                
+                gears: `
+                    <circle cx="75" cy="75" r="40" fill="${primaryColor}"/>
+                    <circle cx="60" cy="60" r="15" fill="${secondaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="90" cy="90" r="15" fill="${secondaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="60" cy="60" r="8" fill="#fff"/>
+                    <circle cx="90" cy="90" r="8" fill="#fff"/>
+                    <rect x="55" y="45" width="10" height="8" fill="#fff" opacity="0.8"/>
+                    <rect x="85" y="75" width="10" height="8" fill="#fff" opacity="0.8"/>`,
+                
+                circuit: `
+                    <rect x="30" y="30" width="90" height="90" rx="5" fill="${primaryColor}"/>
+                    <rect x="35" y="35" width="80" height="80" rx="3" fill="${secondaryColor}"/>
+                    <line x1="45" y1="55" x2="105" y2="55" stroke="#fff" stroke-width="3"/>
+                    <line x1="45" y1="75" x2="105" y2="75" stroke="#fff" stroke-width="3"/>
+                    <line x1="45" y1="95" x2="105" y2="95" stroke="#fff" stroke-width="3"/>
+                    <circle cx="55" cy="55" r="3" fill="#fff"/>
+                    <circle cx="95" cy="75" r="3" fill="#fff"/>
+                    <circle cx="75" cy="95" r="3" fill="#fff"/>`,
+                
+                star: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <polygon points="75,35 81,57 105,57 87,71 93,93 75,79 57,93 63,71 45,57 69,57" fill="${secondaryColor}" stroke="#fff" stroke-width="2"/>
+                    <circle cx="75" cy="75" r="12" fill="#fff"/>`,
+                
+                circle: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="25" fill="${secondaryColor}"/>
+                    <circle cx="75" cy="75" r="10" fill="#fff"/>`
+            };
+            
+            return `
+                <div style="position: relative; width: 100%; height: 100%;">
+                    <svg width="150" height="150" viewBox="0 0 150 150" style="position: absolute; top: 0; left: 0;">
+                        ${patterns[pattern] || patterns.circle}
+                    </svg>
+                    <div style="position: absolute; top: 8px; right: 8px; font-size: 1.5em;">${emoji}</div>
+                    <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; font-size: 0.7em; line-height: 1.1; text-align: center; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                        <div style="font-weight: bold;">${fighter.archetype}</div>
+                        <div style="opacity: 0.9;">${fighter.variation}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+
+        function generateCharacterGrid() {
+            const grid = document.getElementById('characterGrid');
+            grid.innerHTML = '';
+            
+            if (gameState.selectionStep === 'archetype') {
+                // Show the 5 main archetypes
+                archetypes.forEach(archetype => {
+                    const btn = document.createElement('button');
+                    btn.className = `character-btn archetype-btn`;
+                    btn.innerHTML = generateArchetypePortrait(archetype);
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.border = '3px solid #4a4a6a';
+                    btn.style.position = 'relative';
+                    btn.style.overflow = 'hidden';
+                    
+                    btn.onclick = () => selectArchetype(archetype);
+                    grid.appendChild(btn);
+                });
+                
+                // Adjust grid for 5 archetypes (5 columns)
+                grid.style.gridTemplateColumns = 'repeat(5, 1fr)';
+                
+            } else if (gameState.selectionStep === 'variation' && gameState.selectedArchetype) {
+                // Show the 3 variations for the selected archetype
+                const archetype = gameState.selectedArchetype;
+                archetype.variations.forEach(variation => {
+                    const btn = document.createElement('button');
+                    btn.className = `character-btn variation-btn`;
+                    
+                    // Create fighter object for portrait generation
+                    const fighter = {
+                        archetype: archetype.name,
+                        variation: variation.name,
+                        color: variation.color
+                    };
+                    
+                    btn.innerHTML = generateCharacterPortrait(fighter);
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.border = '3px solid #4a4a6a';
+                    btn.style.position = 'relative';
+                    btn.style.overflow = 'hidden';
+                    
+                    // Check if this variation is already selected by another player
+                    const isSelected = gameState.playerSelections.some((p, i) => 
+                        p.character === variation.id && i !== gameState.currentPlayer
+                    );
+                    
+                    if (isSelected) {
+                        btn.classList.add('disabled');
+                        btn.onclick = null;
+                    } else {
+                        btn.onclick = () => selectVariation(variation.id);
+                    }
+                    
+                    grid.appendChild(btn);
+                });
+                
+                // Adjust grid for 3 variations (3 columns)
+                grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                grid.style.maxWidth = '600px';
+            }
+        }
+        
+        function generateArchetypePortrait(archetype) {
+            // Get main pattern and emoji for the archetype
+            const archetypePatterns = {
+                'Balanced': 'shield',
+                'Rushdown': 'lightning', 
+                'Grappler': 'mountain',
+                'Zoner': 'crosshair',
+                'Technical': 'gears'
+            };
+            
+            const archetypeEmojis = {
+                'Balanced': '⚖️',
+                'Rushdown': '⚡',
+                'Grappler': '💪',
+                'Zoner': '🎯', 
+                'Technical': '⚙️'
+            };
+            
+            const pattern = archetypePatterns[archetype.name] || 'circle';
+            const emoji = archetypeEmojis[archetype.name] || '?';
+            const secondaryColor = getSecondaryColor(archetype.color);
+            
+            return createArchetypePortraitSVG(archetype.color, secondaryColor, pattern, emoji, archetype);
+        }
+        
+        function createArchetypePortraitSVG(primaryColor, secondaryColor, pattern, emoji, archetype) {
+            const patterns = {
+                shield: `
+                    <defs>
+                        <linearGradient id="gradShield${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M75 30 L45 45 L45 105 L75 120 L105 105 L105 45 Z" fill="url(#gradShield${Date.now()})" stroke="#fff" stroke-width="3"/>
+                    <circle cx="75" cy="70" r="20" fill="#fff" opacity="0.3"/>`,
+                
+                lightning: `
+                    <defs>
+                        <linearGradient id="gradLightning${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="15" fill="url(#gradLightning${Date.now()})"/>
+                    <path d="M55 35 L95 35 L70 75 L90 75 L50 115 L75 75 L55 75 Z" fill="#fff" opacity="0.9"/>`,
+                
+                mountain: `
+                    <defs>
+                        <linearGradient id="gradMountain${Date.now()}" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:${primaryColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:${secondaryColor};stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="25" y="25" width="100" height="100" rx="8" fill="url(#gradMountain${Date.now()})"/>
+                    <polygon points="35,115 75,40 115,115" fill="#fff" opacity="0.4"/>
+                    <polygon points="50,115 75,65 100,115" fill="#fff" opacity="0.6"/>`,
+                
+                crosshair: `
+                    <circle cx="75" cy="75" r="50" fill="${primaryColor}" stroke="#fff" stroke-width="3"/>
+                    <circle cx="75" cy="75" r="35" fill="${secondaryColor}"/>
+                    <line x1="75" y1="30" x2="75" y2="120" stroke="#fff" stroke-width="4"/>
+                    <line x1="30" y1="75" x2="120" y2="75" stroke="#fff" stroke-width="4"/>
+                    <circle cx="75" cy="75" r="10" fill="#fff"/>`,
+                
+                gears: `
+                    <circle cx="75" cy="75" r="45" fill="${primaryColor}"/>
+                    <circle cx="60" cy="60" r="18" fill="${secondaryColor}" stroke="#fff" stroke-width="3"/>
+                    <circle cx="90" cy="90" r="18" fill="${secondaryColor}" stroke="#fff" stroke-width="3"/>
+                    <circle cx="60" cy="60" r="10" fill="#fff"/>
+                    <circle cx="90" cy="90" r="10" fill="#fff"/>
+                    <rect x="54" y="42" width="12" height="10" fill="#fff" opacity="0.8"/>
+                    <rect x="84" y="72" width="12" height="10" fill="#fff" opacity="0.8"/>`,
+                
+                circle: `
+                    <circle cx="75" cy="75" r="50" fill="${primaryColor}"/>
+                    <circle cx="75" cy="75" r="30" fill="${secondaryColor}"/>
+                    <circle cx="75" cy="75" r="15" fill="#fff"/>`
+            };
+            
+            return `
+                <div style="position: relative; width: 100%; height: 100%;">
+                    <svg width="150" height="150" viewBox="0 0 150 150" style="position: absolute; top: 0; left: 0;">
+                        ${patterns[pattern] || patterns.circle}
+                    </svg>
+                    <div style="position: absolute; top: 8px; right: 8px; font-size: 2em;">${emoji}</div>
+                    <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; font-size: 0.9em; line-height: 1.2; text-align: center; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                        <div style="font-weight: bold; font-size: 1.1em;">${archetype.name}</div>
+                        <div style="opacity: 0.8; font-size: 0.8em; margin-top: 2px;">${archetype.description}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function selectArchetype(archetype) {
+            gameState.selectedArchetype = archetype;
+            gameState.selectionStep = 'variation';
+            generateCharacterGrid();
+            updateSelectStatus();
+            updateControlsVisibility();
+        }
+        
+        function selectVariation(variationId) {
+            // Set selection for current player
+            gameState.playerSelections[gameState.currentPlayer].character = variationId;
+            
+            // Reset selection state for next player
+            gameState.selectedArchetype = null;
+            gameState.selectionStep = 'archetype';
+            
+            // Move to next player
+            gameState.currentPlayer++;
+            if (gameState.currentPlayer >= gameState.playerSelections.length) {
+                gameState.currentPlayer = gameState.playerSelections.length - 1;
+            }
+            
+            // Update UI
+            generatePlayerInfo();
+            generateCharacterGrid();
+            updateSelectStatus();
+            updateControlsVisibility();
+            
+            // Check if all players have selected
+            const allSelected = gameState.playerSelections.every(p => p.character !== '');
+            if (allSelected) {
+                document.getElementById('startFightBtn').classList.remove('disabled');
+            }
+        }
+        
+        function backToArchetypeSelection() {
+            gameState.selectedArchetype = null;
+            gameState.selectionStep = 'archetype';
+            generateCharacterGrid();
+            updateSelectStatus();
+            updateControlsVisibility();
+        }
+        
+        function updateControlsVisibility() {
+            const backVariationBtn = document.getElementById('backVariationBtn');
+            if (gameState.selectionStep === 'variation') {
+                backVariationBtn.style.display = 'inline-block';
+            } else {
+                backVariationBtn.style.display = 'none';
+            }
+        }
+        
+        function updateSelectStatus() {
+            const status = document.getElementById('selectStatus');
+            if (gameState.currentPlayer < gameState.playerSelections.length) {
+                const currentPlayerNum = gameState.playerSelections[gameState.currentPlayer].playerNumber;
+                if (gameState.selectionStep === 'archetype') {
+                    status.textContent = `Player ${currentPlayerNum}: Select your archetype`;
+                } else if (gameState.selectionStep === 'variation') {
+                    const archetypeName = gameState.selectedArchetype.name;
+                    status.textContent = `Player ${currentPlayerNum}: Select ${archetypeName} variation`;
+                }
+            } else {
+                status.textContent = 'All players ready!';
+            }
+        }
+        
+        function startFight() {
+            const allSelected = gameState.playerSelections.every(p => p.character !== '');
+            if (!allSelected) return;
+            
+            alert('Starting fight!\n\n' + 
+                  gameState.playerSelections.map(p => 
+                      `Player ${p.playerNumber} (Team ${p.team}): ${getDisplayName(p.character)}`
+                  ).join('\n')
+            );
+        }
+        
+        function backToSetup() {
+            document.getElementById('characterSelect').classList.remove('active');
+            document.getElementById('matchSetup').classList.add('active');
+        }
+        
+        function goBack() {
+            alert('Would return to main menu');
+        }
+    </script>
+</body>
+</html>

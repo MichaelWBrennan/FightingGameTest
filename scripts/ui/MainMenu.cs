@@ -43,7 +43,7 @@ public partial class MainMenu : Control
     private void OnStartGamePressed()
     {
         GD.Print("Start Game pressed");
-        GameManager.Instance?.ChangeState(GameState.CharacterSelect);
+        GameManager.Instance?.ChangeState(GameState.MatchSetup);
     }
     
     private void OnTrainingPressed()

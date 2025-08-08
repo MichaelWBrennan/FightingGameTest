@@ -57,6 +57,9 @@ public partial class GameManager : Node
             case GameState.MainMenu:
                 HandleMainMenuState();
                 break;
+            case GameState.MatchSetup:
+                HandleMatchSetupState();
+                break;
             case GameState.CharacterSelect:
                 HandleCharacterSelectState();
                 break;
@@ -75,6 +78,11 @@ public partial class GameManager : Node
     private void HandleMainMenuState()
     {
         GetTree().ChangeSceneToFile("res://scenes/main_menu/MainMenu.tscn");
+    }
+    
+    private void HandleMatchSetupState()
+    {
+        GetTree().ChangeSceneToFile("res://scenes/match_setup/MatchSetup.tscn");
     }
     
     private void HandleCharacterSelectState()
@@ -102,6 +110,7 @@ public partial class GameManager : Node
 public enum GameState
 {
     MainMenu,
+    MatchSetup,
     CharacterSelect,
     Gameplay,
     Training,
