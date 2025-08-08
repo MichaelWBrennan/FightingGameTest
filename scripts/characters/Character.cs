@@ -144,8 +144,11 @@ public partial class Character : CharacterBody2D
             return;
         }
         
-        // Try to load the idle sprite for this character
-        string spritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{CharacterId}_idle.png";
+        // Try to load the enhanced idle sprite first, fallback to original if not found
+        string enhancedSpritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{CharacterId}_idle_enhanced.png";
+        string originalSpritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{CharacterId}_idle.png";
+        
+        string spritePath = ResourceLoader.Exists(enhancedSpritePath) ? enhancedSpritePath : originalSpritePath;
         
         if (ResourceLoader.Exists(spritePath))
         {
@@ -540,7 +543,11 @@ public partial class Character : CharacterBody2D
             _ => $"{CharacterId}_idle.png"
         };
         
-        string spritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{spriteFileName}";
+        // Try enhanced version first, fallback to original
+        string enhancedSpritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{spriteFileName.Replace(".png", "_enhanced.png")}";
+        string originalSpritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{spriteFileName}";
+        
+        string spritePath = ResourceLoader.Exists(enhancedSpritePath) ? enhancedSpritePath : originalSpritePath;
         
         if (ResourceLoader.Exists(spritePath))
         {
