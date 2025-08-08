@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://bj2bqpjqx3xsa"]
+
+[sub_resource type="GDScript" id="GDScript_1"]
+script/source = "extends Node2D
+
+var characters = ['ryu', 'ken', 'chun_li', 'zangief', 'lei_wulong', 'sagat']
+var character_nodes = []
+
+func _ready():
+	create_test_characters()
+
+func create_test_characters():
+	for i in range(characters.size()):
+		var character = preload('res://scenes/characters/Character.tscn').instantiate()
+		character.CharacterId = characters[i]
+		character.position.x = i * 150 - 375  # Spread them out horizontally
+		character.position.y = 200
+		add_child(character)
+		character_nodes.append(character)
+		print('Created character: ', characters[i])
+	
+	# Add a title label
+	var label = Label.new()
+	label.text = 'Fighter Sprite Test - All Characters'
+	label.position = Vector2(400, 50)
+	label.add_theme_font_size_override('font_size', 32)
+	add_child(label)
+	
+	# Add instructions
+	var instructions = Label.new()
+	instructions.text = 'Basic 2D Humanoid Sprites Generated for Each Fighter'
+	instructions.position = Vector2(350, 100)
+	instructions.add_theme_font_size_override('font_size', 16)
+	add_child(instructions)
+"
+
+[node name="SpriteTest" type="Node2D"]
+script = SubResource("GDScript_1")
