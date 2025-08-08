@@ -12,8 +12,8 @@ public partial class MatchSetup : Control
     
     private Button _oneVOneButton;
     private Button _twoVTwoButton;
-    private Button _threeVThreeButton;
-    private Button _fourVFourButton;
+    private Button _twoVOneButton;
+    private Button _threeVOneButton;
     private Button _freeForAllButton;
     
     private Button _proceedButton;
@@ -39,8 +39,8 @@ public partial class MatchSetup : Control
         // Get match mode buttons
         _oneVOneButton = GetNode<Button>("MatchModeSection/MatchModeButtons/OneVOneButton");
         _twoVTwoButton = GetNode<Button>("MatchModeSection/MatchModeButtons/TwoVTwoButton");
-        _threeVThreeButton = GetNode<Button>("MatchModeSection/MatchModeButtons/ThreeVThreeButton");
-        _fourVFourButton = GetNode<Button>("MatchModeSection/MatchModeButtons/FourVFourButton");
+        _twoVOneButton = GetNode<Button>("MatchModeSection/MatchModeButtons/TwoVOneButton");
+        _threeVOneButton = GetNode<Button>("MatchModeSection/MatchModeButtons/ThreeVOneButton");
         _freeForAllButton = GetNode<Button>("MatchModeSection/MatchModeButtons/FreeForAllButton");
         
         // Get control buttons
@@ -56,8 +56,8 @@ public partial class MatchSetup : Control
         // Connect match mode buttons
         _oneVOneButton.Pressed += () => OnMatchModeSelected(MatchMode.OneVOne);
         _twoVTwoButton.Pressed += () => OnMatchModeSelected(MatchMode.TwoVTwo);
-        _threeVThreeButton.Pressed += () => OnMatchModeSelected(MatchMode.ThreeVThree);
-        _fourVFourButton.Pressed += () => OnMatchModeSelected(MatchMode.FourVFour);
+        _twoVOneButton.Pressed += () => OnMatchModeSelected(MatchMode.TwoVOne);
+        _threeVOneButton.Pressed += () => OnMatchModeSelected(MatchMode.ThreeVOne);
         _freeForAllButton.Pressed += () => OnMatchModeSelected(MatchMode.FreeForAll);
         
         // Connect control buttons
@@ -85,15 +85,15 @@ public partial class MatchSetup : Control
         // Enable/disable match modes based on player count
         _oneVOneButton.Disabled = _playerCount != 2;
         _twoVTwoButton.Disabled = _playerCount != 4;
-        _threeVThreeButton.Disabled = _playerCount != 6; // Not available for now
-        _fourVFourButton.Disabled = _playerCount != 8; // Not available for now
+        _twoVOneButton.Disabled = _playerCount != 3; // 2v1 needs 3 players
+        _threeVOneButton.Disabled = _playerCount != 4; // 3v1 needs 4 players
         _freeForAllButton.Disabled = _playerCount < 3;
         
         // Reset match mode if it becomes invalid
         if ((_matchMode == MatchMode.OneVOne && _playerCount != 2) ||
             (_matchMode == MatchMode.TwoVTwo && _playerCount != 4) ||
-            (_matchMode == MatchMode.ThreeVThree && _playerCount != 6) ||
-            (_matchMode == MatchMode.FourVFour && _playerCount != 8) ||
+            (_matchMode == MatchMode.TwoVOne && _playerCount != 3) ||
+            (_matchMode == MatchMode.ThreeVOne && _playerCount != 4) ||
             (_matchMode == MatchMode.FreeForAll && _playerCount < 3))
         {
             _matchMode = MatchMode.None;
@@ -110,8 +110,8 @@ public partial class MatchSetup : Control
         // Update match mode button states
         _oneVOneButton.ButtonPressed = _matchMode == MatchMode.OneVOne;
         _twoVTwoButton.ButtonPressed = _matchMode == MatchMode.TwoVTwo;
-        _threeVThreeButton.ButtonPressed = _matchMode == MatchMode.ThreeVThree;
-        _fourVFourButton.ButtonPressed = _matchMode == MatchMode.FourVFour;
+        _twoVOneButton.ButtonPressed = _matchMode == MatchMode.TwoVOne;
+        _threeVOneButton.ButtonPressed = _matchMode == MatchMode.ThreeVOne;
         _freeForAllButton.ButtonPressed = _matchMode == MatchMode.FreeForAll;
         
         // Update status and proceed button
@@ -131,8 +131,8 @@ public partial class MatchSetup : Control
             {
                 MatchMode.OneVOne => "1v1",
                 MatchMode.TwoVTwo => "2v2 Team Battle",
-                MatchMode.ThreeVThree => "3v3 Team Battle",
-                MatchMode.FourVFour => "4v4 Team Battle",
+                MatchMode.TwoVOne => "2v1 Asymmetric",
+                MatchMode.ThreeVOne => "3v1 Asymmetric",
                 MatchMode.FreeForAll => "Free For All",
                 _ => "Unknown"
             };
@@ -169,8 +169,8 @@ public enum MatchMode
     None,
     OneVOne,
     TwoVTwo,
-    ThreeVThree,
-    FourVFour,
+    TwoVOne,
+    ThreeVOne,
     FreeForAll
 }
 

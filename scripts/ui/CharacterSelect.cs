@@ -76,8 +76,8 @@ public partial class CharacterSelect : Control
         {
             MatchMode.OneVOne => playerIndex == 0 ? 1 : 2,
             MatchMode.TwoVTwo => playerIndex < 2 ? 1 : 2,
-            MatchMode.ThreeVThree => playerIndex < 3 ? 1 : 2,
-            MatchMode.FourVFour => playerIndex < 4 ? 1 : 2,
+            MatchMode.TwoVOne => playerIndex < 2 ? 1 : 2, // First 2 players on team 1, last player on team 2
+            MatchMode.ThreeVOne => playerIndex < 3 ? 1 : 2, // First 3 players on team 1, last player on team 2
             MatchMode.FreeForAll => playerIndex + 1, // Each player is their own team
             _ => 1
         };
@@ -106,8 +106,8 @@ public partial class CharacterSelect : Control
         {
             MatchMode.OneVOne => "1v1 Character Select",
             MatchMode.TwoVTwo => "2v2 Team Character Select",
-            MatchMode.ThreeVThree => "3v3 Team Character Select", 
-            MatchMode.FourVFour => "4v4 Team Character Select",
+            MatchMode.TwoVOne => "2v1 Asymmetric Character Select",
+            MatchMode.ThreeVOne => "3v1 Asymmetric Character Select",
             MatchMode.FreeForAll => "Free For All Character Select",
             _ => "Character Select"
         };
@@ -122,38 +122,55 @@ public partial class CharacterSelect : Control
             child.QueueFree();
         }
         
-        // Get all available fighters from DLC manager
-        var allCharacters = DLCManager.Instance?.GetAvailableFighters()?.Select(f => f.FighterId).ToList() ?? 
-                           new List<string> { "fighter1", "fighter2", "fighter3", "fighter4", "fighter5", "fighter6", "fighter7", "fighter8", "fighter9", "fighter10", "fighter11", "fighter12", "fighter13", "fighter14", "fighter15", "fighter16" };
+        // Define archetype-based roster with 3 variations each
+        var archetypeRoster = GetArchetypeRoster();
+        _availableCharacters = archetypeRoster.Select(f => f.FighterId).ToArray();
         
-        _availableCharacters = allCharacters.ToArray();
-        
-        foreach (var characterId in _availableCharacters)
+        foreach (var fighter in archetypeRoster)
         {
-            CreateCharacterButton(characterId);
-        }
-        
-        // Add placeholders for future characters
-        var totalSlots = 16;
-        var currentCount = _availableCharacters.Length;
-        for (int i = currentCount; i < totalSlots; i++)
-        {
-            var placeholder = new Button();
-            placeholder.Text = "???";
-            placeholder.CustomMinimumSize = new Vector2(150, 150);
-            placeholder.Disabled = true;
-            _characterGrid.AddChild(placeholder);
+            CreateCharacterButton(fighter);
         }
     }
     
-    private void CreateCharacterButton(string characterId)
+    private List<ArchetypeFighter> GetArchetypeRoster()
+    {
+        return new List<ArchetypeFighter>
+        {
+            // Balanced Archetype - All-rounders
+            new("balanced_a", "Balanced", "Standard", "All-around fighter with no weaknesses", Colors.Blue),
+            new("balanced_b", "Balanced", "Hybrid", "Adaptable with shifting fighting styles", Colors.CornflowerBlue),
+            new("balanced_c", "Balanced", "Versatile", "Master of fundamentals", Colors.DodgerBlue),
+            
+            // Rushdown Archetype - Fast and aggressive
+            new("rushdown_a", "Rushdown", "Pressure", "Relentless offense and mixups", Colors.Red),
+            new("rushdown_b", "Rushdown", "Blitz", "Lightning-fast combo chains", Colors.Crimson),
+            new("rushdown_c", "Rushdown", "Berserker", "All-out aggressive assault", Colors.OrangeRed),
+            
+            // Grappler Archetype - Command throws and power
+            new("grappler_a", "Grappler", "Wrestler", "Classic command throw specialist", Colors.Green),
+            new("grappler_b", "Grappler", "Bruiser", "Heavy hits with reach", Colors.DarkGreen),
+            new("grappler_c", "Grappler", "Colossus", "Unstoppable powerhouse", Colors.ForestGreen),
+            
+            // Zoner Archetype - Projectiles and keep-away
+            new("zoner_a", "Zoner", "Sniper", "Precise long-range attacks", Colors.Purple),
+            new("zoner_b", "Zoner", "Trapper", "Area control specialist", Colors.MediumPurple),
+            new("zoner_c", "Zoner", "Artillery", "Maximum screen control", Colors.DarkViolet),
+            
+            // Technical Archetype - Complex combos and execution
+            new("technical_a", "Technical", "Combo", "Intricate combo sequences", Colors.Orange),
+            new("technical_b", "Technical", "Setup", "Advanced combo setups", Colors.DarkOrange),
+            new("technical_c", "Technical", "Master", "Ultimate execution challenge", Colors.Gold)
+        };
+    }
+    
+    private void CreateCharacterButton(ArchetypeFighter fighter)
     {
         var button = new Button();
         button.CustomMinimumSize = new Vector2(150, 150);
         
         // Create a colored rectangle as portrait background
         var colorRect = new ColorRect();
-        colorRect.Color = GetCharacterColor(characterId);
+        colorRect.Color = fighter.Color;
         colorRect.AnchorLeft = 0;
         colorRect.AnchorTop = 0;
         colorRect.AnchorRight = 1;
@@ -164,59 +181,71 @@ public partial class CharacterSelect : Control
         colorRect.OffsetBottom = -5;
         button.AddChild(colorRect);
         
-        // Add name label
-        var nameLabel = new Label();
-        nameLabel.Text = GetDisplayName(characterId);
-        nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
-        nameLabel.VerticalAlignment = VerticalAlignment.Center;
-        nameLabel.AnchorLeft = 0;
-        nameLabel.AnchorRight = 1;
-        nameLabel.AnchorTop = 0;
-        nameLabel.AnchorBottom = 1;
-        nameLabel.OffsetLeft = 0;
-        nameLabel.OffsetRight = 0;
-        nameLabel.OffsetTop = 0;
-        nameLabel.OffsetBottom = 0;
-        nameLabel.AddThemeColorOverride("font_color", Colors.White);
-        nameLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
-        nameLabel.AddThemeConstantOverride("shadow_offset_x", 1);
-        nameLabel.AddThemeConstantOverride("shadow_offset_y", 1);
-        nameLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        button.AddChild(nameLabel);
+        // Add archetype label (top)
+        var archetypeLabel = new Label();
+        archetypeLabel.Text = fighter.Archetype;
+        archetypeLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        archetypeLabel.AnchorLeft = 0;
+        archetypeLabel.AnchorRight = 1;
+        archetypeLabel.AnchorTop = 0;
+        archetypeLabel.AnchorBottom = 0;
+        archetypeLabel.OffsetLeft = 0;
+        archetypeLabel.OffsetRight = 0;
+        archetypeLabel.OffsetTop = 10;
+        archetypeLabel.OffsetBottom = 25;
+        archetypeLabel.AddThemeColorOverride("font_color", Colors.White);
+        archetypeLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
+        archetypeLabel.AddThemeConstantOverride("shadow_offset_x", 1);
+        archetypeLabel.AddThemeConstantOverride("shadow_offset_y", 1);
+        button.AddChild(archetypeLabel);
+        
+        // Add variation label (center)
+        var variationLabel = new Label();
+        variationLabel.Text = fighter.Variation;
+        variationLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        variationLabel.VerticalAlignment = VerticalAlignment.Center;
+        variationLabel.AnchorLeft = 0;
+        variationLabel.AnchorRight = 1;
+        variationLabel.AnchorTop = 0;
+        variationLabel.AnchorBottom = 1;
+        variationLabel.OffsetLeft = 0;
+        variationLabel.OffsetRight = 0;
+        variationLabel.OffsetTop = 0;
+        variationLabel.OffsetBottom = 0;
+        variationLabel.AddThemeColorOverride("font_color", Colors.White);
+        variationLabel.AddThemeColorOverride("font_shadow_color", Colors.Black);
+        variationLabel.AddThemeConstantOverride("shadow_offset_x", 1);
+        variationLabel.AddThemeConstantOverride("shadow_offset_y", 1);
+        button.AddChild(variationLabel);
         
         // Check if character is already selected by another player
-        bool isAlreadySelected = _playerSelections.Any(p => p.SelectedCharacter == characterId && _playerSelections.IndexOf(p) != _currentPlayerIndex);
+        bool isAlreadySelected = _playerSelections.Any(p => p.SelectedCharacter == fighter.FighterId && _playerSelections.IndexOf(p) != _currentPlayerIndex);
         if (isAlreadySelected)
         {
             button.Disabled = true;
             button.Modulate = new Color(0.5f, 0.5f, 0.5f, 1.0f);
         }
         
-        button.Pressed += () => OnCharacterSelected(characterId);
+        button.Pressed += () => OnCharacterSelected(fighter.FighterId);
         _characterGrid.AddChild(button);
     }
     
     private Color GetCharacterColor(string characterId)
     {
-        // Generate a unique color for each character based on hash
-        var hash = characterId.GetHashCode();
-        var random = new Random(hash);
-        
-        // Generate bright, distinguishable colors
-        var hue = random.NextSingle();
-        var saturation = 0.7f + (random.NextSingle() * 0.3f); // 0.7 - 1.0
-        var value = 0.8f + (random.NextSingle() * 0.2f); // 0.8 - 1.0
-        
-        return Color.FromHsv(hue, saturation, value);
+        // Get color from archetype roster
+        var archetypeRoster = GetArchetypeRoster();
+        var fighter = archetypeRoster.FirstOrDefault(f => f.FighterId == characterId);
+        return fighter?.Color ?? Colors.White;
     }
     
     private string GetDisplayName(string characterId)
     {
-        // Convert generic fighter IDs to display names
-        if (characterId.StartsWith("fighter"))
+        // Get display name from archetype roster
+        var archetypeRoster = GetArchetypeRoster();
+        var fighter = archetypeRoster.FirstOrDefault(f => f.FighterId == characterId);
+        if (fighter != null)
         {
-            var number = characterId.Replace("fighter", "");
-            return $"Fighter {number}";
+            return $"{fighter.Archetype}\n{fighter.Variation}";
         }
         return characterId.Replace("_", " ").Capitalize();
     }
@@ -280,28 +309,12 @@ public partial class CharacterSelect : Control
     
     private string GetCharacterArchetype(string characterId)
     {
-        // Simple archetype mapping - assign archetypes to generic fighters
-        var archetypeMap = new Dictionary<string, string>
+        // Extract archetype from fighter ID
+        if (characterId.Contains("_"))
         {
-            ["fighter1"] = "balanced",
-            ["fighter2"] = "rushdown", 
-            ["fighter3"] = "rushdown",
-            ["fighter4"] = "grappler",
-            ["fighter5"] = "charge",
-            ["fighter6"] = "rushdown",
-            ["fighter7"] = "balanced",
-            ["fighter8"] = "setup",
-            ["fighter9"] = "zoner",
-            ["fighter10"] = "mixup",
-            ["fighter11"] = "technical",
-            ["fighter12"] = "powerhouse",
-            ["fighter13"] = "defensive",
-            ["fighter14"] = "aggressive",
-            ["fighter15"] = "versatile",
-            ["fighter16"] = "specialist"
-        };
-        
-        return archetypeMap.GetValueOrDefault(characterId, "unknown");
+            return characterId.Split('_')[0];
+        }
+        return "unknown";
     }
     
     private void ShowAccessDeniedDialog(string characterId, string playerId)
@@ -385,4 +398,25 @@ public class PlayerSelectionData
     public int PlayerNumber { get; set; }
     public string SelectedCharacter { get; set; }
     public int Team { get; set; }
+}
+
+/// <summary>
+/// Represents a fighter with archetype classification and variation
+/// </summary>
+public class ArchetypeFighter
+{
+    public string FighterId { get; }
+    public string Archetype { get; }
+    public string Variation { get; }
+    public string Description { get; }
+    public Color Color { get; }
+    
+    public ArchetypeFighter(string fighterId, string archetype, string variation, string description, Color color)
+    {
+        FighterId = fighterId;
+        Archetype = archetype;
+        Variation = variation;
+        Description = description;
+        Color = color;
+    }
 }

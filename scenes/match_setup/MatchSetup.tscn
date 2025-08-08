@@ -116,17 +116,17 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_1")
 text = "2v2 (Team)"
 
-[node name="ThreeVThreeButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
+[node name="TwoVOneButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_1")
-text = "3v3 (Team)"
+text = "2v1 (Asymmetric)"
 
-[node name="FourVFourButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
+[node name="ThreeVOneButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_1")
-text = "4v4 (Team)"
+text = "3v1 (Asymmetric)"
 
 [node name="FreeForAllButton" type="Button" parent="MatchModeSection/MatchModeButtons"]
 layout_mode = 2
