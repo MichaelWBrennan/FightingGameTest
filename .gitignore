@@ -4,6 +4,11 @@
 export.cfg
 export_presets.cfg
 
+# Temporary and test files
+*.tmp
+*.log
+sprite_preview.html
+
 # C# ignores
 bin/
 obj/

@@ -21,6 +21,7 @@ public partial class Character : CharacterBody2D
     public AnimationTree AnimationTree { get; private set; }
     public Area2D HitboxArea { get; private set; }
     public Area2D HurtboxArea { get; private set; }
+    public Sprite2D CharacterSprite { get; private set; }
     
     // State
     public CharacterState CurrentState { get; private set; } = CharacterState.Idle;
@@ -126,9 +127,43 @@ public partial class Character : CharacterBody2D
         AnimationTree = GetNode<AnimationTree>("AnimationTree");
         HitboxArea = GetNode<Area2D>("HitboxArea");
         HurtboxArea = GetNode<Area2D>("HurtboxArea");
+        CharacterSprite = GetNode<Sprite2D>("CharacterSprite");
         
         // Connect hurtbox to take damage
         HurtboxArea.AreaEntered += OnHurtboxEntered;
+        
+        // Load character sprite
+        LoadCharacterSprite();
+    }
+    
+    private void LoadCharacterSprite()
+    {
+        if (string.IsNullOrEmpty(CharacterId))
+        {
+            GD.PrintErr("Cannot load sprite: Character ID not set!");
+            return;
+        }
+        
+        // Try to load the idle sprite for this character
+        string spritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{CharacterId}_idle.png";
+        
+        if (ResourceLoader.Exists(spritePath))
+        {
+            var texture = GD.Load<Texture2D>(spritePath);
+            if (texture != null && CharacterSprite != null)
+            {
+                CharacterSprite.Texture = texture;
+                GD.Print($"Loaded sprite for {CharacterId}: {spritePath}");
+            }
+            else
+            {
+                GD.PrintErr($"Failed to load sprite texture: {spritePath}");
+            }
+        }
+        else
+        {
+            GD.PrintErr($"Sprite file not found: {spritePath}");
+        }
     }
     
     private void InitializeCharacter()
@@ -471,6 +506,9 @@ public partial class Character : CharacterBody2D
     {
         if (AnimationPlayer == null || Data?.Animations == null) return;
         
+        // Load appropriate sprite based on current state
+        LoadSpriteForState(CurrentState);
+        
         string animationName = CurrentState switch
         {
             CharacterState.Idle => Data.Animations.Idle,
@@ -486,6 +524,31 @@ public partial class Character : CharacterBody2D
         if (AnimationPlayer.HasAnimation(animationName))
         {
             AnimationPlayer.Play(animationName);
+        }
+    }
+    
+    private void LoadSpriteForState(CharacterState state)
+    {
+        if (string.IsNullOrEmpty(CharacterId) || CharacterSprite == null) return;
+        
+        string spriteFileName = state switch
+        {
+            CharacterState.Idle => $"{CharacterId}_idle.png",
+            CharacterState.Walking => $"{CharacterId}_walk.png",
+            CharacterState.Jumping => $"{CharacterId}_jump.png",
+            CharacterState.Attacking => $"{CharacterId}_attack.png",
+            _ => $"{CharacterId}_idle.png"
+        };
+        
+        string spritePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/sprites/{spriteFileName}";
+        
+        if (ResourceLoader.Exists(spritePath))
+        {
+            var texture = GD.Load<Texture2D>(spritePath);
+            if (texture != null)
+            {
+                CharacterSprite.Texture = texture;
+            }
         }
     }
     
