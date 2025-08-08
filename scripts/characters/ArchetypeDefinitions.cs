@@ -331,15 +331,15 @@ public static class ArchetypeDefinitions
             Description = "Changes combat capabilities on the fly.",
             SubStyles = new Dictionary<string, SubStyleDefinition>
             {
-                ["dual_mode"] = new()
+                ["defensive_stance"] = new()
                 {
-                    Name = "Dual Mode",
-                    Description = "Two full movesets or forms.",
-                    Examples = new[] { "Gen (SF)", "Lei Wulong (Tekken)" },
-                    PlayStyle = "Complete transformation between modes",
-                    StrengthFocus = "Versatility and adaptability",
-                    WeaknessFocus = "Complex character knowledge requirements",
-                    DesignIntent = "Two characters in one"
+                    Name = "Defensive Stance",
+                    Description = "Switches stance to enhance defensive capabilities.",
+                    Examples = new[] { "Asuka (Tekken)", "Baiken (GG)", "Lei Wulong (Tekken)" },
+                    PlayStyle = "Situational defense activation, counters, parries",
+                    StrengthFocus = "Enhanced defensive options and counterattacks",
+                    WeaknessFocus = "Requires timing and prediction, limited offense",
+                    DesignIntent = "Reward mastery of defensive stance mechanics"
                 },
                 ["combo_stance"] = new()
                 {
