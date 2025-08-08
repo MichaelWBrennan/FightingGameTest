@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fighting Game Platform - Demos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a0a15, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .title {
+            font-size: 4em;
+            margin: 0 0 20px 0;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.5em;
+            color: #87ceeb;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1em;
+            color: #cccccc;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .demos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .demo-card {
+            background: rgba(0,0,0,0.4);
+            border: 2px solid #4a4a6a;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .demo-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .demo-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+        
+        .demo-card:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+        
+        .demo-title {
+            font-size: 1.8em;
+            color: #ffd700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .demo-description {
+            color: #cccccc;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .demo-features {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .demo-features li {
+            color: #aaaaaa;
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .demo-features li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+        }
+        
+        .demo-button {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .demo-button:hover {
+            background: linear-gradient(45deg, #ff6b6b 0%, #ee5a52 100%);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .featured {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px 0;
+            border-top: 1px solid #4a4a6a;
+            color: #888888;
+        }
+        
+        .github-link {
+            color: #87ceeb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .github-link:hover {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">FIGHTING GAME PLATFORM</h1>
+            <p class="subtitle">Interactive Demo Showcase</p>
+            <p class="description">
+                An industry-defining competitive fighting game platform built on Godot 4 with C# scripting. 
+                Explore our advanced archetype system, character selection mechanics, and cutting-edge graphics features.
+            </p>
+        </div>
+        
+        <div class="demos-grid">
+            <div class="demo-card featured" onclick="window.open('character_select_demo.html', '_blank')">
+                <h3 class="demo-title">🎮 Character Select System</h3>
+                <p class="demo-description">
+                    Advanced multi-player character selection with archetype-based fighter system
+                </p>
+                <ul class="demo-features">
+                    <li>5 Core Archetypes (Balanced, Rushdown, Grappler, Zoner, Technical)</li>
+                    <li>3 Variations per Archetype (15 Total Fighters)</li>
+                    <li>Multi-player Support (2-4 players)</li>
+                    <li>Team Battle Modes (1v1, 2v2, 2v1, 3v1, FFA)</li>
+                </ul>
+                <a href="character_select_demo.html" class="demo-button">Launch Demo</a>
+            </div>
+            
+            <div class="demo-card" onclick="window.open('pseudo_2d5_demo.html', '_blank')">
+                <h3 class="demo-title">🎨 Pseudo 2.5D Graphics</h3>
+                <p class="demo-description">
+                    BlazBlue/Skullgirls-style graphics enhancement system with dynamic lighting
+                </p>
+                <ul class="demo-features">
+                    <li>Motion blur trails</li>
+                    <li>Dynamic slash effects</li>
+                    <li>Glowing weapon visuals</li>
+                    <li>Speed-based intensity</li>
+                </ul>
+                <a href="pseudo_2d5_demo.html" class="demo-button">View Graphics</a>
+            </div>
+            
+            <div class="demo-card" onclick="window.open('enhanced_sprite_demo.html', '_blank')">
+                <h3 class="demo-title">🖼️ Enhanced Sprite System</h3>
+                <p class="demo-description">
+                    Advanced sprite management with dynamic loading and optimization
+                </p>
+                <ul class="demo-features">
+                    <li>Dynamic sprite loading</li>
+                    <li>Performance optimization</li>
+                    <li>Quality scaling</li>
+                    <li>Memory management</li>
+                </ul>
+                <a href="enhanced_sprite_demo.html" class="demo-button">Explore Sprites</a>
+            </div>
+            
+            <div class="demo-card" onclick="window.open('gothic_stage_showcase.html', '_blank')">
+                <h3 class="demo-title">🏰 Gothic Stage Demo</h3>
+                <p class="demo-description">
+                    Atmospheric stage design with dynamic environments and effects
+                </p>
+                <ul class="demo-features">
+                    <li>Dynamic lighting</li>
+                    <li>Atmospheric effects</li>
+                    <li>Parallax backgrounds</li>
+                    <li>Interactive elements</li>
+                </ul>
+                <a href="gothic_stage_showcase.html" class="demo-button">Enter Stage</a>
+            </div>
+            
+            <div class="demo-card" onclick="window.open('graphics_upgrade_showcase.html', '_blank')">
+                <h3 class="demo-title">⚡ Graphics Showcase</h3>
+                <p class="demo-description">
+                    Comprehensive graphics upgrade demonstration with advanced effects
+                </p>
+                <ul class="demo-features">
+                    <li>Particle systems</li>
+                    <li>Advanced shaders</li>
+                    <li>Post-processing</li>
+                    <li>Visual effects</li>
+                </ul>
+                <a href="graphics_upgrade_showcase.html" class="demo-button">See Effects</a>
+            </div>
+            
+            <div class="demo-card" onclick="window.open('sf2_character_select_demo.html', '_blank')">
+                <h3 class="demo-title">👑 Street Fighter 2 Style</h3>
+                <p class="demo-description">
+                    Classic fighting game character selection with modern enhancements
+                </p>
+                <ul class="demo-features">
+                    <li>Retro aesthetics</li>
+                    <li>Classic fighters</li>
+                    <li>Nostalgic interface</li>
+                    <li>Modern mechanics</li>
+                </ul>
+                <a href="sf2_character_select_demo.html" class="demo-button">Go Retro</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>
+                <strong>Fighting Game Platform</strong> - Built with Godot 4 & C# | 
+                <a href="https://github.com/MichaelWBrennan/FightingGameTest" class="github-link" target="_blank">
+                    View on GitHub
+                </a>
+            </p>
+            <p>MIT License | Open Source | Community Driven</p>
+        </div>
+    </div>
+    
+    <script>
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.demo-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && document.activeElement.classList.contains('demo-card')) {
+                    document.activeElement.click();
+                }
+            });
+            
+            // Make cards focusable for accessibility
+            cards.forEach(card => {
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+            });
+        });
+    </script>
+</body>
+</html>
