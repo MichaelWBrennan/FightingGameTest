@@ -97,16 +97,16 @@ public partial class Enhanced2D5DemoScene : Node2D
     
     private void CreateCharacters()
     {
-        // Create placeholder character sprites
-        _character1 = CreateCharacterSprite("Character1", Colors.Red, new Vector2(-150, 0));
-        _character2 = CreateCharacterSprite("Character2", Colors.Blue, new Vector2(150, 0));
+        // Create SF2HD character sprites - Ryu (red theme) and Ken (blue theme) 
+        _character1 = CreateCharacterSprite("Ryu", "ryu", Colors.Red, new Vector2(-150, 0));
+        _character2 = CreateCharacterSprite("Ken", "ken", Colors.Blue, new Vector2(150, 0));
         
         // Add to players group for camera tracking
         _character1.AddToGroup("players");
         _character2.AddToGroup("players");
     }
     
-    private Sprite2D CreateCharacterSprite(string name, Color color, Vector2 position)
+    private Sprite2D CreateCharacterSprite(string name, string characterId, Color accentColor, Vector2 position)
     {
         var sprite = new Sprite2D
         {
@@ -115,12 +115,33 @@ public partial class Enhanced2D5DemoScene : Node2D
             ZIndex = 50
         };
         
-        // Create character texture with pseudo 2.5D shader
-        var image = Image.CreateEmpty(64, 96, false, Image.Format.Rgba8);
-        image.Fill(color);
-        var texture = ImageTexture.CreateFromImage(image);
+        // Load SF2HD character sprite - try enhanced version first, fallback to original
+        string enhancedSpritePath = $"res://assets/sprites/street_fighter_6/{characterId}/sprites/{characterId}_idle_enhanced.png";
+        string originalSpritePath = $"res://assets/sprites/street_fighter_6/{characterId}/sprites/{characterId}_idle.png";
         
-        sprite.Texture = texture;
+        string spritePath = ResourceLoader.Exists(enhancedSpritePath) ? enhancedSpritePath : originalSpritePath;
+        
+        if (ResourceLoader.Exists(spritePath))
+        {
+            var texture = GD.Load<Texture2D>(spritePath);
+            if (texture != null)
+            {
+                sprite.Texture = texture;
+                GD.Print($"Loaded SF2HD sprite for {characterId}: {spritePath} ({texture.GetSize()})");
+            }
+            else
+            {
+                GD.PrintErr($"Failed to load texture: {spritePath}");
+                // Fallback to simple colored rectangle
+                CreateFallbackTexture(sprite, accentColor);
+            }
+        }
+        else
+        {
+            GD.PrintErr($"Sprite file not found: {spritePath}");
+            // Fallback to simple colored rectangle
+            CreateFallbackTexture(sprite, accentColor);
+        }
         
         // Apply pseudo 2.5D character shader
         var shaderPath = "res://assets/shaders/combat/Pseudo2D5Character.gdshader";
@@ -132,12 +153,22 @@ public partial class Enhanced2D5DemoScene : Node2D
             
             // Set shader parameters
             material.SetShaderParameter("main_light_color", Colors.White);
-            material.SetShaderParameter("rim_light_color", color.Lerp(Colors.White, 0.5f));
+            material.SetShaderParameter("rim_light_color", accentColor.Lerp(Colors.White, 0.5f));
             material.SetShaderParameter("lighting_intensity", 1.2f);
         }
         
         AddChild(sprite);
         return sprite;
+    }
+    
+    private void CreateFallbackTexture(Sprite2D sprite, Color color)
+    {
+        // Create fallback colored rectangle if sprite loading fails
+        var image = Image.CreateEmpty(64, 96, false, Image.Format.Rgba8);
+        image.Fill(color);
+        var texture = ImageTexture.CreateFromImage(image);
+        sprite.Texture = texture;
+        GD.PrintErr($"Using fallback colored rectangle for {sprite.Name}");
     }
     
     private void SetupUI()

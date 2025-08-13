@@ -3,7 +3,7 @@ using Godot;
 /// <summary>
 /// Simple test to verify sprite loading functionality without running the full game
 /// </summary>
-public partial class SpriteLoadingTest : GodotObject
+public partial class SpriteLoadingTestStatic : GodotObject
 {
     public static void RunTest()
     {
