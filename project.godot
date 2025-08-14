@@ -58,6 +58,7 @@ SpectatorStreamingSystem="*res://scripts/streaming/SpectatorStreamingSystem.cs"
 
 # Gothic 2.5D Stage System
 StageManager="*res://scripts/stages/StageManager.cs"
+ProceduralStageGenerator="*res://scripts/stages/ProceduralStageGenerator.cs"
 
 # EVO Mainstage Guarantee Features
 EVOTournamentManager="*res://scripts/tournaments/EVOTournamentManager.cs"
