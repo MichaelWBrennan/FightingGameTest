@@ -48,6 +48,15 @@ public class CharacterData
     [JsonPropertyName("jumpHeight")]
     public float JumpHeight { get; set; } = 300f;
     
+    [JsonPropertyName("airDashSpeed")]
+    public float AirDashSpeed { get; set; } = 200f;
+    
+    [JsonPropertyName("dashDistance")]
+    public float DashDistance { get; set; } = 120f;
+    
+    [JsonPropertyName("maxAirDashes")]
+    public int MaxAirDashes { get; set; } = 1;
+    
     [JsonPropertyName("weight")]
     public int Weight { get; set; } = 100;
     
@@ -101,6 +110,15 @@ public class AnimationData
     
     [JsonPropertyName("knockdown")]
     public string Knockdown { get; set; } = "";
+    
+    [JsonPropertyName("dash")]
+    public string Dash { get; set; } = "";
+    
+    [JsonPropertyName("airDash")]
+    public string AirDash { get; set; } = "";
+    
+    [JsonPropertyName("wakeup")]
+    public string Wakeup { get; set; } = "";
 }
 
 public class MovesetData
