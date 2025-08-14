@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://bx8vq7m2n9pst"]
+
+[ext_resource type="Script" path="res://tests/test_render_profile.gd" id="1_test_render"]
+[ext_resource type="Script" path="res://tests/test_dynamic_sprite_controller.gd" id="2_test_sprite"]
+
+[node name="TestRunner" type="Node"]
+
+[node name="RenderProfileTest" type="Node" parent="."]
+script = ExtResource("1_test_render")
+
+[node name="DynamicSpriteControllerTest" type="Node" parent="."]
+script = ExtResource("2_test_sprite")
