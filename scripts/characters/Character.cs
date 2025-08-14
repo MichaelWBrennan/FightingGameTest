@@ -13,6 +13,11 @@ public partial class Character : CharacterBody2D
     [Export] public bool FacingRight { get; set; } = true;
     [Export] public string SelectedSubArchetype { get; set; } = ""; // Empty means default
     
+    // Real-time sprite generation settings
+    [Export] public bool UseRealtimeSprites { get; set; } = true;
+    [Export] public bool UseEnhancedQuality { get; set; } = true;
+    [Export] public string SpritePalette { get; set; } = "default";
+    
     // Character data
     public CharacterData Data { get; private set; }
     
@@ -22,6 +27,10 @@ public partial class Character : CharacterBody2D
     public Area2D HitboxArea { get; private set; }
     public Area2D HurtboxArea { get; private set; }
     public Sprite2D CharacterSprite { get; private set; }
+    public AnimatedSprite2D AnimatedSprite { get; private set; }
+    
+    // Real-time sprite generation component
+    private Node RealtimeAnimatedComponent { get; set; }
     
     // 2D-HD Rendering System
     private Node DynamicSpriteController { get; set; }
@@ -128,24 +137,48 @@ public partial class Character : CharacterBody2D
     private void SetupComponents()
     {
         AnimationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
-        AnimationTree = GetNode<AnimationTree>("AnimationTree");
+        AnimationTree = GetNodeOrNull<AnimationTree>("AnimationTree");
         HitboxArea = GetNode<Area2D>("HitboxArea");
         HurtboxArea = GetNode<Area2D>("HurtboxArea");
-        CharacterSprite = GetNode<Sprite2D>("CharacterSprite");
+        CharacterSprite = GetNodeOrNull<Sprite2D>("CharacterSprite");
+        AnimatedSprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
         
         // Connect hurtbox to take damage
         HurtboxArea.AreaEntered += OnHurtboxEntered;
         
-        // Setup 2D-HD rendering system
-        SetupAdvancedSprites();
+        // Setup sprite systems with fallback hierarchy
+        SetupSpriteSystem();
+    }
+    
+    /// <summary>
+    /// Setup sprite system with fallback hierarchy: 2D-HD -> Real-time -> Traditional
+    /// </summary>
+    private void SetupSpriteSystem()
+    {
+        // Priority 1: Try 2D-HD advanced sprite system
+        if (SetupAdvancedSprites())
+        {
+            GD.Print($"Character {CharacterId}: Using 2D-HD advanced sprite system");
+            return;
+        }
         
-        // Load character sprite (fallback method)
+        // Priority 2: Try real-time sprite system if enabled
+        if (UseRealtimeSprites && SetupRealtimeSprites())
+        {
+            GD.Print($"Character {CharacterId}: Using real-time sprite system");
+            return;
+        }
+        
+        // Priority 3: Fallback to traditional sprite loading
+        GD.Print($"Character {CharacterId}: Using traditional sprite system");
         LoadCharacterSprite();
     }
     
-    private void SetupAdvancedSprites()
+    /// <summary>
+    /// Setup 2D-HD advanced sprite system
+    /// </summary>
+    private bool SetupAdvancedSprites()
     {
-        // Try to create DynamicSpriteController for enhanced rendering
         try
         {
             var controllerScript = GD.Load<GDScript>("res://engine/actors/DynamicSpriteController.gd");
@@ -169,14 +202,16 @@ public partial class Character : CharacterBody2D
                 DynamicSpriteController.Call("register_hitbox_area", HurtboxArea, Vector2.One);
                 
                 _useAdvancedSprites = true;
-                GD.Print($"Character {CharacterId}: Advanced sprite system enabled");
+                return true;
             }
         }
         catch (Exception e)
         {
-            GD.PrintErr($"Failed to setup advanced sprites for {CharacterId}: {e.Message}");
-            _useAdvancedSprites = false;
+            GD.PrintErr($"Failed to setup 2D-HD sprites for {CharacterId}: {e.Message}");
         }
+        
+        _useAdvancedSprites = false;
+        return false;
     }
     
     private void LoadCharacterSprite()
@@ -209,6 +244,67 @@ public partial class Character : CharacterBody2D
         else
         {
             GD.PrintErr($"Sprite file not found: {spritePath}");
+        }
+    }
+    
+    /// <summary>
+    /// Setup real-time sprite generation system
+    /// </summary>
+    private bool SetupRealtimeSprites()
+    {
+        // Ensure we have an AnimatedSprite2D node
+        if (AnimatedSprite == null)
+        {
+            AnimatedSprite = new AnimatedSprite2D
+            {
+                Name = "AnimatedSprite2D"
+            };
+            AddChild(AnimatedSprite);
+            
+            // Hide the static sprite if we're using real-time generation
+            if (CharacterSprite != null)
+            {
+                CharacterSprite.Visible = false;
+            }
+        }
+        
+        // Create and setup the real-time animated sprite component
+        var script = GD.Load<Script>("res://scripts/graphics/RealtimeAnimatedSpriteComponent.gd");
+        if (script != null)
+        {
+            var componentObject = script.Call("new");
+            var realtimeComponent = componentObject.AsGodotObject() as Node;
+            if (realtimeComponent != null)
+            {
+                RealtimeAnimatedComponent = realtimeComponent;
+                RealtimeAnimatedComponent.Name = "RealtimeAnimatedSpriteComponent";
+                AddChild(RealtimeAnimatedComponent);
+                
+                // Configure the component
+                RealtimeAnimatedComponent.Set("character_id", CharacterId);
+                RealtimeAnimatedComponent.Set("use_enhanced_quality", UseEnhancedQuality);
+                RealtimeAnimatedComponent.Set("palette_name", SpritePalette);
+                RealtimeAnimatedComponent.Set("auto_generate_frames", true);
+                RealtimeAnimatedComponent.Set("enable_interpolation", true);
+                
+                // Setup the component with our character and sprite references
+                RealtimeAnimatedComponent.Call("setup_for_character", this, AnimatedSprite);
+                
+                // Connect to character state changes
+                RealtimeAnimatedComponent.Call("connect_to_character_signals", this);
+                
+                return true;
+            }
+            else
+            {
+                GD.PrintErr("Failed to create RealtimeAnimatedSpriteComponent instance");
+                return false;
+            }
+        }
+        else
+        {
+            GD.PrintErr("RealtimeAnimatedSpriteComponent script not found");
+            return false;
         }
     }
     
@@ -552,8 +648,12 @@ public partial class Character : CharacterBody2D
     {
         if (AnimationPlayer == null || Data?.Animations == null) return;
         
-        // Load appropriate sprite based on current state
-        LoadSpriteForState(CurrentState);
+        // For real-time sprites, the RealtimeAnimatedSpriteComponent handles animation updates automatically
+        // For traditional sprites, load the appropriate sprite based on current state
+        if (!UseRealtimeSprites)
+        {
+            LoadSpriteForState(CurrentState);
+        }
         
         string animationName = CurrentState switch
         {
@@ -746,10 +846,10 @@ public partial class Character : CharacterBody2D
         InitializeCharacter();
     }
     
-    // === 2D-HD Sprite System API ===
+    // === Unified Sprite System API ===
     
     /// <summary>
-    /// Set sprite rendering quality (LOW, MED, HIGH, ULTRA)
+    /// Set sprite rendering quality for 2D-HD system (LOW, MED, HIGH, ULTRA)
     /// </summary>
     public void SetSpriteQuality(string quality)
     {
@@ -767,7 +867,49 @@ public partial class Character : CharacterBody2D
     }
     
     /// <summary>
-    /// Set color palette for sprite swapping
+    /// Set color palette - works with both 2D-HD and real-time systems
+    /// </summary>
+    public void SetSpritePalette(string newPalette)
+    {
+        SpritePalette = newPalette;
+        
+        // Try 2D-HD system first
+        if (_useAdvancedSprites && DynamicSpriteController != null)
+        {
+            try
+            {
+                // Convert string palette name to texture if needed
+                var paletteTexture = LoadPaletteTexture(newPalette);
+                if (paletteTexture != null)
+                {
+                    DynamicSpriteController.Call("set_palette", paletteTexture);
+                    GD.Print($"Changed {CharacterId} 2D-HD palette to {newPalette}");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to set 2D-HD palette: {e.Message}");
+            }
+        }
+        
+        // Try real-time system
+        if (UseRealtimeSprites && RealtimeAnimatedComponent != null)
+        {
+            try
+            {
+                RealtimeAnimatedComponent.Call("set_character_palette", newPalette);
+                GD.Print($"Changed {CharacterId} real-time palette to {newPalette}");
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to set real-time palette: {e.Message}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Set color palette using texture (2D-HD system only)
     /// </summary>
     public void SetSpritePalette(Texture2D paletteTexture)
     {
@@ -785,10 +927,44 @@ public partial class Character : CharacterBody2D
     }
     
     /// <summary>
-    /// Get performance statistics from sprite system
+    /// Adjust character proportions in real-time (real-time system only)
+    /// </summary>
+    public void SetCharacterProportions(float limbLength = 1.0f, float headSize = 1.0f, float bodyWidth = 1.0f)
+    {
+        if (!UseRealtimeSprites || RealtimeAnimatedComponent == null)
+        {
+            GD.PrintErr("Real-time sprites not enabled, cannot change proportions");
+            return;
+        }
+        
+        RealtimeAnimatedComponent.Call("set_limb_length", limbLength);
+        RealtimeAnimatedComponent.Call("set_head_size", headSize);
+        RealtimeAnimatedComponent.Call("set_body_width", bodyWidth);
+        GD.Print($"Changed {CharacterId} proportions - Limb: {limbLength}, Head: {headSize}, Body: {bodyWidth}");
+    }
+    
+    /// <summary>
+    /// Toggle between real-time and traditional sprite systems
+    /// </summary>
+    public void ToggleRealtimeSprites(bool enabled)
+    {
+        if (UseRealtimeSprites == enabled)
+            return;
+        
+        UseRealtimeSprites = enabled;
+        
+        // Re-setup the sprite system with new preference
+        SetupSpriteSystem();
+        
+        GD.Print($"Real-time sprites {(enabled ? "enabled" : "disabled")} for {CharacterId}");
+    }
+    
+    /// <summary>
+    /// Get performance statistics from active sprite system
     /// </summary>
     public Godot.Collections.Dictionary GetSpritePerformanceStats()
     {
+        // Try 2D-HD system first
         if (_useAdvancedSprites && DynamicSpriteController != null)
         {
             try
@@ -798,11 +974,24 @@ public partial class Character : CharacterBody2D
                 {
                     return result.AsGodotDictionary();
                 }
-                return new Godot.Collections.Dictionary();
             }
             catch (Exception e)
             {
-                GD.PrintErr($"Failed to get sprite performance stats: {e.Message}");
+                GD.PrintErr($"Failed to get 2D-HD performance stats: {e.Message}");
+            }
+        }
+        
+        // Try real-time system
+        if (UseRealtimeSprites && RealtimeAnimatedComponent != null)
+        {
+            try
+            {
+                var stats = RealtimeAnimatedComponent.Call("get_performance_stats");
+                return stats.AsGodotDictionary();
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to get real-time performance stats: {e.Message}");
             }
         }
         
@@ -810,21 +999,58 @@ public partial class Character : CharacterBody2D
     }
     
     /// <summary>
-    /// Force sprite cache cleanup
+    /// Clear sprite cache from active system
     /// </summary>
     public void ClearSpriteCache()
     {
+        // Clear 2D-HD cache
         if (_useAdvancedSprites && DynamicSpriteController != null)
         {
             try
             {
                 DynamicSpriteController.Call("force_cache_cleanup");
+                GD.Print($"Cleared 2D-HD sprite cache for {CharacterId}");
             }
             catch (Exception e)
             {
-                GD.PrintErr($"Failed to clear sprite cache: {e.Message}");
+                GD.PrintErr($"Failed to clear 2D-HD cache: {e.Message}");
             }
         }
+        
+        // Clear real-time cache
+        if (UseRealtimeSprites && RealtimeAnimatedComponent != null)
+        {
+            try
+            {
+                RealtimeAnimatedComponent.Call("clear_cache");
+                GD.Print($"Cleared real-time sprite cache for {CharacterId}");
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to clear real-time cache: {e.Message}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Load palette texture from palette name
+    /// </summary>
+    private Texture2D LoadPaletteTexture(string paletteName)
+    {
+        string palettePath = $"res://assets/sprites/street_fighter_6/{CharacterId}/palettes/{paletteName}.png";
+        if (ResourceLoader.Exists(palettePath))
+        {
+            return GD.Load<Texture2D>(palettePath);
+        }
+        
+        // Try generic palette
+        string genericPath = $"res://assets/palettes/{paletteName}.png";
+        if (ResourceLoader.Exists(genericPath))
+        {
+            return GD.Load<Texture2D>(genericPath);
+        }
+        
+        return null;
     }
 }
 
