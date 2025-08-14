@@ -383,6 +383,15 @@ public partial class Character : CharacterBody2D
         // Buffer inputs for special moves
         BufferInput(input);
         
+        // Check for enhanced movement inputs first (high priority)
+        if (ProcessEnhancedMovementInput(input)) return;
+        
+        // Check for defensive actions
+        if (ProcessDefensiveInput(input)) return;
+        
+        // Check for cancel opportunities
+        if (ProcessCancelInput(input)) return;
+        
         // Process movement
         ProcessMovementInput(input);
         
@@ -426,6 +435,121 @@ public partial class Character : CharacterBody2D
         {
             _inputBuffer.Remove(key);
         }
+    }
+    
+    /// <summary>
+    /// Process enhanced movement inputs
+    /// </summary>
+    private bool ProcessEnhancedMovementInput(PlayerInputState input)
+    {
+        if (EnhancedMovementSystem.Instance == null) return false;
+        
+        // Check for dash inputs (double tap)
+        if (InputManager.Instance.IsInputJustPressed(PlayerId, "right") && input.Right)
+        {
+            if (EnhancedMovementSystem.Instance.TryGroundDash(this, true))
+                return true;
+        }
+        else if (InputManager.Instance.IsInputJustPressed(PlayerId, "left") && input.Left)
+        {
+            if (EnhancedMovementSystem.Instance.TryGroundDash(this, false))
+                return true;
+        }
+        
+        // Air dash inputs (in air + direction)
+        if (CurrentState == CharacterState.Jumping)
+        {
+            Vector2 airDashDirection = Vector2.Zero;
+            if (input.Right) airDashDirection.X = 1;
+            if (input.Left) airDashDirection.X = -1;
+            if (input.Up) airDashDirection.Y = -1;
+            if (input.Down) airDashDirection.Y = 1;
+            
+            if (airDashDirection != Vector2.Zero && input.AnyButton)
+            {
+                if (EnhancedMovementSystem.Instance.TryAirDash(this, airDashDirection))
+                    return true;
+            }
+        }
+        
+        // Instant Air Dash (IAD) - up + direction + button
+        if (input.Up && (input.Left || input.Right) && input.AnyButton)
+        {
+            Vector2 iadDirection = new Vector2(input.Right ? 1 : -1, -0.5f);
+            if (EnhancedMovementSystem.Instance.TryInstantAirDash(this, iadDirection))
+                return true;
+        }
+        
+        // Burst movement - multiple buttons pressed
+        if (input.LightPunch && input.HeavyKick) // LP + HK for burst
+        {
+            Vector2 burstDirection = input.Right ? Vector2.Right : input.Left ? Vector2.Left : Vector2.Zero;
+            if (burstDirection != Vector2.Zero)
+            {
+                if (EnhancedMovementSystem.Instance.TryBurstMovement(this, burstDirection))
+                    return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Process defensive inputs (parry, faultless defense)
+    /// </summary>
+    private bool ProcessDefensiveInput(PlayerInputState input)
+    {
+        // Check for Faultless Defense (hold back + any button while blocking)
+        if ((input.Left && FacingRight) || (input.Right && !FacingRight))
+        {
+            if (input.AnyButton && FaultlessDefenseSystem.Instance != null)
+            {
+                var opponent = GetOpponent();
+                if (opponent?.CurrentState == CharacterState.Attacking)
+                {
+                    FaultlessDefenseSystem.Instance.ProcessFDAttempt(this, opponent, true, opponent.StateFrame);
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Process cancel inputs
+    /// </summary>
+    private bool ProcessCancelInput(PlayerInputState input)
+    {
+        if (CurrentState != CharacterState.Attacking) return false;
+        
+        // Roman Cancel - multiple buttons
+        if (input.LightPunch && input.MediumPunch && input.HeavyPunch)
+        {
+            if (RomanCancelSystem.Instance?.TryRomanCancel(this) == true)
+                return true;
+        }
+        
+        // Special cancels - check for normal to special cancels
+        if (SpecialCancelSystem.Instance != null && input.AnyButton)
+        {
+            // Try to cancel current move into special
+            string targetSpecial = GetSpecialFromInput(input);
+            if (!string.IsNullOrEmpty(targetSpecial))
+            {
+                if (SpecialCancelSystem.Instance.TryCancel(this, GetCurrentMove(), targetSpecial, SpecialCancelSystem.CancelWindow.Active))
+                    return true;
+            }
+        }
+        
+        // Dash cancels
+        if ((input.Right && FacingRight) || (input.Left && !FacingRight))
+        {
+            if (EnhancedMovementSystem.Instance?.TryDashCancel(this, GetCurrentMove(), true) == true)
+                return true;
+        }
+        
+        return false;
     }
     
     private string GetMotionInput(PlayerInputState input)
@@ -1052,6 +1176,43 @@ public partial class Character : CharacterBody2D
         
         return null;
     }
+    
+    /// <summary>
+    /// Get special move from current input
+    /// </summary>
+    private string GetSpecialFromInput(PlayerInputState input)
+    {
+        // Simplified special move detection - real implementation would be more sophisticated
+        if (Data?.Moves?.Specials == null) return "";
+        
+        foreach (var special in Data.Moves.Specials)
+        {
+            if (IsInputInBuffer(special.Value.Input))
+            {
+                return special.Key;
+            }
+        }
+        
+        return "";
+    }
+    
+    /// <summary>
+    /// Get current move being performed
+    /// </summary>
+    private string GetCurrentMove()
+    {
+        // In real implementation, this would track the current move
+        return ""; // Placeholder
+    }
+    
+    /// <summary>
+    /// Get opponent character
+    /// </summary>
+    private Character GetOpponent()
+    {
+        // In real implementation, this would reference the other player
+        return null; // Placeholder
+    }
 }
 
 public enum CharacterState
@@ -1064,7 +1225,11 @@ public enum CharacterState
     Hit,
     Blocking,
     Knocked,
-    Stunned
+    Stunned,
+    Dashing,        // Ground dash state
+    AirDashing,     // Air dash state
+    TechRoll,       // Tech roll state
+    WakeUp          // Wake-up state
 }
 
 public class Hitbox

@@ -263,6 +263,8 @@ public class SystemAdjustments
     public ComboScalingConfig ComboScaling { get; set; } = new();
     public MeterSystemConfig MeterSystem { get; set; } = new();
     public RomanCancelConfig RomanCancel { get; set; } = new();
+    public EnhancedMovementConfig EnhancedMovement { get; set; } = new();
+    public FaultlessDefenseConfig FaultlessDefense { get; set; } = new();
 }
 
 public class ComboScalingConfig
@@ -284,6 +286,21 @@ public class RomanCancelConfig
     public bool Enabled { get; set; } = true;
     public int MeterCost { get; set; } = 50;
     public int FrameAdvantage { get; set; } = 10;
+}
+
+public class EnhancedMovementConfig
+{
+    public bool Enabled { get; set; } = true;
+    public int DashCancelCost { get; set; } = 25;
+    public int BurstMovementCost { get; set; } = 50;
+    public int IADCost { get; set; } = 10;
+}
+
+public class FaultlessDefenseConfig
+{
+    public bool Enabled { get; set; } = true;
+    public int CostPerFrame { get; set; } = 2;
+    public float PushbackMultiplier { get; set; } = 2.5f;
 }
 
 public class ChangeLogEntry

@@ -22,6 +22,9 @@
   "walkSpeed": 150,
   "runSpeed": 250,
   "jumpHeight": 300,
+  "airDashSpeed": 200,
+  "dashDistance": 120,
+  "maxAirDashes": 1,
   "weight": 100,
   "dlcCharacter": false,
   "releaseDate": "2024-08-05",
@@ -35,7 +38,10 @@
     "block": "ryu_block",
     "crouchBlock": "ryu_crouch_block",
     "hit": "ryu_hit",
-    "knockdown": "ryu_knockdown"
+    "knockdown": "ryu_knockdown",
+    "dash": "ryu_dash",
+    "airDash": "ryu_air_dash",
+    "wakeup": "ryu_wakeup"
   },
   "moves": {
     "normals": {
@@ -49,7 +55,8 @@
         "hitAdvantage": 4,
         "comboType": "opener",
         "properties": [
-          "cancelable"
+          "cancelable",
+          "dash_cancelable"
         ],
         "hitboxes": [
           {
