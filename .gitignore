@@ -59,3 +59,9 @@ steam_sdk/
 # Backup and cache
 *.backup
 *.cache
+
+# Sprite generator temporary files
+tools/sprite_generator/__pycache__/
+tools/sprite_generator/*.pyc
+generated_sprites/
+/tmp/test_sprites/
