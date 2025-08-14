@@ -31,6 +31,9 @@ public partial class StageManager : Node
     private CinematicCameraSystem _cameraSystem;
     private DynamicLightingSystem _lightingSystem;
     
+    // Procedural generation
+    private ProceduralStageGenerator _proceduralGenerator;
+    
     // Audio components
     private AudioStreamPlayer _ambientPlayer;
     private AudioStreamPlayer _musicPlayer;
@@ -63,6 +66,10 @@ public partial class StageManager : Node
         _particleSystem = Enhanced2D5ParticleSystem.Instance;
         _cameraSystem = CinematicCameraSystem.Instance;
         _lightingSystem = DynamicLightingSystem.Instance;
+        
+        // Initialize procedural stage generator
+        _proceduralGenerator = new ProceduralStageGenerator();
+        AddChild(_proceduralGenerator);
         
         // Create audio players
         _ambientPlayer = new AudioStreamPlayer
@@ -526,6 +533,138 @@ public partial class StageManager : Node
         {
             layer.SetEffectIntensity(intensity);
         }
+    }
+    
+    // Procedural stage generation methods
+    
+    /// <summary>
+    /// Generate and load a stage procedurally based on configuration
+    /// Integrates with existing sprite generation system for consistent style
+    /// </summary>
+    public void LoadProceduralStage(ProceduralStageGenerator.ProceduralStageConfig config, Node2D parent = null)
+    {
+        if (_proceduralGenerator == null)
+        {
+            GD.PrintErr("Procedural stage generator not initialized");
+            return;
+        }
+        
+        GD.Print($"Generating procedural stage with theme: {config.Theme}, mood: {config.Mood}");
+        
+        // Generate the stage data procedurally
+        var proceduralStageData = _proceduralGenerator.GenerateStage(config);
+        
+        // Add to available stages for future reference
+        _availableStages[proceduralStageData.StageId] = proceduralStageData;
+        
+        // Load the generated stage using existing loading logic
+        LoadStage(proceduralStageData.StageId, parent);
+        
+        GD.Print($"Procedural stage loaded: {proceduralStageData.Name}");
+    }
+    
+    /// <summary>
+    /// Generate a contextual stage based on character selection and game state
+    /// Uses FGC precedents to ensure competitive viability
+    /// </summary>
+    public void LoadContextualStage(string characterId, string gameMode = "versus", string timeOfDay = "dynamic")
+    {
+        var config = new ProceduralStageGenerator.ProceduralStageConfig();
+        
+        // Configure based on character context
+        config.CharacterContext = characterId;
+        config.TimeOfDay = timeOfDay;
+        
+        // Match theme to character archetype or use classic default
+        config.Theme = DetermineThemeFromCharacter(characterId);
+        
+        // Adjust settings based on game mode
+        switch (gameMode.ToLower())
+        {
+            case "tournament":
+            case "ranked":
+                config.Theme = "tournament";
+                config.Mood = "intense";
+                config.CrowdIntensity = 0.8f;
+                break;
+                
+            case "training":
+                config.Theme = "dojo";
+                config.Mood = "neutral";
+                config.CrowdIntensity = 0.0f;
+                config.EnableWeatherEffects = false;
+                break;
+                
+            case "casual":
+            case "versus":
+                config.Mood = "neutral";
+                config.CrowdIntensity = 0.5f;
+                break;
+        }
+        
+        LoadProceduralStage(config);
+    }
+    
+    /// <summary>
+    /// Generate a stage that complements the current sprite generation palette
+    /// Ensures visual consistency between characters and stage
+    /// </summary>
+    public void LoadStageForSpriteStyle(string primaryPalette, string secondaryPalette = "")
+    {
+        var config = new ProceduralStageGenerator.ProceduralStageConfig();
+        
+        // Match stage theme to sprite palette themes
+        config.Theme = DetermineThemeFromPalette(primaryPalette);
+        config.TimeOfDay = DetermineTimeFromPalette(primaryPalette);
+        
+        // Store palette information for stage generation
+        config.CustomParameters["primary_palette"] = primaryPalette;
+        config.CustomParameters["secondary_palette"] = secondaryPalette;
+        
+        LoadProceduralStage(config);
+    }
+    
+    /// <summary>
+    /// Get performance statistics from procedural generation
+    /// </summary>
+    public Dictionary<string, object> GetProceduralPerformanceStats()
+    {
+        return _proceduralGenerator?.GetPerformanceStats() ?? new Dictionary<string, object>();
+    }
+    
+    private string DetermineThemeFromCharacter(string characterId)
+    {
+        // Map character IDs to appropriate stage themes based on FGC precedents
+        return characterId?.ToLower() switch
+        {
+            "ryu" or "ken" or "chun-li" => "classic", // Street Fighter II precedent
+            "alex" or "dudley" => "urban", // 3rd Strike precedent  
+            "lei" or "king" => "tournament", // Tekken precedent
+            _ => "classic" // Default to Street Fighter II style
+        };
+    }
+    
+    private string DetermineThemeFromPalette(string palette)
+    {
+        // Match palette themes to stage themes for visual consistency
+        return palette?.ToLower() switch
+        {
+            "ryu" or "ken" or "default" => "classic",
+            "urban" or "modern" => "urban",
+            "tournament" or "professional" => "tournament",
+            _ => "classic"
+        };
+    }
+    
+    private string DetermineTimeFromPalette(string palette)
+    {
+        // Some palettes suggest specific times of day
+        return palette?.ToLower() switch
+        {
+            "sunset" or "evening" => "sunset",
+            "night" or "dark" => "night",
+            _ => "day"
+        };
     }
     
     public override void _ExitTree()
