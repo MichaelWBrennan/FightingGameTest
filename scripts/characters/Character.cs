@@ -23,6 +23,10 @@ public partial class Character : CharacterBody2D
     public Area2D HurtboxArea { get; private set; }
     public Sprite2D CharacterSprite { get; private set; }
     
+    // 2D-HD Rendering System
+    private Node DynamicSpriteController { get; set; }
+    private bool _useAdvancedSprites = true;
+    
     // State
     public CharacterState CurrentState { get; private set; } = CharacterState.Idle;
     public int Health { get; private set; }
@@ -132,8 +136,47 @@ public partial class Character : CharacterBody2D
         // Connect hurtbox to take damage
         HurtboxArea.AreaEntered += OnHurtboxEntered;
         
-        // Load character sprite
+        // Setup 2D-HD rendering system
+        SetupAdvancedSprites();
+        
+        // Load character sprite (fallback method)
         LoadCharacterSprite();
+    }
+    
+    private void SetupAdvancedSprites()
+    {
+        // Try to create DynamicSpriteController for enhanced rendering
+        try
+        {
+            var controllerScript = GD.Load<GDScript>("res://engine/actors/DynamicSpriteController.gd");
+            if (controllerScript != null)
+            {
+                DynamicSpriteController = (Node)controllerScript.New();
+                DynamicSpriteController.Name = "DynamicSpriteController";
+                AddChild(DynamicSpriteController);
+                
+                // Configure for this character
+                var context = new Godot.Collections.Dictionary
+                {
+                    {"character_id", CharacterId}
+                };
+                
+                DynamicSpriteController.Call("set_action", "idle", context);
+                DynamicSpriteController.Call("set_quality", "MED");
+                
+                // Register hitbox areas for auto-scaling
+                DynamicSpriteController.Call("register_hitbox_area", HitboxArea, Vector2.One);
+                DynamicSpriteController.Call("register_hitbox_area", HurtboxArea, Vector2.One);
+                
+                _useAdvancedSprites = true;
+                GD.Print($"Character {CharacterId}: Advanced sprite system enabled");
+            }
+        }
+        catch (Exception e)
+        {
+            GD.PrintErr($"Failed to setup advanced sprites for {CharacterId}: {e.Message}");
+            _useAdvancedSprites = false;
+        }
     }
     
     private void LoadCharacterSprite()
@@ -532,7 +575,41 @@ public partial class Character : CharacterBody2D
     
     private void LoadSpriteForState(CharacterState state)
     {
-        if (string.IsNullOrEmpty(CharacterId) || CharacterSprite == null) return;
+        if (string.IsNullOrEmpty(CharacterId)) return;
+        
+        // Use advanced sprite system if available
+        if (_useAdvancedSprites && DynamicSpriteController != null)
+        {
+            string actionName = state switch
+            {
+                CharacterState.Idle => "idle",
+                CharacterState.Walking => "walk", 
+                CharacterState.Jumping => "jump",
+                CharacterState.Attacking => "attack",
+                _ => "idle"
+            };
+            
+            var context = new Godot.Collections.Dictionary
+            {
+                {"character_id", CharacterId},
+                {"state", (int)state},
+                {"frame", StateFrame}
+            };
+            
+            try
+            {
+                DynamicSpriteController.Call("set_action", actionName, context);
+                return; // Success, no need for fallback
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Advanced sprite system failed for {CharacterId}: {e.Message}");
+                _useAdvancedSprites = false; // Disable and fallback
+            }
+        }
+        
+        // Fallback to original sprite loading system
+        if (CharacterSprite == null) return;
         
         string spriteFileName = state switch
         {
@@ -667,6 +744,87 @@ public partial class Character : CharacterBody2D
         SelectedSubArchetype = subArchetypeId;
         LoadCharacterData();
         InitializeCharacter();
+    }
+    
+    // === 2D-HD Sprite System API ===
+    
+    /// <summary>
+    /// Set sprite rendering quality (LOW, MED, HIGH, ULTRA)
+    /// </summary>
+    public void SetSpriteQuality(string quality)
+    {
+        if (_useAdvancedSprites && DynamicSpriteController != null)
+        {
+            try
+            {
+                DynamicSpriteController.Call("set_quality", quality);
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to set sprite quality: {e.Message}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Set color palette for sprite swapping
+    /// </summary>
+    public void SetSpritePalette(Texture2D paletteTexture)
+    {
+        if (_useAdvancedSprites && DynamicSpriteController != null)
+        {
+            try
+            {
+                DynamicSpriteController.Call("set_palette", paletteTexture);
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to set sprite palette: {e.Message}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Get performance statistics from sprite system
+    /// </summary>
+    public Godot.Collections.Dictionary GetSpritePerformanceStats()
+    {
+        if (_useAdvancedSprites && DynamicSpriteController != null)
+        {
+            try
+            {
+                var result = DynamicSpriteController.Call("get_performance_stats");
+                if (result.VariantType == Variant.Type.Dictionary)
+                {
+                    return result.AsGodotDictionary();
+                }
+                return new Godot.Collections.Dictionary();
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to get sprite performance stats: {e.Message}");
+            }
+        }
+        
+        return new Godot.Collections.Dictionary();
+    }
+    
+    /// <summary>
+    /// Force sprite cache cleanup
+    /// </summary>
+    public void ClearSpriteCache()
+    {
+        if (_useAdvancedSprites && DynamicSpriteController != null)
+        {
+            try
+            {
+                DynamicSpriteController.Call("force_cache_cleanup");
+            }
+            catch (Exception e)
+            {
+                GD.PrintErr($"Failed to clear sprite cache: {e.Message}");
+            }
+        }
     }
 }
 

@@ -61,6 +61,10 @@ CuttingEdgeGraphicsManager="*res://scripts/graphics/CuttingEdgeGraphicsManager.c
 DynamicLightingSystem="*res://scripts/graphics/DynamicLightingSystem.cs"
 AdvancedParticleSystem="*res://scripts/graphics/AdvancedParticleSystem.cs"
 
+# 2D-HD Rendering Engine
+RenderProfileManager="*res://engine/render/RenderProfileManager.gd"
+TextureStreamer="*res://utils/texture_streamer.gd"
+
 # Pseudo 2.5D Graphics Enhancement Systems
 Pseudo2D5Manager="*res://scripts/graphics/Pseudo2D5Manager.cs"
 Enhanced2D5ParticleSystem="*res://scripts/graphics/Enhanced2D5ParticleSystem.cs"
