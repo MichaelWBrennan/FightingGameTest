@@ -1,0 +1,507 @@
+{
+  "characterId": "ken",
+  "name": "Ken",
+  "displayName": "Ken Masters",
+  "description": "Ryu's best friend and rival who fights with a flashy, aggressive style.",
+  "archetype": "rushdown",
+  "complexity": "easy",
+  "counterplayTags": [
+    "anti-air",
+    "neutral"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter"
+  ],
+  "uniqueMechanics": [
+    "run",
+    "overhead"
+  ],
+  "health": 1000,
+  "meter": 100,
+  "walkSpeed": 160,
+  "runSpeed": 280,
+  "jumpHeight": 310,
+  "airDashSpeed": 220,
+  "dashDistance": 140,
+  "maxAirDashes": 2,
+  "weight": 95,
+  "dlcCharacter": true,
+  "releaseDate": "2024-09-01",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "ken_idle",
+    "walkForward": "ken_walk_forward",
+    "walkBackward": "ken_walk_backward",
+    "jump": "ken_jump",
+    "crouch": "ken_crouch",
+    "block": "ken_block",
+    "crouchBlock": "ken_crouch_block",
+    "hit": "ken_hit",
+    "knockdown": "ken_knockdown"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Quick Jab",
+        "damage": 55,
+        "startupFrames": 3,
+        "activeFrames": 3,
+        "recoveryFrames": 6,
+        "blockAdvantage": 2,
+        "hitAdvantage": 5,
+        "comboType": "opener",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 3,
+            "endFrame": 5,
+            "position": [
+              60,
+              0
+            ],
+            "size": [
+              40,
+              30
+            ],
+            "damage": 55,
+            "hitstun": 12,
+            "blockstun": 8
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Step Punch",
+        "damage": 85,
+        "startupFrames": 7,
+        "activeFrames": 4,
+        "recoveryFrames": 9,
+        "blockAdvantage": -1,
+        "hitAdvantage": 4,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 7,
+            "endFrame": 10,
+            "position": [
+              75,
+              0
+            ],
+            "size": [
+              55,
+              35
+            ],
+            "damage": 85,
+            "hitstun": 16,
+            "blockstun": 11
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Fierce Punch",
+        "damage": 130,
+        "startupFrames": 12,
+        "activeFrames": 5,
+        "recoveryFrames": 17,
+        "blockAdvantage": -4,
+        "hitAdvantage": 1,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 12,
+            "endFrame": 16,
+            "position": [
+              85,
+              -5
+            ],
+            "size": [
+              65,
+              45
+            ],
+            "damage": 130,
+            "hitstun": 22,
+            "blockstun": 14,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "hadoken": {
+        "name": "Hadoken",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch",
+        "damage": 90,
+        "startupFrames": 14,
+        "activeFrames": 0,
+        "recoveryFrames": 28,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 320,
+          "lifetime": 110,
+          "size": [
+            38,
+            18
+          ],
+          "damage": 90,
+          "hitstun": 16,
+          "blockstun": 11
+        }
+      },
+      "shoryuken": {
+        "name": "Shoryuken",
+        "input": "623P",
+        "description": "Dragon punch motion + Punch",
+        "damage": 150,
+        "startupFrames": 4,
+        "activeFrames": 8,
+        "recoveryFrames": 32,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "invincible",
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 11,
+            "position": [
+              40,
+              -35
+            ],
+            "size": [
+              50,
+              85
+            ],
+            "damage": 150,
+            "hitstun": 28,
+            "blockstun": 18,
+            "knockdown": true
+          }
+        ]
+      },
+      "tatsumaki": {
+        "name": "Tatsumaki Senpukyaku",
+        "input": "214K",
+        "description": "Quarter-circle back + Kick",
+        "damage": 110,
+        "startupFrames": 9,
+        "activeFrames": 12,
+        "recoveryFrames": 22,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": [
+          "multi_hit",
+          "air_ok"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 9,
+            "endFrame": 20,
+            "position": [
+              45,
+              0
+            ],
+            "size": [
+              70,
+              50
+            ],
+            "damage": 35,
+            "hitstun": 10,
+            "blockstun": 7,
+            "hits": 3
+          }
+        ]
+      }
+    },
+    "supers": {
+      "shinryuken": {
+        "name": "Shinryuken",
+        "input": "236236P",
+        "description": "Quarter-circle forward x2 + Punch",
+        "damage": 320,
+        "startupFrames": 5,
+        "activeFrames": 12,
+        "recoveryFrames": 40,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": [
+          "super",
+          "invincible"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 16,
+            "position": [
+              50,
+              -40
+            ],
+            "size": [
+              60,
+              100
+            ],
+            "damage": 320,
+            "hitstun": 45,
+            "blockstun": 25,
+            "knockdown": true
+          }
+        ]
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Rushdown",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "hadoken"
+      ],
+      "damage": 230,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Hurricane Combo",
+      "inputs": [
+        "mediumPunch",
+        "tatsumaki"
+      ],
+      "damage": 195,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Dragon Fist",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "shinryuken"
+      ],
+      "damage": 455,
+      "difficulty": "hard"
+    }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "fundamental",
+      "name": "Fundamental Ken",
+      "description": "Well-rounded and balanced approach. Classic Ken fundamentals.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "aggressive",
+      "name": "Aggressive Ken",
+      "description": "Rushdown-focused with enhanced pressure tools and offensive capabilities.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.95,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.2,
+        "jumpHeightMultiplier": 1.1,
+        "weightMultiplier": 0.95
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "startupFrameBonus": -1,
+          "hitAdvantageBonus": 2,
+          "addedProperties": [
+            "rushdown",
+            "pressure"
+          ],
+          "removedProperties": []
+        },
+        "tatsumaki": {
+          "recoveryFrameBonus": -3,
+          "addedProperties": [
+            "enhanced_mobility"
+          ],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+rushdown_pressure",
+        "+enhanced_mobility"
+      ],
+      "additionalMoves": {
+        "special_step_kick": {
+          "name": "Step Kick",
+          "input": "6MK",
+          "description": "Forward stepping kick with good range",
+          "damage": 85,
+          "startupFrames": 12,
+          "activeFrames": 4,
+          "recoveryFrames": 14,
+          "blockAdvantage": -1,
+          "hitAdvantage": 5,
+          "meterCost": 0,
+          "comboType": "opener",
+          "properties": [
+            "advancing",
+            "overhead",
+            "cancelable"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 12,
+              "endFrame": 15,
+              "position": [
+                85,
+                -10
+              ],
+              "size": [
+                55,
+                40
+              ],
+              "damage": 85,
+              "hitstun": 16,
+              "blockstun": 11,
+              "knockdown": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "subArchetypeId": "technical",
+      "name": "Technical Ken",
+      "description": "Complex combo routes and advanced techniques for high-level play.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 0.95,
+        "runSpeedMultiplier": 0.9,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05
+      },
+      "moveModifiers": {
+        "shoryuken": {
+          "damageMultiplier": 1.2,
+          "addedProperties": [
+            "technical_cancel",
+            "advanced_combo"
+          ],
+          "removedProperties": []
+        },
+        "shinryuken": {
+          "damageMultiplier": 1.15,
+          "addedProperties": [
+            "technical_execution"
+          ],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+advanced_combos",
+        "+technical_cancels",
+        "+complex_execution"
+      ],
+      "additionalMoves": {
+        "special_kara_throw": {
+          "name": "Kara Throw",
+          "input": "MK~LP+LK",
+          "description": "Extended range throw using kara-cancel technique",
+          "damage": 120,
+          "startupFrames": 3,
+          "activeFrames": 2,
+          "recoveryFrames": 18,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "throw",
+            "kara_cancel",
+            "extended_range"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 3,
+              "endFrame": 4,
+              "position": [
+                45,
+                0
+              ],
+              "size": [
+                60,
+                50
+              ],
+              "damage": 120,
+              "hitstun": 0,
+              "blockstun": 0,
+              "knockdown": true
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Ken - Character Sprites",
+        "file_name": "street_fighter_6_ken_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Ken - Victory Sprites",
+        "file_name": "street_fighter_6_ken_victory_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      },
+      {
+        "name": "Ken - Special Move Effects",
+        "file_name": "street_fighter_6_ken_special_move_effects",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Ken - Portrait",
+        "file_name": "street_fighter_6_ken_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": true,
+        "file_size": 1024000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Ken - Character Select Icon",
+        "file_name": "street_fighter_6_ken_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ken/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
+}
