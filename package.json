@@ -2,31 +2,70 @@
   "name": "fighting-game-retention-system",
   "version": "1.0.0",
   "description": "Player-respecting retention and ROI system for PlayCanvas fighting platform",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "dev:client": "cd src/client && bun run dev",
     "dev:backend": "cd src/backend && bun run dev",
+    "build": "tsc --build",
     "build:client": "cd src/client && bun run build",
     "build:backend": "cd src/backend && bun run build",
+    "build:types": "tsc --emitDeclarationOnly",
+    "clean": "rm -rf dist && tsc --build --clean",
     "test": "bun test",
-    "lint": "eslint src/ --ext .ts,.js",
+    "test:types": "tsc --noEmit",
+    "lint": "eslint src/ types/ --ext .ts,.tsx",
+    "lint:fix": "eslint src/ types/ --ext .ts,.tsx --fix",
     "type-check": "tsc --noEmit",
-    "validate-contracts": "node scripts/validate-contracts.js"
+    "type-check:watch": "tsc --noEmit --watch",
+    "validate-contracts": "tsx scripts/validate-contracts.ts",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js"
   },
-  "keywords": ["playcanvas", "fighting-game", "retention", "ethical-monetization", "player-respecting"],
+  "keywords": ["playcanvas", "fighting-game", "retention", "ethical-monetization", "player-respecting", "typescript"],
   "author": "Fighting Game Team",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.0.0",
-    "typescript": "^5.0.0",
+    "@types/node": "^20.10.0",
+    "@types/web": "^0.0.127",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.2",
+    "typescript": "^5.3.3",
+    "tsx": "^4.6.2",
+    "prettier": "^3.1.1",
     "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1"
+    "ajv-formats": "^2.1.1",
+    "rimraf": "^5.0.5"
+  },
+  "dependencies": {
+    "playcanvas": "^1.68.0"
   },
   "workspaces": [
     "src/client",
     "src/backend/*"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./types/*": {
+      "types": "./types/*.ts",
+      "import": "./types/*.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "types/",
+    "README.md",
+    "LICENSE"
   ]
 }
