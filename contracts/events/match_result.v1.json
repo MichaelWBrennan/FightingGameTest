@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "match_result.v1.json", 
+  "title": "Match Result Event",
+  "description": "Tracks the outcome of a fighting game match",
+  "type": "object",
+  "required": ["event", "v", "ts", "userId", "matchId", "ranked", "roundsWon", "roundsLost", "disconnect", "sessionHash"],
+  "properties": {
+    "event": {
+      "type": "string",
+      "const": "match_result"
+    },
+    "v": {
+      "type": "string", 
+      "const": "1.0"
+    },
+    "ts": {
+      "type": "integer",
+      "description": "Unix timestamp in seconds"
+    },
+    "userId": {
+      "type": "string",
+      "pattern": "^u_[a-zA-Z0-9]+$",
+      "description": "Unique user identifier"
+    },
+    "matchId": {
+      "type": "string",
+      "pattern": "^m_[a-zA-Z0-9]+$",
+      "description": "Unique match identifier"
+    },
+    "ranked": {
+      "type": "boolean",
+      "description": "Whether this was a ranked match"
+    },
+    "mmrDelta": {
+      "type": "integer",
+      "description": "MMR change from this match (can be negative)"
+    },
+    "characterId": {
+      "type": "string",
+      "description": "Character used by the player"
+    },
+    "opponentId": {
+      "type": "string", 
+      "description": "Character used by opponent"
+    },
+    "roundsWon": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of rounds won by player"
+    },
+    "roundsLost": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of rounds lost by player"
+    },
+    "disconnect": {
+      "type": "boolean",
+      "description": "Whether the match ended due to disconnect"
+    },
+    "sessionHash": {
+      "type": "string",
+      "pattern": "^s_[a-zA-Z0-9]+$",
+      "description": "Session this match belonged to"
+    },
+    "matchDurationMs": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Match duration in milliseconds"
+    },
+    "winStreak": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current win streak after this match"
+    }
+  },
+  "additionalProperties": false
+}

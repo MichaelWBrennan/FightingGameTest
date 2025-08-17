@@ -1,533 +1,406 @@
-# SF3: Third Strike HD-2D Fighting Game
+# Fighting Game Retention System
 
-A cutting-edge fighting game that combines **Street Fighter 3: Third Strike's legendary fluid animation** with **Octopath Traveler's stunning HD-2D visual style**, built on the PlayCanvas WebGL engine.
+A player-respecting, high-retention, high-ROI live system for PlayCanvas fighting games. This system delivers sustainable retention and efficient monetization without exploitative mechanics, optimizing LTV/CAC, D30/D90 retention, and ARPDAU through value creation rather than compulsion.
 
-## 🎮 What We've Built
+## 🎯 Mission Statement
 
-This project represents a complete transformation from Godot to PlayCanvas, implementing:
+Position your fighting game as the industry benchmark for ethical player retention while maximizing lifetime value through mastery, community, and transparent cosmetics—all without sacrificing player trust.
 
-### ✨ Core Features
+## 🛡️ Ethical Guardrails (Non-Negotiables)
 
-- **SF3:3S Combat System**: Frame-perfect parry system, special moves, and fluid combat
-- **HD-2D Graphics**: Multi-layer parallax backgrounds with depth-of-field and dynamic lighting
-- **Custom Shaders**: Rim lighting, normal mapping, and sprite enhancement effects
-- **Advanced Post-Processing**: Bloom, color grading, depth-of-field, and fighting game VFX
-- **Precision Input**: Frame-accurate input handling for competitive play
+- ❌ **No loot boxes, gacha, paid randomness, pay-to-win, or energy timers**
+- ❌ **No virtual currency abstraction** - Direct, transparent pricing only
+- ❌ **No FOMO traps** - Time-limited items have periodic reruns or transparent return paths
+- ✅ **Fair progression** - Power is earned by skill/time, not purchase (cosmetics only)
+- ✅ **Privacy by design** - GDPR/CCPA compliance with opt-in telemetry
+- ✅ **Deterministic gameplay** - Retention systems never affect netcode or match fairness
 
-### 🎨 Visual Systems
+## 📊 Business KPIs (Target Metrics)
 
-#### SF3:3S Graphics Manager
-- Fluid hand-drawn animation style
-- Muted atmospheric color palettes
-- Interactive background elements
-- Character-specific lighting
+- **Retention**: D1 ≥ 55%, D7 ≥ 30%, D30 ≥ 15%, D90 ≥ 8%
+- **Revenue**: ARPDAU uplift ≥ +15% through cosmetic value, not power differential
+- **Economics**: LTV/CAC ≥ 3.0 within 90 days
+- **Satisfaction**: CSAT ≥ 80, NPS ≥ +40, Refund rate ≤ 2%
 
-#### HD-2D Renderer
-- Multi-depth layer system with parallax
-- Sprite billboarding in 3D space
-- Dynamic lighting with soft shadows
-- Camera depth effects
+## 🏗️ System Architecture
 
-#### Post-Processing Pipeline
-- **Depth-of-Field**: Octopath-style focus effects
-- **Bloom**: Dramatic lighting enhancement
-- **Color Grading**: Cinematic visual treatment
-- **Fighting Game VFX**: Hit flashes, screen shake, slow motion
+### Client SDK (PlayCanvas)
+Drop-in TypeScript SDK for tracking and engagement features:
 
-#### Custom GLSL Shaders
-- **Rim Lighting**: Character depth separation
-- **Normal Mapping**: 2D sprite depth enhancement
-- **Pixel Perfect**: Art style preservation
+```
+src/client/
+├── retention/
+│   ├── RetentionClient.ts    # Session tracking & analytics
+│   └── MasteryEngine.ts      # XP tracking & prestige
+├── commerce/
+│   └── Storefront.ts         # Direct pricing & transparency
+├── social/
+│   └── Clubs.ts              # Team formation & community
+└── coach/
+    └── CoachOverlay.ts       # Contextual gameplay tips
+```
 
-### ⚔️ Combat Systems
+### Backend Services (Node.js + TypeScript)
+Modular microservices architecture:
 
-#### Frame-Accurate Combat
-- 60 FPS locked timing
-- SF3:3S parry system with red parry
-- Damage scaling and combo tracking
-- Special move motion detection
+```
+src/backend/
+├── identity/          # Account management & consent
+├── progression/       # Mastery tracking & objectives  
+├── commerce/          # Catalog & direct payments
+├── analytics/         # Event ingestion & churn prediction
+├── liveops/          # Events & seasonal content
+└── notify/           # Opt-in communication
+```
 
-#### Input Management
-- Frame-perfect input buffering
-- Motion pattern recognition (236, 623, etc.)
-- Gamepad and keyboard support
-- Fighting game notation support
+### Data Contracts
+JSON Schema-based event and configuration contracts:
 
-#### Character System
-- Data-driven character loading
-- Archetype-based balance system
-- Animation and state management
-- Physics integration
+```
+contracts/
+├── events/           # Event schemas (session, match, purchase, etc.)
+└── config/          # Configuration schemas (objectives, catalog, etc.)
+```
+
+## 🎮 Core Features
+
+### 1. Mastery-Centric Progression (Power-Neutral)
+- **Account Mastery Track**: Infinite, prestige-able progression
+- **Character Mastery Tracks**: Individual character specialization
+- **Archetype Challenges**: Cross-character skill development
+- **Rewards**: Titles, banners, announcer packs, VFX palettes, stage variants, profile cosmetics
+- **Guarantee**: No gameplay advantage from any rewards
+
+### 2. Session Anchors & Cadence
+- **Daily/Weekly Objectives**: Skill-oriented, short lists, no streak penalties
+- **Rotating Labs**: Curated "learn an archetype" queues with boosted XP and coaching overlays
+- **Seasonal Ladders**: Transparent MMR with decay that never deletes rank rewards
+
+### 3. Social & Status Systems
+- **Clubs/Teams**: Opt-in social features with shared objectives and group trophies
+- **Mentor Mode**: Veteran coaching system with cosmetic rewards for mentors
+- **Replays + Highlights**: Shareable clips with creator watermark opt-in
+
+### 4. Ethical Monetization (Cosmetics Only)
+- **Direct Purchase**: Clear pricing, tax included, regionally appropriate
+- **Bundle Transparency**: Visible à-la-carte vs bundle pricing with no dark discounts
+- **Showcase Store**: Rotating cosmetics with documented Return Window dates in UI
+
+### 5. Player Knowledge & Onboarding
+- **Contextual Coach**: Frame-data tips, matchup primers, "why you lost" summaries
+- **Sandbox Labs**: CPU scripts for practicing meta-common strings; save/load labs
+
+### 6. Churn Prediction & Respectful Winback
+- **On-Device Signals**: Lightweight behavioral analysis + backend models
+- **Ethical Winback**: Practice vouchers, Lab unlocks, training tools—not purchase pressure
+- **Opt-In Communication**: Rate-limited, one-click unsubscribe
+
+### 7. Live-Ops Operating System
+- **Calendarized Events**: Skill trials, community tournaments with fixed start/stop
+- **No Paid Passes**: Event cosmetics are earnable via play and return to store later
+
+### 8. Analytics & Experimentation
+- **First-Party Telemetry**: Event contracts, cohorting, holdout groups
+- **A/B/n Framework**: Fixed-horizon statistics to avoid peeking
+- **Ethical Governance**: Experiments cannot change match fairness
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Modern web browser with WebGL 2.0 support
-- Node.js 16+ (for development)
+- Node.js 18+ with Bun runtime
+- PostgreSQL 14+
+- Redis 6+
+- ClickHouse 23+ (for analytics)
 
-### Running the Game
+### Installation
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-2. **Start development server**:
-   ```bash
-   npm start
-   # or
-   yarn start
-   ```
-
-3. **Open in browser**:
-   - Navigate to `http://localhost:8000`
-   - The game will initialize automatically
-
-### Controls
-
-#### Player 1 (Keyboard)
-- **Movement**: WASD
-- **Attacks**: J (LP), K (MP), L (HP), U (LK), I (MK), O (HK)
-
-#### Player 2 (Keyboard)  
-- **Movement**: Arrow Keys
-- **Attacks**: Numpad 1-6
-
-#### Special Moves
-- **Hadoken**: ↓↘→ + Punch
-- **Shoryuken**: →↓↘ + Punch  
-- **Tatsu**: ↓↙← + Kick
-
-#### Debug Controls
-- **F1**: Toggle debug info
-- **F2**: Frame step mode
-- **F3**: Toggle hitbox display
-
-## 🛠️ Architecture
-
-### File Structure
-```
-src/
-├── scripts/
-│   ├── core/
-│   │   ├── GameManager.js          # Main game loop and scene management
-│   │   └── InputManager.js         # Frame-accurate input handling
-│   ├── graphics/
-│   │   ├── SF3GraphicsManager.js   # SF3:3S visual style system
-│   │   ├── HD2DRenderer.js         # Octopath HD-2D rendering
-│   │   └── PostProcessingManager.js # Advanced post-effects
-│   ├── characters/
-│   │   └── CharacterManager.js     # Legacy character system
-│   ├── combat/
-│   │   └── CombatSystem.js         # Fighting game mechanics
-│   ├── CharacterLoader.ts          # 🆕 Data-driven character loading
-│   ├── VariationOverlay.ts         # 🆕 MKX-style variation system
-│   ├── RotationService.ts          # 🆕 LoL-like fighter rotation
-│   ├── CharacterSelectUI.ts        # 🆕 Character selection interface
-│   └── EntitlementBridge.ts        # 🆕 Character ownership system
-├── shaders/
-│   ├── RimLightingShader.glsl      # Character rim lighting
-│   └── SpriteNormalMappingShader.glsl # 2D sprite normal mapping
-├── assets/
-│   └── data/
-│       ├── characters/             # 🆕 Character definitions and variations
-│       └── rotation.config.json    # 🆕 Fighter rotation configuration
-└── tests/
-    └── test-harness.js             # 🆕 Unit testing framework
-```
-
-### Key Technologies
-- **PlayCanvas Engine**: WebGL rendering and scene management
-- **Custom GLSL Shaders**: Advanced visual effects
-- **Frame-Perfect Systems**: 60 FPS locked gameplay
-- **HD-2D Techniques**: Multi-layer parallax and depth effects
-- **TypeScript Architecture**: Type-safe character and rotation systems
-- **Data-Driven Design**: JSON-based character definitions with variation overlays
-- **MKX-Style Variations**: Three distinct playstyles per character
-- **LoL-Like Rotation**: Dynamic character availability system
-
-## 🎯 Visual Style Achieved
-
-### SF3:3S Elements
-- ✅ Fluid, rubber-like character motion
-- ✅ Muted atmospheric color palettes
-- ✅ Interactive background elements
-- ✅ Hand-drawn animation feel
-- ✅ Legendary parry system
-
-### HD-2D Elements  
-- ✅ Multi-layer parallax backgrounds
-- ✅ Dynamic depth-of-field effects
-- ✅ Volumetric lighting and shadows
-- ✅ Sprite billboarding in 3D space
-- ✅ Cinematic post-processing
-
-### Fighting Game Polish
-- ✅ Frame-perfect input timing
-- ✅ Hit effects and screen shake
-- ✅ Dramatic super move visuals
-- ✅ Competitive-ready mechanics
-
-## 🏆 Achievement Summary
-
-**✅ COMPLETED: Full Godot → PlayCanvas Conversion**
-
-We have successfully:
-
-1. **Removed all Godot files** and created a pure PlayCanvas project
-2. **Implemented SF3:3S graphics system** with fluid animation and atmospheric visuals
-3. **Built HD-2D renderer** with multi-layer depth and Octopath-style effects
-4. **Created custom GLSL shaders** for rim lighting and normal mapping
-5. **Developed frame-accurate combat** with parry system and special moves
-6. **Integrated advanced post-processing** with DOF, bloom, and VFX
-7. **Preserved all original mechanics** while upgrading graphics dramatically
-
-## 🎮 Technical Innovation
-
-This project represents a unique fusion:
-- **Classic 2D fighting game feel** (SF3:3S) 
-- **Modern HD-2D visual techniques** (Octopath Traveler)
-- **Web-native performance** (PlayCanvas WebGL)
-- **Competitive-grade precision** (Frame-perfect systems)
-
-The result is a fighting game that honors SF3:3S's legendary gameplay while pushing visual boundaries with modern rendering techniques.
-
-## 📄 License
-
-MIT License - See LICENSE file for details.
-
----
-
-## 🎮 New Fighting Game Systems (v2.0)
-
-### ⚔️ Character Variation System
-
-This game now features an **MKX-style variation system** where each character has three distinct playstyles:
-
-#### 12 Core Archetypes
-1. **Shoto** (Vanguard) - Balanced fundamentals with parry system
-2. **Zoner** (Zephyr) - Projectile control and space management
-3. **Grappler** (Crusher) - Command grabs and armor
-4. **Rushdown** (Blitz) - Speed and pressure mixups
-5. **Charge** (Volt) - Charge motion execution with partitioning
-6. **Footsies** (Ranger) - Poke-whiff punish specialist
-7. **Setplay** (Weaver) - Trap deployment and area control
-8. **Puppet** (Maestro) - Command ethereal assistants
-9. **Stance** (Shifter) - Form-swapping with unique movesets
-10. **Rekka** (Chain) - Sequence-branching attack chains
-11. **Powerhouse** (Titan) - Slow, devastating armor attacks
-12. **Aerial** (Sky) - Air mobility and dominance
-
-#### Three Variations Per Character
-Each character has exactly **3 variations** that meaningfully alter:
-- Special moves and properties
-- Frame data and advantage
-- Unique mechanics and traits
-- Movement characteristics
-- Statistical modifications
-
-Examples:
-- **Vanguard**: Discipline (defense), Ascendant (stance), Enforcer (armor)
-- **Zephyr**: Storm Caller (weather), Wind Dancer (mobility), Zoner Pure (keepaway)
-- **Crusher**: Pure Grappler (max grabs), Strike Grappler (normals), Armored Tank (defense)
-
-### 🔄 Fighter Rotation System
-
-Inspired by **League of Legends' champion rotation**, the game features:
-
-#### Dynamic Character Pools
-- **Free Rotation**: Changes weekly (configurable)
-- **Starter Characters**: Always available for new players
-- **Owned Characters**: Unlocked permanently
-- **Event Overrides**: Special rotation during events
-
-#### Smart Entitlements
-- **Training Mode**: All characters unlocked by default
-- **Platform Integration**: Steam, PlayStation, Xbox, Web support
-- **Dev/QA Overrides**: Debug unlocks for development
-- **Hot-Swappable**: Runtime configuration updates
-
-#### Regional Support
-- **UTC Rollover**: Configurable rollover times per region
-- **Event Coordination**: Synchronized global events
-- **Local Overrides**: Region-specific character availability
-
-### 🎨 Character Select Experience
-
-- **Archetype Badges**: Visual indicators for playstyle
-- **Variation Carousel**: Three-slot selection per character
-- **Lock State Display**: Clear availability indicators
-- **Rotation Countdown**: Timer to next character refresh
-- **Featured Banner**: Highlight special characters
-
-## 🚀 Quick Start (Updated)
-
-### Prerequisites
-- Modern web browser with WebGL 2.0 support
-- Node.js 16+ (for development and testing)
-
-### Running the Game
-
-1. **Install dependencies**:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-2. **Run tests** (recommended):
-   ```bash
-   node tests/test-harness.js
-   # or with verbose output
-   node tests/test-harness.js --verbose
-   ```
-
-3. **Start development server**:
-   ```bash
-   npm start
-   # or
-   yarn start
-   ```
-
-4. **Open in browser**:
-   - Navigate to `http://localhost:8000`
-   - Select character and variation
-   - The game will initialize with new character system
-
-### Character Selection
-
-1. **Choose Character**: Pick from available roster (rotation-dependent)
-2. **Select Variation**: Choose one of three playstyles
-3. **Confirm Selection**: Lock in your choice
-4. **Enter Match**: Battle with your customized fighter
-
-## 🔧 Developer Guide
-
-### Adding a New Character
-
-1. **Create Base Definition**:
-   ```bash
-   # Create assets/data/characters/yourcharacter.base.json
-   ```
-   ```json
-   {
-     "schemaVersion": "1.0",
-     "id": "yourcharacter",
-     "displayName": "Your Character",
-     "archetype": "shoto",
-     "trait": { ... },
-     "normals": { ... },
-     "specials": { ... },
-     "supers": { ... },
-     "movement": { ... },
-     "stats": { ... }
-   }
-   ```
-
-2. **Create Variations**:
-   ```bash
-   # Create assets/data/characters/yourcharacter.variations.json
-   ```
-   ```json
-   {
-     "schemaVersion": "1.0",
-     "characterId": "yourcharacter",
-     "variations": [
-       {
-         "id": "variation1",
-         "name": "Variation Name",
-         "description": "What this variation does",
-         "adds": { ... },
-         "mods": { ... },
-         "removes": [ ... ]
-       }
-       // ... two more variations
-     ]
-   }
-   ```
-
-3. **Add to Rotation**:
-   ```json
-   // In assets/data/rotation.config.json
-   {
-     "pools": {
-       "freeRotation": ["existing_chars", "yourcharacter"]
-     }
-   }
-   ```
-
-4. **Test**:
-   ```bash
-   node tests/test-harness.js
-   ```
-
-### Adding a New Archetype
-
-1. **Define Archetype Characteristics**:
-   - Core gameplay identity
-   - Unique mechanics
-   - Strengths and weaknesses
-   - Typical frame data ranges
-
-2. **Create Representative Character**:
-   - Follow character creation process above
-   - Ensure archetype field matches new type
-   - Design three variations that explore the archetype space
-
-3. **Update Systems**:
-   - Add archetype color in `CharacterSelectUI.ts`
-   - Update test harness expected archetypes
-   - Document archetype in README
-
-### Modifying Fighter Rotation
-
-**Configuration** (`assets/data/rotation.config.json`):
-```json
-{
-  "cadenceDays": 7,
-  "rolloverUtc": "Monday 09:00",
-  "pools": {
-    "freeRotation": ["char1", "char2", "char3", "char4"],
-    "starter": ["vanguard"],
-    "eventOverrides": {
-      "2025-12-25": {
-        "add": ["special_char"],
-        "remove": ["regular_char"],
-        "description": "Holiday Event"
-      }
-    }
-  },
-  "flags": {
-    "trainingAlwaysUnlocked": true,
-    "allowHotSwap": true
-  }
-}
-```
-
-**Runtime Updates**:
-```javascript
-// Hot-swap configuration
-app.fire('rotation:hotswap', 'new-config-url');
-
-// Check availability
-const available = rotationService.isCharacterAvailable('vanguard', 'ranked');
-
-// Get current state
-const state = rotationService.getCurrentState();
-```
-
-### Testing Framework
-
-**Run All Tests**:
+1. **Clone and Setup**
 ```bash
-node tests/test-harness.js
+git clone <repository>
+cd fighting-game-retention-system
+bun install
 ```
 
-**Test Categories**:
-- **Schema Validation**: JSON structure and required fields
-- **Overlay Logic**: Variation application correctness
-- **Archetype Coverage**: All 12 archetypes present
-- **Variation System**: Three variations per character
-- **Determinism**: Consistent results across applications
+2. **Database Setup**
+```bash
+# PostgreSQL setup
+createdb fighting_game_identity
+createdb fighting_game_progression
+createdb fighting_game_analytics
 
-**Custom Tests**:
-```javascript
-const { test, assert } = require('./tests/test-harness.js');
+# Redis setup (default configuration)
+redis-server
 
-test('My custom test', () => {
-  assert(myCondition, 'Error message');
+# ClickHouse setup
+# Install ClickHouse and create database: fighting_game_events
+```
+
+3. **Environment Configuration**
+```bash
+# Copy environment templates
+cp src/backend/identity/.env.example src/backend/identity/.env
+cp src/backend/progression/.env.example src/backend/progression/.env
+cp src/backend/analytics/.env.example src/backend/analytics/.env
+
+# Edit each .env file with your database credentials
+```
+
+4. **Start Services**
+```bash
+# Start all backend services
+bun run dev:backend
+
+# Or start individually
+cd src/backend/identity && bun run dev
+cd src/backend/progression && bun run dev  
+cd src/backend/analytics && bun run dev
+```
+
+5. **Client Integration**
+```typescript
+import { RetentionClient, MasteryEngine, Storefront } from '@fighting-game/client-sdk';
+
+// Initialize retention tracking
+const retention = new RetentionClient({
+  apiEndpoint: 'https://api.yourgame.com',
+  userId: 'u_123',
+  apiKey: 'your-api-key'
+});
+
+// Start session tracking
+retention.startSession();
+
+// Track match results
+retention.trackMatchResult({
+  matchId: 'm_456',
+  ranked: true,
+  roundsWon: 2,
+  roundsLost: 1,
+  characterId: 'grappler_a',
+  opponentId: 'rushdown_b',
+  disconnect: false
 });
 ```
 
-## 📈 Migration Notes
+## 📈 Analytics & Metrics
 
-### From Legacy Character System
+### Event Tracking
+The system tracks key events for retention analysis:
 
-#### Breaking Changes
-- **Character Loading**: Now uses `CharacterLoader.ts` instead of direct JSON
-- **Variation Support**: Characters require both `.base.json` and `.variations.json`
-- **Rotation Integration**: Character availability now managed by `RotationService`
-- **UI Integration**: Character select now uses `CharacterSelectUI.ts`
+- **Session Events**: Start, end, duration
+- **Match Events**: Results, character usage, disconnects
+- **Progression Events**: XP grants, level ups, prestige
+- **Commerce Events**: Store views, purchases, bundle interactions
+- **Social Events**: Club activities, mentor sessions
 
-#### Migration Steps
+### Churn Prediction
+Ethical churn prediction focuses on value creation:
 
-1. **Update Character Data**:
-   ```bash
-   # Old format
-   data/characters/ryu.json
-   
-   # New format
-   assets/data/characters/ryu.base.json
-   assets/data/characters/ryu.variations.json
-   ```
+- **Cold-Start Heuristics**: New player analysis (0-7 days)
+- **Behavioral Patterns**: Session frequency, skill progression, social engagement
+- **Risk Tiers**: Low/Medium/High with transparent explanations
+- **Winback Actions**: Practice unlocks, mentor matching, skill feedback (never purchase pressure)
 
-2. **Update Character Loading Code**:
-   ```javascript
-   // Old way
-   const character = await loadCharacterJSON('ryu');
-   
-   // New way
-   const characterLoader = new CharacterLoader(app);
-   const character = await characterLoader.loadCharacter('ryu', 'discipline');
-   ```
+### A/B Testing
+Built-in experimentation framework:
 
-3. **Add Rotation Service**:
-   ```javascript
-   // Initialize rotation
-   const rotationService = new RotationService(app);
-   await rotationService.initialize();
-   
-   // Check availability before loading
-   if (rotationService.isCharacterAvailable('ryu', 'ranked')) {
-     // Load character
-   }
-   ```
+- **Traffic Splitting**: Consistent user assignment to test variants
+- **Statistical Rigor**: Fixed-horizon testing to avoid peeking
+- **Ethical Constraints**: Experiments cannot affect competitive balance
+- **Governance**: All tests reviewed for player impact
 
-4. **Update UI Integration**:
-   ```javascript
-   // Replace old character select with new system
-   const characterSelectUI = new CharacterSelectUI(app, rotationService, characterLoader);
-   await characterSelectUI.initialize();
-   ```
+## 🎨 Customization & Extension
 
-### Backward Compatibility
+### Adding New Event Types
+1. Create JSON schema in `contracts/events/`
+2. Update client SDK interfaces
+3. Add server-side validation
+4. Update analytics pipelines
 
-- **Legacy `CharacterManager.js`**: Still functional for existing code
-- **Old Data Format**: Supported through migration utility (planned)
-- **API Preservation**: Core character properties unchanged
+### Extending Progression
+1. Add new XP sources in `ProgressionEngine`
+2. Define new mastery tracks
+3. Create reward definitions
+4. Update client UI hooks
 
-### Performance Improvements
+### Custom Monetization
+1. Add item types in catalog schema
+2. Implement new store sections
+3. Add pricing models
+4. Ensure ethical compliance
 
-- **Caching**: Character data cached after first load
-- **Deterministic Hashing**: Enables replay validation
-- **Hot-Swapping**: Runtime configuration updates without restart
-- **Schema Validation**: Catch errors early in development
+## 🔒 Privacy & Compliance
+
+### GDPR/CCPA Compliance
+- **Explicit Consent**: All non-essential data collection requires opt-in
+- **Data Minimization**: Only collect data needed for stated purposes
+- **Right to Deletion**: Complete data removal on request
+- **Data Portability**: Export all user data in standard formats
+
+### Consent Management
+```typescript
+// Check consent before analytics
+const hasAnalyticsConsent = await consentManager.hasConsent(userId, 'analytics');
+if (hasAnalyticsConsent) {
+  analytics.track(event);
+}
+
+// Update communication preferences
+await consentManager.updateCommunicationPreferences(userId, {
+  emailMarketing: false,
+  emailUpdates: true,
+  emailSecurity: true,
+  pushNotifications: false
+});
+```
 
 ## 🧪 Testing
 
-### Automated Testing
+### Unit Tests
 ```bash
 # Run all tests
-node tests/test-harness.js
+bun test
 
-# Verbose output
-node tests/test-harness.js --verbose
+# Test specific service
+cd src/backend/progression && bun test
 
-# Stop on first error
-node tests/test-harness.js --stop-on-error
+# Test client SDK
+cd src/client && bun test
 ```
 
-### Manual Testing
-1. **Character Selection**: Verify all characters and variations load
-2. **Rotation System**: Test weekly rollover and event overrides
-3. **Variation Differences**: Confirm variations meaningfully alter gameplay
-4. **Entitlement System**: Test lock/unlock states
-5. **Cross-Platform**: Verify consistent behavior across devices
+### Integration Tests
+```bash
+# Start test environment
+docker-compose -f docker-compose.test.yml up
+
+# Run integration tests
+bun run test:integration
+```
+
+### Contract Validation
+```bash
+# Validate all schemas
+bun run validate-contracts
+
+# Validate specific event
+bun run validate-event contracts/events/match_result.v1.json
+```
+
+## 📊 Monitoring & Dashboards
+
+### Key Metrics Dashboard
+- **Retention Curves**: D1/D7/D30/D90 retention by cohort
+- **Revenue Metrics**: ARPDAU, LTV, conversion rates
+- **Engagement**: Session frequency, duration, match participation
+- **Churn Risk**: Distribution of risk scores, winback effectiveness
+
+### Operational Metrics
+- **Service Health**: API response times, error rates, uptime
+- **Data Pipeline**: Event ingestion rates, processing delays
+- **Experiment Status**: Active tests, statistical power, results
+
+### Business Intelligence
+- **Cohort Analysis**: Player behavior segmentation
+- **Feature Usage**: Adoption rates for new features
+- **Content Performance**: Lab completion rates, objective engagement
+
+## 🚢 Deployment
+
+### Production Environment
+```bash
+# Build all services
+bun run build
+
+# Deploy with Docker
+docker-compose -f docker-compose.prod.yml up
+
+# Or deploy individual services
+cd src/backend/identity && bun run start
+```
+
+### Environment Variables
+Critical production settings:
+
+```env
+# Security
+JWT_SECRET=your-production-jwt-secret
+API_KEYS=prod-key-1,prod-key-2
+
+# Databases
+DB_HOST=your-postgres-host
+CLICKHOUSE_HOST=your-clickhouse-host
+REDIS_HOST=your-redis-host
+
+# External Services
+STRIPE_SECRET_KEY=your-stripe-key
+IDENTITY_SERVICE_URL=https://identity.yourgame.com
+```
+
+### Scaling Considerations
+- **Event Ingestion**: Use Kafka for high-throughput scenarios
+- **Analytics**: ClickHouse clustering for large datasets  
+- **Caching**: Redis clustering for session storage
+- **Load Balancing**: Service mesh for microservice communication
+
+## 📚 Documentation
+
+### Core Documentation
+- [Player Bill of Rights](docs/player_bill_of_rights.md) - Our ethical framework
+- [Economy Design](docs/economy_no_currency.md) - Transparent monetization approach
+- [Privacy & Consent](docs/privacy_and_optin.md) - Data handling practices
+- [Experimentation Guide](docs/experimentation_playbook.md) - A/B testing methodology
+
+### Technical Documentation  
+- [API Reference](docs/api_reference.md) - Complete API documentation
+- [Event Schemas](docs/event_schemas.md) - All event contract definitions
+- [Database Schema](docs/database_schema.md) - Database structure reference
+- [Deployment Guide](docs/deployment.md) - Production deployment instructions
+
+### Development Guides
+- [Contributing](docs/contributing.md) - Contribution guidelines
+- [Architecture](docs/architecture.md) - System design overview
+- [Security](docs/security.md) - Security considerations and practices
+
+## 🤝 Contributing
+
+We welcome contributions that align with our ethical framework:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b ethical-feature`
+3. **Follow our coding standards**: ESLint configuration provided
+4. **Add tests**: Maintain test coverage above 80%
+5. **Update documentation**: Keep docs current with changes
+6. **Submit pull request**: Include ethical impact assessment
+
+### Ethical Review Process
+All contributions undergo ethical review:
+- Does this respect player autonomy?
+- Does this create genuine value?
+- Is this transparent and fair?
+- Does this maintain competitive integrity?
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙋 Support
+
+- **Documentation**: [docs.yourgame.com](https://docs.yourgame.com)
+- **Community**: [community.yourgame.com](https://community.yourgame.com)
+- **Issues**: [GitHub Issues](https://github.com/yourgame/retention-system/issues)
+- **Ethics Concerns**: ethics@yourgame.com
+- **Player Rights**: rights@yourgame.com
+
+## 🎖️ Industry Benchmark
+
+This system represents a new standard for ethical game monetization and retention. By choosing transparency over manipulation, value creation over exploitation, and player respect over short-term revenue, we demonstrate that commercial success and ethical practices are not just compatible—they're synergistic.
 
 ---
 
-**Built with ❤️ for the Fighting Game Community**
+**Built with ❤️ for the fighting game community**
 
-*"The perfect fusion of classic gameplay, modern systems, and competitive integrity"*
+*When the industry chooses dark patterns, we choose transparency.*  
+*When others exploit, we create value.*  
+*When competitors manipulate, we respect.*
+
+This is the future of ethical game development. Join us.

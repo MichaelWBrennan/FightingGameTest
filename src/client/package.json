@@ -1,0 +1,31 @@
+{
+  "name": "@fighting-game/client-sdk",
+  "version": "1.0.0",
+  "description": "PlayCanvas client SDK for retention and engagement systems",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "bun test",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "uuid": "^9.0.0",
+    "eventemitter3": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.0",
+    "typescript": "^5.0.0",
+    "bun-types": "^1.0.0"
+  },
+  "peerDependencies": {
+    "playcanvas": "^1.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "localization/**/*"
+  ],
+  "keywords": ["playcanvas", "retention", "mastery", "ethical-monetization"]
+}

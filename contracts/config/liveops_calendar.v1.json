@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "liveops_calendar.v1.json",
+  "title": "Live Operations Calendar Configuration",
+  "description": "Configuration for scheduled events, labs, and seasonal content",
+  "type": "object",
+  "required": ["version", "events", "labs", "seasons"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Configuration version"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "startTime", "endTime", "visible"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique event identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the event"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["tournament", "skill_trial", "community_challenge", "seasonal"],
+            "description": "Type of event"
+          },
+          "startTime": {
+            "type": "integer",
+            "description": "Event start time (Unix timestamp)"
+          },
+          "endTime": {
+            "type": "integer",
+            "description": "Event end time (Unix timestamp)"
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Whether event is visible in calendar"
+          },
+          "description": {
+            "type": "string",
+            "description": "Event description"
+          },
+          "rewards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "itemId"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["cosmetic", "title", "banner", "xp_boost"]
+                },
+                "itemId": {
+                  "type": "string"
+                },
+                "requirement": {
+                  "type": "string",
+                  "description": "Requirement to earn reward"
+                }
+              }
+            }
+          },
+          "returnWindow": {
+            "type": "integer",
+            "description": "Days until rewards return to store (if applicable)"
+          }
+        }
+      }
+    },
+    "labs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "archetype", "rotationWeek", "active"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique lab identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Lab display name"
+          },
+          "archetype": {
+            "type": "string",
+            "enum": ["grappler", "rushdown", "zoner", "all_rounder"],
+            "description": "Character archetype focus"
+          },
+          "rotationWeek": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Week in rotation cycle"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether lab is currently active"
+          },
+          "xpMultiplier": {
+            "type": "number",
+            "minimum": 1.0,
+            "description": "XP bonus for playing this lab"
+          },
+          "coachingEnabled": {
+            "type": "boolean",
+            "description": "Whether coaching overlays are enabled"
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "description"],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "cpuBehavior": {
+                  "type": "string",
+                  "description": "CPU script for this scenario"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "seasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "startTime", "endTime", "ladderConfig"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique season identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Season display name"
+          },
+          "startTime": {
+            "type": "integer",
+            "description": "Season start time (Unix timestamp)"
+          },
+          "endTime": {
+            "type": "integer",
+            "description": "Season end time (Unix timestamp)"
+          },
+          "ladderConfig": {
+            "type": "object",
+            "required": ["ranks", "decayRules"],
+            "properties": {
+              "ranks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "mmrThreshold", "rewards"],
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "mmrThreshold": {
+                      "type": "integer"
+                    },
+                    "rewards": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "decayRules": {
+                "type": "object",
+                "required": ["enabled", "inactivityDays", "decayAmount"],
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "inactivityDays": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "decayAmount": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

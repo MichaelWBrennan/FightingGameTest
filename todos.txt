@@ -1,0 +1,110 @@
+[
+  {
+    "id": "project-structure",
+    "task": "Create project structure with client, backend, contracts, and docs directories",
+    "status": "completed",
+    "priority": "high"
+  },
+  {
+    "id": "package-setup",
+    "task": "Initialize package.json files for client and backend with TypeScript dependencies",
+    "status": "completed",
+    "priority": "high"
+  },
+  {
+    "id": "data-contracts",
+    "task": "Create JSON schemas for events, configs, and API contracts",
+    "status": "completed",
+    "priority": "high"
+  },
+  {
+    "id": "client-retention",
+    "task": "Implement PlayCanvas RetentionClient SDK for session tracking and objectives",
+    "status": "completed",
+    "priority": "high"
+  },
+  {
+    "id": "client-mastery",
+    "task": "Implement MasteryEngine for XP tracking and prestige system",
+    "status": "completed",
+    "priority": "high"
+  },
+  {
+    "id": "client-commerce",
+    "task": "Implement Storefront with direct pricing and transparent commerce",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "client-social",
+    "task": "Implement Clubs system for team formation and social features",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "client-coach",
+    "task": "Implement CoachOverlay for contextual gameplay tips",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "backend-identity",
+    "task": "Create identity service for account management and consent",
+    "status": "completed",
+    "priority": "high"
+  },
+  {
+    "id": "backend-progression",
+    "task": "Create progression service for mastery tracking and objectives",
+    "status": "completed",
+    "priority": "high"
+  },
+  {
+    "id": "backend-analytics",
+    "task": "Create analytics service for event ingestion and churn prediction",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "backend-commerce",
+    "task": "Create commerce service for catalog and direct payments",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "backend-liveops",
+    "task": "Create live-ops service for events and seasonal content",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "backend-notify",
+    "task": "Create notification service with opt-in communication",
+    "status": "completed",
+    "priority": "low"
+  },
+  {
+    "id": "churn-model",
+    "task": "Implement churn prediction model and ethical winback playbooks",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "documentation",
+    "task": "Create comprehensive documentation including Player Bill of Rights",
+    "status": "completed",
+    "priority": "medium"
+  },
+  {
+    "id": "testing",
+    "task": "Add unit tests for core retention mechanics and validation",
+    "status": "completed",
+    "priority": "low"
+  },
+  {
+    "id": "github-push",
+    "task": "Push complete retention system to GitHub repository",
+    "status": "completed",
+    "priority": "high"
+  }
+]
