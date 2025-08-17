@@ -8,46 +8,8 @@ class HD2DRenderer {
         this.app = app;
         this.initialized = false;
         
-        // HD-2D Configuration (based on Octopath Traveler techniques)
-        this.hd2dConfig = {
-            // Depth layer configuration
-            depthLayers: {
-                background: { z: -50, parallaxSpeed: 0.1, blur: 0.8 },
-                midground: { z: -25, parallaxSpeed: 0.3, blur: 0.4 },
-                playground: { z: -10, parallaxSpeed: 0.6, blur: 0.2 },
-                foreground: { z: -5, parallaxSpeed: 0.8, blur: 0.1 },
-                characters: { z: 0, parallaxSpeed: 1.0, blur: 0.0 },
-                effects: { z: 5, parallaxSpeed: 1.2, blur: 0.0 },
-                ui: { z: 10, parallaxSpeed: 0.0, blur: 0.0 }
-            },
-            
-            // Camera configuration for HD-2D effect
-            camera: {
-                tiltAngle: 8, // Slight tilt for depth perception
-                heightOffset: 2, // Camera height for perspective
-                followSmoothing: 0.1,
-                fov: 45,
-                depthOfField: true
-            },
-            
-            // Lighting configuration
-            lighting: {
-                dynamicLights: true,
-                softShadows: true,
-                lightShafts: true,
-                volumetricFog: true,
-                rimLighting: true
-            },
-            
-            // Sprite rendering
-            sprites: {
-                billboarding: true,
-                pixelPerfect: true,
-                filterMode: 'nearest', // Pixel art preservation
-                normalMaps: true,
-                heightMaps: false
-            }
-        };
+        // HD-2D Configuration will be loaded from an external file
+        this.hd2dConfig = {};
         
         // Render layers for depth sorting
         this.renderLayers = new Map();
@@ -96,10 +58,18 @@ class HD2DRenderer {
         };
     }
 
-    async initialize() {
+    async initialize(configPath = 'assets/data/graphics_config.json') {
         console.log('Initializing HD-2D Renderer...');
         
         try {
+            // Load HD-2D configuration from external file
+            const response = await fetch(configPath);
+            if (!response.ok) {
+                throw new Error(`Failed to load graphics config: ${response.statusText}`);
+            }
+            this.hd2dConfig = await response.json();
+            console.log('HD-2D configuration loaded successfully.');
+
             // Setup multi-layer rendering system
             this.setupRenderLayers();
             
