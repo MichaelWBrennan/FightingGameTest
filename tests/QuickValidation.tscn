@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bn4xk5q8m7rst"]
-
-[ext_resource type="Script" path="res://tests/quick_validation.gd" id="1_validation"]
-
-[node name="QuickValidation" type="Node"]
-script = ExtResource("1_validation")

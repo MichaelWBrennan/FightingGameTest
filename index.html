@@ -3,313 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fighting Game Platform - Demos</title>
+    <title>SF3:3S HD-2D Fighting Game</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #0a0a15, #1a1a2e, #16213e);
-            color: white;
-            min-height: 100vh;
+            box-sizing: border-box;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .title {
-            font-size: 4em;
-            margin: 0 0 20px 0;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ffd93d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        
-        .subtitle {
-            font-size: 1.5em;
-            color: #87ceeb;
-            margin-bottom: 10px;
-        }
-        
-        .description {
-            font-size: 1.1em;
-            color: #cccccc;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .demos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .demo-card {
-            background: rgba(0,0,0,0.4);
-            border: 2px solid #4a4a6a;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
+
+        body {
+            background: #000;
+            font-family: 'Arial', sans-serif;
             overflow: hidden;
         }
-        
-        .demo-card:hover {
-            border-color: #ffd700;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+
+        #application-canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
-        
-        .demo-card::before {
-            content: '';
+
+        #loading-screen {
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
-            transform: rotate(45deg);
-            transition: all 0.5s;
-            opacity: 0;
-        }
-        
-        .demo-card:hover::before {
-            opacity: 1;
-            transform: rotate(45deg) translate(50%, 50%);
-        }
-        
-        .demo-title {
-            font-size: 1.8em;
-            color: #ffd700;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .demo-description {
-            color: #cccccc;
-            margin-bottom: 20px;
-            line-height: 1.5;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .demo-features {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .demo-features li {
-            color: #aaaaaa;
-            margin: 8px 0;
-            padding-left: 20px;
-            position: relative;
-        }
-        
-        .demo-features li::before {
-            content: '✨';
-            position: absolute;
+            top: 0;
             left: 0;
-            color: #ffd700;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease-out;
         }
-        
-        .demo-button {
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .demo-button:hover {
-            background: linear-gradient(45deg, #ff6b6b 0%, #ee5a52 100%);
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-            transform: scale(1.05);
-        }
-        
-        .featured {
-            border-color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-        }
-        
-        .footer {
+
+        .loading-title {
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 0 0 20px #00ffff;
+            margin-bottom: 2rem;
             text-align: center;
-            margin-top: 60px;
-            padding: 30px 0;
-            border-top: 1px solid #4a4a6a;
-            color: #888888;
         }
-        
-        .github-link {
-            color: #87ceeb;
-            text-decoration: none;
-            font-weight: bold;
+
+        .loading-subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 2rem;
         }
-        
-        .github-link:hover {
-            color: #ffd700;
+
+        .loading-bar {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #0080ff);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        #debug-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-family: monospace;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 100;
+            display: none;
+        }
+
+        .control-hints {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 class="title">FIGHTING GAME PLATFORM</h1>
-            <p class="subtitle">Interactive Demo Showcase</p>
-            <p class="description">
-                An industry-defining competitive fighting game platform built on Godot 4 with C# scripting. 
-                Explore our advanced archetype system, character selection mechanics, and cutting-edge graphics features.
-            </p>
-        </div>
-        
-        <div class="demos-grid">
-            <div class="demo-card featured" onclick="window.open('character_select_demo.html', '_blank')">
-                <h3 class="demo-title">🎮 Character Select System</h3>
-                <p class="demo-description">
-                    Advanced multi-player character selection with archetype-based fighter system
-                </p>
-                <ul class="demo-features">
-                    <li>5 Core Archetypes (Balanced, Rushdown, Grappler, Zoner, Technical)</li>
-                    <li>3 Variations per Archetype (15 Total Fighters)</li>
-                    <li>Multi-player Support (2-4 players)</li>
-                    <li>Team Battle Modes (1v1, 2v2, 2v1, 3v1, FFA)</li>
-                </ul>
-                <a href="character_select_demo.html" class="demo-button">Launch Demo</a>
-            </div>
-            
-            <div class="demo-card" onclick="window.open('pseudo_2d5_demo.html', '_blank')">
-                <h3 class="demo-title">🎨 Pseudo 2.5D Graphics</h3>
-                <p class="demo-description">
-                    BlazBlue/Skullgirls-style graphics enhancement system with dynamic lighting
-                </p>
-                <ul class="demo-features">
-                    <li>Motion blur trails</li>
-                    <li>Dynamic slash effects</li>
-                    <li>Glowing weapon visuals</li>
-                    <li>Speed-based intensity</li>
-                </ul>
-                <a href="pseudo_2d5_demo.html" class="demo-button">View Graphics</a>
-            </div>
-            
-            <div class="demo-card" onclick="window.open('enhanced_sprite_demo.html', '_blank')">
-                <h3 class="demo-title">🖼️ Enhanced Sprite System</h3>
-                <p class="demo-description">
-                    Advanced sprite management with dynamic loading and optimization
-                </p>
-                <ul class="demo-features">
-                    <li>Dynamic sprite loading</li>
-                    <li>Performance optimization</li>
-                    <li>Quality scaling</li>
-                    <li>Memory management</li>
-                </ul>
-                <a href="enhanced_sprite_demo.html" class="demo-button">Explore Sprites</a>
-            </div>
-            
-            <div class="demo-card" onclick="window.open('gothic_stage_showcase.html', '_blank')">
-                <h3 class="demo-title">🏰 Gothic Stage Demo</h3>
-                <p class="demo-description">
-                    Atmospheric stage design with dynamic environments and effects
-                </p>
-                <ul class="demo-features">
-                    <li>Dynamic lighting</li>
-                    <li>Atmospheric effects</li>
-                    <li>Parallax backgrounds</li>
-                    <li>Interactive elements</li>
-                </ul>
-                <a href="gothic_stage_showcase.html" class="demo-button">Enter Stage</a>
-            </div>
-            
-            <div class="demo-card" onclick="window.open('graphics_upgrade_showcase.html', '_blank')">
-                <h3 class="demo-title">⚡ Graphics Showcase</h3>
-                <p class="demo-description">
-                    Comprehensive graphics upgrade demonstration with advanced effects
-                </p>
-                <ul class="demo-features">
-                    <li>Particle systems</li>
-                    <li>Advanced shaders</li>
-                    <li>Post-processing</li>
-                    <li>Visual effects</li>
-                </ul>
-                <a href="graphics_upgrade_showcase.html" class="demo-button">See Effects</a>
-            </div>
-            
-            <div class="demo-card" onclick="window.open('sf2_character_select_demo.html', '_blank')">
-                <h3 class="demo-title">👑 Street Fighter 2 Style</h3>
-                <p class="demo-description">
-                    Classic fighting game character selection with modern enhancements
-                </p>
-                <ul class="demo-features">
-                    <li>Retro aesthetics</li>
-                    <li>Classic fighters</li>
-                    <li>Nostalgic interface</li>
-                    <li>Modern mechanics</li>
-                </ul>
-                <a href="sf2_character_select_demo.html" class="demo-button">Go Retro</a>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p>
-                <strong>Fighting Game Platform</strong> - Built with Godot 4 & C# | 
-                <a href="https://github.com/MichaelWBrennan/FightingGameTest" class="github-link" target="_blank">
-                    View on GitHub
-                </a>
-            </p>
-            <p>MIT License | Open Source | Community Driven</p>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-title">SF3: THIRD STRIKE HD-2D</div>
+        <div class="loading-subtitle">Initializing Enhanced Graphics System...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loading-progress"></div>
         </div>
     </div>
-    
+
+    <!-- Debug Information -->
+    <div id="debug-info">
+        <div>FPS: <span id="fps">60</span></div>
+        <div>Frame Time: <span id="frame-time">16.67ms</span></div>
+        <div>Entities: <span id="entity-count">0</span></div>
+        <div>Draw Calls: <span id="draw-calls">0</span></div>
+        <div>Graphics Quality: <span id="graphics-quality">Ultra</span></div>
+    </div>
+
+    <!-- Control Hints -->
+    <div class="control-hints">
+        <div>P1: WASD + JKLUIO | P2: Arrows + Numpad | F1: Debug | F2: Frame Step</div>
+    </div>
+
+    <!-- PlayCanvas Application Canvas -->
+    <canvas id="application-canvas"></canvas>
+
+    <!-- PlayCanvas Engine -->
+    <script src="https://code.playcanvas.com/playcanvas-1.69.0.min.js"></script>
+
+    <!-- Core Game Scripts -->
+    <script src="src/scripts/core/GameManager.js"></script>
+    <script src="src/scripts/core/InputManager.js"></script>
+    <script src="src/scripts/graphics/SF3GraphicsManager.js"></script>
+    <script src="src/scripts/graphics/HD2DRenderer.js"></script>
+    <script src="src/scripts/graphics/PostProcessingManager.js"></script>
+    <script src="src/scripts/graphics/ParallaxManager.js"></script>
+    <script src="src/scripts/characters/CharacterManager.js"></script>
+    <script src="src/scripts/combat/CombatSystem.js"></script>
+    <script src="src/scripts/ui/UIManager.js"></script>
+
+    <!-- Application Initialization -->
     <script>
-        // Add some interactive effects
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.demo-card');
+        // Global game state
+        window.SF3HD2D = {
+            app: null,
+            canvas: null,
+            initialized: false,
+            debug: false,
+            gameManager: null,
+            inputManager: null,
+            sf3Graphics: null,
+            hd2dRenderer: null,
+            postProcessing: null,
+            parallaxManager: null,
+            characterManager: null,
+            combatSystem: null,
+            uiManager: null
+        };
+
+        // Loading progress tracking
+        let loadingProgress = 0;
+        const loadingSteps = [
+            'Initializing PlayCanvas Engine...',
+            'Loading SF3:3S Graphics System...',
+            'Setting up HD-2D Renderer...',
+            'Creating Custom Shaders...',
+            'Loading Character Data...',
+            'Initializing Combat System...',
+            'Setting up Post-Processing...',
+            'Finalizing Scene Setup...'
+        ];
+
+        function updateLoadingProgress(step, progress) {
+            const progressElement = document.getElementById('loading-progress');
+            const subtitleElement = document.querySelector('.loading-subtitle');
             
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px) scale(1.02)';
-                });
+            if (step < loadingSteps.length) {
+                subtitleElement.textContent = loadingSteps[step];
+            }
+            
+            progressElement.style.width = progress + '%';
+            loadingProgress = progress;
+        }
+
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
+
+        // Initialize the application
+        async function initializeApplication() {
+            try {
+                updateLoadingProgress(0, 10);
+
+                // Get canvas element
+                window.SF3HD2D.canvas = document.getElementById('application-canvas');
                 
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
+                // Create PlayCanvas application
+                window.SF3HD2D.app = new pc.Application(window.SF3HD2D.canvas, {
+                    mouse: new pc.Mouse(window.SF3HD2D.canvas),
+                    keyboard: new pc.Keyboard(window),
+                    graphicsDeviceOptions: {
+                        antialias: true,
+                        alpha: false,
+                        preserveDrawingBuffer: false,
+                        preferWebGl2: true,
+                        powerPreference: 'high-performance'
+                    }
                 });
-            });
-            
-            // Add keyboard navigation
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && document.activeElement.classList.contains('demo-card')) {
-                    document.activeElement.click();
+
+                updateLoadingProgress(1, 20);
+
+                // Set up application properties
+                window.SF3HD2D.app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+                window.SF3HD2D.app.setCanvasResolution(pc.RESOLUTION_AUTO);
+
+                // Enable WebGL extensions for enhanced graphics
+                const gl = window.SF3HD2D.app.graphicsDevice.gl;
+                if (gl.getExtension('OES_standard_derivatives')) {
+                    console.log('OES_standard_derivatives enabled for shader derivatives');
                 }
-            });
-            
-            // Make cards focusable for accessibility
-            cards.forEach(card => {
-                card.setAttribute('tabindex', '0');
-                card.setAttribute('role', 'button');
-            });
+                if (gl.getExtension('WEBGL_depth_texture')) {
+                    console.log('WEBGL_depth_texture enabled for depth-based effects');
+                }
+
+                updateLoadingProgress(2, 30);
+
+                // Initialize core systems
+                window.SF3HD2D.gameManager = new GameManager(window.SF3HD2D.app);
+                window.SF3HD2D.inputManager = new InputManager(window.SF3HD2D.app);
+                
+                updateLoadingProgress(3, 40);
+
+                // Initialize graphics systems
+                window.SF3HD2D.sf3Graphics = new SF3GraphicsManager(window.SF3HD2D.app);
+                window.SF3HD2D.hd2dRenderer = new HD2DRenderer(window.SF3HD2D.app);
+                window.SF3HD2D.postProcessing = new PostProcessingManager(window.SF3HD2D.app);
+                window.SF3HD2D.parallaxManager = new ParallaxManager(window.SF3HD2D.app);
+
+                updateLoadingProgress(4, 60);
+
+                // Initialize game systems
+                window.SF3HD2D.characterManager = new CharacterManager(window.SF3HD2D.app);
+                window.SF3HD2D.combatSystem = new CombatSystem(window.SF3HD2D.app);
+                window.SF3HD2D.uiManager = new UIManager(window.SF3HD2D.app);
+
+                updateLoadingProgress(5, 75);
+
+                // Load assets and initialize scene
+                await window.SF3HD2D.gameManager.initialize();
+                await window.SF3HD2D.sf3Graphics.initialize();
+                await window.SF3HD2D.hd2dRenderer.initialize();
+
+                updateLoadingProgress(6, 85);
+
+                // Finalize setup
+                await window.SF3HD2D.postProcessing.initialize();
+                await window.SF3HD2D.characterManager.loadCharacterData();
+                
+                updateLoadingProgress(7, 95);
+
+                // Start the application
+                window.SF3HD2D.app.start();
+                window.SF3HD2D.initialized = true;
+
+                updateLoadingProgress(7, 100);
+
+                // Setup debug toggle
+                window.addEventListener('keydown', (event) => {
+                    if (event.key === 'F1') {
+                        event.preventDefault();
+                        toggleDebugInfo();
+                    }
+                });
+
+                // Hide loading screen after initialization
+                setTimeout(() => {
+                    hideLoadingScreen();
+                    console.log('SF3:3S HD-2D Fighting Game initialized successfully!');
+                }, 500);
+
+            } catch (error) {
+                console.error('Failed to initialize application:', error);
+                document.querySelector('.loading-subtitle').textContent = 'Initialization failed. Check console for details.';
+            }
+        }
+
+        function toggleDebugInfo() {
+            window.SF3HD2D.debug = !window.SF3HD2D.debug;
+            const debugInfo = document.getElementById('debug-info');
+            debugInfo.style.display = window.SF3HD2D.debug ? 'block' : 'none';
+        }
+
+        // Debug information update loop
+        function updateDebugInfo() {
+            if (window.SF3HD2D.debug && window.SF3HD2D.app) {
+                const stats = window.SF3HD2D.app.stats;
+                document.getElementById('fps').textContent = Math.round(1000 / stats.frame.ms);
+                document.getElementById('frame-time').textContent = stats.frame.ms.toFixed(2) + 'ms';
+                document.getElementById('entity-count').textContent = window.SF3HD2D.app.root.children.length;
+                document.getElementById('draw-calls').textContent = stats.drawCalls.total;
+            }
+            requestAnimationFrame(updateDebugInfo);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.SF3HD2D.app) {
+                window.SF3HD2D.app.resizeCanvas();
+            }
+        });
+
+        // Handle visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (window.SF3HD2D.app) {
+                if (document.hidden) {
+                    window.SF3HD2D.app.timeScale = 0;
+                } else {
+                    window.SF3HD2D.app.timeScale = 1;
+                }
+            }
+        });
+
+        // Start the application when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApplication();
+            updateDebugInfo();
         });
     </script>
 </body>
