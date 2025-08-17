@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "1.0",
+  "characterId": "chain",
+  "variations": [
+    {
+      "id": "endless_chain",
+      "name": "Endless Chain",
+      "description": "Extended rekka sequences with additional branches and follow-ups",
+      "adds": {
+        "specials": {
+          "rekka_4_ultimate": {
+            "name": "Dragon Ultimate",
+            "input": "236P (After 3rd Rekka)",
+            "damage": 180,
+            "startup": 20,
+            "recovery": 45,
+            "onBlock": -12,
+            "tags": ["rekka", "ultimate", "wall_bounce"],
+            "rekka": {
+              "sequence_number": 4,
+              "is_ultimate": true,
+              "damage_bonus": 1.6,
+              "requires_previous": "rekka_3_finisher"
+            }
+          },
+          "rekka_branch_a": {
+            "name": "Dragon Spiral",
+            "input": "41236P (After Dragon Rush)",
+            "damage": 105,
+            "startup": 10,
+            "recovery": 24,
+            "onBlock": -3,
+            "tags": ["rekka", "spinning", "multi_hit"],
+            "rekka": {
+              "sequence_number": 2,
+              "branch": "spiral",
+              "follow_ups": ["rekka_3_finisher", "rekka_4_ultimate"],
+              "requires_previous": "rekka_1"
+            }
+          },
+          "rekka_branch_b": {
+            "name": "Dragon Phantom",
+            "input": "63214P (After Dragon Rush)",
+            "damage": 85,
+            "startup": 8,
+            "recovery": 20,
+            "onBlock": 0,
+            "tags": ["rekka", "teleport", "mixup"],
+            "rekka": {
+              "sequence_number": 2,
+              "branch": "phantom",
+              "teleport": true,
+              "follow_ups": ["rekka_3_finisher"],
+              "requires_previous": "rekka_1"
+            }
+          }
+        },
+        "enhanced_rekka": {
+          "additional_branches": 2,
+          "extended_sequences": true
+        }
+      },
+      "mods": {
+        "trait.params.maxChainLength": 7,
+        "trait.params.sequenceBonus": 1.2,
+        "rekka_1.rekka.follow_ups": ["rekka_2_high", "rekka_2_low", "rekka_2_grab", "rekka_branch_a", "rekka_branch_b"],
+        "rekka_3_finisher.rekka.follow_ups": ["rekka_4_ultimate"],
+        "stats.meterGain": 1.2
+      },
+      "removes": []
+    },
+    {
+      "id": "combo_master",
+      "name": "Combo Master",
+      "description": "Enhanced normal chain combos with auto-links and extended sequences",
+      "adds": {
+        "auto_chains": {
+          "smart_linking": true,
+          "optimal_routing": true,
+          "extended_chains": true
+        },
+        "specials": {
+          "chain_extender": {
+            "name": "Chain Extender",
+            "input": "LP+MP",
+            "damage": 0,
+            "startup": 3,
+            "recovery": 8,
+            "tags": ["utility", "chain_extend"],
+            "chain": {
+              "extends_any_chain": true,
+              "resets_scaling": 0.1,
+              "adds_follow_ups": true
+            }
+          },
+          "auto_combo": {
+            "name": "Auto Combo",
+            "input": "PPP",
+            "damage": 200,
+            "startup": 4,
+            "recovery": 25,
+            "onBlock": -4,
+            "tags": ["auto", "chain", "beginner_friendly"],
+            "auto": {
+              "automatic_timing": true,
+              "optimal_damage": true,
+              "hits": 6
+            }
+          }
+        }
+      },
+      "mods": {
+        "trait.params.maxChainLength": 8,
+        "trait.params.damageScaling": 0.95,
+        "lp.chain.follow_ups": ["lp", "mp", "lk", "mk"],
+        "mp.chain.follow_ups": ["hp", "mk", "hk", "special", "lp"],
+        "mk.chain.follow_ups": ["hk", "hp", "special", "lp", "mp"],
+        "lk.chain.follow_ups": ["mk", "hk", "special", "lp"],
+        "chain_special.chain.can_loop_back": true
+      },
+      "removes": ["rekka_2_grab"]
+    },
+    {
+      "id": "power_sequence",
+      "name": "Power Sequence",
+      "description": "Simplified but more powerful sequences with enhanced damage",
+      "adds": {
+        "power_modes": {
+          "simplified_inputs": true,
+          "enhanced_damage": true,
+          "armor_on_sequences": true
+        },
+        "specials": {
+          "power_rekka_1": {
+            "name": "Power Dragon Rush",
+            "input": "236P+P",
+            "damage": 130,
+            "startup": 12,
+            "recovery": 22,
+            "onBlock": 0,
+            "tags": ["rekka", "power", "armor"],
+            "armor": {"hits": 1, "frames": [8, 18]},
+            "rekka": {
+              "sequence_number": 1,
+              "power_version": true,
+              "follow_ups": ["power_rekka_2"]
+            }
+          },
+          "power_rekka_2": {
+            "name": "Power Dragon Finisher",
+            "input": "236P (After Power Dragon Rush)",
+            "damage": 200,
+            "startup": 15,
+            "recovery": 35,
+            "onBlock": -5,
+            "tags": ["rekka", "power", "unblockable"],
+            "rekka": {
+              "sequence_number": 2,
+              "power_version": true,
+              "is_finisher": true,
+              "damage_bonus": 1.8
+            }
+          }
+        }
+      },
+      "mods": {
+        "trait.params.maxChainLength": 3,
+        "trait.params.damageScaling": 1.0,
+        "trait.params.sequenceBonus": 1.4,
+        "rekka_1.damage": 110,
+        "rekka_2_high.damage": 130,
+        "rekka_2_low.damage": 125,
+        "rekka_3_finisher.damage": 180,
+        "hp.chain.sequence_bonus": 1.4,
+        "hk.chain.sequence_bonus": 1.5,
+        "stats.health": 1050,
+        "movement.walkF": 0.9
+      },
+      "removes": ["rekka_2_grab", "chain_special"]
+    }
+  ]
+}

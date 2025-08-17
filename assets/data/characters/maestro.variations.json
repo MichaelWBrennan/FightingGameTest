@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0",
+  "characterId": "maestro",
+  "variations": [
+    {
+      "id": "puppet_swarm",
+      "name": "Puppet Swarm",
+      "description": "Control multiple puppets simultaneously with swarm tactics",
+      "adds": {
+        "specials": {
+          "mass_summon": {
+            "name": "Mass Summon",
+            "input": "236236K",
+            "damage": 0,
+            "startup": 45,
+            "recovery": 60,
+            "tags": ["summon", "puppet", "mass"],
+            "puppet": {
+              "type": "swarm",
+              "count": 3,
+              "health": 75,
+              "duration": 0,
+              "ai": "aggressive"
+            }
+          },
+          "swarm_command": {
+            "name": "Swarm Command",
+            "input": "41236P",
+            "damage": 60,
+            "startup": 10,
+            "recovery": 20,
+            "tags": ["puppet_command", "all_puppets"],
+            "puppet_command": {
+              "type": "attack_all",
+              "damage": 60,
+              "affects_all_puppets": true
+            }
+          }
+        },
+        "swarm_tactics": {
+          "puppet_limit": 4,
+          "reduced_individual_health": true,
+          "swarm_bonuses": true
+        }
+      },
+      "mods": {
+        "trait.params.maxPuppets": 4,
+        "trait.params.puppetHealth": 75,
+        "qcf_p.puppet.health": 75,
+        "qcf_p.recovery": 40,
+        "qcb_k.damage": 70,
+        "stats.meterGain": 1.3,
+        "movement.walkB": 1.1
+      },
+      "removes": ["charge_bf_k"]
+    },
+    {
+      "id": "master_puppeteer",
+      "name": "Master Puppeteer",
+      "description": "Enhanced puppet AI and advanced control techniques",
+      "adds": {
+        "specials": {
+          "puppet_stance": {
+            "name": "Puppet Stance",
+            "input": "214214P",
+            "damage": 0,
+            "startup": 15,
+            "recovery": 25,
+            "tags": ["stance", "puppet_control", "enhanced_ai"],
+            "stance": {
+              "duration": 300,
+              "puppet_ai": "advanced",
+              "auto_commands": true,
+              "enhanced_damage": 1.2
+            }
+          },
+          "mirror_strike": {
+            "name": "Mirror Strike",
+            "input": "6P+K",
+            "damage": 90,
+            "startup": 8,
+            "recovery": 18,
+            "onBlock": -1,
+            "tags": ["puppet_sync", "mirror"],
+            "puppet_command": {
+              "type": "mirror_attack",
+              "copies_user_input": true,
+              "damage_bonus": 1.1
+            }
+          }
+        },
+        "advanced_ai": {
+          "puppet_intelligence": "high",
+          "adaptive_behavior": true,
+          "counter_assist": true
+        }
+      },
+      "mods": {
+        "trait.params.puppetHealth": 125,
+        "trait.params.commandRange": 400,
+        "qcf_p.puppet.ai": "advanced",
+        "qcb_k.damage": 95,
+        "dp_p.puppet_command.duration": 240,
+        "puppet_recall.puppet_command.heals_puppet": 40,
+        "stats.health": 900
+      },
+      "removes": []
+    },
+    {
+      "id": "direct_control",
+      "name": "Direct Control",
+      "description": "Take direct control of puppets for precise coordination",
+      "adds": {
+        "specials": {
+          "puppet_switch": {
+            "name": "Puppet Switch",
+            "input": "MP+MK",
+            "damage": 0,
+            "startup": 8,
+            "recovery": 12,
+            "tags": ["switch", "direct_control"],
+            "switch": {
+              "type": "control_switch",
+              "duration": 180,
+              "maintains_position": true
+            }
+          },
+          "coordinated_attack": {
+            "name": "Coordinated Attack",
+            "input": "HP+HK",
+            "damage": 120,
+            "startup": 12,
+            "recovery": 22,
+            "onBlock": -2,
+            "tags": ["puppet_sync", "coordinated"],
+            "coordination": {
+              "simultaneous_attack": true,
+              "damage_bonus": 1.3,
+              "frame_perfect": true
+            }
+          }
+        },
+        "direct_control": {
+          "manual_puppet_movement": true,
+          "precise_timing": true,
+          "enhanced_coordination": true
+        }
+      },
+      "mods": {
+        "trait.params.maxPuppets": 1,
+        "trait.params.puppetHealth": 150,
+        "trait.params.commandRange": 500,
+        "qcf_p.puppet.health": 150,
+        "qcb_k.damage": 105,
+        "charge_bf_k.puppet_command.speed": "precise",
+        "movement.walkF": 0.9,
+        "stats.defense": 1.0
+      },
+      "removes": ["puppet_recall"]
+    }
+  ]
+}

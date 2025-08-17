@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "1.0",
+  "id": "maestro",
+  "displayName": "Maestro",
+  "archetype": "puppet",
+  "trait": {
+    "id": "conductor",
+    "name": "Conductor",
+    "description": "Command ethereal puppets and coordinate complex attack patterns",
+    "params": {
+      "maxPuppets": 2,
+      "puppetHealth": 100,
+      "commandRange": 300
+    }
+  },
+  "normals": {
+    "lp": {
+      "name": "Light Gesture",
+      "damage": 40,
+      "startup": 6,
+      "active": 3,
+      "recovery": 9,
+      "onBlock": 1,
+      "onHit": 4,
+      "tags": ["cancelable", "puppet_call"],
+      "hitbox": {"x": 50, "y": 0, "width": 35, "height": 25}
+    },
+    "mp": {
+      "name": "Commanding Strike",
+      "damage": 75,
+      "startup": 9,
+      "active": 4,
+      "recovery": 12,
+      "onBlock": -1,
+      "onHit": 3,
+      "tags": ["cancelable", "puppet_command"],
+      "hitbox": {"x": 65, "y": 0, "width": 45, "height": 30}
+    },
+    "hp": {
+      "name": "Grand Gesture",
+      "damage": 110,
+      "startup": 13,
+      "active": 5,
+      "recovery": 18,
+      "onBlock": -4,
+      "onHit": 2,
+      "tags": ["puppet_enhance", "launcher"],
+      "hitbox": {"x": 70, "y": 0, "width": 55, "height": 35}
+    },
+    "lk": {
+      "name": "Quick Step",
+      "damage": 45,
+      "startup": 7,
+      "active": 3,
+      "recovery": 10,
+      "onBlock": 0,
+      "onHit": 3,
+      "tags": ["low", "puppet_reposition"],
+      "hitbox": {"x": 55, "y": 35, "width": 40, "height": 20}
+    },
+    "mk": {
+      "name": "Puppet Dance",
+      "damage": 80,
+      "startup": 11,
+      "active": 4,
+      "recovery": 15,
+      "onBlock": -2,
+      "onHit": 2,
+      "tags": ["puppet_sync", "advance"],
+      "hitbox": {"x": 75, "y": 10, "width": 55, "height": 30}
+    },
+    "hk": {
+      "name": "Master's Kick",
+      "damage": 125,
+      "startup": 15,
+      "active": 6,
+      "recovery": 22,
+      "onBlock": -6,
+      "onHit": 0,
+      "tags": ["launcher", "puppet_launch"],
+      "hitbox": {"x": 85, "y": -5, "width": 65, "height": 45}
+    }
+  },
+  "specials": {
+    "qcf_p": {
+      "name": "Summon Puppet",
+      "input": "236P",
+      "damage": 0,
+      "startup": 30,
+      "recovery": 45,
+      "tags": ["summon", "puppet", "positioning"],
+      "puppet": {
+        "type": "basic",
+        "health": 100,
+        "duration": 0,
+        "ai": "follow",
+        "position": "behind_opponent"
+      }
+    },
+    "qcb_k": {
+      "name": "Puppet Attack",
+      "input": "214K",
+      "damage": 85,
+      "startup": 12,
+      "recovery": 25,
+      "onBlock": -3,
+      "tags": ["puppet_command", "remote"],
+      "puppet_command": {
+        "type": "attack",
+        "damage": 85,
+        "range": 300,
+        "requires_puppet": true
+      }
+    },
+    "dp_p": {
+      "name": "Puppet Shield",
+      "input": "623P",
+      "damage": 70,
+      "startup": 8,
+      "recovery": 28,
+      "onBlock": -8,
+      "invulnFrames": [1, 5],
+      "tags": ["reversal", "puppet_defensive"],
+      "puppet_command": {
+        "type": "defend",
+        "creates_barrier": true,
+        "duration": 180
+      }
+    },
+    "charge_bf_k": {
+      "name": "Puppet Rush",
+      "input": "[4]6K",
+      "damage": 100,
+      "startup": 15,
+      "recovery": 30,
+      "onBlock": -5,
+      "tags": ["puppet_command", "advance", "charge"],
+      "charge": {
+        "time": 50,
+        "partition": true
+      },
+      "puppet_command": {
+        "type": "rush",
+        "distance": 200,
+        "speed": "fast"
+      }
+    },
+    "puppet_recall": {
+      "name": "Puppet Recall",
+      "input": "P+K",
+      "damage": 0,
+      "startup": 5,
+      "recovery": 15,
+      "tags": ["utility", "puppet_control"],
+      "puppet_command": {
+        "type": "recall",
+        "speed": "instant",
+        "heals_puppet": 25
+      }
+    }
+  },
+  "supers": {
+    "lvl1": {
+      "name": "Puppet Symphony",
+      "input": "236236P",
+      "damage": 250,
+      "startup": 15,
+      "recovery": 50,
+      "meterCost": 25,
+      "tags": ["super", "puppet_combo", "multi_hit"],
+      "puppet_command": {
+        "type": "symphony",
+        "hits": 5,
+        "damage_per_hit": 50
+      }
+    },
+    "lvl2": {
+      "name": "Dual Assault",
+      "input": "214214K",
+      "damage": 300,
+      "startup": 20,
+      "recovery": 60,
+      "meterCost": 50,
+      "tags": ["super", "puppet_sync", "unblockable"],
+      "puppet_command": {
+        "type": "synchronized_attack",
+        "requires_all_puppets": true,
+        "unblockable": true
+      }
+    },
+    "lvl3": {
+      "name": "Master's Domain",
+      "input": "632146P",
+      "damage": 400,
+      "startup": 25,
+      "recovery": 80,
+      "meterCost": 100,
+      "tags": ["super", "puppet_army", "cinematic"],
+      "puppet_command": {
+        "type": "summon_army",
+        "puppet_count": 5,
+        "duration": 300,
+        "damage_multiplier": 1.5
+      }
+    }
+  },
+  "movement": {
+    "walkF": 0.8,
+    "walkB": 1.0,
+    "dashF": 17,
+    "dashB": 19,
+    "jumpArc": "standard",
+    "airDash": false,
+    "doubleJump": false
+  },
+  "stats": {
+    "health": 925,
+    "defense": 0.9,
+    "meterGain": 1.1,
+    "weight": 85,
+    "stun": 875
+  }
+}

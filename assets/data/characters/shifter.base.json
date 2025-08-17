@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "1.0",
+  "id": "shifter",
+  "displayName": "Shifter",
+  "archetype": "stance",
+  "trait": {
+    "id": "form_mastery",
+    "name": "Form Mastery",
+    "description": "Seamlessly transition between multiple combat stances with unique movesets",
+    "params": {
+      "stanceCount": 3,
+      "transitionFrames": 8,
+      "stanceMeterGain": 1.5
+    }
+  },
+  "stances": {
+    "neutral": {
+      "name": "Neutral Stance",
+      "description": "Balanced stance with versatile options",
+      "active": true
+    },
+    "power": {
+      "name": "Power Stance",
+      "description": "Heavy hitting stance with armor properties",
+      "active": false
+    },
+    "speed": {
+      "name": "Speed Stance", 
+      "description": "Fast stance with enhanced mobility",
+      "active": false
+    }
+  },
+  "normals": {
+    "lp": {
+      "name": "Neutral Jab",
+      "damage": 50,
+      "startup": 5,
+      "active": 3,
+      "recovery": 8,
+      "onBlock": 1,
+      "onHit": 4,
+      "tags": ["cancelable", "stance_change"],
+      "hitbox": {"x": 55, "y": 0, "width": 40, "height": 30},
+      "stance_variants": {
+        "power": {"damage": 70, "startup": 7, "armor": {"hits": 1, "frames": [3, 6]}},
+        "speed": {"damage": 40, "startup": 3, "recovery": 6}
+      }
+    },
+    "mp": {
+      "name": "Neutral Cross",
+      "damage": 80,
+      "startup": 8,
+      "active": 4,
+      "recovery": 12,
+      "onBlock": -1,
+      "onHit": 3,
+      "tags": ["cancelable", "stance_change"],
+      "hitbox": {"x": 70, "y": 0, "width": 50, "height": 35},
+      "stance_variants": {
+        "power": {"damage": 110, "startup": 12, "armor": {"hits": 1, "frames": [5, 10]}},
+        "speed": {"damage": 65, "startup": 5, "recovery": 8}
+      }
+    },
+    "hp": {
+      "name": "Neutral Hook",
+      "damage": 120,
+      "startup": 12,
+      "active": 5,
+      "recovery": 18,
+      "onBlock": -4,
+      "onHit": 2,
+      "tags": ["launcher", "stance_change"],
+      "hitbox": {"x": 75, "y": 0, "width": 55, "height": 40},
+      "stance_variants": {
+        "power": {"damage": 160, "startup": 16, "armor": {"hits": 2, "frames": [8, 15]}, "tags": ["launcher", "armor"]},
+        "speed": {"damage": 95, "startup": 8, "recovery": 12, "tags": ["launcher", "chain"]}
+      }
+    },
+    "lk": {
+      "name": "Neutral Low",
+      "damage": 55,
+      "startup": 7,
+      "active": 3,
+      "recovery": 10,
+      "onBlock": 0,
+      "onHit": 3,
+      "tags": ["low", "stance_change"],
+      "hitbox": {"x": 60, "y": 35, "width": 45, "height": 25},
+      "stance_variants": {
+        "power": {"damage": 75, "startup": 9, "tags": ["low", "knockdown"]},
+        "speed": {"damage": 45, "startup": 5, "recovery": 7, "tags": ["low", "chain"]}
+      }
+    },
+    "mk": {
+      "name": "Neutral Mid",
+      "damage": 90,
+      "startup": 10,
+      "active": 4,
+      "recovery": 15,
+      "onBlock": -2,
+      "onHit": 2,
+      "tags": ["advance", "stance_change"],
+      "hitbox": {"x": 80, "y": 10, "width": 60, "height": 35},
+      "stance_variants": {
+        "power": {"damage": 125, "startup": 14, "tags": ["advance", "armor"]},
+        "speed": {"damage": 70, "startup": 7, "recovery": 10, "tags": ["advance", "chain"]}
+      }
+    },
+    "hk": {
+      "name": "Neutral High",
+      "damage": 135,
+      "startup": 15,
+      "active": 6,
+      "recovery": 22,
+      "onBlock": -6,
+      "onHit": 0,
+      "tags": ["launcher", "stance_change"],
+      "hitbox": {"x": 90, "y": -5, "width": 70, "height": 50},
+      "stance_variants": {
+        "power": {"damage": 180, "startup": 19, "tags": ["launcher", "wall_bounce"]},
+        "speed": {"damage": 105, "startup": 11, "recovery": 16, "tags": ["launcher", "juggle"]}
+      }
+    }
+  },
+  "specials": {
+    "stance_change": {
+      "name": "Stance Change",
+      "input": "P+K",
+      "damage": 0,
+      "startup": 8,
+      "recovery": 12,
+      "tags": ["stance", "utility", "cancelable"],
+      "stance_change": {
+        "cycles_through": ["neutral", "power", "speed"],
+        "can_cancel_from": "any_normal"
+      }
+    },
+    "qcf_p": {
+      "name": "Form Strike",
+      "input": "236P",
+      "damage": 100,
+      "startup": 13,
+      "recovery": 25,
+      "onBlock": -4,
+      "tags": ["special", "stance_specific"],
+      "stance_variants": {
+        "neutral": {"damage": 100, "tags": ["balanced"]},
+        "power": {"damage": 140, "startup": 18, "armor": {"hits": 1, "frames": [8, 15]}, "tags": ["power", "armor"]},
+        "speed": {"damage": 80, "startup": 8, "recovery": 18, "tags": ["speed", "safe"]}
+      }
+    },
+    "qcb_k": {
+      "name": "Form Kick",
+      "input": "214K", 
+      "damage": 90,
+      "startup": 11,
+      "recovery": 22,
+      "onBlock": -3,
+      "tags": ["special", "stance_specific"],
+      "stance_variants": {
+        "neutral": {"damage": 90, "tags": ["balanced"]},
+        "power": {"damage": 125, "startup": 15, "tags": ["power", "knockdown"]},
+        "speed": {"damage": 70, "startup": 7, "recovery": 16, "tags": ["speed", "chain"]}
+      }
+    },
+    "dp_p": {
+      "name": "Rising Form",
+      "input": "623P",
+      "damage": 130,
+      "startup": 6,
+      "recovery": 30,
+      "onBlock": -15,
+      "invulnFrames": [1, 5],
+      "tags": ["reversal", "stance_specific"],
+      "stance_variants": {
+        "neutral": {"damage": 130, "invulnFrames": [1, 5]},
+        "power": {"damage": 170, "startup": 8, "invulnFrames": [1, 8], "armor": {"hits": 1, "frames": [6, 12]}},
+        "speed": {"damage": 105, "startup": 4, "recovery": 25, "invulnFrames": [1, 6]}
+      }
+    }
+  },
+  "supers": {
+    "lvl1": {
+      "name": "Perfect Form",
+      "input": "236236P",
+      "damage": 280,
+      "startup": 12,
+      "recovery": 45,
+      "meterCost": 25,
+      "tags": ["super", "stance_enhanced"],
+      "stance_variants": {
+        "neutral": {"damage": 280, "tags": ["balanced"]},
+        "power": {"damage": 350, "startup": 18, "tags": ["power", "unblockable"]},
+        "speed": {"damage": 240, "startup": 6, "tags": ["speed", "multi_hit"]}
+      }
+    },
+    "lvl2": {
+      "name": "Tri-Form Assault",
+      "input": "214214K",
+      "damage": 320,
+      "startup": 15,
+      "recovery": 55,
+      "meterCost": 50,
+      "tags": ["super", "stance_combo", "multi_hit"],
+      "combo": {
+        "hits_in_all_stances": true,
+        "automatic_transitions": true,
+        "damage_scaling": 0.8
+      }
+    },
+    "lvl3": {
+      "name": "Master of Forms",
+      "input": "641236P",
+      "damage": 420,
+      "startup": 20,
+      "recovery": 75,
+      "meterCost": 100,
+      "tags": ["super", "stance_mastery", "cinematic"],
+      "mastery": {
+        "unlocks_all_stance_benefits": true,
+        "enhanced_properties": true,
+        "damage_multiplier": 1.8
+      }
+    }
+  },
+  "movement": {
+    "walkF": 0.9,
+    "walkB": 0.9,
+    "dashF": 18,
+    "dashB": 17,
+    "jumpArc": "standard",
+    "airDash": false,
+    "doubleJump": false,
+    "stance_variants": {
+      "power": {"walkF": 0.7, "walkB": 0.8, "dashF": 14, "dashB": 15},
+      "speed": {"walkF": 1.2, "walkB": 1.1, "dashF": 24, "dashB": 22}
+    }
+  },
+  "stats": {
+    "health": 1000,
+    "defense": 1.0,
+    "meterGain": 1.0,
+    "weight": 100,
+    "stun": 1000,
+    "stance_variants": {
+      "power": {"health": 1100, "defense": 1.2, "weight": 120},
+      "speed": {"health": 900, "defense": 0.8, "weight": 80}
+    }
+  }
+}

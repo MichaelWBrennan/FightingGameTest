@@ -1,0 +1,161 @@
+{
+  "schemaVersion": "1.0",
+  "characterId": "weaver",
+  "variations": [
+    {
+      "id": "trap_master",
+      "name": "Trap Master",
+      "description": "Maximum trap deployment with enhanced duration and effects",
+      "adds": {
+        "specials": {
+          "sticky_trap": {
+            "name": "Sticky Web Trap",
+            "input": "236K",
+            "damage": 0,
+            "startup": 22,
+            "recovery": 38,
+            "tags": ["trap", "persistent", "sticky"],
+            "trap": {
+              "duration": 600,
+              "trigger": "contact",
+              "effect": "immobilize",
+              "damage": 60,
+              "hold_duration": 120
+            }
+          },
+          "explosive_mine": {
+            "name": "Explosive Spider Mine",
+            "input": "214P",
+            "damage": 0,
+            "startup": 28,
+            "recovery": 45,
+            "tags": ["trap", "mine", "explosive"],
+            "trap": {
+              "duration": 720,
+              "trigger": "proximity",
+              "arm_time": 90,
+              "effect": "explosion",
+              "damage": 150,
+              "radius": 100,
+              "knockdown": true
+            }
+          }
+        },
+        "passive": {
+          "trap_limit": 4,
+          "setup_speed": 1.2
+        }
+      },
+      "mods": {
+        "trait.params.maxTraps": 4,
+        "trait.params.trapDuration": 600,
+        "qcf_p.trap.duration": 600,
+        "qcb_k.trap.duration": 720,
+        "qcf_p.recovery": 30,
+        "qcb_k.recovery": 35,
+        "charge_df_k.wall.duration": 480
+      },
+      "removes": []
+    },
+    {
+      "id": "web_fighter",
+      "name": "Web Fighter",
+      "description": "Close-range combat enhanced by web abilities and debuffs",
+      "adds": {
+        "specials": {
+          "web_grab": {
+            "name": "Web Grab",
+            "input": "360P",
+            "damage": 140,
+            "startup": 5,
+            "recovery": 30,
+            "tags": ["command_grab", "web_attach", "unblockable"],
+            "grab": {
+              "range": 70,
+              "web_effect": true,
+              "follow_up": true
+            }
+          },
+          "web_dash": {
+            "name": "Web Dash",
+            "input": "66P",
+            "damage": 80,
+            "startup": 8,
+            "recovery": 18,
+            "onBlock": 0,
+            "tags": ["advance", "web_trail", "safe"],
+            "properties": {
+              "distance": 100,
+              "leaves_web": true,
+              "web_duration": 240
+            }
+          }
+        },
+        "combat": {
+          "web_enhanced_normals": true,
+          "debuff_on_hit": true
+        }
+      },
+      "mods": {
+        "mp.debuff.duration": 180,
+        "mp.debuff.strength": 0.7,
+        "hp.tags": ["setup", "hard_knockdown", "web_attach"],
+        "hk.tags": ["launcher", "web_attach", "enhanced"],
+        "movement.walkF": 0.9,
+        "movement.dashF": 18,
+        "stats.health": 950
+      },
+      "removes": ["charge_df_k"]
+    },
+    {
+      "id": "spider_queen",
+      "name": "Spider Queen",
+      "description": "Summon spider minions and control multiple threats simultaneously",
+      "adds": {
+        "minions": {
+          "spider_summon": {
+            "name": "Summon Spider",
+            "input": "41236K",
+            "damage": 0,
+            "startup": 35,
+            "recovery": 50,
+            "tags": ["summon", "minion", "persistent"],
+            "minion": {
+              "health": 50,
+              "duration": 600,
+              "ai": "aggressive",
+              "damage": 40,
+              "attack_speed": 90
+            }
+          },
+          "spider_command": {
+            "name": "Spider Command",
+            "input": "63214P",
+            "damage": 0,
+            "startup": 10,
+            "recovery": 20,
+            "tags": ["command", "minion_control"],
+            "command": {
+              "type": "attack",
+              "target": "opponent",
+              "enhanced": true
+            }
+          }
+        },
+        "queen_powers": {
+          "minion_limit": 2,
+          "enhanced_trap_interaction": true
+        }
+      },
+      "mods": {
+        "trait.params.maxTraps": 2,
+        "trait.params.trapDuration": 360,
+        "qcf_p.trap.damage": 100,
+        "qcb_k.trap.damage": 140,
+        "stats.meterGain": 1.2,
+        "movement.walkB": 1.1
+      },
+      "removes": ["dp_p"]
+    }
+  ]
+}

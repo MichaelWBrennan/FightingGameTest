@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.0",
+  "characterId": "crusher",
+  "variations": [
+    {
+      "id": "pure_grappler",
+      "name": "Pure Grappler",
+      "description": "Maximum command grab power with enhanced range and damage",
+      "adds": {
+        "specials": {
+          "air_grab": {
+            "name": "Sky Crusher",
+            "input": "360K (Air)",
+            "damage": 200,
+            "startup": 3,
+            "recovery": 30,
+            "tags": ["command_grab", "air_grab", "unblockable"],
+            "grab": {
+              "range": 80,
+              "air_only": true
+            }
+          }
+        },
+        "passive": {
+          "grab_immunity_frames": 3,
+          "throw_tech_window": -2
+        }
+      },
+      "mods": {
+        "trait.params.grabRange": 1.5,
+        "trait.params.commandGrabDamage": 1.4,
+        "spd.damage": 220,
+        "qcf_p.damage": 180,
+        "spd.grab.range": 80,
+        "qcf_p.grab.range": 100
+      },
+      "removes": []
+    },
+    {
+      "id": "strike_grappler",
+      "name": "Strike Grappler",
+      "description": "Enhanced normal attacks with strike-grab mixups and better footsies",
+      "adds": {
+        "specials": {
+          "command_normal": {
+            "name": "Power Slap",
+            "input": "6HP",
+            "damage": 110,
+            "startup": 14,
+            "recovery": 18,
+            "onBlock": -4,
+            "onHit": 2,
+            "tags": ["overhead", "grab_setup"],
+            "hitbox": {"x": 90, "y": -5, "width": 60, "height": 45}
+          }
+        },
+        "mixups": {
+          "strike_grab_cancel": true,
+          "grab_feints": true
+        }
+      },
+      "mods": {
+        "mp.damage": 100,
+        "hp.damage": 150,
+        "mk.onBlock": -2,
+        "hk.startup": 13,
+        "movement.walkF": 0.7,
+        "stats.health": 1150
+      },
+      "removes": ["dp_k"]
+    },
+    {
+      "id": "armored_tank",
+      "name": "Armored Tank",
+      "description": "Maximum defense with super armor and damage reduction",
+      "adds": {
+        "armor_moves": {
+          "armored_walk": {
+            "name": "Fortress Advance",
+            "input": "66 (Hold)",
+            "tags": ["armor", "movement", "slow"],
+            "armor": {"hits": 2, "continuous": true},
+            "properties": {"speed_reduction": 0.5, "damage_reduction": 0.7}
+          }
+        },
+        "super_armor": {
+          "activation_cost": 25,
+          "duration": 180,
+          "damage_reduction": 0.5
+        }
+      },
+      "mods": {
+        "trait.params.armorHits": 2,
+        "mp.armor.hits": 2,
+        "hp.armor.hits": 3,
+        "charge_bf_k.armor.hits": 2,
+        "stats.defense": 1.4,
+        "stats.weight": 160,
+        "movement.walkF": 0.5,
+        "movement.dashF": 10
+      },
+      "removes": ["qcf_p"]
+    }
+  ]
+}

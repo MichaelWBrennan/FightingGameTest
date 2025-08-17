@@ -1,0 +1,193 @@
+{
+  "schemaVersion": "1.0",
+  "id": "zephyr",
+  "displayName": "Zephyr",
+  "archetype": "zoner",
+  "trait": {
+    "id": "projectile_mastery",
+    "name": "Projectile Mastery",
+    "description": "Enhanced projectile control and multi-projectile management",
+    "params": {
+      "maxProjectiles": 3,
+      "projectileSpeed": 1.2,
+      "chargeBonus": 1.5
+    }
+  },
+  "normals": {
+    "lp": {
+      "name": "Quick Jab",
+      "damage": 40,
+      "startup": 5,
+      "active": 2,
+      "recovery": 8,
+      "onBlock": 0,
+      "onHit": 3,
+      "tags": ["cancelable"],
+      "hitbox": {"x": 50, "y": 0, "width": 35, "height": 25}
+    },
+    "mp": {
+      "name": "Palm Strike",
+      "damage": 70,
+      "startup": 8,
+      "active": 3,
+      "recovery": 12,
+      "onBlock": -3,
+      "onHit": 1,
+      "tags": ["cancelable", "pushback"],
+      "hitbox": {"x": 65, "y": 0, "width": 45, "height": 30}
+    },
+    "hp": {
+      "name": "Wind Slash",
+      "damage": 110,
+      "startup": 14,
+      "active": 4,
+      "recovery": 22,
+      "onBlock": -8,
+      "onHit": -2,
+      "tags": ["knockback", "range"],
+      "hitbox": {"x": 90, "y": 0, "width": 80, "height": 35}
+    },
+    "lk": {
+      "name": "Low Sweep",
+      "damage": 50,
+      "startup": 7,
+      "active": 3,
+      "recovery": 9,
+      "onBlock": -2,
+      "onHit": 2,
+      "tags": ["low", "trip"],
+      "hitbox": {"x": 60, "y": 35, "width": 50, "height": 20}
+    },
+    "mk": {
+      "name": "Step Kick",
+      "damage": 80,
+      "startup": 11,
+      "active": 3,
+      "recovery": 15,
+      "onBlock": -5,
+      "onHit": 0,
+      "tags": ["advance", "cancelable"],
+      "hitbox": {"x": 85, "y": 10, "width": 60, "height": 30}
+    },
+    "hk": {
+      "name": "Launching Kick",
+      "damage": 130,
+      "startup": 16,
+      "active": 5,
+      "recovery": 25,
+      "onBlock": -12,
+      "onHit": -4,
+      "tags": ["launcher", "juggle"],
+      "hitbox": {"x": 95, "y": -15, "width": 70, "height": 50}
+    }
+  },
+  "specials": {
+    "qcf_p": {
+      "name": "Wind Bullet",
+      "input": "236P",
+      "damage": 90,
+      "startup": 11,
+      "recovery": 25,
+      "onBlock": -4,
+      "tags": ["projectile", "fast"],
+      "projectile": {
+        "speed": 400,
+        "lifetime": 100,
+        "size": {"width": 30, "height": 15}
+      }
+    },
+    "charge_bf_p": {
+      "name": "Gale Force",
+      "input": "[4]6P",
+      "damage": 120,
+      "startup": 18,
+      "recovery": 35,
+      "onBlock": -6,
+      "tags": ["projectile", "charge", "piercing"],
+      "projectile": {
+        "speed": 350,
+        "lifetime": 150,
+        "size": {"width": 60, "height": 25}
+      }
+    },
+    "qcf_k": {
+      "name": "Air Cutter",
+      "input": "236K",
+      "damage": 75,
+      "startup": 13,
+      "recovery": 28,
+      "onBlock": -3,
+      "tags": ["projectile", "air_ok", "angled"],
+      "projectile": {
+        "speed": 380,
+        "lifetime": 120,
+        "size": {"width": 40, "height": 10}
+      }
+    },
+    "dp_k": {
+      "name": "Rising Tornado",
+      "input": "623K",
+      "damage": 140,
+      "startup": 8,
+      "recovery": 35,
+      "onBlock": -15,
+      "invulnFrames": [1, 4],
+      "tags": ["antiAir", "reversal"],
+      "hitbox": {"x": 30, "y": -50, "width": 60, "height": 100}
+    }
+  },
+  "supers": {
+    "lvl1": {
+      "name": "Hurricane Barrage",
+      "input": "236236P",
+      "damage": 280,
+      "startup": 10,
+      "recovery": 50,
+      "meterCost": 25,
+      "tags": ["super", "projectile", "multi_hit"],
+      "projectile": {
+        "speed": 450,
+        "lifetime": 200,
+        "size": {"width": 50, "height": 30}
+      }
+    },
+    "lvl2": {
+      "name": "Tempest Zone",
+      "input": "214214K",
+      "damage": 320,
+      "startup": 15,
+      "recovery": 65,
+      "meterCost": 50,
+      "tags": ["super", "area_control", "persistent"],
+      "zone": {
+        "duration": 300,
+        "size": {"width": 200, "height": 100}
+      }
+    },
+    "lvl3": {
+      "name": "Eye of the Storm",
+      "input": "641236K",
+      "damage": 420,
+      "startup": 12,
+      "recovery": 85,
+      "meterCost": 100,
+      "tags": ["super", "fullscreen", "cinematic"]
+    }
+  },
+  "movement": {
+    "walkF": 0.7,
+    "walkB": 0.9,
+    "dashF": 20,
+    "dashB": 15,
+    "jumpArc": "high",
+    "airDash": true,
+    "doubleJump": false
+  },
+  "stats": {
+    "health": 950,
+    "defense": 0.9,
+    "meterGain": 1.1,
+    "weight": 85,
+    "stun": 900
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "schemaVersion": "1.0",
+  "id": "chain",
+  "displayName": "Chain",
+  "archetype": "rekka",
+  "trait": {
+    "id": "sequence_master",
+    "name": "Sequence Master",
+    "description": "Chain attacks together in branching sequences with increasing power",
+    "params": {
+      "maxChainLength": 5,
+      "damageScaling": 0.9,
+      "sequenceBonus": 1.1
+    }
+  },
+  "normals": {
+    "lp": {
+      "name": "Quick Strike",
+      "damage": 45,
+      "startup": 4,
+      "active": 3,
+      "recovery": 7,
+      "onBlock": 2,
+      "onHit": 5,
+      "tags": ["chain_starter", "cancelable"],
+      "hitbox": {"x": 55, "y": 0, "width": 40, "height": 30},
+      "chain": {
+        "can_start_sequence": true,
+        "follow_ups": ["lp", "mp", "lk"]
+      }
+    },
+    "mp": {
+      "name": "Chain Strike",
+      "damage": 75,
+      "startup": 6,
+      "active": 4,
+      "recovery": 9,
+      "onBlock": 0,
+      "onHit": 3,
+      "tags": ["chain_linker", "cancelable"],
+      "hitbox": {"x": 65, "y": 0, "width": 50, "height": 35},
+      "chain": {
+        "can_continue_sequence": true,
+        "follow_ups": ["hp", "mk", "hk", "special"]
+      }
+    },
+    "hp": {
+      "name": "Power Strike",
+      "damage": 115,
+      "startup": 10,
+      "active": 5,
+      "recovery": 15,
+      "onBlock": -3,
+      "onHit": 2,
+      "tags": ["chain_ender", "launcher"],
+      "hitbox": {"x": 75, "y": 0, "width": 55, "height": 40},
+      "chain": {
+        "can_end_sequence": true,
+        "sequence_bonus": 1.2
+      }
+    },
+    "lk": {
+      "name": "Low Chain",
+      "damage": 50,
+      "startup": 5,
+      "active": 3,
+      "recovery": 8,
+      "onBlock": 1,
+      "onHit": 4,
+      "tags": ["low", "chain_linker"],
+      "hitbox": {"x": 60, "y": 35, "width": 45, "height": 25},
+      "chain": {
+        "can_continue_sequence": true,
+        "follow_ups": ["mk", "hk", "special"]
+      }
+    },
+    "mk": {
+      "name": "Mid Chain",
+      "damage": 85,
+      "startup": 8,
+      "active": 4,
+      "recovery": 12,
+      "onBlock": -1,
+      "onHit": 3,
+      "tags": ["chain_linker", "advance"],
+      "hitbox": {"x": 80, "y": 10, "width": 60, "height": 35},
+      "chain": {
+        "can_continue_sequence": true,
+        "follow_ups": ["hk", "hp", "special"]
+      }
+    },
+    "hk": {
+      "name": "Heavy Chain",
+      "damage": 130,
+      "startup": 12,
+      "active": 6,
+      "recovery": 18,
+      "onBlock": -5,
+      "onHit": 1,
+      "tags": ["chain_ender", "knockdown"],
+      "hitbox": {"x": 90, "y": -5, "width": 70, "height": 50},
+      "chain": {
+        "can_end_sequence": true,
+        "sequence_bonus": 1.3
+      }
+    }
+  },
+  "specials": {
+    "rekka_1": {
+      "name": "Dragon Rush",
+      "input": "236P",
+      "damage": 90,
+      "startup": 10,
+      "recovery": 20,
+      "onBlock": -2,
+      "tags": ["rekka", "chain_special", "safe"],
+      "hitbox": {"x": 70, "y": 0, "width": 60, "height": 40},
+      "rekka": {
+        "sequence_number": 1,
+        "follow_ups": ["rekka_2_high", "rekka_2_low", "rekka_2_grab"]
+      }
+    },
+    "rekka_2_high": {
+      "name": "Dragon Uppercut",
+      "input": "236P (After Dragon Rush)",
+      "damage": 100,
+      "startup": 8,
+      "recovery": 25,
+      "onBlock": -6,
+      "tags": ["rekka", "launcher", "antiAir"],
+      "hitbox": {"x": 60, "y": -30, "width": 55, "height": 80},
+      "rekka": {
+        "sequence_number": 2,
+        "follow_ups": ["rekka_3_finisher"],
+        "requires_previous": "rekka_1"
+      }
+    },
+    "rekka_2_low": {
+      "name": "Dragon Sweep",
+      "input": "214P (After Dragon Rush)",
+      "damage": 95,
+      "startup": 12,
+      "recovery": 22,
+      "onBlock": -4,
+      "tags": ["rekka", "low", "knockdown"],
+      "hitbox": {"x": 80, "y": 30, "width": 70, "height": 25},
+      "rekka": {
+        "sequence_number": 2,
+        "follow_ups": ["rekka_3_finisher"],
+        "requires_previous": "rekka_1"
+      }
+    },
+    "rekka_2_grab": {
+      "name": "Dragon Grab",
+      "input": "623P (After Dragon Rush)",
+      "damage": 120,
+      "startup": 6,
+      "recovery": 30,
+      "tags": ["rekka", "grab", "unblockable"],
+      "grab": {
+        "range": 80,
+        "whiff_recovery": 25
+      },
+      "rekka": {
+        "sequence_number": 2,
+        "follow_ups": ["rekka_3_finisher"],
+        "requires_previous": "rekka_1"
+      }
+    },
+    "rekka_3_finisher": {
+      "name": "Dragon Phoenix",
+      "input": "236P (After 2nd Rekka)",
+      "damage": 140,
+      "startup": 15,
+      "recovery": 35,
+      "onBlock": -8,
+      "tags": ["rekka", "finisher", "launcher"],
+      "hitbox": {"x": 80, "y": -20, "width": 80, "height": 100},
+      "rekka": {
+        "sequence_number": 3,
+        "is_finisher": true,
+        "damage_bonus": 1.4
+      }
+    },
+    "chain_special": {
+      "name": "Chain Lightning",
+      "input": "214K",
+      "damage": 80,
+      "startup": 9,
+      "recovery": 18,
+      "onBlock": 0,
+      "tags": ["chain_compatible", "projectile"],
+      "projectile": {
+        "speed": 400,
+        "lifetime": 100,
+        "size": {"width": 50, "height": 20}
+      },
+      "chain": {
+        "can_continue_from_normals": true,
+        "can_start_rekka": true
+      }
+    }
+  },
+  "supers": {
+    "lvl1": {
+      "name": "Infinite Chain",
+      "input": "236236P",
+      "damage": 280,
+      "startup": 12,
+      "recovery": 45,
+      "meterCost": 25,
+      "tags": ["super", "chain_super", "multi_hit"],
+      "chain": {
+        "auto_chains": true,
+        "extended_sequence": true,
+        "damage_scaling": 0.85
+      }
+    },
+    "lvl2": {
+      "name": "Perfect Sequence",
+      "input": "214214K",
+      "damage": 320,
+      "startup": 15,
+      "recovery": 55,
+      "meterCost": 50,
+      "tags": ["super", "rekka_super", "unblockable"],
+      "rekka": {
+        "perfect_execution": true,
+        "all_branches_available": true,
+        "enhanced_damage": 1.5
+      }
+    },
+    "lvl3": {
+      "name": "Master's Technique",
+      "input": "632146P",
+      "damage": 400,
+      "startup": 20,
+      "recovery": 70,
+      "meterCost": 100,
+      "tags": ["super", "sequence_mastery", "cinematic"],
+      "sequence": {
+        "uses_all_techniques": true,
+        "automatic_perfect_timing": true,
+        "massive_damage_scaling": 1.8
+      }
+    }
+  },
+  "movement": {
+    "walkF": 1.0,
+    "walkB": 0.9,
+    "dashF": 19,
+    "dashB": 17,
+    "jumpArc": "standard",
+    "airDash": false,
+    "doubleJump": false
+  },
+  "stats": {
+    "health": 975,
+    "defense": 0.95,
+    "meterGain": 1.1,
+    "weight": 95,
+    "stun": 950
+  }
+}

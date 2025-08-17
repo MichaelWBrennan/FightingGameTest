@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "1.0",
+  "characterId": "vanguard",
+  "variations": [
+    {
+      "id": "discipline",
+      "name": "Discipline",
+      "description": "Enhanced defense and parry capabilities with improved reversal options",
+      "adds": {
+        "specials": {
+          "qcf_k": {
+            "name": "Enhanced Hadoken",
+            "input": "236K",
+            "damage": 120,
+            "startup": 11,
+            "recovery": 25,
+            "onBlock": -4,
+            "tags": ["projectile", "enhanced"],
+            "lowProfile": true,
+            "chip": 10,
+            "projectile": {
+              "speed": 350,
+              "lifetime": 140,
+              "size": {"width": 50, "height": 25}
+            }
+          }
+        }
+      },
+      "mods": {
+        "dp_p": {
+          "invulnFrames": [1, 10],
+          "recovery": 25
+        },
+        "trait.params.parryWindow": 8,
+        "trait.params.meterGain": 200,
+        "stats.defense": 1.1
+      },
+      "removes": []
+    },
+    {
+      "id": "ascendant",
+      "name": "Ascendant",
+      "description": "Aerial mobility and stance-based combat with elemental powers",
+      "adds": {
+        "stance": {
+          "forms": ["fire", "wind"],
+          "cancelRules": "loose",
+          "swapInput": "MP+MK"
+        },
+        "specials": {
+          "fire_stance_special": {
+            "name": "Flame Pillar",
+            "input": "236P (Fire)",
+            "damage": 140,
+            "startup": 15,
+            "recovery": 35,
+            "onBlock": -8,
+            "tags": ["fire", "stance", "multi_hit"],
+            "stanceRequired": "fire"
+          },
+          "wind_stance_special": {
+            "name": "Wind Cutter",
+            "input": "236P (Wind)", 
+            "damage": 90,
+            "startup": 10,
+            "recovery": 20,
+            "onBlock": -2,
+            "tags": ["wind", "stance", "air_ok"],
+            "stanceRequired": "wind"
+          }
+        }
+      },
+      "mods": {
+        "movement.jumpArc": "floaty",
+        "movement.airDash": true,
+        "movement.doubleJump": true,
+        "stats.meterGain": 1.2
+      },
+      "removes": ["qcf_p"]
+    },
+    {
+      "id": "enforcer",
+      "name": "Enforcer",
+      "description": "Armored attacks and enhanced damage with reduced mobility",
+      "adds": {
+        "armor": {
+          "hits": 1,
+          "onMoves": ["mp", "hp", "dp_p"],
+          "type": "strike"
+        },
+        "specials": {
+          "armored_rush": {
+            "name": "Power Rush",
+            "input": "46P",
+            "damage": 150,
+            "startup": 12,
+            "recovery": 28,
+            "onBlock": -6,
+            "tags": ["armor", "knockdown"],
+            "armor": {"hits": 2, "type": "all"}
+          }
+        }
+      },
+      "mods": {
+        "specials.qcf_p.onBlock": -2,
+        "specials.qcf_p.damage": 120,
+        "hp.damage": 140,
+        "mp.damage": 90,
+        "stats.health": 1100,
+        "movement.walkF": 0.8,
+        "movement.walkB": 0.7
+      },
+      "removes": []
+    }
+  ]
+}

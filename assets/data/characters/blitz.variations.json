@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "characterId": "blitz",
+  "variations": [
+    {
+      "id": "speed_demon",
+      "name": "Speed Demon",
+      "description": "Maximum mobility and speed with enhanced dash options",
+      "adds": {
+        "specials": {
+          "triple_dash": {
+            "name": "Triple Dash",
+            "input": "66~66~66",
+            "damage": 80,
+            "startup": 4,
+            "recovery": 12,
+            "onBlock": 2,
+            "tags": ["dash", "multi_hit", "safe"],
+            "properties": {"hits": 3, "distance": 150}
+          },
+          "instant_overhead": {
+            "name": "Flash Step",
+            "input": "9P",
+            "damage": 70,
+            "startup": 6,
+            "recovery": 14,
+            "onBlock": -1,
+            "tags": ["overhead", "instant", "teleport"]
+          }
+        }
+      },
+      "mods": {
+        "trait.params.speedMultiplier": 1.4,
+        "trait.params.dashCancelWindow": 12,
+        "movement.walkF": 1.4,
+        "movement.dashF": 30,
+        "movement.dashB": 28,
+        "qcf_p.recovery": 12,
+        "air_dash.recovery": 3,
+        "stats.weight": 70
+      },
+      "removes": []
+    },
+    {
+      "id": "mixup_master",
+      "name": "Mix-up Master",
+      "description": "Enhanced frame traps and high-low mixup options",
+      "adds": {
+        "command_normals": {
+          "overhead_punch": {
+            "name": "Hammer Fist",
+            "input": "6HP",
+            "damage": 95,
+            "startup": 12,
+            "recovery": 16,
+            "onBlock": -2,
+            "onHit": 4,
+            "tags": ["overhead", "frame_trap"]
+          },
+          "low_slide": {
+            "name": "Sweep Slide",
+            "input": "3MK",
+            "damage": 75,
+            "startup": 9,
+            "recovery": 18,
+            "onBlock": -4,
+            "onHit": 0,
+            "tags": ["low", "knockdown", "slide"]
+          }
+        },
+        "frame_traps": {
+          "enhanced_gaps": true,
+          "variable_timing": true
+        }
+      },
+      "mods": {
+        "trait.params.frameAdvantageBonus": 3,
+        "lp.onBlock": 3,
+        "mp.onBlock": 2,
+        "mp.tags": ["cancelable", "frame_trap", "enhanced"],
+        "lk.onBlock": 2,
+        "qcb_k.recovery": 15,
+        "stats.meterGain": 1.3
+      },
+      "removes": ["air_dash"]
+    },
+    {
+      "id": "combo_fiend",
+      "name": "Combo Fiend",
+      "description": "Extended combo potential with juggle and wall bounce options",
+      "adds": {
+        "specials": {
+          "juggle_kick": {
+            "name": "Launcher Kick",
+            "input": "214K~K",
+            "damage": 60,
+            "startup": 10,
+            "recovery": 20,
+            "onBlock": -6,
+            "tags": ["launcher", "juggle", "combo_extend"],
+            "properties": {"juggle_state": "high", "wall_bounce": true}
+          },
+          "dive_kick": {
+            "name": "Lightning Dive",
+            "input": "236K (Air)",
+            "damage": 85,
+            "startup": 8,
+            "recovery": 15,
+            "onBlock": 1,
+            "tags": ["overhead", "air_ok", "combo_starter"]
+          }
+        },
+        "combo_system": {
+          "extended_hitstun": 4,
+          "juggle_decay": 0.8,
+          "wall_bounce": true
+        }
+      },
+      "mods": {
+        "hp.tags": ["launcher", "knockdown", "juggle"],
+        "hk.tags": ["overhead", "spinning", "wall_bounce"],
+        "qcb_k.tags": ["rekka", "multi_hit", "combo_extend"],
+        "dp_p.tags": ["reversal", "antiAir", "juggle"],
+        "movement.jumpArc": "high",
+        "stats.health": 850
+      },
+      "removes": []
+    }
+  ]
+}

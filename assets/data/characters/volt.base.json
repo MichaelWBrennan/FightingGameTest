@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "1.0",
+  "id": "volt",
+  "displayName": "Volt",
+  "archetype": "charge",
+  "trait": {
+    "id": "charge_master",
+    "name": "Charge Master",
+    "description": "Enhanced charge time storage and partitioning abilities",
+    "params": {
+      "chargeTime": 45,
+      "chargeStorage": 90,
+      "partitionWindow": 12
+    }
+  },
+  "normals": {
+    "lp": {
+      "name": "Quick Jab",
+      "damage": 50,
+      "startup": 4,
+      "active": 3,
+      "recovery": 7,
+      "onBlock": 1,
+      "onHit": 4,
+      "tags": ["cancelable"],
+      "hitbox": {"x": 55, "y": 0, "width": 40, "height": 30}
+    },
+    "mp": {
+      "name": "Straight Punch",
+      "damage": 80,
+      "startup": 7,
+      "active": 4,
+      "recovery": 10,
+      "onBlock": -1,
+      "onHit": 3,
+      "tags": ["cancelable", "charge_cancel"],
+      "hitbox": {"x": 70, "y": 0, "width": 50, "height": 35}
+    },
+    "hp": {
+      "name": "Power Uppercut",
+      "damage": 120,
+      "startup": 11,
+      "active": 5,
+      "recovery": 16,
+      "onBlock": -4,
+      "onHit": 1,
+      "tags": ["launcher", "charge_cancel"],
+      "hitbox": {"x": 60, "y": -20, "width": 55, "height": 60}
+    },
+    "lk": {
+      "name": "Low Kick",
+      "damage": 55,
+      "startup": 6,
+      "active": 3,
+      "recovery": 8,
+      "onBlock": 0,
+      "onHit": 3,
+      "tags": ["low", "cancelable"],
+      "hitbox": {"x": 50, "y": 35, "width": 45, "height": 25}
+    },
+    "mk": {
+      "name": "Side Kick",
+      "damage": 90,
+      "startup": 9,
+      "active": 4,
+      "recovery": 13,
+      "onBlock": -2,
+      "onHit": 2,
+      "tags": ["advance", "charge_cancel"],
+      "hitbox": {"x": 80, "y": 0, "width": 60, "height": 35}
+    },
+    "hk": {
+      "name": "Overhead Axe",
+      "damage": 135,
+      "startup": 14,
+      "active": 6,
+      "recovery": 20,
+      "onBlock": -7,
+      "onHit": 0,
+      "tags": ["overhead", "knockdown"],
+      "hitbox": {"x": 75, "y": -15, "width": 65, "height": 50}
+    }
+  },
+  "specials": {
+    "charge_bf_p": {
+      "name": "Sonic Boom",
+      "input": "[4]6P",
+      "damage": 100,
+      "startup": 15,
+      "recovery": 28,
+      "onBlock": -3,
+      "tags": ["projectile", "charge"],
+      "charge": {
+        "time": 45,
+        "partition": true
+      },
+      "projectile": {
+        "speed": 350,
+        "lifetime": 130,
+        "size": {"width": 50, "height": 25}
+      }
+    },
+    "charge_db_k": {
+      "name": "Flash Kick",
+      "input": "[2]8K",
+      "damage": 150,
+      "startup": 5,
+      "recovery": 32,
+      "onBlock": -18,
+      "invulnFrames": [1, 8],
+      "tags": ["antiAir", "reversal", "charge"],
+      "charge": {
+        "time": 45,
+        "partition": true
+      },
+      "hitbox": {"x": 40, "y": -60, "width": 60, "height": 120}
+    },
+    "charge_bf_k": {
+      "name": "Lightning Knee",
+      "input": "[4]6K",
+      "damage": 120,
+      "startup": 12,
+      "recovery": 25,
+      "onBlock": -5,
+      "tags": ["advance", "charge", "armor"],
+      "charge": {
+        "time": 45,
+        "partition": false
+      },
+      "armor": {"hits": 1, "frames": [8, 15]},
+      "hitbox": {"x": 85, "y": 0, "width": 70, "height": 40}
+    },
+    "triple_punch": {
+      "name": "Triple Strike",
+      "input": "PPP",
+      "damage": 75,
+      "startup": 8,
+      "recovery": 20,
+      "onBlock": -2,
+      "tags": ["multi_hit", "safe"],
+      "properties": {"hits": 3, "gap": 4}
+    }
+  },
+  "supers": {
+    "lvl1": {
+      "name": "Mega Sonic Boom",
+      "input": "[4]6[4]6P",
+      "damage": 300,
+      "startup": 12,
+      "recovery": 45,
+      "meterCost": 25,
+      "tags": ["super", "projectile", "charge"],
+      "charge": {
+        "time": 30,
+        "partition": true
+      }
+    },
+    "lvl2": {
+      "name": "Lightning Storm",
+      "input": "[2]8[2]8K",
+      "damage": 350,
+      "startup": 8,
+      "recovery": 55,
+      "meterCost": 50,
+      "invulnFrames": [1, 15],
+      "tags": ["super", "reversal", "charge", "area_attack"]
+    },
+    "lvl3": {
+      "name": "Plasma Cannon",
+      "input": "[4]6[4]6[4]6P",
+      "damage": 450,
+      "startup": 20,
+      "recovery": 80,
+      "meterCost": 100,
+      "tags": ["super", "fullscreen", "unblockable", "cinematic"]
+    }
+  },
+  "movement": {
+    "walkF": 0.8,
+    "walkB": 0.9,
+    "dashF": 18,
+    "dashB": 16,
+    "jumpArc": "standard",
+    "airDash": false,
+    "doubleJump": false
+  },
+  "stats": {
+    "health": 1050,
+    "defense": 1.0,
+    "meterGain": 1.0,
+    "weight": 105,
+    "stun": 1000
+  }
+}

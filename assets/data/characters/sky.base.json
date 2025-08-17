@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "1.0",
+  "id": "sky",
+  "displayName": "Sky",
+  "archetype": "aerial",
+  "trait": {
+    "id": "air_dominance",
+    "name": "Air Dominance",
+    "description": "Superior air mobility and extended air time with aerial command options",
+    "params": {
+      "airTime": 2.0,
+      "airDashCount": 3,
+      "airSpecialCount": 2
+    }
+  },
+  "normals": {
+    "lp": {
+      "name": "Quick Strike",
+      "damage": 45,
+      "startup": 4,
+      "active": 3,
+      "recovery": 7,
+      "onBlock": 2,
+      "onHit": 5,
+      "tags": ["cancelable", "air_ok"],
+      "hitbox": {"x": 55, "y": 0, "width": 40, "height": 30},
+      "air_properties": {
+        "damage": 50,
+        "startup": 3,
+        "trajectory_change": true
+      }
+    },
+    "mp": {
+      "name": "Aerial Cross",
+      "damage": 75,
+      "startup": 6,
+      "active": 4,
+      "recovery": 9,
+      "onBlock": 0,
+      "onHit": 3,
+      "tags": ["cancelable", "air_ok"],
+      "hitbox": {"x": 65, "y": 0, "width": 50, "height": 35},
+      "air_properties": {
+        "damage": 80,
+        "startup": 5,
+        "float_extension": 10
+      }
+    },
+    "hp": {
+      "name": "Diving Strike",
+      "damage": 110,
+      "startup": 10,
+      "active": 5,
+      "recovery": 15,
+      "onBlock": -3,
+      "onHit": 2,
+      "tags": ["launcher", "air_ok"],
+      "hitbox": {"x": 70, "y": 0, "width": 55, "height": 40},
+      "air_properties": {
+        "damage": 120,
+        "startup": 8,
+        "dive_angle": -45,
+        "ground_bounce": true
+      }
+    },
+    "lk": {
+      "name": "Quick Kick",
+      "damage": 50,
+      "startup": 5,
+      "active": 3,
+      "recovery": 8,
+      "onBlock": 1,
+      "onHit": 4,
+      "tags": ["low", "air_ok"],
+      "hitbox": {"x": 60, "y": 35, "width": 45, "height": 25},
+      "air_properties": {
+        "damage": 55,
+        "startup": 4,
+        "cross_up": true
+      }
+    },
+    "mk": {
+      "name": "Aerial Knee",
+      "damage": 85,
+      "startup": 8,
+      "active": 4,
+      "recovery": 12,
+      "onBlock": -1,
+      "onHit": 3,
+      "tags": ["air_ok", "advance"],
+      "hitbox": {"x": 75, "y": 10, "width": 60, "height": 35},
+      "air_properties": {
+        "damage": 90,
+        "startup": 6,
+        "momentum_change": true
+      }
+    },
+    "hk": {
+      "name": "Sky Crusher",
+      "damage": 125,
+      "startup": 12,
+      "active": 6,
+      "recovery": 18,
+      "onBlock": -5,
+      "onHit": 1,
+      "tags": ["launcher", "air_ok"],
+      "hitbox": {"x": 85, "y": -5, "width": 70, "height": 50},
+      "air_properties": {
+        "damage": 135,
+        "startup": 10,
+        "meteor_effect": true,
+        "hard_knockdown": true
+      }
+    }
+  },
+  "specials": {
+    "air_dash": {
+      "name": "Air Dash",
+      "input": "66 (Air)",
+      "damage": 0,
+      "startup": 1,
+      "recovery": 8,
+      "tags": ["movement", "air_only", "multi_use"],
+      "air_dash": {
+        "distance": 120,
+        "speed": "fast",
+        "max_uses": 3,
+        "resets_on_hit": true
+      }
+    },
+    "qcf_p": {
+      "name": "Wind Cutter",
+      "input": "236P",
+      "damage": 90,
+      "startup": 11,
+      "recovery": 22,
+      "onBlock": -3,
+      "tags": ["projectile", "air_ok"],
+      "projectile": {
+        "speed": 350,
+        "lifetime": 100,
+        "size": {"width": 50, "height": 25}
+      },
+      "air_properties": {
+        "damage": 95,
+        "startup": 9,
+        "angled_projectile": true,
+        "float_extension": 15
+      }
+    },
+    "qcb_k": {
+      "name": "Sky Drop",
+      "input": "214K",
+      "damage": 100,
+      "startup": 8,
+      "recovery": 25,
+      "onBlock": -4,
+      "tags": ["dive", "air_ok", "overhead"],
+      "dive": {
+        "angle": -60,
+        "speed": "fast",
+        "tracking": true
+      },
+      "air_properties": {
+        "damage": 110,
+        "startup": 6,
+        "enhanced_tracking": true,
+        "safe_on_block": true
+      }
+    },
+    "dp_p": {
+      "name": "Rising Cyclone",
+      "input": "623P",
+      "damage": 130,
+      "startup": 5,
+      "recovery": 30,
+      "onBlock": -15,
+      "invulnFrames": [1, 6],
+      "tags": ["reversal", "antiAir", "air_ok"],
+      "hitbox": {"x": 50, "y": -50, "width": 70, "height": 100},
+      "air_properties": {
+        "damage": 140,
+        "startup": 3,
+        "extended_hitbox": true,
+        "float_reset": true
+      }
+    },
+    "air_special": {
+      "name": "Feather Dance",
+      "input": "214214P (Air)",
+      "damage": 0,
+      "startup": 10,
+      "recovery": 20,
+      "tags": ["air_only", "float", "mixup"],
+      "float": {
+        "duration": 60,
+        "movement_speed": 1.5,
+        "attack_enhancement": true,
+        "landing_options": ["fast_fall", "delayed_fall", "drift"]
+      }
+    },
+    "double_jump": {
+      "name": "Double Jump",
+      "input": "8 (Air)",
+      "damage": 0,
+      "startup": 1,
+      "recovery": 5,
+      "tags": ["movement", "air_only", "multi_use"],
+      "jump": {
+        "height": 0.8,
+        "max_uses": 2,
+        "resets_air_actions": true
+      }
+    }
+  },
+  "supers": {
+    "lvl1": {
+      "name": "Aerial Supremacy",
+      "input": "236236P",
+      "damage": 270,
+      "startup": 10,
+      "recovery": 45,
+      "meterCost": 25,
+      "tags": ["super", "air_ok", "multi_hit"],
+      "air_properties": {
+        "damage": 290,
+        "startup": 8,
+        "enhanced_mobility": true,
+        "hits": 8
+      }
+    },
+    "lvl2": {
+      "name": "Sky Domain",
+      "input": "214214K",
+      "damage": 0,
+      "startup": 15,
+      "recovery": 50,
+      "meterCost": 50,
+      "tags": ["super", "buff", "air_control"],
+      "domain": {
+        "duration": 480,
+        "enhanced_air_mobility": true,
+        "infinite_air_actions": true,
+        "damage_bonus": 1.3
+      }
+    },
+    "lvl3": {
+      "name": "Heaven's Judgment",
+      "input": "632146P",
+      "damage": 420,
+      "startup": 20,
+      "recovery": 75,
+      "meterCost": 100,
+      "tags": ["super", "air_ok", "fullscreen", "cinematic"],
+      "judgment": {
+        "aerial_cinematic": true,
+        "fullscreen_coverage": true,
+        "unblockable": true,
+        "environmental_interaction": true
+      }
+    }
+  },
+  "movement": {
+    "walkF": 1.1,
+    "walkB": 1.0,
+    "dashF": 22,
+    "dashB": 20,
+    "jumpArc": "high",
+    "airDash": true,
+    "doubleJump": true,
+    "tripleJump": false,
+    "airDashCount": 3,
+    "doubleJumpCount": 2,
+    "floatTime": 120
+  },
+  "stats": {
+    "health": 875,
+    "defense": 0.8,
+    "meterGain": 1.2,
+    "weight": 75,
+    "stun": 825
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "schemaVersion": "1.0",
+  "id": "weaver",
+  "displayName": "Weaver",
+  "archetype": "setplay",
+  "trait": {
+    "id": "web_master",
+    "name": "Web Master",
+    "description": "Deploy persistent traps and control space with web constructs",
+    "params": {
+      "maxTraps": 3,
+      "trapDuration": 480,
+      "webStrength": 1.2
+    }
+  },
+  "normals": {
+    "lp": {
+      "name": "Quick Strike",
+      "damage": 45,
+      "startup": 5,
+      "active": 3,
+      "recovery": 8,
+      "onBlock": 1,
+      "onHit": 4,
+      "tags": ["cancelable", "setup"],
+      "hitbox": {"x": 55, "y": 0, "width": 40, "height": 30}
+    },
+    "mp": {
+      "name": "Web Touch",
+      "damage": 70,
+      "startup": 8,
+      "active": 4,
+      "recovery": 12,
+      "onBlock": -1,
+      "onHit": 3,
+      "tags": ["cancelable", "slow", "setup"],
+      "debuff": {"type": "slow", "duration": 120, "strength": 0.8},
+      "hitbox": {"x": 65, "y": 0, "width": 50, "height": 35}
+    },
+    "hp": {
+      "name": "Trap Setter",
+      "damage": 105,
+      "startup": 14,
+      "active": 5,
+      "recovery": 20,
+      "onBlock": -6,
+      "onHit": -1,
+      "tags": ["setup", "hard_knockdown"],
+      "hitbox": {"x": 75, "y": 0, "width": 60, "height": 40}
+    },
+    "lk": {
+      "name": "Low Web",
+      "damage": 50,
+      "startup": 7,
+      "active": 3,
+      "recovery": 10,
+      "onBlock": 0,
+      "onHit": 3,
+      "tags": ["low", "trip", "setup"],
+      "hitbox": {"x": 60, "y": 35, "width": 45, "height": 25}
+    },
+    "mk": {
+      "name": "Mid Sweep",
+      "damage": 80,
+      "startup": 10,
+      "active": 4,
+      "recovery": 15,
+      "onBlock": -3,
+      "onHit": 1,
+      "tags": ["setup", "space_control"],
+      "hitbox": {"x": 85, "y": 15, "width": 65, "height": 30}
+    },
+    "hk": {
+      "name": "Web Launcher",
+      "damage": 120,
+      "startup": 16,
+      "active": 6,
+      "recovery": 25,
+      "onBlock": -8,
+      "onHit": -2,
+      "tags": ["launcher", "web_attach"],
+      "hitbox": {"x": 90, "y": -10, "width": 70, "height": 50}
+    }
+  },
+  "specials": {
+    "qcf_p": {
+      "name": "Web Trap",
+      "input": "236P",
+      "damage": 0,
+      "startup": 20,
+      "recovery": 35,
+      "tags": ["trap", "persistent", "projectile"],
+      "trap": {
+        "duration": 480,
+        "trigger": "contact",
+        "effect": "capture",
+        "damage": 80,
+        "hitstun": 30
+      },
+      "projectile": {
+        "speed": 200,
+        "lifetime": 300,
+        "size": {"width": 60, "height": 40}
+      }
+    },
+    "qcb_k": {
+      "name": "Spider Mine",
+      "input": "214K",
+      "damage": 0,
+      "startup": 25,
+      "recovery": 40,
+      "tags": ["trap", "mine", "delayed"],
+      "trap": {
+        "duration": 600,
+        "trigger": "proximity",
+        "arm_time": 60,
+        "effect": "explosion",
+        "damage": 120,
+        "radius": 80
+      }
+    },
+    "dp_p": {
+      "name": "Web Shield",
+      "input": "623P",
+      "damage": 90,
+      "startup": 8,
+      "recovery": 30,
+      "onBlock": -10,
+      "invulnFrames": [1, 6],
+      "tags": ["reversal", "web_armor"],
+      "armor": {"hits": 2, "frames": [5, 15]},
+      "hitbox": {"x": 40, "y": -30, "width": 60, "height": 80}
+    },
+    "charge_df_k": {
+      "name": "Web Wall",
+      "input": "[1]3K",
+      "damage": 0,
+      "startup": 30,
+      "recovery": 45,
+      "tags": ["wall", "persistent", "space_control"],
+      "charge": {
+        "time": 50,
+        "partition": false
+      },
+      "wall": {
+        "duration": 360,
+        "height": 120,
+        "width": 20,
+        "blocks_projectiles": true,
+        "slows_movement": 0.5
+      }
+    }
+  },
+  "supers": {
+    "lvl1": {
+      "name": "Web Domain",
+      "input": "236236P",
+      "damage": 0,
+      "startup": 25,
+      "recovery": 60,
+      "meterCost": 25,
+      "tags": ["super", "area_control", "persistent"],
+      "domain": {
+        "duration": 480,
+        "size": {"width": 300, "height": 150},
+        "effect": "slow_opponent",
+        "trap_spawn_rate": 120
+      }
+    },
+    "lvl2": {
+      "name": "Spider Swarm",
+      "input": "214214K",
+      "damage": 280,
+      "startup": 15,
+      "recovery": 55,
+      "meterCost": 50,
+      "tags": ["super", "multi_trap", "pressure"],
+      "swarm": {
+        "trap_count": 5,
+        "spawn_interval": 30,
+        "chase_opponent": true
+      }
+    },
+    "lvl3": {
+      "name": "Perfect Web",
+      "input": "641236P",
+      "damage": 350,
+      "startup": 20,
+      "recovery": 80,
+      "meterCost": 100,
+      "tags": ["super", "unblockable", "fullscreen", "cinematic"],
+      "web": {
+        "covers_screen": true,
+        "inescapable": true,
+        "damage_over_time": 50
+      }
+    }
+  },
+  "movement": {
+    "walkF": 0.8,
+    "walkB": 0.9,
+    "dashF": 15,
+    "dashB": 18,
+    "jumpArc": "high",
+    "airDash": false,
+    "doubleJump": false
+  },
+  "stats": {
+    "health": 975,
+    "defense": 0.95,
+    "meterGain": 1.1,
+    "weight": 90,
+    "stun": 900
+  }
+}

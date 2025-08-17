@@ -1,0 +1,181 @@
+{
+  "schemaVersion": "1.0",
+  "characterId": "titan",
+  "variations": [
+    {
+      "id": "destroyer",
+      "name": "Destroyer",
+      "description": "Maximum damage output with enhanced counter hits and devastating attacks",
+      "adds": {
+        "specials": {
+          "rage_mode": {
+            "name": "Rage Mode",
+            "input": "236236K",
+            "damage": 0,
+            "startup": 25,
+            "recovery": 35,
+            "tags": ["buff", "rage", "damage_boost"],
+            "buff": {
+              "duration": 240,
+              "damage_multiplier": 1.6,
+              "counter_hit_bonus": 2.2,
+              "health_drain": 2
+            }
+          },
+          "obliterate": {
+            "name": "Obliterate",
+            "input": "HP+HK",
+            "damage": 250,
+            "startup": 30,
+            "recovery": 50,
+            "onBlock": -15,
+            "tags": ["heavy", "unblockable", "slow"],
+            "properties": {
+              "unblockable": true,
+              "ignores_armor": true,
+              "wall_break": true
+            }
+          }
+        },
+        "destruction": {
+          "enhanced_counter_hits": true,
+          "max_damage_scaling": 1.4
+        }
+      },
+      "mods": {
+        "trait.params.damageBonus": 1.5,
+        "trait.params.counterHitBonus": 2.2,
+        "mp.damage": 125,
+        "hp.damage": 190,
+        "mk.damage": 135,
+        "hk.damage": 210,
+        "qcf_p.damage": 170,
+        "dp_p.damage": 220,
+        "charge_bf_k.damage": 190,
+        "stats.health": 1250
+      },
+      "removes": ["qcb_k"]
+    },
+    {
+      "id": "fortress",
+      "name": "Fortress",
+      "description": "Ultimate defensive capabilities with maximum armor and damage reduction",
+      "adds": {
+        "specials": {
+          "iron_wall": {
+            "name": "Iron Wall",
+            "input": "214214P",
+            "damage": 0,
+            "startup": 15,
+            "recovery": 30,
+            "tags": ["defensive", "armor", "wall"],
+            "wall": {
+              "duration": 360,
+              "reflects_projectiles": true,
+              "damages_on_contact": 50,
+              "armor_enhancement": true
+            }
+          },
+          "retaliation": {
+            "name": "Retaliation",
+            "input": "4P+K (During Armor)",
+            "damage": 180,
+            "startup": 3,
+            "recovery": 25,
+            "tags": ["counter", "armor", "instant"],
+            "counter": {
+              "activates_during_armor": true,
+              "damage_scaling": 1.8,
+              "knockdown": true
+            }
+          }
+        },
+        "fortress_mode": {
+          "permanent_armor": true,
+          "damage_reduction": 0.7,
+          "enhanced_recovery": true
+        }
+      },
+      "mods": {
+        "trait.params.armorThreshold": 1,
+        "lp.armor.hits": 2,
+        "mp.armor.hits": 2,
+        "hp.armor.hits": 3,
+        "mk.armor.hits": 2,
+        "hk.armor.hits": 3,
+        "qcf_p.armor.hits": 3,
+        "qcb_k.armor.hits": 5,
+        "charge_bf_k.armor.hits": 5,
+        "stats.defense": 1.5,
+        "stats.health": 1400,
+        "movement.walkF": 0.4,
+        "movement.dashF": 8
+      },
+      "removes": ["power_up"]
+    },
+    {
+      "id": "juggernaut",
+      "name": "Juggernaut",
+      "description": "Command grabs and unstoppable forward momentum with close-range dominance",
+      "adds": {
+        "specials": {
+          "titan_grab": {
+            "name": "Titan Grab",
+            "input": "360P",
+            "damage": 200,
+            "startup": 3,
+            "recovery": 35,
+            "tags": ["command_grab", "unblockable", "heavy"],
+            "grab": {
+              "range": 90,
+              "wall_slam": true,
+              "follow_up_possible": true
+            }
+          },
+          "unstoppable_charge": {
+            "name": "Unstoppable Charge",
+            "input": "66P",
+            "damage": 120,
+            "startup": 12,
+            "recovery": 25,
+            "onBlock": 0,
+            "tags": ["advance", "armor", "grab_setup"],
+            "properties": {
+              "distance": 150,
+              "grab_on_contact": true,
+              "armor_breaking": true
+            },
+            "armor": {"hits": 2, "frames": [8, 20]}
+          },
+          "ground_slam": {
+            "name": "Ground Slam",
+            "input": "214P (After Grab)",
+            "damage": 150,
+            "startup": 10,
+            "recovery": 30,
+            "tags": ["grab_follow_up", "area_damage", "knockdown"],
+            "area": {
+              "radius": 120,
+              "affects_grounded": true,
+              "shockwave": true
+            }
+          }
+        },
+        "grab_mastery": {
+          "enhanced_grab_range": 1.3,
+          "grab_immunity_frames": 5,
+          "throw_tech_resistance": true
+        }
+      },
+      "mods": {
+        "qcf_p.tags": ["heavy", "armor", "advance", "grab_setup"],
+        "charge_bf_k.tags": ["charge", "heavy", "armor", "advance", "grab_setup"],
+        "movement.walkF": 0.6,
+        "movement.dashF": 12,
+        "stats.health": 1350,
+        "stats.weight": 180
+      },
+      "removes": ["dp_p"]
+    }
+  ]
+}
