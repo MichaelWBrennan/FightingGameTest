@@ -179,7 +179,7 @@ class ParallaxManager {
             }
         });
         
-        // Urban Stage - Street Fighter style
+        // Urban Stage - 2D Fighting Game style
         this.stageData.set('urban_stage', {
             name: 'Urban Street',
             layers: {

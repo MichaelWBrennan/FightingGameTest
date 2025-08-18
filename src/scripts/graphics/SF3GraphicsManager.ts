@@ -1,5 +1,5 @@
 /**
- * SF3GraphicsManager - Street Fighter 3: Third Strike Graphics System
+ * SF3GraphicsManager - 2D Fighting Game Graphics System
  * Implements the legendary fluid animation and visual style of SF3:3S
  * Features: Hand-drawn animation feel, muted atmospheric palettes, fluid motion
  */

@@ -1,7 +1,7 @@
 {
   "characterId": "ryu",
-  "name": "Ryu",
-  "displayName": "Ryu",
+  "name": "FighterA",
+  "displayName": "FighterA",
   "description": "A wandering warrior who trains constantly to become a true martial artist.",
   "archetype": "shoto",
   "complexity": "easy",

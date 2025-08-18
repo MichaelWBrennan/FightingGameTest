@@ -1,7 +1,7 @@
 {
   "characterId": "chun_li",
-  "name": "Chun-Li",
-  "displayName": "Chun-Li",
+  "name": "FighterC",
+  "displayName": "FighterC",
   "description": "An ICPO officer with lightning-fast kicks.",
   "archetype": "rushdown",
   "complexity": "medium",

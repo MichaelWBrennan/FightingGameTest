@@ -2,7 +2,7 @@ shader_type canvas_item;
 
 /*
 HD-2D Sprite Rim Lighting Shader
-Combines Street Fighter 3: Third Strike fluid animation style 
+Combines 2D Fighting Game fluid animation style
 with Octopath Traveler's HD-2D rim lighting effects.
 
 Features:

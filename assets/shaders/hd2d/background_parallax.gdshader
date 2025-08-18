@@ -3,7 +3,7 @@ shader_type canvas_item;
 /*
 HD-2D Background Parallax Shader
 Creates multi-layer parallax backgrounds with atmospheric depth
-for Street Fighter 3: Third Strike meets Octopath Traveler style.
+for 2D Fighting Game meets RPG style.
 
 Features:
 - Multi-layer parallax scrolling
