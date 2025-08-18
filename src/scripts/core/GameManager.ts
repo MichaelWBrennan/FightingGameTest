@@ -1,5 +1,5 @@
 import { CharacterManager } from '../characters/CharacterManager.js';
-import HD2DRenderer from '../graphics/HD2DRenderer.js';
+import { StageLayerManager } from '../components/graphics/StageLayerManager';
 import { RotationService } from '../RotationService.js';
 import StageManager from './StageManager.js';
 
@@ -12,7 +12,7 @@ import { type GameState, type BattleState, type ISystem, type PerformanceStats, 
 
 export class GameManager implements ISystem {
     private readonly app: pc.Application;
-    private hd2dRenderer!: HD2DRenderer;
+    private stageLayerManager!: StageLayerManager;
     private characterManager!: CharacterManager;
     private stageManager!: StageManager;
     private rotationService!: RotationService;
@@ -76,15 +76,15 @@ export class GameManager implements ISystem {
         
         try {
             // Initialize core systems
-            this.hd2dRenderer = new HD2DRenderer(this.app);
-            await this.hd2dRenderer.initialize();
-            this.registerSystem('hd2dRenderer', this.hd2dRenderer);
+            this.stageLayerManager = new StageLayerManager(this.app);
+            // Note: StageLayerManager is a PlayCanvas script component, so we don't need to initialize it separately
+            this.registerSystem('stageLayerManager', this.stageLayerManager);
 
             this.characterManager = new CharacterManager(this.app);
             await this.characterManager.initialize();
             this.registerSystem('characterManager', this.characterManager);
 
-            this.stageManager = new StageManager(this.app, this.hd2dRenderer);
+            this.stageManager = new StageManager(this.app, this.stageLayerManager);
             this.registerSystem('stageManager', this.stageManager);
 
             this.rotationService = new RotationService(this.app, this.characterManager);
@@ -330,85 +330,6 @@ export class GameManager implements ISystem {
         console.log('Background layers created:', this.backgroundLayers.length);
     }
 
-    private createDefaultEntities(): void {
-        // Create stage boundaries (invisible collision)
-        this.createStageBoundaries();
-        
-        // Create default stage ground
-        this.createStageGround();
-        
-        // Create particle effect pools
-        this.createParticleSystem();
-    }
-
-    private createStageBoundaries(): void {
-        // Left boundary
-        this.leftBoundary = new pc.Entity('LeftBoundary');
-        this.leftBoundary.addComponent('collision', {
-            type: 'box',
-            halfExtents: new pc.Vec3(0.1, 10, 5)
-        });
-        this.leftBoundary.setPosition(-12, 0, 0);
-        this.mainScene.addChild(this.leftBoundary);
-        
-        // Right boundary
-        this.rightBoundary = new pc.Entity('RightBoundary');
-        this.rightBoundary.addComponent('collision', {
-            type: 'box',
-            halfExtents: new pc.Vec3(0.1, 10, 5)
-        });
-        this.rightBoundary.setPosition(12, 0, 0);
-        this.mainScene.addChild(this.rightBoundary);
-        
-        // Ground
-        this.groundBoundary = new pc.Entity('GroundBoundary');
-        this.groundBoundary.addComponent('collision', {
-            type: 'box',
-            halfExtents: new pc.Vec3(15, 0.1, 5)
-        });
-        this.groundBoundary.setPosition(0, -5, 0);
-        this.mainScene.addChild(this.groundBoundary);
-    }
-
-    private createStageGround(): void {
-        // Visible stage ground plane
-        this.stageGround = new pc.Entity('StageGround');
-        this.stageGround.addComponent('render', {
-            type: 'plane'
-        });
-        this.stageGround.setPosition(0, -5, -1);
-        this.stageGround.setLocalScale(30, 1, 10);
-        this.mainScene.addChild(this.stageGround);
-    }
-
-    private createParticleSystem(): void {
-        // Particle effect container
-        this.particleContainer = new pc.Entity('ParticleEffects');
-        this.mainScene.addChild(this.particleContainer);
-        
-        // Pre-create particle pools for performance
-        this.particlePools = {
-            impact: [],
-            spark: [],
-            dust: [],
-            energy: [],
-            blood: [] // For hit effects
-        };
-        
-        // Create initial particle entities (object pooling)
-        Object.keys(this.particlePools).forEach((type: string) => {
-            const particleType = type as ParticleType;
-            for (let i = 0; i < 50; i++) {
-                const particle = new pc.Entity(`${type}_particle_${i}`);
-                particle.addComponent('render', {
-                    type: 'plane'
-                });
-                particle.enabled = false;
-                this.particleContainer.addChild(particle);
-                this.particlePools[particleType].push(particle);
-            }
-        });
-    }
 
     private setupGameLoop(): void {
         // Frame-accurate update loop for fighting games

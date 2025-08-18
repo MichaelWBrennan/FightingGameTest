@@ -225,30 +225,22 @@ export class CharacterManager implements ISystem {
     }
 
     private setupCharacterGraphics(character: CharacterEntity, characterData: CharacterData, playerId: string): void {
-        // Get graphics managers from global scope
-        const sf3Graphics = (globalThis as any).SF3HD2D?.sf3Graphics;
-        const hd2dRenderer = (globalThis as any).SF3HD2D?.hd2dRenderer;
-        
-        if (sf3Graphics) {
-            // Apply SF3 character graphics
-            sf3Graphics.createCharacter(playerId, characterData);
-        }
-        
-        if (hd2dRenderer) {
-            // Add to appropriate HD-2D layer
-            hd2dRenderer.addEntityToLayer(character, 'characters');
-            
-            // Create billboard sprite for 2D character in 3D space
-            const spriteTexture = this.loadCharacterSprite(characterData);
-            if (spriteTexture) {
-                const billboardSprite = hd2dRenderer.createBillboardSprite(
-                    spriteTexture,
-                    character.getPosition(),
-                    new pc.Vec2(2, 3) // Character size
-                );
-                
-                character.addChild(billboardSprite);
+        // Add the SpriteRendererHD2D component to handle rendering
+        character.addComponent('script');
+        const spriteRenderer = character.script.create('spriteRendererHD2D', {
+            attributes: {
+                layerName: 'characters'
             }
+        });
+
+        // Load the sprite texture and assign it to the renderer
+        // Note: In a real project, asset loading would be more robust.
+        const spriteAsset = this.app.assets.find(characterData.spritePath, 'texture');
+        if (spriteAsset) {
+            spriteRenderer.spriteAsset = spriteAsset.id;
+        } else {
+            console.warn(`Sprite asset not found for: ${characterData.spritePath}`);
+            // You might want to load a placeholder sprite here
         }
         
         // Setup character-specific lighting

@@ -1,7 +1,8 @@
-import HD2DRenderer from '../graphics/HD2DRenderer.js';
+import { StageLayerManager } from '../components/graphics/StageLayerManager';
+import { ISystem } from '../../../types/core';
 
 // Define a type for the stage data, based on the JSON structure
-type StageLayer = {
+export interface StageLayerData {
     name: string;
     depth: number;
     parallaxMultiplier: number;
@@ -9,102 +10,53 @@ type StageLayer = {
     position: [number, number];
     scale: [number, number];
     tint?: [number, number, number, number];
-    shader?: string;
-    animation?: any;
-};
+}
 
-type StageData = {
+export interface StageData {
     stageId: string;
     name: string;
-    backgroundLayers: StageLayer[];
-    foregroundLayers: StageLayer[];
-    // Add other properties from the JSON as needed
-};
+    backgroundLayers: StageLayerData[];
+    foregroundLayers: StageLayerData[];
+}
 
-class StageManager {
+class StageManager implements ISystem {
     private app: pc.Application;
-    private hd2dRenderer: HD2DRenderer;
-    private currentStage: pc.Entity | null = null;
+    private stageLayerManager: StageLayerManager;
+    private currentStageId: string | null = null;
 
-    constructor(app: pc.Application, hd2dRenderer: HD2DRenderer) {
+    constructor(app: pc.Application, stageLayerManager: StageLayerManager) {
         this.app = app;
-        this.hd2dRenderer = hd2dRenderer;
+        this.stageLayerManager = stageLayerManager;
     }
 
-    public async loadStage(stageData: StageData) {
+    public async loadStage(stageData: StageData): Promise<void> {
         console.log(`Loading stage: ${stageData.name}`);
 
-        if (this.currentStage) {
-            this.currentStage.destroy();
+        if (this.currentStageId) {
+            this.destroyStage();
         }
 
-        this.currentStage = new pc.Entity(stageData.stageId);
-        this.app.root.addChild(this.currentStage);
+        this.currentStageId = stageData.stageId;
+        this.stageLayerManager.clearLayers();
 
-        // Process background layers
-        for (const layerData of stageData.backgroundLayers) {
-            const layerEntity = await this.createLayerEntity(layerData);
-            this.currentStage.addChild(layerEntity);
-            const renderLayerName = this.getRenderLayerName(layerData.depth, false);
-            this.hd2dRenderer.addEntityToLayer(layerEntity, renderLayerName);
-        }
+        const allLayers = [...stageData.backgroundLayers, ...stageData.foregroundLayers];
 
-        // Process foreground layers
-        for (const layerData of stageData.foregroundLayers) {
-            const layerEntity = await this.createLayerEntity(layerData);
-            this.currentStage.addChild(layerEntity);
-            const renderLayerName = this.getRenderLayerName(layerData.depth, true);
-            this.hd2dRenderer.addEntityToLayer(layerEntity, renderLayerName);
+        for (const layerData of allLayers) {
+            this.stageLayerManager.addLayer(layerData);
         }
 
         console.log(`Stage ${stageData.name} loaded successfully.`);
     }
 
-    private async createLayerEntity(layerData: StageLayer): Promise<pc.Entity> {
-        const entity = new pc.Entity(layerData.name);
-
-        // For now, we'll create a simple plane with a placeholder texture
-        // In a real implementation, you would load the texture from layerData.texturePath
-        const material = new pc.StandardMaterial();
-        if (layerData.tint) {
-            material.diffuse = new pc.Color(...layerData.tint);
-        }
-        material.update();
-
-        entity.addComponent('render', {
-            type: 'plane',
-            material: material,
-        });
-
-        entity.setPosition(layerData.position[0], layerData.position[1], layerData.depth);
-        entity.setLocalScale(layerData.scale[0], layerData.scale[1], 1);
-
-        return entity;
+    public getCurrentStageId(): string | null {
+        return this.currentStageId;
     }
 
-    private getRenderLayerName(depth: number, isForeground: boolean): string {
-        if (isForeground) {
-            return 'foreground';
-        }
-
-        // For background layers, map depth to a layer name
-        if (depth <= -3.0) {
-            return 'background';
-        } else if (depth <= -1.0) {
-            return 'midground';
-        } else {
-            return 'playground';
-        }
-    }
-
-    public getCurrentStage(): pc.Entity | null {
-        return this.currentStage;
-    }
-
-    public destroyStage() {
-        if (this.currentStage) {
-            this.currentStage.destroy();
-            this.currentStage = null;
+    public destroyStage(): void {
+        if (this.currentStageId) {
+            this.stageLayerManager.clearLayers();
+            this.currentStageId = null;
+            console.log('Current stage cleared.');
         }
     }
 }

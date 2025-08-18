@@ -3,6 +3,7 @@
   "id": "blitz",
   "displayName": "Blitz",
   "archetype": "rushdown",
+  "spritePath": "characters/sprites/street_fighter_6/ryu/idle.png",
   "trait": {
     "id": "lightning_speed",
     "name": "Lightning Speed",

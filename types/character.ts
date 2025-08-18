@@ -128,6 +128,7 @@ export interface CharacterData {
   characterId: string;
   name: string;
   archetype: CharacterArchetype;
+  spritePath: string;
   
   // Base stats
   health: number;
