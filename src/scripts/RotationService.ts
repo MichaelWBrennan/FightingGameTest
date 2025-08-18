@@ -10,6 +10,7 @@
  *   const available = rotation.isCharacterAvailable('vanguard', 'ranked');
  */
 
+import { CharacterManager } from './characters/CharacterManager';
 import { EntitlementBridge } from './EntitlementBridge';
 
 interface RotationConfig {
@@ -93,6 +94,7 @@ export type GameMode = 'training' | 'casual' | 'ranked' | 'tournament' | 'story'
 
 export class RotationService {
   private app: pc.Application;
+  private characterManager: CharacterManager;
   private entitlementBridge: EntitlementBridge;
   private config: RotationConfig | null = null;
   private state: RotationState | null = null;
@@ -101,8 +103,9 @@ export class RotationService {
   private updateTimer: number | null = null;
   private eventEmitter: pc.EventHandler;
 
-  constructor(app: pc.Application, region: string = 'default') {
+  constructor(app: pc.Application, characterManager: CharacterManager, region: string = 'default') {
     this.app = app;
+    this.characterManager = characterManager;
     this.region = region;
     this.entitlementBridge = new EntitlementBridge();
     this.eventEmitter = new pc.EventHandler();
@@ -286,15 +289,14 @@ export class RotationService {
     // Apply dev/QA overrides
     if (this.config.entitlements.devUnlocks.enabled) {
       if (this.config.entitlements.devUnlocks.characters.includes('all')) {
-        // Dev unlock all - this would be populated from all available characters
-        pool.push('all_dev_characters'); // Placeholder
+        pool.push(...this.characterManager.getAvailableCharacters());
       } else {
         pool.push(...this.config.entitlements.devUnlocks.characters);
       }
     }
 
     if (this.config.entitlements.qaFlags.unlockAll) {
-      pool.push('all_qa_characters'); // Placeholder
+      pool.push(...this.characterManager.getAvailableCharacters());
     }
 
     if (this.config.entitlements.qaFlags.forceRotation) {
@@ -495,9 +497,7 @@ export class RotationService {
     }
 
     if (mode === 'training' && this.config.flags.trainingAlwaysUnlocked) {
-      // Return all characters for training mode
-      // This would be populated from character registry
-      return ['all_characters']; // Placeholder
+      return this.characterManager.getAvailableCharacters();
     }
 
     // Filter active pool by entitlements

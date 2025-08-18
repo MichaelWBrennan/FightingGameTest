@@ -1,3 +1,8 @@
+import { CharacterManager } from '../characters/CharacterManager.js';
+import HD2DRenderer from '../graphics/HD2DRenderer.js';
+import { RotationService } from '../RotationService.js';
+import StageManager from './StageManager.js';
+
 /**
  * Core Game Manager for SF3:3S HD-2D Fighting Game
  * Handles main game state, scene management, and system coordination
@@ -7,6 +12,10 @@ import { type GameState, type BattleState, type ISystem, type PerformanceStats, 
 
 export class GameManager implements ISystem {
     private readonly app: pc.Application;
+    private hd2dRenderer!: HD2DRenderer;
+    private characterManager!: CharacterManager;
+    private stageManager!: StageManager;
+    private rotationService!: RotationService;
     private initialized: boolean = false;
     private gameState: GameState = 'MENU';
     private battleState: BattleState = 'NEUTRAL';
@@ -66,18 +75,33 @@ export class GameManager implements ISystem {
         console.log('Initializing Game Manager...');
         
         try {
-            // Set up render settings for fighting game precision
+            // Initialize core systems
+            this.hd2dRenderer = new HD2DRenderer(this.app);
+            await this.hd2dRenderer.initialize();
+            this.registerSystem('hd2dRenderer', this.hd2dRenderer);
+
+            this.characterManager = new CharacterManager(this.app);
+            await this.characterManager.initialize();
+            this.registerSystem('characterManager', this.characterManager);
+
+            this.stageManager = new StageManager(this.app, this.hd2dRenderer);
+            this.registerSystem('stageManager', this.stageManager);
+
+            this.rotationService = new RotationService(this.app, this.characterManager);
+            await this.rotationService.initialize();
+            this.registerSystem('rotationService', this.rotationService);
+
             this.setupRenderSettings();
-            
-            // Create main scene
-            await this.createMainScene();
             
             // Initialize game loop
             this.setupGameLoop();
-            
-            // Create default entities
+
+            // Create default entities like boundaries
             this.createDefaultEntities();
             
+            // Start a new game
+            await this.startNewGame();
+
             this.initialized = true;
             console.log('Game Manager initialized successfully');
             
@@ -85,6 +109,58 @@ export class GameManager implements ISystem {
             console.error('Failed to initialize Game Manager:', error);
             throw error;
         }
+    }
+
+    private async startNewGame(): Promise<void> {
+        console.log("Starting new game...");
+
+        // 1. Get available content from RotationService
+        const availableChars = this.rotationService.getAvailableCharacters('casual');
+        // For stages, we'll assume a list for now, as RotationService doesn't manage stages yet.
+        const availableStages = ['castle', 'cathedral', 'crypt'];
+
+        if (availableChars.length < 1 || availableStages.length < 1) {
+            console.error("Not enough characters or stages available to start a game.");
+            return;
+        }
+
+        // 2. Load a stage
+        const stageId = availableStages[Math.floor(Math.random() * availableStages.length)];
+        try {
+            const response = await fetch(`stages/data/${stageId}.json`);
+            if (!response.ok) throw new Error(`Failed to fetch stage data for ${stageId}`);
+            const stageData = await response.json();
+            await this.stageManager.loadStage(stageData);
+            console.log(`Stage ${stageId} loaded.`);
+        } catch (error) {
+            console.error(`Failed to load stage: ${error}`);
+            return;
+        }
+
+        // 3. Create characters with variations
+        const char1Id = availableChars[Math.floor(Math.random() * availableChars.length)];
+        const char2Id = availableChars[Math.floor(Math.random() * availableChars.length)];
+
+        const char1Variations = this.characterManager.getCharacterVariations(char1Id);
+        const char2Variations = this.characterManager.getCharacterVariations(char2Id);
+
+        if (!char1Variations || char1Variations.length === 0 || !char2Variations || char2Variations.length === 0) {
+            console.error("Characters do not have variations to select from.");
+            // As a fallback, create characters without variations
+            this.characterManager.createCharacter(char1Id, 'player1', new pc.Vec3(-3, 0, 0));
+            this.characterManager.createCharacter(char2Id, 'player2', new pc.Vec3(3, 0, 0));
+            return;
+        }
+
+        const variation1Id = char1Variations[Math.floor(Math.random() * char1Variations.length)].id;
+        const variation2Id = char2Variations[Math.floor(Math.random() * char2Variations.length)].id;
+
+        this.characterManager.createCharacterWithVariation(char1Id, variation1Id, 'player1', new pc.Vec3(-3, 0, 0));
+        this.characterManager.createCharacterWithVariation(char2Id, variation2Id, 'player2', new pc.Vec3(3, 0, 0));
+
+        console.log(`Created characters: ${char1Id} (${variation1Id}) vs ${char2Id} (${variation2Id})`);
+
+        this.setGameState('BATTLE');
     }
 
     private setupRenderSettings(): void {
@@ -107,34 +183,84 @@ export class GameManager implements ISystem {
         this.app.scene.skyboxIntensity = 0.3;
     }
 
-    private async createMainScene(): Promise<void> {
-        // Create root scene entity
-        this.mainScene = new pc.Entity('MainScene');
-        this.app.root.addChild(this.mainScene);
+    private createDefaultEntities(): void {
+        // Create stage boundaries (invisible collision)
+        this.createStageBoundaries();
+
+        // Create default stage ground
+        this.createStageGround();
         
-        // Create camera with fighting game optimal settings
-        this.camera = new pc.Entity('MainCamera');
-        this.camera.addComponent('camera', {
-            clearColor: new pc.Color(0.1, 0.1, 0.15), // Dark blue-grey background
-            projection: pc.PROJECTION_ORTHOGRAPHIC,
-            orthoHeight: 10,
-            nearClip: 0.1,
-            farClip: 1000,
-            frustumCulling: true
+        // Create particle effect pools
+        this.createParticleSystem();
+    }
+
+    private createStageBoundaries(): void {
+        // Left boundary
+        this.leftBoundary = new pc.Entity('LeftBoundary');
+        this.leftBoundary.addComponent('collision', {
+            type: 'box',
+            halfExtents: new pc.Vec3(0.1, 10, 5)
         });
+        this.leftBoundary.setPosition(-12, 0, 0);
+        this.app.root.addChild(this.leftBoundary);
         
-        // Position camera for 2D fighting game view
-        this.camera.setPosition(0, 0, 10);
-        this.camera.lookAt(0, 0, 0);
-        this.mainScene.addChild(this.camera);
+        // Right boundary
+        this.rightBoundary = new pc.Entity('RightBoundary');
+        this.rightBoundary.addComponent('collision', {
+            type: 'box',
+            halfExtents: new pc.Vec3(0.1, 10, 5)
+        });
+        this.rightBoundary.setPosition(12, 0, 0);
+        this.app.root.addChild(this.rightBoundary);
         
-        // Create lighting setup for SF3:3S + HD-2D style
-        await this.setupLighting();
+        // Ground
+        this.groundBoundary = new pc.Entity('GroundBoundary');
+        this.groundBoundary.addComponent('collision', {
+            type: 'box',
+            halfExtents: new pc.Vec3(15, 0.1, 5)
+        });
+        this.groundBoundary.setPosition(0, -5, 0);
+        this.app.root.addChild(this.groundBoundary);
+    }
+
+    private createStageGround(): void {
+        // Visible stage ground plane
+        this.stageGround = new pc.Entity('StageGround');
+        this.stageGround.addComponent('render', {
+            type: 'plane'
+        });
+        this.stageGround.setPosition(0, -5, -1);
+        this.stageGround.setLocalScale(30, 1, 10);
+        this.app.root.addChild(this.stageGround);
+    }
+
+    private createParticleSystem(): void {
+        // Particle effect container
+        this.particleContainer = new pc.Entity('ParticleEffects');
+        this.app.root.addChild(this.particleContainer);
         
-        // Create background layers for parallax
-        this.createBackgroundLayers();
+        // Pre-create particle pools for performance
+        this.particlePools = {
+            impact: [],
+            spark: [],
+            dust: [],
+            energy: [],
+            blood: [] // For hit effects
+        };
         
-        console.log('Main scene created successfully');
+        // Create initial particle entities (object pooling)
+        Object.keys(this.particlePools).forEach((type: string) => {
+            const particleType = type as ParticleType;
+            for (let i = 0; i < 50; i++) {
+                const particle = new pc.Entity(`${type}_particle_${i}`);
+                particle.addComponent('render', {
+                    type: 'plane'
+                });
+                particle.enabled = false;
+                this.particleContainer.addChild(particle);
+                this.particlePools[particleType].push(particle);
+            }
+        });
     }
 
     private async setupLighting(): Promise<void> {

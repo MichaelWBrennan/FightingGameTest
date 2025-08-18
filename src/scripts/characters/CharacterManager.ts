@@ -35,6 +35,7 @@ export class CharacterManager implements ISystem {
     // Character registry
     private readonly characters: Map<string, CharacterEntity> = new Map();
     private readonly characterData: Map<string, CharacterData> = new Map();
+    private readonly characterVariations: Map<string, any> = new Map();
     private readonly activeCharacters: Map<string, CharacterEntity> = new Map(); // player1, player2
     
     // Animation system
@@ -99,30 +100,37 @@ export class CharacterManager implements ISystem {
     }
 
     private async loadCharacterData(): Promise<void> {
-        // Load character data from the migrated data files
-        const characterFiles: readonly string[] = [
-            'ryu.json',
-            'ken.json', 
-            'chun_li.json',
-            'zangief.json',
-            'sagat.json',
-            'lei_wulong.json'
+        const characterIds = [
+            'blitz', 'chain', 'crusher', 'maestro', 'ranger', 'shifter',
+            'sky', 'titan', 'vanguard', 'volt', 'weaver', 'zephyr'
         ];
-        
-        for (const filename of characterFiles) {
+
+        for (const id of characterIds) {
             try {
-                const response = await fetch(`data/characters/${filename}`);
-                if (response.ok) {
-                    const characterData: CharacterData = await response.json();
-                    this.characterData.set(characterData.characterId, characterData);
-                    console.log(`Loaded character data: ${characterData.name}`);
+                // Load base character data
+                const baseResponse = await fetch(`characters/data/${id}.base.json`);
+                if (baseResponse.ok) {
+                    const baseData: CharacterData = await baseResponse.json();
+                    this.characterData.set(id, baseData);
+                    console.log(`Loaded base character: ${baseData.displayName}`);
+                } else {
+                    console.warn(`Failed to load base character data for: ${id}`);
+                    continue;
+                }
+
+                // Load character variations
+                const variationsResponse = await fetch(`characters/data/${id}.variations.json`);
+                if (variationsResponse.ok) {
+                    const variationsData = await variationsResponse.json();
+                    this.characterVariations.set(id, variationsData.variations);
+                    console.log(`Loaded ${variationsData.variations.length} variations for ${id}`);
                 }
             } catch (error) {
-                console.warn(`Failed to load character: ${filename}`, error);
+                console.error(`Error loading character ${id}:`, error);
             }
         }
-        
-        console.log(`Loaded ${this.characterData.size} characters`);
+
+        console.log(`Loaded ${this.characterData.size} characters and their variations.`);
     }
 
     private setupAnimationSystem(): void {
@@ -153,8 +161,8 @@ export class CharacterManager implements ISystem {
     }
 
     // Character creation and management
-    public createCharacter(characterId: string, playerId: string, position: pc.Vec3 = new pc.Vec3(0, 0, 0)): CharacterEntity | null {
-        const characterData = this.characterData.get(characterId);
+    public createCharacter(characterId: string, playerId: string, position: pc.Vec3 = new pc.Vec3(0, 0, 0), characterDataOverride: CharacterData | null = null): CharacterEntity | null {
+        const characterData = characterDataOverride || this.characterData.get(characterId);
         if (!characterData) {
             console.error(`Character data not found: ${characterId}`);
             return null;
@@ -217,30 +225,22 @@ export class CharacterManager implements ISystem {
     }
 
     private setupCharacterGraphics(character: CharacterEntity, characterData: CharacterData, playerId: string): void {
-        // Get graphics managers from global scope
-        const sf3Graphics = (globalThis as any).SF3HD2D?.sf3Graphics;
-        const hd2dRenderer = (globalThis as any).SF3HD2D?.hd2dRenderer;
-        
-        if (sf3Graphics) {
-            // Apply SF3 character graphics
-            sf3Graphics.createCharacter(playerId, characterData);
-        }
-        
-        if (hd2dRenderer) {
-            // Add to appropriate HD-2D layer
-            hd2dRenderer.addEntityToLayer(character, 'characters');
-            
-            // Create billboard sprite for 2D character in 3D space
-            const spriteTexture = this.loadCharacterSprite(characterData);
-            if (spriteTexture) {
-                const billboardSprite = hd2dRenderer.createBillboardSprite(
-                    spriteTexture,
-                    character.getPosition(),
-                    new pc.Vec2(2, 3) // Character size
-                );
-                
-                character.addChild(billboardSprite);
+        // Add the SpriteRendererHD2D component to handle rendering
+        character.addComponent('script');
+        const spriteRenderer = character.script.create('spriteRendererHD2D', {
+            attributes: {
+                layerName: 'characters'
             }
+        });
+
+        // Load the sprite texture and assign it to the renderer
+        // Note: In a real project, asset loading would be more robust.
+        const spriteAsset = this.app.assets.find(characterData.spritePath, 'texture');
+        if (spriteAsset) {
+            spriteRenderer.spriteAsset = spriteAsset.id;
+        } else {
+            console.warn(`Sprite asset not found for: ${characterData.spritePath}`);
+            // You might want to load a placeholder sprite here
         }
         
         // Setup character-specific lighting
@@ -541,6 +541,85 @@ export class CharacterManager implements ISystem {
         }, lifetime * (1000/60));
     }
 
+    public createCharacterWithVariation(characterId: string, variationId: string, playerId: string, position: pc.Vec3 = new pc.Vec3(0, 0, 0)): CharacterEntity | null {
+        const baseData = this.characterData.get(characterId);
+        const variations = this.characterVariations.get(characterId);
+
+        if (!baseData || !variations) {
+            console.error(`Character or variation data not found for: ${characterId}`);
+            return null;
+        }
+
+        const variationData = variations.find((v: any) => v.id === variationId);
+        if (!variationData) {
+            console.error(`Variation not found: ${variationId}`);
+            return null;
+        }
+
+        console.log(`Creating character ${characterId} with variation ${variationId} for ${playerId}`);
+
+        // Apply the variation to the base data
+        const finalData = this.applyVariation(baseData, variationData);
+
+        // Create the character using the modified data
+        return this.createCharacter(characterId, playerId, position, finalData);
+    }
+
+    private applyVariation(baseData: CharacterData, variationData: any): CharacterData {
+        // Deep clone base data to avoid modifying the original
+        const finalData = JSON.parse(JSON.stringify(baseData));
+
+        // Apply modifications
+        if (variationData.mods) {
+            for (const path in variationData.mods) {
+                this.setObjectValueByPath(finalData, path, variationData.mods[path]);
+            }
+        }
+
+        // Apply additions
+        if (variationData.adds) {
+            for (const key in variationData.adds) {
+                if (finalData[key]) {
+                    Object.assign(finalData[key], variationData.adds[key]);
+                } else {
+                    finalData[key] = variationData.adds[key];
+                }
+            }
+        }
+
+        // Apply removals
+        if (variationData.removes) {
+            for (const path of variationData.removes) {
+                this.deleteObjectValueByPath(finalData, path);
+            }
+        }
+
+        // Update display name
+        finalData.displayName = `${baseData.displayName} (${variationData.name})`;
+
+        return finalData;
+    }
+
+    private setObjectValueByPath(obj: any, path: string, value: any): void {
+        const keys = path.split('.');
+        let current = obj;
+        for (let i = 0; i < keys.length - 1; i++) {
+            current = current[keys[i]];
+            if (current === undefined) return; // Path does not exist
+        }
+        current[keys[keys.length - 1]] = value;
+    }
+
+    private deleteObjectValueByPath(obj: any, path: string): void {
+        const keys = path.split('.');
+        let current = obj;
+        for (let i = 0; i < keys.length - 1; i++) {
+            current = current[keys[i]];
+            if (current === undefined) return; // Path does not exist
+        }
+        delete current[keys[keys.length - 1]];
+    }
+
     // Update methods
     public update(dt: number): void {
         if (!this.initialized) return;
@@ -668,6 +747,10 @@ export class CharacterManager implements ISystem {
     // Public API
     public getCharacter(playerId: string): CharacterEntity | undefined {
         return this.activeCharacters.get(playerId);
+    }
+
+    public getCharacterVariations(characterId: string): any[] | undefined {
+        return this.characterVariations.get(characterId);
     }
 
     public getCharacterData(characterId: string): CharacterData | undefined {
