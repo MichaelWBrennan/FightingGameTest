@@ -19,16 +19,16 @@ export class IdentityService {
     return user;
   }
 
-  public async login(credentials: Pick<User, 'email' | 'passwordHash'>): Promise<{ token: string }> {
+  public async login(_credentials: Pick<User, 'email' | 'passwordHash'>): Promise<{ token: string }> {
     // Placeholder
     return { token: 'dummy-token' };
   }
 
-  public async logout(token: string): Promise<void> {
+  public async logout(_token: string): Promise<void> {
     // Placeholder
   }
 
-  public async getProfile(userId: string): Promise<User | null> {
+  public async getProfile(_userId: string): Promise<User | null> {
     // Placeholder
     return null;
   }
@@ -38,11 +38,11 @@ export class IdentityService {
     return consentData;
   }
 
-  public async deleteAccount(userId: string): Promise<void> {
+  public async deleteAccount(_userId: string): Promise<void> {
     // Placeholder
   }
 
-  public async getCommunicationPreferences(userId: string): Promise<CommunicationPreferences | null> {
+  public async getCommunicationPreferences(_userId: string): Promise<CommunicationPreferences | null> {
     // Placeholder
     return null;
   }

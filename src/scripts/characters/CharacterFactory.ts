@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 import { CharacterEntity } from './CharacterEntity';
 import { CharacterData } from '../../../types/character';
 

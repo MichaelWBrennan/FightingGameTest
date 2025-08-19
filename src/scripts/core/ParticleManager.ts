@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 import { ISystem, ParticlePool, ParticleType } from "../../../types/core";
 
 export class ParticleManager implements ISystem {

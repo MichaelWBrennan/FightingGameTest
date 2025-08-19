@@ -35,7 +35,7 @@ interface SF3GraphicsManagerState {
     frameBlendSpeed?: number;
 }
 
-class SF3GraphicsManager implements ISystem {
+export class SF3GraphicsManager implements ISystem {
     private app: pc.Application;
     private state: SF3GraphicsManagerState;
 
@@ -639,5 +639,3 @@ class SF3GraphicsManager implements ISystem {
         console.log('SF3GraphicsManager destroyed');
     }
 }
-
-export default SF3GraphicsManager;
