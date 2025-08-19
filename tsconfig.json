@@ -56,16 +56,9 @@
     }
   },
   
-  // This is a solution-style tsconfig. Actual source compilation happens in
-  // referenced projects below. We intentionally avoid a broad include here to
-  // prevent compiling non-referenced folders (e.g., experimental scripts).
-  "files": [],
-  "references": [
-    {
-      "path": "./src/client"
-    },
-    {
-      "path": "./src/app"
-    }
+  "include": [
+    "src/**/*.ts",
+    "types/**/*.ts",
+    "tests/**/*.ts"
   ]
 }

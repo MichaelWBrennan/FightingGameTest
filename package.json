@@ -7,7 +7,7 @@
   "scripts": {
     "dev:client": "cd src/client && bun run dev",
     "dev:backend": "cd src/backend && bun run dev",
-    "build": "tsc --build",
+    "build": "tsc && cp index.html dist/ && cp -r assets dist/ && sed -i 's|src=\"src/|src=\"|g' dist/index.html",
     "build:client": "cd src/client && bun run build",
     "build:backend": "cd src/backend && bun run build",
     "build:types": "tsc --emitDeclarationOnly",

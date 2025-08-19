@@ -11,6 +11,11 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get __dirname in ES module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Test configuration
 const TEST_CONFIG = {
@@ -517,9 +522,7 @@ function runAllTests(): void {
 }
 
 // Run tests if this file is executed directly
-if (require.main === module) {
-  runAllTests();
-}
+runAllTests();
 
 export {
   test,
