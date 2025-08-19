@@ -641,7 +641,7 @@ export class Storefront extends EventEmitter {
     return Array.from(this.catalog.values()).every(item => !item.owned);
   }
 
-  private getItemType(itemId: string): 'skin' | 'title' | 'banner' | 'announcer' | 'vfx_palette' | 'bundle' {
+  private getItemType(itemId: string): 'skin' | 'title' | 'banner' | 'announcer' | 'vfx_palette' | 'bundle' | 'stage_variant' {
     const item = this.catalog.get(itemId);
     if (item) return item.type;
     

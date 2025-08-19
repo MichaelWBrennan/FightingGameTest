@@ -214,7 +214,7 @@ export class RetentionClient extends EventEmitter {
    * Track a match result
    */
   public trackMatchResult(matchData: Omit<MatchResultEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: MatchResultEvent = {
+    const event: IRetentionEvent = {
       event: 'match_result',
       v: '1.0', 
       ts: Math.floor(Date.now() / 1000),
@@ -230,7 +230,7 @@ export class RetentionClient extends EventEmitter {
    * Track progression grants (XP, unlocks, etc.)
    */
   public trackProgression(progressionData: Omit<ProgressionGrantEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: ProgressionGrantEvent = {
+    const event: IRetentionEvent = {
       event: 'progression_grant',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
@@ -246,7 +246,7 @@ export class RetentionClient extends EventEmitter {
    * Track store impressions
    */
   public trackStoreImpression(storeData: Omit<StoreImpressionEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: StoreImpressionEvent = {
+    const event: IRetentionEvent = {
       event: 'store_impression',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
@@ -262,7 +262,7 @@ export class RetentionClient extends EventEmitter {
    * Track completed purchases
    */
   public trackPurchase(purchaseData: Omit<PurchaseCompletedEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: PurchaseCompletedEvent = {
+    const event: IRetentionEvent = {
       event: 'purchase_completed',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
@@ -346,7 +346,18 @@ export class RetentionClient extends EventEmitter {
     }
   }
 
-  private async sendEvents(endpoint: string, events: IRetentionEvent[], retryCount: number = 0): Promise<void> {
+  private async sendEvents(endpointOrEvents: string | IRetentionEvent[], events?: IRetentionEvent[], retryCount: number = 0): Promise<void> {
+    // Overload shim to support both sendEvents(endpoint, events) and sendEvents(events)
+    let endpoint: string;
+    let payload: IRetentionEvent[];
+    if (typeof endpointOrEvents === 'string') {
+      endpoint = endpointOrEvents;
+      payload = events ?? [];
+    } else {
+      // Default to analytics endpoint if only events provided (offline flush)
+      endpoint = '/analytics/events';
+      payload = endpointOrEvents;
+    }
     try {
       const response = await fetch(`${this.config.apiEndpoint}${endpoint}`, {
         method: 'POST',
@@ -355,7 +366,7 @@ export class RetentionClient extends EventEmitter {
           'Authorization': `Bearer ${this.config.apiKey}`,
           'X-Client-Version': this.getClientVersion()
         },
-        body: JSON.stringify({ events })
+        body: JSON.stringify({ events: payload })
       });
 
       if (!response.ok) {
@@ -367,7 +378,7 @@ export class RetentionClient extends EventEmitter {
         // Exponential backoff
         const delay = Math.pow(2, retryCount) * 1000;
         await new Promise(resolve => setTimeout(resolve, delay));
-        return this.sendEvents(events, retryCount + 1);
+        return this.sendEvents(endpoint, payload, retryCount + 1);
       }
       throw error;
     }

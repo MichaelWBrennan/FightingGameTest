@@ -55,18 +55,11 @@
       "@ui/*": ["./src/scripts/ui/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "types/**/*.ts",
-    "tests/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.js",
-    "src/client/node_modules"
-  ],
+  
+  // This is a solution-style tsconfig. Actual source compilation happens in
+  // referenced projects below. We intentionally avoid a broad include here to
+  // prevent compiling non-referenced folders (e.g., experimental scripts).
+  "files": [],
   "references": [
     {
       "path": "./src/client"

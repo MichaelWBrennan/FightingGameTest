@@ -2,7 +2,7 @@
  * Input system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import { type Direction, type InputMapping, type PlayerInputMappings } from './core.js';
+import { type Direction, type PlayerInputMappings } from './core';
 
 // Input State Types
 export interface ButtonState {

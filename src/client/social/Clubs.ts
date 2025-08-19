@@ -201,8 +201,8 @@ export class Clubs extends EventEmitter {
       const club = await response.json();
       this.userClubs.set(club.id, club);
 
-      // Track club creation
-      this.config.retentionClient.trackEvent({
+      // Track club creation (use public API event shape)
+      (this.config.retentionClient as any).trackEvent({
         event: 'club_event',
         v: '1.0',
         ts: Math.floor(Date.now() / 1000),
@@ -589,7 +589,7 @@ export class Clubs extends EventEmitter {
   private trackClubEvent(clubId: string, action: string, additionalData: any = {}): void {
     const club = this.userClubs.get(clubId);
     
-    this.config.retentionClient.trackEvent({
+    (this.config.retentionClient as any).trackEvent({
       event: 'club_event',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),

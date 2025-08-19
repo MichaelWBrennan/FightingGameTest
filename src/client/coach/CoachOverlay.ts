@@ -23,7 +23,7 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import { IGameState } from '../../../types/game';
+import { IGameState } from '../../../types/game.js';
 
 export interface CoachOverlayConfig {
   gameState: IGameState; // Game state manager interface
@@ -548,11 +548,18 @@ export class CoachOverlay extends EventEmitter {
   }
 
   private getCurrentGamePhase(): 'pre_match' | 'between_rounds' | 'post_match' | 'lab_session' {
-    return this.config.gameState?.phase || 'between_rounds';
+    // Fallback since IGameState does not expose phase directly
+    return 'between_rounds';
   }
 
   private getCurrentCharacter(): string {
-    return this.config.gameState?.playerCharacter || '';
+    // Use IGameState API to resolve current player's character if available
+    try {
+      const playerId = (this as any).playerId ?? 'player1';
+      return this.config.gameState.getPlayerCharacter?.(playerId) ?? '';
+    } catch {
+      return '';
+    }
   }
 
   private getTipPriority(tip: CoachingTip): number {
@@ -567,8 +574,10 @@ export class CoachOverlay extends EventEmitter {
 
   private getRecentPerformanceMetrics(): any {
     const recent = this.roundHistory.slice(-5);
+    const count = recent.length || 1;
+    const total = recent.reduce((sum: number, r) => sum + r.playerStats.blockPercentage, 0);
     return {
-      avgBlockPercentage: recent.reduce((sum, r) => sum + r.playerStats.blockPercentage, 0) / recent.length || 0
+      avgBlockPercentage: (total as number) / count
     };
   }
 
@@ -576,11 +585,11 @@ export class CoachOverlay extends EventEmitter {
     if (rounds.length < 3) return 'stable';
     
     const winRates = rounds.map(r => r.result === 'win' ? 1 : 0);
-    const early = winRates.slice(0, Math.floor(winRates.length / 2));
-    const late = winRates.slice(Math.floor(winRates.length / 2));
+    const early = winRates.slice(0, Math.floor(winRates.length / 2)) as Array<0 | 1>;
+    const late = winRates.slice(Math.floor(winRates.length / 2)) as Array<0 | 1>;
     
-    const earlyAvg = early.reduce((a, b) => a + b, 0) / early.length;
-    const lateAvg = late.reduce((a, b) => a + b, 0) / late.length;
+    const earlyAvg = early.reduce<number>((a, b) => a + b, 0) / (early.length || 1);
+    const lateAvg = late.reduce<number>((a, b) => a + b, 0) / (late.length || 1);
     
     if (lateAvg > earlyAvg + 0.2) return 'improving';
     if (lateAvg < earlyAvg - 0.2) return 'declining';
