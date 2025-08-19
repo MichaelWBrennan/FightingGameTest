@@ -46,6 +46,8 @@ export class CharacterSelectUI {
   private currentMode: GameMode = 'casual';
   private playerSelections: Map<string, PlayerSelection> = new Map();
   private characterSlots: Map<string, CharacterSlot> = new Map();
+  private slotOrder: string[] = [];
+  private playerCursorIndex: Map<string, number> = new Map();
   private uiRoot: pc.Entity | null = null;
   
   // UI Elements
@@ -63,6 +65,7 @@ export class CharacterSelectUI {
   private readonly SELECTION_TIMEOUT = 30000; // 30 seconds
   private readonly GRID_COLUMNS = 6;
   private readonly VARIATION_SLOTS = 3;
+  private readonly INCLUDE_RANDOM_SLOT = true;
 
   constructor(app: pc.Application, rotationService: RotationService, characterLoader: CharacterLoader) {
     this.app = app;
@@ -93,6 +96,11 @@ export class CharacterSelectUI {
       this.createCountdownDisplay();
       this.createLockIndicators();
       this.createFeaturedBanner();
+      if (this.INCLUDE_RANDOM_SLOT) {
+        // Ensure cursor defaults
+        this.playerCursorIndex.set('player1', 0);
+        this.playerCursorIndex.set('player2', 0);
+      }
       
       // Setup input handling
       this.setupInputHandling();
@@ -193,10 +201,19 @@ export class CharacterSelectUI {
     
     // Create character slots
     let index = 0;
+    this.slotOrder = [];
     for (const [characterId, slot] of this.characterSlots) {
       slot.uiElement = this.createCharacterSlot(slot, index);
       this.characterGrid.addChild(slot.uiElement);
+      this.slotOrder.push(characterId);
       index++;
+    }
+    // Append Random Select slot
+    if (this.INCLUDE_RANDOM_SLOT) {
+      const randomId = '__random__';
+      const randomSlot = this.createRandomSlot(index);
+      this.characterGrid.addChild(randomSlot);
+      this.slotOrder.push(randomId);
     }
     
     this.uiRoot!.addChild(this.characterGrid);
@@ -285,15 +302,68 @@ export class CharacterSelectUI {
       });
       
       slotElement.button!.on('hoverstart', () => {
-        slotElement.element!.color = new pc.Color(1, 1, 0.8);
+        this.applyFocusVisual(slotElement, true);
       });
       
       slotElement.button!.on('hoverend', () => {
-        slotElement.element!.color = new pc.Color(0.8, 0.8, 0.8);
+        this.applyFocusVisual(slotElement, false);
       });
     }
     
     return slotElement;
+  }
+
+  /**
+   * Create a Random Select slot
+   */
+  private createRandomSlot(index: number): pc.Entity {
+    const slotElement = new pc.Entity('Character_RANDOM');
+    slotElement.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      color: new pc.Color(0.2, 0.25, 0.3),
+      opacity: 1.0
+    });
+    const question = new pc.Entity('Question');
+    question.addComponent('element', {
+      type: pc.ELEMENTTYPE_TEXT,
+      anchor: [0, 0.25, 1, 0.85],
+      fontSize: 64,
+      color: new pc.Color(1, 1, 1),
+      text: '?',
+      alignment: new pc.Vec2(0.5, 0.5)
+    });
+    slotElement.addChild(question);
+    const label = new pc.Entity('Label');
+    label.addComponent('element', {
+      type: pc.ELEMENTTYPE_TEXT,
+      anchor: [0, 0, 1, 0.25],
+      fontSize: 20,
+      color: new pc.Color(0.9, 0.9, 1),
+      text: 'RANDOM',
+      alignment: new pc.Vec2(0.5, 0.5)
+    });
+    slotElement.addChild(label);
+
+    slotElement.addComponent('button', { imageEntity: slotElement });
+    slotElement.button!.on('click', () => {
+      // Pick a random available, unlocked character id
+      const candidates = [...this.characterSlots.values()].filter(s => !s.locked).map(s => s.id);
+      if (candidates.length === 0) return;
+      const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+      this.selectCharacter('player1', chosen);
+    });
+    slotElement.button!.on('hoverstart', () => this.applyFocusVisual(slotElement, true));
+    slotElement.button!.on('hoverend', () => this.applyFocusVisual(slotElement, false));
+    return slotElement;
+  }
+
+  /**
+   * Subtle focus visuals to aid navigation (historic fighting game UX cue)
+   */
+  private applyFocusVisual(slotEntity: pc.Entity, focused: boolean): void {
+    if (!slotEntity.element) return;
+    slotEntity.element.color = focused ? new pc.Color(1, 1, 0.9) : slotEntity.element.color;
   }
 
   /**
@@ -518,11 +588,90 @@ export class CharacterSelectUI {
   private onKeyDown(event: pc.KeyboardEvent): void {
     for (const [playerId, device] of this.inputDevices) {
       if (event.key === device.selectKey) {
-        this.confirmSelection(playerId);
+        const selection = this.playerSelections.get(playerId);
+        if (selection && !selection.characterId) {
+          this.selectFocusedCharacter(playerId);
+        } else {
+          this.confirmSelection(playerId);
+        }
       } else if (event.key === device.backKey) {
         this.cancelSelection(playerId);
+      } else if (event.key === device.leftKey) {
+        this.moveCursor(playerId, -1, 0);
+      } else if (event.key === device.rightKey) {
+        this.moveCursor(playerId, 1, 0);
+      } else if (event.key === device.upKey) {
+        this.moveCursor(playerId, 0, -1);
+      } else if (event.key === device.downKey) {
+        this.moveCursor(playerId, 0, 1);
       }
-      // Add navigation logic here
+    }
+  }
+
+  /**
+   * Select the currently focused grid item for player
+   */
+  private selectFocusedCharacter(playerId: string): void {
+    const idx = this.playerCursorIndex.get(playerId) ?? 0;
+    const id = this.slotOrder[idx];
+    if (!id) return;
+    if (id === '__random__') {
+      const candidates = [...this.characterSlots.values()].filter(s => !s.locked).map(s => s.id);
+      if (candidates.length === 0) return;
+      const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+      this.selectCharacter(playerId, chosen);
+    } else {
+      this.selectCharacter(playerId, id);
+    }
+  }
+
+  /**
+   * Grid navigation for character focus
+   */
+  private moveCursor(playerId: string, dx: number, dy: number): void {
+    if (!this.characterGrid || this.slotOrder.length === 0) return;
+    const cols = this.GRID_COLUMNS;
+    const total = this.slotOrder.length;
+    const current = this.playerCursorIndex.get(playerId) ?? 0;
+    const row = Math.floor(current / cols);
+    const col = current % cols;
+    let newRow = Math.max(0, Math.min(Math.floor((current + dy * cols) / cols), Math.ceil(total / cols)));
+    let newCol = Math.max(0, Math.min(cols - 1, col + dx));
+    let next = row * cols + newCol + dy * cols;
+    if (dy !== 0) next = (row + dy) * cols + newCol;
+    // Clamp and wrap to nearest valid index
+    next = Math.max(0, Math.min(total - 1, next));
+    this.playerCursorIndex.set(playerId, next);
+    this.updateFocusHighlight(playerId);
+    const targetId = this.slotOrder[next];
+    if (targetId && targetId !== '__random__') {
+      const slot = this.characterSlots.get(targetId);
+      if (slot && !slot.locked) {
+        // Hover-like feedback
+        this.applyFocusVisual(slot.uiElement, true);
+      }
+    }
+  }
+
+  private updateFocusHighlight(playerId: string): void {
+    // Clear previous highlights by resetting colors on all slots (subtle)
+    for (const [, slot] of this.characterSlots) {
+      if (slot.uiElement?.element) {
+        slot.uiElement.element.color = slot.locked ? new pc.Color(0.3, 0.3, 0.3) : new pc.Color(0.8, 0.8, 0.8);
+      }
+    }
+    // Highlight current focus
+    const idx = this.playerCursorIndex.get(playerId) ?? 0;
+    const id = this.slotOrder[idx];
+    if (!id) return;
+    if (id === '__random__') {
+      const randomEntity = this.characterGrid!.findByName('Character_RANDOM');
+      if (randomEntity?.element) randomEntity.element.color = new pc.Color(1, 1, 0.9);
+      return;
+    }
+    const slot = this.characterSlots.get(id);
+    if (slot?.uiElement?.element) {
+      slot.uiElement.element.color = new pc.Color(1, 1, 0.9);
     }
   }
 

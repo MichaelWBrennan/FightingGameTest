@@ -137,6 +137,7 @@
     <script src="src/scripts/characters/CharacterManager.js"></script>
     <script src="src/scripts/combat/CombatSystem.js"></script>
     <script src="src/scripts/ui/UIManager.js"></script>
+    <script src="src/scripts/CharacterSelectUI.js"></script>
 
     <!-- Application Initialization -->
     <script>
@@ -259,6 +260,7 @@
                 // Finalize setup
                 await window.SF3HD2D.postProcessing.initialize();
                 await window.SF3HD2D.characterManager.loadCharacterData();
+                await window.SF3HD2D.uiManager.initialize();
                 
                 updateLoadingProgress(7, 95);
 
