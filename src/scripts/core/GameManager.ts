@@ -4,6 +4,8 @@ import { RotationService } from '../RotationService';
 import StageManager from './StageManager';
 import { SceneManager } from './SceneManager';
 import { ParticleManager } from './ParticleManager';
+import { CoachManager } from './CoachManager';
+import { ComboTrialManager } from './ComboTrialManager';
 
 /**
  * Core Game Manager for SF3:3S HD-2D Fighting Game
@@ -20,6 +22,8 @@ export class GameManager implements ISystem {
     private rotationService!: RotationService;
     private sceneManager!: SceneManager;
     private particleManager!: ParticleManager;
+    private coachManager!: CoachManager;
+    private comboTrialManager!: ComboTrialManager;
     private initialized: boolean = false;
     private gameState: GameState = 'MENU';
     private battleState: BattleState = 'NEUTRAL';
@@ -76,6 +80,14 @@ export class GameManager implements ISystem {
             this.rotationService = new RotationService(this.app, this.characterManager);
             await this.rotationService.initialize();
             this.registerSystem('rotationService', this.rotationService);
+
+            this.coachManager = new CoachManager(this.app, this);
+            await this.coachManager.initialize();
+            this.registerSystem('coachManager', this.coachManager);
+
+            this.comboTrialManager = new ComboTrialManager(this.app);
+            await this.comboTrialManager.initialize();
+            this.registerSystem('comboTrialManager', this.comboTrialManager);
 
             this.setupRenderSettings();
             

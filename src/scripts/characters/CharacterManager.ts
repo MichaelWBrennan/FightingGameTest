@@ -263,31 +263,43 @@ export class CharacterManager implements ISystem {
     }
 
     // Combat methods
-    public performAttack(character: CharacterEntity, attackType: string): boolean {
+    public performAttack(character: CharacterEntity, attackType: string, isEx: boolean = false): boolean {
         if (!character || character.currentState === 'hitstun' || character.currentState === 'knocked_down') {
             return false;
         }
         
+        const attackData = this.getAttackData(character.characterData, attackType);
+        if (!attackData) return false;
+
+        if (isEx) {
+            if (!attackData.ex) {
+                console.warn(`Attack ${attackType} has no EX version.`);
+                return false;
+            }
+            if (character.meter < (attackData.meterCost || 50)) {
+                console.log('Not enough meter for EX move.');
+                return false;
+            }
+            character.meter -= attackData.meterCost || 50;
+            console.log(`${character.name} performed an EX attack!`);
+        }
+
         this.setCharacterState(character, 'attacking');
         this.updateCharacterAnimation(character, attackType);
         
-        // Get attack data
-        const attackData = this.getAttackData(character.characterData, attackType);
-        if (attackData) {
-            // Create hitbox
-            this.createHitbox(character, attackData);
-            
-            // Store attack data on character
-            character.currentAttackData = attackData;
-            
-            // Trigger attack event
-            const event: CharacterAttackEvent = {
-                character: character,
-                attackType: attackType,
-                attackData: attackData
-            };
-            this.app.fire('character:attack', event);
-        }
+        // Create hitbox
+        this.createHitbox(character, attackData);
+
+        // Store attack data on character
+        character.currentAttackData = attackData;
+
+        // Trigger attack event
+        const event: CharacterAttackEvent = {
+            character: character,
+            attackType: attackType,
+            attackData: attackData
+        };
+        this.app.fire('character:attack', event);
         
         return true;
     }
@@ -514,6 +526,11 @@ export class CharacterManager implements ISystem {
     // Public API
     public getCharacter(playerId: string): CharacterEntity | undefined {
         return this.activeCharacters.get(playerId);
+    }
+
+    public getOpponent(character: CharacterEntity): CharacterEntity | undefined {
+        const opponentPlayerId = character.playerId === 'player1' ? 'player2' : 'player1';
+        return this.activeCharacters.get(opponentPlayerId);
     }
 
     public getCharacterVariations(characterId: string): any[] | undefined {

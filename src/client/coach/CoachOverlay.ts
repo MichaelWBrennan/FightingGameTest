@@ -23,9 +23,10 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
+import { IGameState } from '../../../types/game';
 
 export interface CoachOverlayConfig {
-  gameState: any; // Game state manager interface
+  gameState: IGameState; // Game state manager interface
   playerProfile: any; // User profile with skill level, preferences
   enableDuringMatches?: boolean;
   enableFrameData?: boolean;
@@ -524,18 +525,10 @@ export class CoachOverlay extends EventEmitter {
   }
 
   private initializeCoachingData(): CoachingData {
-    return {
-      matchupDatabase: new Map(),
-      characterTips: new Map(),
-      situationalTips: new Map(),
-      frameData: new Map(),
-      playerProgress: {
-        weaknesses: [],
-        strengths: [],
-        focusAreas: [],
-        recentImprovements: []
-      }
-    };
+    // In a real implementation, this data would be loaded from a server
+    // or from local data files. For now, we use dummy data.
+    const { dummyCoachingData } = require('./coachingData');
+    return dummyCoachingData;
   }
 
   private setupGameStateListeners(): void {

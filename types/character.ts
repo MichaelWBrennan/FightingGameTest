@@ -32,7 +32,8 @@ export type CharacterState =
   | 'blockstun' 
   | 'knocked_down' 
   | 'special_move' 
-  | 'super_move';
+  | 'super_move'
+  | 'parrying';
 
 export interface CharacterStateData {
   priority: number;
@@ -107,6 +108,8 @@ export interface AttackData {
   hitstun?: number;
   blockstun?: number;
   properties?: AttackProperties;
+  ex?: boolean;
+  meterCost?: number;
 }
 
 export interface AttackProperties {
@@ -365,7 +368,8 @@ export const DEFAULT_CHARACTER_STATES: CharacterStates = {
   blockstun: { priority: 3, cancellable: false },
   knocked_down: { priority: 5, cancellable: false },
   special_move: { priority: 4, cancellable: true },
-  super_move: { priority: 5, cancellable: false }
+  super_move: { priority: 5, cancellable: false },
+  parrying: { priority: 6, cancellable: false }
 } as const;
 
 export const DEFAULT_FRAME_DATA: FrameData = {
