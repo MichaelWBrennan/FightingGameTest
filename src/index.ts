@@ -1,20 +1,20 @@
 /**
- * Main entry point for SF3:3S HD-2D Fighting Game System
+ * Main entry point for HD-2D Fighting Game System
  * Exports all core systems with strict TypeScript typing
  */
 
 // Core Systems
-export { GameManager } from './scripts/core/GameManager.js';
-export { InputManager } from './scripts/core/InputManager.js';
+export { GameManager } from './scripts/core/GameManager';
+export { InputManager } from './scripts/core/InputManager';
 
 // Combat System
-export { CombatSystem } from './scripts/combat/CombatSystem.js';
+export { CombatSystem } from './scripts/combat/CombatSystem';
 
 // Character System
-export { CharacterManager } from './scripts/characters/CharacterManager.js';
+export { CharacterManager } from './scripts/characters/CharacterManager';
 
 // Graphics Systems
-export { SF3GraphicsManager } from './scripts/graphics/SF3GraphicsManager.js';
+export { SF3GraphicsManager } from './scripts/graphics/SF3GraphicsManager';
 
 // Type Exports for Consumer Use
 export type {
@@ -76,7 +76,7 @@ export const BUILD_TARGET = 'TypeScript Migration';
  * @returns Promise<FightingGameSystem> - Initialized system managers
  */
 export async function initializeFightingGameSystem(app: pc.Application): Promise<FightingGameSystem> {
-    console.log(`Initializing SF3:3S HD-2D Fighting Game System v${VERSION}`);
+    console.log(`Initializing HD-2D Fighting Game System v${VERSION}`);
     
     // Create system managers
     const gameManager = new GameManager(app);

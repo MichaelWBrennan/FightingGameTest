@@ -4,7 +4,7 @@
  * Features: Data-driven characters, SF3-style animation, HD-2D integration
  */
 
-import { type ISystem } from '../../../types/core.js';
+import { type ISystem } from '../../../types/core';
 import {
     type CharacterData,
     type CharacterEntity,
@@ -26,7 +26,7 @@ import {
     DEFAULT_ARCHETYPE_TEMPLATES,
     DEFAULT_CHARACTER_STATES,
     DEFAULT_FRAME_DATA
-} from '../../../types/character.js';
+} from '../../../types/character';
 
 export class CharacterManager implements ISystem {
     private readonly app: pc.Application;

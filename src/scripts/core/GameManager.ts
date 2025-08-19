@@ -1,14 +1,14 @@
-import { CharacterManager } from '../characters/CharacterManager.js';
+import { CharacterManager } from '../characters/CharacterManager';
 import { StageLayerManager } from '../components/graphics/StageLayerManager';
-import { RotationService } from '../RotationService.js';
-import StageManager from './StageManager.js';
+import { RotationService } from '../RotationService';
+import StageManager from './StageManager';
 
 /**
  * Core Game Manager for SF3:3S HD-2D Fighting Game
  * Handles main game state, scene management, and system coordination
  */
 
-import { type GameState, type BattleState, type ISystem, type PerformanceStats, type ParticlePool, type ParticleType } from '../../../types/core.js';
+import { type GameState, type BattleState, type ISystem, type PerformanceStats, type ParticlePool, type ParticleType } from '../../../types/core';
 
 export class GameManager implements ISystem {
     private readonly app: pc.Application;
@@ -329,7 +329,6 @@ export class GameManager implements ISystem {
         
         console.log('Background layers created:', this.backgroundLayers.length);
     }
-
 
     private setupGameLoop(): void {
         // Frame-accurate update loop for fighting games

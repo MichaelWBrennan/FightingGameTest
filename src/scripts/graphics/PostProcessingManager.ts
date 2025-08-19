@@ -3,95 +3,187 @@
  * Implements Octopath Traveler style post-processing: depth-of-field, bloom, color grading
  * Features: Real-time DOF, volumetric lighting, cinematic color grading
  */
-class PostProcessingManager {
-    constructor(app) {
+
+import * as pc from 'playcanvas';
+import { ISystem } from '../../../types/core';
+import { PostProcessEffect, PostProcessingState, ScreenShake, HitFlash, SlowMotion } from '../../../types/graphics';
+
+interface DepthOfFieldSettings {
+    enabled: boolean;
+    focusDistance: number;
+    focusRange: number;
+    blurRadius: number;
+    maxBlur: number;
+    bokehIntensity: number;
+    adaptiveFocus: boolean;
+}
+
+interface BloomSettings {
+    enabled: boolean;
+    threshold: number;
+    intensity: number;
+    radius: number;
+    passes: number;
+    quality: string;
+}
+
+interface ColorGradingSettings {
+    enabled: boolean;
+    contrast: number;
+    saturation: number;
+    brightness: number;
+    warmth: number;
+    vignette: number;
+    filmGrain: number;
+}
+
+interface LightingEffectsSettings {
+    enabled: boolean;
+    volumetricFog: boolean;
+    lightShafts: boolean;
+    screenSpaceReflections: boolean;
+    ambientOcclusion: boolean;
+}
+
+interface FightingGameEffects {
+    enabled: boolean;
+    hitPause: boolean;
+    screenShake: ScreenShake;
+    flashEffect: HitFlash;
+    slowMotion: SlowMotion;
+    dramaTicLighting: boolean;
+}
+
+interface PostProcessingEffects {
+    depthOfField: DepthOfFieldSettings;
+    bloom: BloomSettings;
+    colorGrading: ColorGradingSettings;
+    lightingEffects: LightingEffectsSettings;
+    fightingGameEffects: FightingGameEffects;
+}
+
+interface RenderTargets {
+    sceneColor: pc.RenderTarget | null;
+    sceneDepth: pc.RenderTarget | null;
+    blurHorizontal: pc.RenderTarget | null;
+    blurVertical: pc.RenderTarget | null;
+    bloom: pc.RenderTarget | null;
+    final: pc.RenderTarget | null;
+}
+
+interface PostProcessingMaterials {
+    depthOfField: pc.StandardMaterial | null;
+    bloom: pc.StandardMaterial | null;
+    colorGrading: pc.StandardMaterial | null;
+    combine: pc.StandardMaterial | null;
+    blur: pc.StandardMaterial | null;
+}
+
+interface PostProcessingCameras {
+    postProcess: pc.Entity | null;
+    depth: pc.Entity | null;
+}
+
+interface QualitySettings {
+    scale: number;
+    minScale: number;
+    maxScale: number;
+}
+
+class PostProcessingManager implements ISystem {
+    private app: pc.Application;
+    private initialized: boolean = false;
+    
+    // Post-processing configuration
+    private effects: PostProcessingEffects = {
+        depthOfField: {
+            enabled: true,
+            focusDistance: 15.0,
+            focusRange: 5.0,
+            blurRadius: 1.5,
+            maxBlur: 2.0,
+            bokehIntensity: 0.8,
+            adaptiveFocus: true
+        },
+        
+        bloom: {
+            enabled: true,
+            threshold: 0.7,
+            intensity: 0.9,
+            radius: 0.8,
+            passes: 3,
+            quality: 'high'
+        },
+        
+        colorGrading: {
+            enabled: true,
+            contrast: 1.1,
+            saturation: 1.15,
+            brightness: 0.05,
+            warmth: 0.1,
+            vignette: 0.3,
+            filmGrain: 0.15
+        },
+        
+        lightingEffects: {
+            enabled: true,
+            volumetricFog: true,
+            lightShafts: true,
+            screenSpaceReflections: false,
+            ambientOcclusion: true
+        },
+        
+        fightingGameEffects: {
+            enabled: true,
+            hitPause: false,
+            screenShake: { intensity: 0, duration: 0, decay: 0, frequency: 0, active: false },
+            flashEffect: { color: new pc.Color(1, 1, 1), intensity: 0, duration: 0, active: false },
+            slowMotion: { factor: 1.0, duration: 0, active: false },
+            dramaTicLighting: false
+        }
+    };
+    
+    // Render targets for multi-pass rendering
+    private renderTargets: RenderTargets = {
+        sceneColor: null,
+        sceneDepth: null,
+        blurHorizontal: null,
+        blurVertical: null,
+        bloom: null,
+        final: null
+    };
+    
+    // Post-processing materials/shaders
+    private materials: PostProcessingMaterials = {
+        depthOfField: null,
+        bloom: null,
+        colorGrading: null,
+        combine: null,
+        blur: null
+    };
+    
+    // Effect cameras for multi-pass rendering
+    private cameras: PostProcessingCameras = {
+        postProcess: null,
+        depth: null
+    };
+    
+    // Performance settings
+    private quality: string = 'ultra'; // ultra, high, medium, low
+    private resolution: QualitySettings = {
+        scale: 1.0,
+        minScale: 0.5,
+        maxScale: 1.0
+    };
+    
+    // Entities
+    private fullScreenQuad: pc.Entity | null = null;
+
+    constructor(app: pc.Application) {
         this.app = app;
-        this.initialized = false;
-        
-        // Post-processing configuration
-        this.effects = {
-            depthOfField: {
-                enabled: true,
-                focusDistance: 15.0,
-                focusRange: 5.0,
-                blurRadius: 1.5,
-                maxBlur: 2.0,
-                bokehIntensity: 0.8,
-                adaptiveFocus: true
-            },
-            
-            bloom: {
-                enabled: true,
-                threshold: 0.7,
-                intensity: 0.9,
-                radius: 0.8,
-                passes: 3,
-                quality: 'high'
-            },
-            
-            colorGrading: {
-                enabled: true,
-                contrast: 1.1,
-                saturation: 1.15,
-                brightness: 0.05,
-                warmth: 0.1,
-                vignette: 0.3,
-                filmGrain: 0.15
-            },
-            
-            lightingEffects: {
-                enabled: true,
-                volumetricFog: true,
-                lightShafts: true,
-                screenSpaceReflections: false,
-                ambientOcclusion: true
-            },
-            
-            fightingGameEffects: {
-                enabled: true,
-                hitPause: false,
-                screenShake: { intensity: 0, duration: 0 },
-                flashEffect: { color: [1, 1, 1], intensity: 0 },
-                slowMotion: 1.0,
-                dramaTicLighting: false
-            }
-        };
-        
-        // Render targets for multi-pass rendering
-        this.renderTargets = {
-            sceneColor: null,
-            sceneDepth: null,
-            blurHorizontal: null,
-            blurVertical: null,
-            bloom: null,
-            final: null
-        };
-        
-        // Post-processing materials/shaders
-        this.materials = {
-            depthOfField: null,
-            bloom: null,
-            colorGrading: null,
-            combine: null,
-            blur: null
-        };
-        
-        // Effect cameras for multi-pass rendering
-        this.cameras = {
-            postProcess: null,
-            depth: null
-        };
-        
-        // Performance settings
-        this.quality = 'ultra'; // ultra, high, medium, low
-        this.resolution = {
-            scale: 1.0,
-            minScale: 0.5,
-            maxScale: 1.0
-        };
     }
 
-    async initialize() {
+    public async initialize(): Promise<void> {
         console.log('Initializing Post-Processing Manager...');
         
         try {
@@ -119,7 +211,7 @@ class PostProcessingManager {
         }
     }
 
-    createRenderTargets() {
+    private createRenderTargets(): void {
         const device = this.app.graphicsDevice;
         const width = Math.floor(device.width * this.resolution.scale);
         const height = Math.floor(device.height * this.resolution.scale);
@@ -205,7 +297,7 @@ class PostProcessingManager {
         console.log('Post-processing render targets created');
     }
 
-    async createPostProcessingMaterials() {
+    private async createPostProcessingMaterials(): Promise<void> {
         // Depth of Field material
         this.materials.depthOfField = new pc.StandardMaterial();
         this.materials.depthOfField.chunks.PS_LIGHTING = this.getDOFFragmentShader();
@@ -244,7 +336,7 @@ class PostProcessingManager {
         console.log('Post-processing materials created');
     }
 
-    getDOFFragmentShader() {
+    private getDOFFragmentShader(): string {
         return `
         uniform sampler2D texture_sceneColor;
         uniform sampler2D texture_sceneDepth;
@@ -285,7 +377,7 @@ class PostProcessingManager {
         }`;
     }
 
-    getBloomFragmentShader() {
+    private getBloomFragmentShader(): string {
         return `
         uniform sampler2D texture_sceneColor;
         uniform float uBloomThreshold;
@@ -305,7 +397,7 @@ class PostProcessingManager {
         }`;
     }
 
-    getBlurFragmentShader() {
+    private getBlurFragmentShader(): string {
         return `
         uniform sampler2D texture_source;
         uniform vec2 uBlurDirection;
@@ -332,7 +424,7 @@ class PostProcessingManager {
         }`;
     }
 
-    getColorGradingFragmentShader() {
+    private getColorGradingFragmentShader(): string {
         return `
         uniform sampler2D texture_sceneColor;
         uniform float uContrast;
@@ -383,7 +475,7 @@ class PostProcessingManager {
         }`;
     }
 
-    getCombineFragmentShader() {
+    private getCombineFragmentShader(): string {
         return `
         uniform sampler2D texture_sceneColor;
         uniform sampler2D texture_bloom;
@@ -409,7 +501,7 @@ class PostProcessingManager {
         }`;
     }
 
-    setupPostProcessingCameras() {
+    private setupPostProcessingCameras(): void {
         // Post-processing camera (orthographic, full screen)
         this.cameras.postProcess = new pc.Entity('PostProcessCamera');
         this.cameras.postProcess.addComponent('camera', {
@@ -425,7 +517,7 @@ class PostProcessingManager {
         this.app.root.addChild(this.cameras.postProcess);
     }
 
-    createEffectEntities() {
+    private createEffectEntities(): void {
         // Full-screen quad for post-processing
         this.fullScreenQuad = new pc.Entity('FullScreenQuad');
         this.fullScreenQuad.addComponent('render', {
@@ -437,7 +529,7 @@ class PostProcessingManager {
         this.app.root.addChild(this.fullScreenQuad);
     }
 
-    setupRenderPipeline() {
+    private setupRenderPipeline(): void {
         // Hook into the main camera's render pipeline
         const mainCamera = this.app.root.findByName('MainCamera');
         if (mainCamera && mainCamera.camera) {
@@ -449,19 +541,19 @@ class PostProcessingManager {
     }
 
     // Public API methods
-    setDepthOfField(focusDistance, focusRange, blurRadius) {
+    public setDepthOfField(focusDistance: number, focusRange: number, blurRadius: number): void {
         this.effects.depthOfField.focusDistance = focusDistance;
         this.effects.depthOfField.focusRange = focusRange;
         this.effects.depthOfField.blurRadius = blurRadius;
     }
 
-    setBloom(threshold, intensity, radius) {
+    public setBloom(threshold: number, intensity: number, radius: number): void {
         this.effects.bloom.threshold = threshold;
         this.effects.bloom.intensity = intensity;
         this.effects.bloom.radius = radius;
     }
 
-    setColorGrading(contrast, saturation, brightness, warmth) {
+    public setColorGrading(contrast: number, saturation: number, brightness: number, warmth: number): void {
         this.effects.colorGrading.contrast = contrast;
         this.effects.colorGrading.saturation = saturation;
         this.effects.colorGrading.brightness = brightness;
@@ -469,9 +561,11 @@ class PostProcessingManager {
     }
 
     // Fighting game specific effects
-    triggerHitFlash(color = [1, 1, 1], intensity = 0.8, duration = 100) {
-        this.effects.fightingGameEffects.flashEffect.color = color;
+    public triggerHitFlash(color: [number, number, number] = [1, 1, 1], intensity: number = 0.8, duration: number = 100): void {
+        this.effects.fightingGameEffects.flashEffect.color = new pc.Color(color[0], color[1], color[2]);
         this.effects.fightingGameEffects.flashEffect.intensity = intensity;
+        this.effects.fightingGameEffects.flashEffect.duration = duration;
+        this.effects.fightingGameEffects.flashEffect.active = true;
         
         // Fade out flash over duration
         const startTime = Date.now();
@@ -484,15 +578,17 @@ class PostProcessingManager {
                 requestAnimationFrame(fadeFlash);
             } else {
                 this.effects.fightingGameEffects.flashEffect.intensity = 0;
+                this.effects.fightingGameEffects.flashEffect.active = false;
             }
         };
         
         fadeFlash();
     }
 
-    triggerScreenShake(intensity = 1.0, duration = 300) {
+    public triggerScreenShake(intensity: number = 1.0, duration: number = 300): void {
         this.effects.fightingGameEffects.screenShake.intensity = intensity;
         this.effects.fightingGameEffects.screenShake.duration = duration;
+        this.effects.fightingGameEffects.screenShake.active = true;
         
         const startTime = Date.now();
         const mainCamera = this.app.root.findByName('MainCamera');
@@ -512,23 +608,27 @@ class PostProcessingManager {
             } else {
                 mainCamera.setPosition(originalPos);
                 this.effects.fightingGameEffects.screenShake.intensity = 0;
+                this.effects.fightingGameEffects.screenShake.active = false;
             }
         };
         
         shakeCamera();
     }
 
-    triggerSlowMotion(factor = 0.3, duration = 1000) {
-        this.effects.fightingGameEffects.slowMotion = factor;
+    public triggerSlowMotion(factor: number = 0.3, duration: number = 1000): void {
+        this.effects.fightingGameEffects.slowMotion.factor = factor;
+        this.effects.fightingGameEffects.slowMotion.duration = duration;
+        this.effects.fightingGameEffects.slowMotion.active = true;
         this.app.timeScale = factor;
         
         setTimeout(() => {
-            this.effects.fightingGameEffects.slowMotion = 1.0;
+            this.effects.fightingGameEffects.slowMotion.factor = 1.0;
+            this.effects.fightingGameEffects.slowMotion.active = false;
             this.app.timeScale = 1.0;
         }, duration);
     }
 
-    setDramaticLighting(enabled) {
+    public setDramaticLighting(enabled: boolean): void {
         this.effects.fightingGameEffects.dramaTicLighting = enabled;
         
         // Adjust post-processing for dramatic effect
@@ -543,14 +643,14 @@ class PostProcessingManager {
     }
 
     // Update loop
-    update(dt) {
+    public update(dt: number): void {
         if (!this.initialized) return;
         
         this.updateEffectParameters(dt);
         this.renderPostProcessing(dt);
     }
 
-    updateEffectParameters(dt) {
+    private updateEffectParameters(dt: number): void {
         // Update material parameters
         if (this.materials.depthOfField) {
             this.materials.depthOfField.setParameter('uFocusDistance', this.effects.depthOfField.focusDistance);
@@ -575,22 +675,26 @@ class PostProcessingManager {
         
         if (this.materials.combine) {
             this.materials.combine.setParameter('uBloomIntensity', this.effects.bloom.intensity);
-            this.materials.combine.setParameter('uFlashColor', this.effects.fightingGameEffects.flashEffect.color);
+            this.materials.combine.setParameter('uFlashColor', [
+                this.effects.fightingGameEffects.flashEffect.color.r,
+                this.effects.fightingGameEffects.flashEffect.color.g,
+                this.effects.fightingGameEffects.flashEffect.color.b
+            ]);
             this.materials.combine.setParameter('uFlashIntensity', this.effects.fightingGameEffects.flashEffect.intensity);
         }
     }
 
-    renderPostProcessing(dt) {
+    private renderPostProcessing(dt: number): void {
         // Multi-pass post-processing would be implemented here
         // For now, we'll just update the parameters
         // In a full implementation, this would render each effect pass
     }
 
     // Quality management
-    setQuality(quality) {
+    public setQuality(quality: string): void {
         this.quality = quality;
         
-        const qualitySettings = {
+        const qualitySettings: Record<string, any> = {
             low: { scale: 0.5, bloom: false, dof: false },
             medium: { scale: 0.75, bloom: true, dof: false },
             high: { scale: 1.0, bloom: true, dof: true },
@@ -607,9 +711,29 @@ class PostProcessingManager {
         
         console.log(`Post-processing quality set to: ${quality}`);
     }
+
+    public destroy(): void {
+        // Clean up resources
+        if (this.fullScreenQuad) {
+            this.fullScreenQuad.destroy();
+        }
+        
+        // Clean up render targets
+        Object.values(this.renderTargets).forEach(target => {
+            if (target) {
+                target.destroy();
+            }
+        });
+        
+        // Clean up cameras
+        Object.values(this.cameras).forEach(camera => {
+            if (camera) {
+                camera.destroy();
+            }
+        });
+        
+        console.log('PostProcessingManager destroyed');
+    }
 }
 
-// Export for module use
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = PostProcessingManager;
-}
+export default PostProcessingManager;

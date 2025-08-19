@@ -3,94 +3,156 @@
  * Creates depth and immersion through layered parallax scrolling
  * Features: Multiple depth layers, speed variation, dynamic backgrounds
  */
-class ParallaxManager {
-    constructor(app) {
+
+import * as pc from 'playcanvas';
+import { ISystem } from '../../../types/core';
+import { ParallaxLayer, ParallaxSettings } from '../../../types/graphics';
+
+interface LayerConfig {
+    depth: number;
+    speed: number;
+    name: string;
+    opacity: number;
+    blur: number;
+}
+
+interface StageData {
+    name: string;
+    layers: Record<string, any>;
+    lighting?: {
+        ambient: pc.Color;
+        directional: pc.Color;
+        intensity: number;
+    };
+    atmosphere?: {
+        fog: boolean;
+        particles: string[];
+        wind: number;
+    };
+}
+
+interface ParallaxLayerData {
+    entity: pc.Entity;
+    config: LayerConfig;
+    elements: pc.Entity[];
+    basePosition: pc.Vec3;
+    currentOffset: pc.Vec3;
+}
+
+interface DynamicElement {
+    entity: pc.Entity;
+    data: any;
+    layer: string;
+    animation: any;
+}
+
+interface VisualEffects {
+    windSpeed: number;
+    timeOfDay: number;
+    weather: string;
+    atmosphere: number;
+}
+
+interface PerformanceSettings {
+    cullingDistance: number;
+    maxElements: number;
+    updateFrequency: number;
+    frameSkip: number;
+}
+
+class ParallaxManager implements ISystem {
+    private app: pc.Application;
+    private initialized: boolean = false;
+    
+    // Parallax configuration based on HD-2D depth layers
+    private layerConfig: Record<string, LayerConfig> = {
+        skybox: { 
+            depth: -100, 
+            speed: 0.05, 
+            name: 'Skybox',
+            opacity: 0.8,
+            blur: 0.3
+        },
+        farBackground: { 
+            depth: -50, 
+            speed: 0.1, 
+            name: 'Far Background',
+            opacity: 0.9,
+            blur: 0.2
+        },
+        midBackground: { 
+            depth: -25, 
+            speed: 0.3, 
+            name: 'Mid Background',
+            opacity: 0.95,
+            blur: 0.1
+        },
+        nearBackground: { 
+            depth: -15, 
+            speed: 0.5, 
+            name: 'Near Background',
+            opacity: 1.0,
+            blur: 0.05
+        },
+        playground: { 
+            depth: -8, 
+            speed: 0.7, 
+            name: 'Playground',
+            opacity: 1.0,
+            blur: 0.0
+        },
+        stageForeground: { 
+            depth: -3, 
+            speed: 0.9, 
+            name: 'Stage Foreground',
+            opacity: 1.0,
+            blur: 0.0
+        }
+    };
+    
+    // Active parallax layers
+    private parallaxLayers: Map<string, ParallaxLayerData> = new Map();
+    private layerEntities: Map<string, pc.Entity> = new Map();
+    
+    // Camera tracking
+    private cameraPosition: pc.Vec3 = new pc.Vec3(0, 0, 0);
+    private lastCameraPosition: pc.Vec3 = new pc.Vec3(0, 0, 0);
+    private cameraVelocity: pc.Vec3 = new pc.Vec3(0, 0, 0);
+    
+    // Dynamic elements
+    private dynamicElements: Map<string, any> = new Map();
+    private animatedElements: DynamicElement[] = [];
+    
+    // Stage-specific data
+    private currentStage: string | null = null;
+    private stageData: Map<string, StageData> = new Map();
+    
+    // Performance settings
+    private performance: PerformanceSettings = {
+        cullingDistance: 100,
+        maxElements: 50,
+        updateFrequency: 60,
+        frameSkip: 0
+    };
+    
+    // Visual effects
+    private effects: VisualEffects = {
+        windSpeed: 0.5,
+        timeOfDay: 0.5, // 0 = night, 1 = day
+        weather: 'clear', // clear, rain, wind, storm
+        atmosphere: 1.0
+    };
+    
+    // Entities
+    private parallaxContainer: pc.Entity | null = null;
+    private mainCamera: pc.Entity | null = null;
+
+    constructor(app: pc.Application) {
         this.app = app;
-        this.initialized = false;
-        
-        // Parallax configuration based on HD-2D depth layers
-        this.layerConfig = {
-            skybox: { 
-                depth: -100, 
-                speed: 0.05, 
-                name: 'Skybox',
-                opacity: 0.8,
-                blur: 0.3
-            },
-            farBackground: { 
-                depth: -50, 
-                speed: 0.1, 
-                name: 'Far Background',
-                opacity: 0.9,
-                blur: 0.2
-            },
-            midBackground: { 
-                depth: -25, 
-                speed: 0.3, 
-                name: 'Mid Background',
-                opacity: 0.95,
-                blur: 0.1
-            },
-            nearBackground: { 
-                depth: -15, 
-                speed: 0.5, 
-                name: 'Near Background',
-                opacity: 1.0,
-                blur: 0.05
-            },
-            playground: { 
-                depth: -8, 
-                speed: 0.7, 
-                name: 'Playground',
-                opacity: 1.0,
-                blur: 0.0
-            },
-            stageForeground: { 
-                depth: -3, 
-                speed: 0.9, 
-                name: 'Stage Foreground',
-                opacity: 1.0,
-                blur: 0.0
-            }
-        };
-        
-        // Active parallax layers
-        this.parallaxLayers = new Map();
-        this.layerEntities = new Map();
-        
-        // Camera tracking
-        this.cameraPosition = new pc.Vec3(0, 0, 0);
-        this.lastCameraPosition = new pc.Vec3(0, 0, 0);
-        this.cameraVelocity = new pc.Vec3(0, 0, 0);
-        
-        // Dynamic elements
-        this.dynamicElements = new Map();
-        this.animatedElements = [];
-        
-        // Stage-specific data
-        this.currentStage = null;
-        this.stageData = new Map();
-        
-        // Performance settings
-        this.performance = {
-            cullingDistance: 100,
-            maxElements: 50,
-            updateFrequency: 60,
-            frameSkip: 0
-        };
-        
-        // Visual effects
-        this.effects = {
-            windSpeed: 0.5,
-            timeOfDay: 0.5, // 0 = night, 1 = day
-            weather: 'clear', // clear, rain, wind, storm
-            atmosphere: 1.0
-        };
-        
         this.setupDefaultStages();
     }
 
-    async initialize() {
+    public async initialize(): Promise<void> {
         console.log('Initializing Parallax Manager...');
         
         try {
@@ -115,7 +177,7 @@ class ParallaxManager {
         }
     }
 
-    setupDefaultStages() {
+    private setupDefaultStages(): void {
         // Training Stage - Simple multi-layer setup
         this.stageData.set('training_stage', {
             name: 'Training Stage',
@@ -224,7 +286,7 @@ class ParallaxManager {
         });
     }
 
-    createParallaxLayers() {
+    private createParallaxLayers(): void {
         // Create container for all parallax layers
         this.parallaxContainer = new pc.Entity('ParallaxContainer');
         this.app.root.addChild(this.parallaxContainer);
@@ -234,7 +296,7 @@ class ParallaxManager {
             const layerEntity = new pc.Entity(`ParallaxLayer_${layerName}`);
             layerEntity.setPosition(0, 0, config.depth);
             
-            this.parallaxContainer.addChild(layerEntity);
+            this.parallaxContainer!.addChild(layerEntity);
             this.layerEntities.set(layerName, layerEntity);
             
             // Create layer data
@@ -250,7 +312,7 @@ class ParallaxManager {
         console.log('Parallax layers created:', this.parallaxLayers.size);
     }
 
-    setupCameraTracking() {
+    private setupCameraTracking(): void {
         // Get main camera reference
         this.mainCamera = this.app.root.findByName('MainCamera');
         
@@ -266,7 +328,7 @@ class ParallaxManager {
         console.log('Camera tracking setup complete');
     }
 
-    async loadStage(stageId) {
+    public async loadStage(stageId: string): Promise<void> {
         const stage = this.stageData.get(stageId);
         if (!stage) {
             console.error(`Stage not found: ${stageId}`);
@@ -285,7 +347,7 @@ class ParallaxManager {
         
         // Set stage lighting
         if (stage.lighting) {
-            this.applyStageL ighting(stage.lighting);
+            this.applyStageLighting(stage.lighting);
         }
         
         // Set stage atmosphere
@@ -297,12 +359,12 @@ class ParallaxManager {
         console.log(`Stage loaded: ${stage.name}`);
     }
 
-    loadStageLayer(layerName, layerData) {
+    private loadStageLayer(layerName: string, layerData: any): void {
         const layer = this.parallaxLayers.get(layerName);
         if (!layer) return;
         
         // Create elements for this layer
-        layerData.elements?.forEach((elementData, index) => {
+        layerData.elements?.forEach((elementData: any, index: number) => {
             const element = this.createElement(layerName, elementData, index);
             if (element) {
                 layer.entity.addChild(element);
@@ -321,7 +383,7 @@ class ParallaxManager {
         });
     }
 
-    createElement(layerName, elementData, index) {
+    private createElement(layerName: string, elementData: any, index: number): pc.Entity | null {
         const element = new pc.Entity(`${layerName}_element_${index}`);
         
         // Position element
@@ -360,7 +422,7 @@ class ParallaxManager {
         return element;
     }
 
-    createMountainElement(element, data) {
+    private createMountainElement(element: pc.Entity, data: any): void {
         element.addComponent('render', {
             type: 'plane',
             material: this.createSolidMaterial(data.color || '#4A5568')
@@ -370,7 +432,7 @@ class ParallaxManager {
         element.setLocalScale(data.width || 20, data.height || 15, 1);
     }
 
-    createBuildingElement(element, data) {
+    private createBuildingElement(element: pc.Entity, data: any): void {
         element.addComponent('render', {
             type: 'box',
             material: this.createSolidMaterial(data.color || '#6B7280')
@@ -382,7 +444,7 @@ class ParallaxManager {
         this.addBuildingWindows(element, data);
     }
 
-    addBuildingWindows(building, data) {
+    private addBuildingWindows(building: pc.Entity, data: any): void {
         const windowRows = Math.floor((data.height || 20) / 4);
         const windowCols = Math.floor((data.width || 10) / 3);
         
@@ -406,7 +468,7 @@ class ParallaxManager {
         }
     }
 
-    createTreeElement(element, data) {
+    private createTreeElement(element: pc.Entity, data: any): void {
         // Tree trunk
         const trunk = new pc.Entity('trunk');
         trunk.addComponent('render', {
@@ -429,7 +491,7 @@ class ParallaxManager {
         element.addChild(foliage);
     }
 
-    createPlatformElement(element, data) {
+    private createPlatformElement(element: pc.Entity, data: any): void {
         element.addComponent('render', {
             type: 'box',
             material: this.createSolidMaterial(data.color || '#8B7355')
@@ -438,7 +500,7 @@ class ParallaxManager {
         element.setLocalScale(data.width || 10, data.height || 1, 3);
     }
 
-    createLampElement(element, data) {
+    private createLampElement(element: pc.Entity, data: any): void {
         // Lamp post
         const post = new pc.Entity('lamp_post');
         post.addComponent('render', {
@@ -471,7 +533,7 @@ class ParallaxManager {
         element.addChild(head);
     }
 
-    createSpectatorGroup(element, data) {
+    private createSpectatorGroup(element: pc.Entity, data: any): void {
         const count = data.count || 5;
         
         for (let i = 0; i < count; i++) {
@@ -490,28 +552,28 @@ class ParallaxManager {
         }
     }
 
-    createGenericElement(element, data) {
+    private createGenericElement(element: pc.Entity, data: any): void {
         element.addComponent('render', {
             type: 'plane',
             material: this.createSolidMaterial(data.color || '#666666')
         });
     }
 
-    createSolidMaterial(color) {
+    private createSolidMaterial(color: string): pc.StandardMaterial {
         const material = new pc.StandardMaterial();
         material.diffuse = new pc.Color().fromString(color);
         material.update();
         return material;
     }
 
-    createEmissiveMaterial(color) {
+    private createEmissiveMaterial(color: string): pc.StandardMaterial {
         const material = new pc.StandardMaterial();
         material.emissive = new pc.Color().fromString(color);
         material.update();
         return material;
     }
 
-    createElementAnimation(elementData) {
+    private createElementAnimation(elementData: any): any {
         const animation = {
             type: 'none',
             time: 0,
@@ -532,12 +594,12 @@ class ParallaxManager {
         return animation;
     }
 
-    setupUpdateLoop() {
+    private setupUpdateLoop(): void {
         // Hook into app update loop
         this.app.on('update', this.updateParallax.bind(this));
     }
 
-    updateParallax(dt) {
+    public update(dt: number): void {
         if (!this.initialized || !this.mainCamera) return;
         
         // Update camera tracking
@@ -550,15 +612,15 @@ class ParallaxManager {
         this.updateAnimatedElements(dt);
     }
 
-    updateCameraTracking(dt) {
+    private updateCameraTracking(dt: number): void {
         this.lastCameraPosition.copy(this.cameraPosition);
-        this.cameraPosition.copy(this.mainCamera.getPosition());
+        this.cameraPosition.copy(this.mainCamera!.getPosition());
         
         // Calculate camera velocity
         this.cameraVelocity.sub2(this.cameraPosition, this.lastCameraPosition);
     }
 
-    updateParallaxLayers(dt) {
+    private updateParallaxLayers(dt: number): void {
         // Calculate camera movement delta
         const cameraDelta = new pc.Vec3().sub2(this.cameraPosition, this.lastCameraPosition);
         
@@ -575,7 +637,7 @@ class ParallaxManager {
         });
     }
 
-    updateAnimatedElements(dt) {
+    private updateAnimatedElements(dt: number): void {
         this.animatedElements.forEach(animElement => {
             const animation = animElement.animation;
             animation.time += dt * animation.speed;
@@ -591,18 +653,18 @@ class ParallaxManager {
         });
     }
 
-    updateSwayAnimation(animElement, animation) {
+    private updateSwayAnimation(animElement: DynamicElement, animation: any): void {
         const swayAmount = Math.sin(animation.time) * animation.amplitude;
         const currentRotation = animElement.entity.getEulerAngles();
         animElement.entity.setEulerAngles(currentRotation.x, currentRotation.y, swayAmount * 5);
     }
 
-    updatePulseAnimation(animElement, animation) {
+    private updatePulseAnimation(animElement: DynamicElement, animation: any): void {
         const pulseAmount = 1 + Math.sin(animation.time) * animation.amplitude;
         animElement.entity.setLocalScale(pulseAmount, pulseAmount, pulseAmount);
     }
 
-    applyStageL ighting(lighting) {
+    private applyStageLighting(lighting: { ambient: pc.Color; directional: pc.Color; intensity: number }): void {
         // Apply stage-specific lighting
         this.app.scene.ambientLight = lighting.ambient;
         
@@ -616,7 +678,7 @@ class ParallaxManager {
         });
     }
 
-    applyStageAtmosphere(atmosphere) {
+    private applyStageAtmosphere(atmosphere: { particles?: string[]; wind?: number; fog?: boolean }): void {
         // Apply atmospheric effects
         this.effects.weather = atmosphere.particles?.[0] || 'clear';
         this.effects.windSpeed = atmosphere.wind || 0.3;
@@ -629,7 +691,7 @@ class ParallaxManager {
         }
     }
 
-    clearAllLayers() {
+    private clearAllLayers(): void {
         this.parallaxLayers.forEach(layer => {
             // Remove all children
             layer.elements.forEach(element => {
@@ -644,24 +706,24 @@ class ParallaxManager {
     }
 
     // Public API
-    setParallaxSpeed(layerName, speed) {
+    public setParallaxSpeed(layerName: string, speed: number): void {
         const layer = this.parallaxLayers.get(layerName);
         if (layer) {
             layer.config.speed = speed;
         }
     }
 
-    setWeatherEffect(weather) {
+    public setWeatherEffect(weather: string): void {
         this.effects.weather = weather;
         // Implement weather effects
     }
 
-    setTimeOfDay(time) {
+    public setTimeOfDay(time: number): void {
         this.effects.timeOfDay = time;
         // Adjust lighting and colors based on time
     }
 
-    addDynamicElement(layerName, elementData) {
+    public addDynamicElement(layerName: string, elementData: any): pc.Entity | null {
         const element = this.createElement(layerName, elementData, 'dynamic');
         const layer = this.parallaxLayers.get(layerName);
         
@@ -674,7 +736,7 @@ class ParallaxManager {
         return null;
     }
 
-    removeDynamicElement(element) {
+    public removeDynamicElement(element: pc.Entity): void {
         this.parallaxLayers.forEach(layer => {
             const index = layer.elements.indexOf(element);
             if (index !== -1) {
@@ -686,7 +748,7 @@ class ParallaxManager {
     }
 
     // Debug and utility
-    getParallaxStats() {
+    public getParallaxStats(): any {
         return {
             initialized: this.initialized,
             currentStage: this.currentStage,
@@ -697,9 +759,23 @@ class ParallaxManager {
             effects: this.effects
         };
     }
+
+    public destroy(): void {
+        // Clean up resources
+        this.clearAllLayers();
+        
+        if (this.parallaxContainer) {
+            this.parallaxContainer.destroy();
+        }
+        
+        this.parallaxLayers.clear();
+        this.layerEntities.clear();
+        this.dynamicElements.clear();
+        this.animatedElements = [];
+        this.stageData.clear();
+        
+        console.log('ParallaxManager destroyed');
+    }
 }
 
-// Export for module use
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ParallaxManager;
-}
+export default ParallaxManager;

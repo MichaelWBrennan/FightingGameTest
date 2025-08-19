@@ -1,16 +1,16 @@
 /**
- * test-harness.js - Unit test harness for schema and overlay logic
+ * test-harness.ts - Unit test harness for schema and overlay logic
  * 
  * Node.js-based testing system for validating character data schemas,
  * variation overlay logic, and system integrity.
  * 
  * Usage:
- *   node tests/test-harness.js
+ *   npx ts-node tests/test-harness.ts
  *   npm test (if added to package.json)
  */
 
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Test configuration
 const TEST_CONFIG = {
@@ -24,12 +24,12 @@ const TEST_CONFIG = {
 let testCount = 0;
 let passCount = 0;
 let failCount = 0;
-const failures = [];
+const failures: Array<{name: string, error: string}> = [];
 
 /**
  * Simple test framework
  */
-function test(name, testFn) {
+function test(name: string, testFn: () => void): void {
   testCount++;
   try {
     testFn();
@@ -37,7 +37,7 @@ function test(name, testFn) {
     if (TEST_CONFIG.verbose) {
       console.log(`✅ ${name}`);
     }
-  } catch (error) {
+  } catch (error: any) {
     failCount++;
     const failure = { name, error: error.message };
     failures.push(failure);
@@ -49,19 +49,19 @@ function test(name, testFn) {
   }
 }
 
-function assert(condition, message) {
+function assert(condition: boolean, message?: string): void {
   if (!condition) {
     throw new Error(message || 'Assertion failed');
   }
 }
 
-function assertEqual(actual, expected, message) {
+function assertEqual<T>(actual: T, expected: T, message?: string): void {
   if (actual !== expected) {
     throw new Error(message || `Expected ${expected}, got ${actual}`);
   }
 }
 
-function assertGreaterThan(actual, expected, message) {
+function assertGreaterThan(actual: number, expected: number, message?: string): void {
   if (actual <= expected) {
     throw new Error(message || `Expected ${actual} > ${expected}`);
   }
@@ -70,7 +70,7 @@ function assertGreaterThan(actual, expected, message) {
 /**
  * Schema validation tests
  */
-function validateCharacterBaseSchema(characterData) {
+function validateCharacterBaseSchema(characterData: any): void {
   // Required fields
   const requiredFields = ['schemaVersion', 'id', 'displayName', 'archetype', 'normals', 'specials', 'movement', 'stats'];
   requiredFields.forEach(field => {
@@ -110,7 +110,7 @@ function validateCharacterBaseSchema(characterData) {
   });
 }
 
-function validateMoveData(moveId, moveData) {
+function validateMoveData(moveId: string, moveData: any): void {
   const requiredFields = ['name', 'damage', 'startup', 'recovery', 'tags'];
   requiredFields.forEach(field => {
     assert(field in moveData, `Move ${moveId} missing required field: ${field}`);
@@ -125,7 +125,7 @@ function validateMoveData(moveId, moveData) {
   assert(Array.isArray(moveData.tags), `Move ${moveId} tags must be an array`);
 }
 
-function validateVariationSchema(variationData, characterId) {
+function validateVariationSchema(variationData: any, characterId: string): void {
   // Required fields
   assertEqual(variationData.schemaVersion, '1.0', 'Variation schema version must be 1.0');
   assertEqual(variationData.characterId, characterId, 'Character ID must match');
@@ -133,7 +133,7 @@ function validateVariationSchema(variationData, characterId) {
   assertEqual(variationData.variations.length, 3, 'Must have exactly 3 variations');
 
   // Validate each variation
-  variationData.variations.forEach((variation, index) => {
+  variationData.variations.forEach((variation: any, index: number) => {
     const requiredFields = ['id', 'name', 'description', 'adds', 'mods', 'removes'];
     requiredFields.forEach(field => {
       assert(field in variation, `Variation ${index} missing required field: ${field}`);
@@ -149,11 +149,11 @@ function validateVariationSchema(variationData, characterId) {
  * Mock VariationOverlay for testing
  */
 class MockVariationOverlay {
-  applyVariation(base, variation) {
+  applyVariation(base: any, variation: any): any {
     const result = JSON.parse(JSON.stringify(base)); // Deep clone
 
     // Apply removes
-    variation.removes.forEach(path => {
+    variation.removes.forEach((path: string) => {
       this.deletePath(result, path);
     });
 
@@ -177,7 +177,7 @@ class MockVariationOverlay {
     return result;
   }
 
-  setPath(obj, path, value) {
+  setPath(obj: any, path: string, value: any): void {
     const keys = path.split('.');
     const lastKey = keys.pop();
     let current = obj;
@@ -189,10 +189,12 @@ class MockVariationOverlay {
       current = current[key];
     }
 
-    current[lastKey] = value;
+    if (lastKey) {
+      current[lastKey] = value;
+    }
   }
 
-  deletePath(obj, path) {
+  deletePath(obj: any, path: string): void {
     const keys = path.split('.');
     const lastKey = keys.pop();
     let current = obj;
@@ -204,14 +206,16 @@ class MockVariationOverlay {
       current = current[key];
     }
 
-    delete current[lastKey];
+    if (lastKey) {
+      delete current[lastKey];
+    }
   }
 
-  isEquivalent(obj1, obj2) {
+  isEquivalent(obj1: any, obj2: any): boolean {
     return JSON.stringify(this.sortObjectKeys(obj1)) === JSON.stringify(this.sortObjectKeys(obj2));
   }
 
-  sortObjectKeys(obj) {
+  sortObjectKeys(obj: any): any {
     if (obj === null || typeof obj !== 'object') {
       return obj;
     }
@@ -220,7 +224,7 @@ class MockVariationOverlay {
       return obj.map(item => this.sortObjectKeys(item));
     }
 
-    const sorted = {};
+    const sorted: any = {};
     Object.keys(obj).sort().forEach(key => {
       sorted[key] = this.sortObjectKeys(obj[key]);
     });
@@ -232,7 +236,7 @@ class MockVariationOverlay {
 /**
  * Test cases
  */
-function runSchemaValidationTests() {
+function runSchemaValidationTests(): void {
   console.log('\n🧪 Running Schema Validation Tests...');
 
   // Get all character files
@@ -274,7 +278,7 @@ function runSchemaValidationTests() {
   });
 }
 
-function runOverlayLogicTests() {
+function runOverlayLogicTests(): void {
   console.log('\n🔄 Running Overlay Logic Tests...');
 
   const overlay = new MockVariationOverlay();
@@ -352,7 +356,7 @@ function runOverlayLogicTests() {
   });
 }
 
-function runArchetypeTests() {
+function runArchetypeTests(): void {
   console.log('\n🎯 Running Archetype Coverage Tests...');
 
   const expectedArchetypes = [
@@ -363,7 +367,7 @@ function runArchetypeTests() {
   const characterFiles = fs.readdirSync(TEST_CONFIG.charactersPath)
     .filter(file => file.endsWith('.base.json'));
 
-  const foundArchetypes = new Set();
+  const foundArchetypes = new Set<string>();
 
   characterFiles.forEach(filename => {
     const filePath = path.join(TEST_CONFIG.charactersPath, filename);
@@ -384,7 +388,7 @@ function runArchetypeTests() {
   });
 }
 
-function runVariationTests() {
+function runVariationTests(): void {
   console.log('\n🔀 Running Variation System Tests...');
 
   const characterFiles = fs.readdirSync(TEST_CONFIG.charactersPath)
@@ -402,7 +406,7 @@ function runVariationTests() {
         assertEqual(variationData.variations.length, 3, 'Must have exactly 3 variations');
         
         // Check variation IDs are unique
-        const ids = variationData.variations.map(v => v.id);
+        const ids = variationData.variations.map((v: any) => v.id);
         const uniqueIds = new Set(ids);
         assertEqual(ids.length, uniqueIds.size, 'Variation IDs must be unique');
       });
@@ -420,7 +424,7 @@ function runVariationTests() {
         const overlay = new MockVariationOverlay();
 
         // Test each variation applies without error
-        variationData.variations.forEach(variation => {
+        variationData.variations.forEach((variation: any) => {
           const result = overlay.applyVariation(baseCharacter, variation);
           assert(result.id === baseCharacter.id, 'Character ID should remain unchanged');
           assert(result.normals, 'Normals should exist after variation');
@@ -431,7 +435,7 @@ function runVariationTests() {
   });
 }
 
-function runDeterminismTests() {
+function runDeterminismTests(): void {
   console.log('\n🎲 Running Determinism Tests...');
 
   test('Determinism: Object key sorting', () => {
@@ -456,7 +460,7 @@ function runDeterminismTests() {
     const overlay = new MockVariationOverlay();
     
     // Apply multiple times and check consistency
-    const results = [];
+    const results: any[] = [];
     for (let i = 0; i < 5; i++) {
       results.push(overlay.applyVariation(base, variation));
     }
@@ -471,7 +475,7 @@ function runDeterminismTests() {
 /**
  * Main test runner
  */
-function runAllTests() {
+function runAllTests(): void {
   console.log('🚀 Starting Character System Test Harness\n');
   console.log(`Testing directory: ${TEST_CONFIG.charactersPath}`);
   console.log(`Verbose mode: ${TEST_CONFIG.verbose}`);
@@ -485,7 +489,7 @@ function runAllTests() {
     runArchetypeTests();
     runVariationTests();
     runDeterminismTests();
-  } catch (error) {
+  } catch (error: any) {
     console.error('Test suite failed with error:', error);
     process.exit(1);
   }
@@ -517,7 +521,7 @@ if (require.main === module) {
   runAllTests();
 }
 
-module.exports = {
+export {
   test,
   assert,
   assertEqual,
