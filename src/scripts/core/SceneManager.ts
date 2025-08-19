@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 import { ISystem } from "../../../types/core";
 
 export class SceneManager implements ISystem {

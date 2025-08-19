@@ -23,7 +23,7 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import { IGameState } from '../../../types/game.js';
+import { IGameState } from '../../../types/game';
 
 export interface CoachOverlayConfig {
   gameState: IGameState; // Game state manager interface
@@ -420,31 +420,6 @@ export class CoachOverlay extends EventEmitter {
     }
   }
 
-  private shouldShowTip(tip: CoachingTip): boolean {
-    // Check timing conditions
-    const gamePhase = this.getCurrentGamePhase();
-    if (tip.timing !== gamePhase) {
-      return false;
-    }
-
-    // Check character conditions
-    if (tip.conditions.characterId && tip.conditions.characterId !== this.getCurrentCharacter()) {
-      return false;
-    }
-
-    // Check skill level
-    if (tip.conditions.skillLevel && tip.conditions.skillLevel !== this.getPlayerSkillLevel()) {
-      return false;
-    }
-
-    // Check if tip was recently shown
-    const recentTips = Array.from(this.activeTips.values())
-      .filter(t => t.type === tip.type)
-      .length;
-    
-    return recentTips === 0;
-  }
-
   private shouldShowPostRoundTips(): boolean {
     // Don't show tips if player is in a flow state (winning streak)
     const recentResults = this.roundHistory.slice(-3).map(r => r.result);
@@ -567,7 +542,7 @@ export class CoachOverlay extends EventEmitter {
     return priorityValues[tip.priority];
   }
 
-  private getTipsForIssue(issue: any): CoachingTip[] {
+  private getTipsForIssue(_issue: any): CoachingTip[] {
     // Return relevant tips based on issue type
     return [];
   }
@@ -588,15 +563,15 @@ export class CoachOverlay extends EventEmitter {
     const early = winRates.slice(0, Math.floor(winRates.length / 2)) as Array<0 | 1>;
     const late = winRates.slice(Math.floor(winRates.length / 2)) as Array<0 | 1>;
     
-    const earlyAvg = early.reduce<number>((a, b) => a + b, 0) / (early.length || 1);
-    const lateAvg = late.reduce<number>((a, b) => a + b, 0) / (late.length || 1);
+    const earlyAvg = early.reduce((a, b) => a + b, 0) / (early.length || 1);
+    const lateAvg = late.reduce((a, b) => a + b, 0) / (late.length || 1);
     
     if (lateAvg > earlyAvg + 0.2) return 'improving';
     if (lateAvg < earlyAvg - 0.2) return 'declining';
     return 'stable';
   }
 
-  private generateKeyInsights(rounds: RoundAnalysis[]): string[] {
+  private generateKeyInsights(_rounds: RoundAnalysis[]): string[] {
     // Generate insights based on round analysis
     return ['Focus on improving defense', 'Good combo execution'];
   }
@@ -609,12 +584,12 @@ export class CoachOverlay extends EventEmitter {
     return ['Practice blocking mixups', 'Learn advanced combos'];
   }
 
-  private detectImprovements(matchData: any): string[] {
+  private detectImprovements(_matchData: any): string[] {
     // Detect areas where player has improved
     return [];
   }
 
-  private detectWeaknesses(matchData: any): string[] {
+  private detectWeaknesses(_matchData: any): string[] {
     // Detect new weaknesses from match data
     return [];
   }
@@ -623,22 +598,22 @@ export class CoachOverlay extends EventEmitter {
     // Update focus areas based on recent performance
   }
 
-  private getLabScenariosForWeakness(weakness: string): LabScenario[] {
+  private getLabScenariosForWeakness(_weakness: string): LabScenario[] {
     // Return lab scenarios that address specific weakness
     return [];
   }
 
-  private meetsUnlockConditions(scenario: LabScenario): boolean {
+  private meetsUnlockConditions(_scenario: LabScenario): boolean {
     // Check if player meets unlock conditions for scenario
     return true;
   }
 
-  private scoreSuitability(scenario: LabScenario): number {
+  private scoreSuitability(_scenario: LabScenario): number {
     // Score how suitable a scenario is for current player
     return 1;
   }
 
-  private getLabScenario(scenarioId: string): LabScenario | null {
+  private getLabScenario(_scenarioId: string): LabScenario | null {
     // Get specific lab scenario by ID
     return null;
   }

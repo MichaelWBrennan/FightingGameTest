@@ -12,7 +12,7 @@ export class DatabaseManager {
     return DatabaseManager.instance;
   }
 
-  public async initialize(config: any): Promise<void> {
+  public async initialize(_config: any): Promise<void> {
     // Placeholder
   }
 

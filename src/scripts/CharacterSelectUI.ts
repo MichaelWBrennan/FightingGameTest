@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 /**
  * CharacterSelectUI.ts - Character selection interface with variation support
  * 

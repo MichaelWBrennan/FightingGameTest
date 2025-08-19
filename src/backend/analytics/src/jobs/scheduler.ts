@@ -1,3 +1,3 @@
-export const setupCronJobs = (services: any) => {
+export const setupCronJobs = (_services: any) => {
   // placeholder
 };

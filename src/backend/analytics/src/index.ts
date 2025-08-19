@@ -123,7 +123,7 @@ async function buildServer() {
       max: 1000, // High limit for event streams
       timeWindow: '1 minute',
       skipOnError: true, // Don't block on rate limiter errors
-      errorResponseBuilder: (request, context) => ({
+      errorResponseBuilder: (_request, context) => ({
         code: 429,
         error: 'Too Many Requests',
         message: `Rate limit exceeded, retry in ${Math.round(context.ttl / 1000)} seconds`,
@@ -294,7 +294,7 @@ async function buildServer() {
     });
 
     // Global error handler
-    fastify.setErrorHandler(async (error, request, reply) => {
+    fastify.setErrorHandler(async (error, _request, _reply) => {
       logger.error('Request error:', {
         error: error.message,
         stack: error.stack,

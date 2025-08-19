@@ -12,7 +12,7 @@ export class ClickHouseManager {
     return ClickHouseManager.instance;
   }
 
-  public async initialize(config: any): Promise<void> {
+  public async initialize(_config: any): Promise<void> {
     // Placeholder
   }
 

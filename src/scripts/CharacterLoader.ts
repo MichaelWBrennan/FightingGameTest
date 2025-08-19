@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 /**
  * CharacterLoader.ts - Data-driven character loading with MKX-style variations
  * 

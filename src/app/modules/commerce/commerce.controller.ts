@@ -8,7 +8,7 @@ export class CommerceController {
     this.commerceService = new CommerceService();
   }
 
-  public getCatalog = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+  public getCatalog = async (_request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     const catalog = await this.commerceService.getCatalog();
     reply.send(catalog);
   }

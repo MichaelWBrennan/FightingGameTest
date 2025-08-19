@@ -31,7 +31,7 @@ export class CommerceService {
     return payment;
   }
 
-  public async getPaymentStatus(transactionId: string): Promise<Payment | null> {
+  public async getPaymentStatus(_transactionId: string): Promise<Payment | null> {
     // Placeholder
     return null;
   }
