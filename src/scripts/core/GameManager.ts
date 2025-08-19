@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 import { CharacterManager } from '../characters/CharacterManager';
 import { StageLayerManager } from '../components/graphics/StageLayerManager';
 import { RotationService } from '../RotationService';

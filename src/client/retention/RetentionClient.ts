@@ -98,7 +98,7 @@ export interface PurchaseCompletedEvent extends IRetentionEvent {
   currency: string;
   items: Array<{
     itemId: string;
-    itemType: 'skin' | 'title' | 'banner' | 'announcer' | 'vfx_palette' | 'bundle';
+    itemType: 'skin' | 'title' | 'banner' | 'announcer' | 'vfx_palette' | 'bundle' | 'stage_variant';
     price: number;
     quantity: number;
   }>;
@@ -165,6 +165,7 @@ export class RetentionClient extends EventEmitter {
     progression_grant: '/progression/events',
     store_impression: '/commerce/events',
     purchase_completed: '/commerce/events',
+    club_event: '/social/events',
   };
   private flushTimer: number | null = null;
   private isOnline: boolean = true;
@@ -214,7 +215,7 @@ export class RetentionClient extends EventEmitter {
    * Track a match result
    */
   public trackMatchResult(matchData: Omit<MatchResultEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: IRetentionEvent = {
+    const event: MatchResultEvent = {
       event: 'match_result',
       v: '1.0', 
       ts: Math.floor(Date.now() / 1000),
@@ -227,10 +228,26 @@ export class RetentionClient extends EventEmitter {
   }
 
   /**
+   * Track club-related events
+   */
+  public trackClubEvent(clubData: Omit<ClubEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
+    const event: ClubEvent = {
+      event: 'club_event',
+      v: '1.0',
+      ts: Math.floor(Date.now() / 1000),
+      userId: this.config.userId,
+      sessionHash: this.sessionHash,
+      ...clubData
+    };
+
+    this.trackEvent(event);
+  }
+
+  /**
    * Track progression grants (XP, unlocks, etc.)
    */
   public trackProgression(progressionData: Omit<ProgressionGrantEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: IRetentionEvent = {
+    const event: ProgressionGrantEvent = {
       event: 'progression_grant',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
@@ -246,7 +263,7 @@ export class RetentionClient extends EventEmitter {
    * Track store impressions
    */
   public trackStoreImpression(storeData: Omit<StoreImpressionEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: IRetentionEvent = {
+    const event: StoreImpressionEvent = {
       event: 'store_impression',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
@@ -262,7 +279,7 @@ export class RetentionClient extends EventEmitter {
    * Track completed purchases
    */
   public trackPurchase(purchaseData: Omit<PurchaseCompletedEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
-    const event: IRetentionEvent = {
+    const event: PurchaseCompletedEvent = {
       event: 'purchase_completed',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
@@ -346,18 +363,7 @@ export class RetentionClient extends EventEmitter {
     }
   }
 
-  private async sendEvents(endpointOrEvents: string | IRetentionEvent[], events?: IRetentionEvent[], retryCount: number = 0): Promise<void> {
-    // Overload shim to support both sendEvents(endpoint, events) and sendEvents(events)
-    let endpoint: string;
-    let payload: IRetentionEvent[];
-    if (typeof endpointOrEvents === 'string') {
-      endpoint = endpointOrEvents;
-      payload = events ?? [];
-    } else {
-      // Default to analytics endpoint if only events provided (offline flush)
-      endpoint = '/analytics/events';
-      payload = endpointOrEvents;
-    }
+  private async _sendWithRetry(endpoint: string, payload: IRetentionEvent[], retryCount: number = 0): Promise<void> {
     try {
       const response = await fetch(`${this.config.apiEndpoint}${endpoint}`, {
         method: 'POST',
@@ -375,13 +381,27 @@ export class RetentionClient extends EventEmitter {
 
     } catch (error) {
       if (retryCount < this.config.maxRetries) {
-        // Exponential backoff
         const delay = Math.pow(2, retryCount) * 1000;
         await new Promise(resolve => setTimeout(resolve, delay));
-        return this.sendEvents(endpoint, payload, retryCount + 1);
+        return this._sendWithRetry(endpoint, payload, retryCount + 1);
       }
       throw error;
     }
+  }
+
+  private async sendEvents(endpointOrEvents: string | IRetentionEvent[], events?: IRetentionEvent[]): Promise<void> {
+    let endpoint: string;
+    let payload: IRetentionEvent[];
+
+    if (typeof endpointOrEvents === 'string') {
+      endpoint = endpointOrEvents;
+      payload = events ?? [];
+    } else {
+      endpoint = '/analytics/events';
+      payload = endpointOrEvents;
+    }
+
+    return this._sendWithRetry(endpoint, payload);
   }
 
   private validateEvent(event: IRetentionEvent): boolean {
@@ -421,7 +441,8 @@ export class RetentionClient extends EventEmitter {
     const offlineEvents = this.offlineQueue.dequeueAll();
     if (offlineEvents.length > 0) {
       try {
-        await this.sendEvents(offlineEvents);
+        // Default to analytics endpoint for offline events
+        await this.sendEvents('/analytics/events', offlineEvents);
         this.log(`Successfully sent ${offlineEvents.length} offline events`);
       } catch (error) {
         this.log('Failed to send offline events:', error);

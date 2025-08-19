@@ -8,16 +8,16 @@ export class AnalyticsService {
     this.db = DatabaseManager.getInstance();
   }
 
-  public async ingestEvents(events: AnalyticsEvent[]): Promise<void> {
+  public async ingestEvents(_events: AnalyticsEvent[]): Promise<void> {
     // Placeholder
   }
 
-  public async getExperiment(userId: string, experimentId: string): Promise<Experiment | null> {
+  public async getExperiment(_userId: string, _experimentId: string): Promise<Experiment | null> {
     // Placeholder
     return null;
   }
 
-  public async getChurnPrediction(userId: string): Promise<ChurnPrediction | null> {
+  public async getChurnPrediction(_userId: string): Promise<ChurnPrediction | null> {
     // Placeholder
     return null;
   }

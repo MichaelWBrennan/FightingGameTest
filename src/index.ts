@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 /**
  * Main entry point for HD-2D Fighting Game System
  * Exports all core systems with strict TypeScript typing
@@ -14,7 +16,7 @@ import { CombatSystem } from './scripts/combat/CombatSystem';
 import { CharacterManager } from './scripts/characters/CharacterManager';
 
 // Graphics Systems
-import SF3GraphicsManager from './scripts/graphics/SF3GraphicsManager';
+import { SF3GraphicsManager } from './scripts/graphics/SF3GraphicsManager';
 
 // Type Exports for Consumer Use
 export type {

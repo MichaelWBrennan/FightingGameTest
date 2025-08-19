@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 import {
     type CharacterData,
     type CharacterState,

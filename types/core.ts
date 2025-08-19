@@ -1,73 +1,8 @@
+import * as pc from 'playcanvas';
+
 /**
  * Core type definitions for SF3:3S HD-2D Fighting Game System
  */
-
-// PlayCanvas types - minimal definitions for what we use
-declare global {
-  namespace pc {
-    class Vec3 {
-      x: number;
-      y: number;
-      z: number;
-      constructor(x?: number, y?: number, z?: number);
-    }
-    
-    class Color {
-      r: number;
-      g: number;
-      b: number;
-      a: number;
-      constructor(r?: number, g?: number, b?: number, a?: number);
-    }
-    class Vec2 {
-      x: number;
-      y: number;
-      constructor(x?: number, y?: number);
-    }
-    
-    class Entity {
-      enabled: boolean;
-      setPosition(x: number, y: number, z: number): void;
-      getPosition(): Vec3;
-      setLocalScale(x: number, y: number, z: number): void;
-      getLocalScale(): Vec3;
-      setEulerAngles(x: number, y: number, z: number): void;
-      lookAt(x: number, y: number, z: number): void;
-      addChild(entity: Entity): void;
-      addComponent(type: string, data?: any): any;
-      constructor(name?: string);
-    }
-    
-    class Application {
-      root: Entity;
-      keyboard: any;
-      mouse: any;
-      graphicsDevice: any;
-      scene: any;
-      stats: any;
-      timeScale: number;
-      
-      on(event: string, callback: Function): void;
-      off(event: string, callback: Function): void;
-      fire(event: string, ...args: any[]): void;
-      setCanvasFillMode(mode: any): void;
-      setCanvasResolution(mode: any, width: number, height: number): void;
-      setTargetFrameRate(fps: number): void;
-    }
-    class StandardMaterial { [key: string]: any }
-    class Texture { [key: string]: any }
-    class CurveSet { [key: string]: any }
-    
-    // Constants
-    const FILLMODE_KEEP_ASPECT: any;
-    const RESOLUTION_FIXED: any;
-    const FOG_NONE: any;
-    const PROJECTION_ORTHOGRAPHIC: any;
-    const LIGHTTYPE_DIRECTIONAL: any;
-    const LIGHTTYPE_SPOT: any;
-    const BLEND_NORMAL: any;
-  }
-}
 
 // Game State Types
 export type GameState = 'MENU' | 'CHARACTER_SELECT' | 'BATTLE' | 'PAUSE';

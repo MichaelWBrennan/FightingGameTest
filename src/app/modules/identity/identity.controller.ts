@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { IdentityService } from './identity.service';
-import { User, Consent, CommunicationPreferences } from './identity.types';
 
 export class IdentityController {
   private identityService: IdentityService;

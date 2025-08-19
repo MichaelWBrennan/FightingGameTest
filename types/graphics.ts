@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 /**
  * Graphics system type definitions for SF3:3S HD-2D Fighting Game
  */

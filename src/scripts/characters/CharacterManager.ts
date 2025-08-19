@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 /**
  * CharacterManager - Character System for SF3:3S HD-2D Fighting Game
  * Handles character loading, animation, and state management

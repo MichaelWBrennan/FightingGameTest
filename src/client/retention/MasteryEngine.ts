@@ -444,7 +444,7 @@ export class MasteryEngine extends EventEmitter {
     this.emit('cosmetic_unlocked', { reward: prestigeReward, prestige: true });
   }
 
-  private updateArchetypeChallenges(archetypeId: string, source: XPSource, amount: number): void {
+  private updateArchetypeChallenges(archetypeId: string, _source: XPSource, amount: number): void {
     const relevantChallenges = this.archetypeChallenges.filter(c => c.archetype === archetypeId);
     
     relevantChallenges.forEach(challenge => {
@@ -476,7 +476,7 @@ export class MasteryEngine extends EventEmitter {
     });
   }
 
-  private hasSeenPrestigePrompt(type: 'account' | 'character', characterId?: string): boolean {
+  private hasSeenPrestigePrompt(_type: 'account' | 'character', _characterId?: string): boolean {
     // Implementation would track whether user has seen prestige prompt
     // This prevents spam notifications
     return false;
