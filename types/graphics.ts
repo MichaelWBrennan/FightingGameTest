@@ -2,7 +2,7 @@
  * Graphics system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import { type ISystem } from './core.js';
+import { type ISystem } from './core';
 
 // Visual Style Configuration
 export interface ColorPalette {

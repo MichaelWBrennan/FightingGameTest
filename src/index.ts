@@ -4,17 +4,17 @@
  */
 
 // Core Systems
-export { GameManager } from './scripts/core/GameManager';
-export { InputManager } from './scripts/core/InputManager';
+import { GameManager } from './scripts/core/GameManager';
+import { InputManager } from './scripts/core/InputManager';
 
 // Combat System
-export { CombatSystem } from './scripts/combat/CombatSystem';
+import { CombatSystem } from './scripts/combat/CombatSystem';
 
 // Character System
-export { CharacterManager } from './scripts/characters/CharacterManager';
+import { CharacterManager } from './scripts/characters/CharacterManager';
 
 // Graphics Systems
-export { SF3GraphicsManager } from './scripts/graphics/SF3GraphicsManager';
+import SF3GraphicsManager from './scripts/graphics/SF3GraphicsManager';
 
 // Type Exports for Consumer Use
 export type {
@@ -25,7 +25,7 @@ export type {
     AttackData,
     PerformanceStats,
     ParticleType
-} from '../types/core.js';
+} from '../types/core';
 
 export type {
     InputState,
@@ -36,7 +36,7 @@ export type {
     PlayerId,
     InputName,
     Direction
-} from '../types/input.js';
+} from '../types/input';
 
 export type {
     CombatSystemConfig,
@@ -47,7 +47,7 @@ export type {
     ParryResult,
     ParryType,
     DamageType
-} from '../types/combat.js';
+} from '../types/combat';
 
 export type {
     CharacterData,
@@ -56,7 +56,7 @@ export type {
     ArchetypeTemplate,
     AnimationData,
     AttackProperties
-} from '../types/character.js';
+} from '../types/character';
 
 export type {
     VisualStyle,
@@ -64,7 +64,7 @@ export type {
     CharacterAnimator,
     EffectType,
     LayerName
-} from '../types/graphics.js';
+} from '../types/graphics';
 
 // Version Information
 export const VERSION = '1.0.0';

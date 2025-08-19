@@ -19,6 +19,11 @@ declare global {
       a: number;
       constructor(r?: number, g?: number, b?: number, a?: number);
     }
+    class Vec2 {
+      x: number;
+      y: number;
+      constructor(x?: number, y?: number);
+    }
     
     class Entity {
       enabled: boolean;
@@ -49,6 +54,9 @@ declare global {
       setCanvasResolution(mode: any, width: number, height: number): void;
       setTargetFrameRate(fps: number): void;
     }
+    class StandardMaterial { [key: string]: any }
+    class Texture { [key: string]: any }
+    class CurveSet { [key: string]: any }
     
     // Constants
     const FILLMODE_KEEP_ASPECT: any;
