@@ -21,6 +21,7 @@ export interface ChargeState {
 }
 
 export interface InputState {
+  [key: string]: any;
   // Digital inputs
   up: boolean;
   down: boolean;
@@ -173,6 +174,24 @@ export type InputEventType =
   | 'input:command'
   | 'input:buffered'
   | 'input:negativeEdge';
+
+export type PlayerAction =
+  | 'up' | 'down' | 'left' | 'right'
+  | 'light_punch' | 'medium_punch' | 'heavy_punch'
+  | 'light_kick' | 'medium_kick' | 'heavy_kick'
+  | 'special_1' | 'special_2' | 'special_3' | 'special_4'
+  | 'super'
+  | 'parry'
+  | 'throw';
+
+export interface InputMapping {
+  [input: string]: PlayerAction;
+}
+
+export interface ControlScheme {
+  keyboard: InputMapping;
+  gamepad: InputMapping;
+}
 
 export type PlayerId = 'player1' | 'player2';
 

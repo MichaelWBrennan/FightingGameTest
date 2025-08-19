@@ -7,7 +7,6 @@
 import { type ISystem } from '../../../types/core';
 import {
     type CharacterData,
-    type CharacterEntity,
     type CharacterState,
     type CharacterStates,
     type ArchetypeTemplates,
@@ -27,16 +26,21 @@ import {
     DEFAULT_CHARACTER_STATES,
     DEFAULT_FRAME_DATA
 } from '../../../types/character';
+import { CharacterEntity } from './CharacterEntity';
+import { CharacterFactory } from './CharacterFactory';
+import { CharacterStateMachine } from './CharacterStateMachine';
 
 export class CharacterManager implements ISystem {
     private readonly app: pc.Application;
     private initialized: boolean = false;
+    private factory: CharacterFactory;
     
     // Character registry
     private readonly characters: Map<string, CharacterEntity> = new Map();
     private readonly characterData: Map<string, CharacterData> = new Map();
     private readonly characterVariations: Map<string, any> = new Map();
     private readonly activeCharacters: Map<string, CharacterEntity> = new Map(); // player1, player2
+    private readonly stateMachines: Map<string, CharacterStateMachine> = new Map();
     
     // Animation system
     private readonly animationSystem: AnimationSystem = {
@@ -55,9 +59,6 @@ export class CharacterManager implements ISystem {
     // Character state management
     private readonly characterStates: CharacterStates = { ...DEFAULT_CHARACTER_STATES };
     
-    // Frame data for fighting game precision
-    private readonly frameData: FrameData = { ...DEFAULT_FRAME_DATA };
-    
     // Physics configuration
     private readonly physicsConfig: PhysicsConfig = {
         gravity: -980, // pixels/second²
@@ -66,12 +67,10 @@ export class CharacterManager implements ISystem {
         bounceThreshold: 100,
         maxFallSpeed: -600
     };
-    
-    // Sprite sheet cache
-    private readonly spriteSheetCache: Map<string, any> = new Map();
 
     constructor(app: pc.Application) {
         this.app = app;
+        this.factory = new CharacterFactory(app);
     }
 
     public async initialize(): Promise<void> {
@@ -168,225 +167,24 @@ export class CharacterManager implements ISystem {
             return null;
         }
         
-        console.log(`Creating character: ${characterData.name} for ${playerId}`);
+        const character = this.factory.createCharacter(characterData, playerId, position);
         
-        // Create character entity
-        const character = new pc.Entity(`${playerId}_${characterId}`) as CharacterEntity;
-        
-        // Add character components
-        this.addCharacterComponents(character, characterData, playerId);
-        
-        // Setup character graphics with SF3 + HD-2D style
-        this.setupCharacterGraphics(character, characterData, playerId);
-        
-        // Initialize character state
-        this.initializeCharacterState(character, characterData);
-        
-        // Position character
-        character.setPosition(position.x, position.y, position.z);
-        
-        // Add to scene and track
-        this.app.root.addChild(character);
         this.characters.set(character.getGuid(), character);
         this.activeCharacters.set(playerId, character);
         
-        // Setup player-specific configuration
-        this.setupPlayerConfiguration(character, playerId);
+        const stateMachine = new CharacterStateMachine(character, this.characterStates);
+        this.stateMachines.set(character.getGuid(), stateMachine);
         
         return character;
     }
 
-    private addCharacterComponents(character: CharacterEntity, characterData: CharacterData, playerId: string): void {
-        // Add render component for sprite rendering
-        character.addComponent('render', {
-            type: 'plane',
-            castShadows: false,
-            receiveShadows: true
-        });
-        
-        // Add collision component for hitboxes
-        character.addComponent('collision', {
-            type: 'box',
-            halfExtents: new pc.Vec3(0.8, 1.8, 0.1) // Character collision box
-        });
-        
-        // Add rigidbody for physics
-        character.addComponent('rigidbody', {
-            type: 'dynamic',
-            mass: 70,
-            linearDamping: 0.1,
-            angularDamping: 0.9,
-            linearFactor: new pc.Vec3(1, 1, 0), // Lock Z movement
-            angularFactor: new pc.Vec3(0, 0, 0)  // Prevent rotation
-        });
-        
-        // Add script component for character behavior
-        character.addComponent('script');
-    }
-
-    private setupCharacterGraphics(character: CharacterEntity, characterData: CharacterData, playerId: string): void {
-        // Add the SpriteRendererHD2D component to handle rendering
-        character.addComponent('script');
-        const spriteRenderer = character.script.create('spriteRendererHD2D', {
-            attributes: {
-                layerName: 'characters'
-            }
-        });
-
-        // Load the sprite texture and assign it to the renderer
-        // Note: In a real project, asset loading would be more robust.
-        const spriteAsset = this.app.assets.find(characterData.spritePath, 'texture');
-        if (spriteAsset) {
-            spriteRenderer.spriteAsset = spriteAsset.id;
-        } else {
-            console.warn(`Sprite asset not found for: ${characterData.spritePath}`);
-            // You might want to load a placeholder sprite here
-        }
-        
-        // Setup character-specific lighting
-        this.setupCharacterLighting(character, playerId);
-    }
-
-    private setupCharacterLighting(character: CharacterEntity, playerId: string): void {
-        // Player-specific lighting colors
-        const lightColors: Record<string, pc.Color> = {
-            player1: new pc.Color(1.0, 0.9, 0.7), // Warm
-            player2: new pc.Color(0.7, 0.9, 1.0)  // Cool
-        };
-        
-        const lightColor = lightColors[playerId] || new pc.Color(1, 1, 1);
-        
-        // Create character spotlight
-        const characterLight = new pc.Entity(`${playerId}_light`);
-        characterLight.addComponent('light', {
-            type: pc.LIGHTTYPE_SPOT,
-            color: lightColor,
-            intensity: 1.5,
-            range: 8,
-            innerConeAngle: 40,
-            outerConeAngle: 60,
-            castShadows: true
-        });
-        
-        characterLight.setPosition(0, 4, 2);
-        characterLight.lookAt(character.getPosition());
-        character.addChild(characterLight);
-    }
-
-    private initializeCharacterState(character: CharacterEntity, characterData: CharacterData): void {
-        // Initialize character properties
-        character.characterData = characterData;
-        character.playerId = '';
-        character.currentState = 'idle';
-        character.previousState = 'idle';
-        character.stateTimer = 0;
-        character.frameCount = 0;
-        
-        // Health and meter
-        character.health = characterData.health;
-        character.maxHealth = characterData.health;
-        character.meter = 0;
-        character.maxMeter = 100;
-        
-        // Movement properties
-        character.facing = 1; // 1 = right, -1 = left
-        character.velocity = new pc.Vec3();
-        character.grounded = true;
-        
-        // Combat properties
-        character.hitboxes = [];
-        character.hurtboxes = [];
-        character.invulnerable = false;
-        character.comboCount = 0;
-        character.comboDamage = 0;
-        
-        // Animation properties
-        character.currentAnimation = 'idle';
-        character.animationFrame = 0;
-        character.animationTimer = 0;
-        character.animationSpeed = 1.0;
-        
-        console.log(`Character state initialized: ${characterData.name}`);
-    }
-
-    private setupPlayerConfiguration(character: CharacterEntity, playerId: string): void {
-        // Player-specific configurations
-        const playerConfigs: PlayerConfigs = {
-            player1: {
-                startPosition: new pc.Vec3(-3, 0, 0),
-                facing: 1,
-                inputPrefix: 'p1_',
-                uiSide: 'left'
-            },
-            player2: {
-                startPosition: new pc.Vec3(3, 0, 0),
-                facing: -1,
-                inputPrefix: 'p2_',
-                uiSide: 'right'
-            }
-        };
-        
-        const config = playerConfigs[playerId];
-        if (config) {
-            character.setPosition(config.startPosition.x, config.startPosition.y, config.startPosition.z);
-            character.facing = config.facing;
-            character.inputPrefix = config.inputPrefix;
-            character.uiSide = config.uiSide;
-            character.playerId = playerId;
-            
-            // Flip sprite for player 2
-            if (config.facing === -1) {
-                character.setLocalScale(-1, 1, 1);
-            }
-        }
-    }
-
-    private loadCharacterSprite(characterData: CharacterData): pc.Texture | null {
-        // Load character sprite texture
-        const spritePath = `assets/sprites/sf3_third_strike/${characterData.characterId}/idle.png`;
-        
-        // Create placeholder texture for now
-        const device = this.app.graphicsDevice;
-        const texture = new pc.Texture(device, {
-            width: 64,
-            height: 96,
-            format: pc.PIXELFORMAT_R8_G8_B8_A8
-        });
-        
-        return texture;
-    }
-
     // Character state management
     public setCharacterState(character: CharacterEntity, newState: CharacterState, force: boolean = false): boolean {
-        if (!character || !this.characterStates[newState]) return false;
-        
-        const currentStateData = this.characterStates[character.currentState];
-        const newStateData = this.characterStates[newState];
-        
-        // Check if state change is allowed
-        if (!force && newStateData.priority < currentStateData.priority) {
-            return false; // Cannot interrupt higher priority state
+        const stateMachine = this.stateMachines.get(character.getGuid());
+        if (stateMachine) {
+            return stateMachine.setState(newState, force);
         }
-        
-        if (!force && !currentStateData.cancellable) {
-            return false; // Current state cannot be cancelled
-        }
-        
-        // Change state
-        character.previousState = character.currentState;
-        character.currentState = newState;
-        character.stateTimer = 0;
-        
-        // Trigger state change event
-        const event: CharacterStateChangeEvent = {
-            character: character,
-            oldState: character.previousState,
-            newState: newState
-        };
-        this.app.fire('character:statechange', event);
-        
-        console.log(`${character.name || 'Character'} state: ${character.previousState} -> ${newState}`);
-        return true;
+        return false;
     }
 
     public updateCharacterAnimation(character: CharacterEntity, animationName: string, loop: boolean = true): void {
@@ -465,31 +263,43 @@ export class CharacterManager implements ISystem {
     }
 
     // Combat methods
-    public performAttack(character: CharacterEntity, attackType: string): boolean {
+    public performAttack(character: CharacterEntity, attackType: string, isEx: boolean = false): boolean {
         if (!character || character.currentState === 'hitstun' || character.currentState === 'knocked_down') {
             return false;
         }
         
+        const attackData = this.getAttackData(character.characterData, attackType);
+        if (!attackData) return false;
+
+        if (isEx) {
+            if (!attackData.ex) {
+                console.warn(`Attack ${attackType} has no EX version.`);
+                return false;
+            }
+            if (character.meter < (attackData.meterCost || 50)) {
+                console.log('Not enough meter for EX move.');
+                return false;
+            }
+            character.meter -= attackData.meterCost || 50;
+            console.log(`${character.name} performed an EX attack!`);
+        }
+
         this.setCharacterState(character, 'attacking');
         this.updateCharacterAnimation(character, attackType);
         
-        // Get attack data
-        const attackData = this.getAttackData(character.characterData, attackType);
-        if (attackData) {
-            // Create hitbox
-            this.createHitbox(character, attackData);
-            
-            // Store attack data on character
-            character.currentAttackData = attackData;
-            
-            // Trigger attack event
-            const event: CharacterAttackEvent = {
-                character: character,
-                attackType: attackType,
-                attackData: attackData
-            };
-            this.app.fire('character:attack', event);
-        }
+        // Create hitbox
+        this.createHitbox(character, attackData);
+
+        // Store attack data on character
+        character.currentAttackData = attackData;
+
+        // Trigger attack event
+        const event: CharacterAttackEvent = {
+            character: character,
+            attackType: attackType,
+            attackData: attackData
+        };
+        this.app.fire('character:attack', event);
         
         return true;
     }
@@ -635,7 +445,6 @@ export class CharacterManager implements ISystem {
 
     private updateCharacter(character: CharacterEntity, dt: number): void {
         // Update state timer
-        character.stateTimer += dt;
         character.frameCount++;
         
         // Update animation
@@ -645,7 +454,10 @@ export class CharacterManager implements ISystem {
         this.updateCharacterPhysics(character, dt);
         
         // Update state-specific behavior
-        this.updateCharacterStateBehavior(character, dt);
+        const stateMachine = this.stateMachines.get(character.getGuid());
+        if (stateMachine) {
+            stateMachine.update(dt);
+        }
     }
 
     private updateCharacterAnimationFrame(character: CharacterEntity, dt: number): void {
@@ -705,39 +517,6 @@ export class CharacterManager implements ISystem {
         }
     }
 
-    private updateCharacterStateBehavior(character: CharacterEntity, dt: number): void {
-        // State-specific updates
-        switch (character.currentState) {
-            case 'hitstun':
-                // Auto-recovery after hitstun duration
-                if (character.stateTimer > (character.hitstunDuration || 0.2)) {
-                    this.setCharacterState(character, 'idle');
-                    this.updateCharacterAnimation(character, 'idle');
-                }
-                break;
-                
-            case 'blockstun':
-                // Auto-recovery after blockstun duration
-                if (character.stateTimer > (character.blockstunDuration || 0.1)) {
-                    this.setCharacterState(character, 'idle');
-                    this.updateCharacterAnimation(character, 'idle');
-                }
-                break;
-                
-            case 'attacking':
-                // Return to idle after attack recovery
-                const attackData = character.currentAttackData;
-                if (attackData && character.stateTimer > (attackData.recovery / 60)) {
-                    this.setCharacterState(character, 'idle');
-                    this.updateCharacterAnimation(character, 'idle');
-                }
-                break;
-                
-            default:
-                // Handle other states or no special behavior
-                break;
-        }
-    }
 
     private updateAnimationSystem(dt: number): void {
         // Global animation system updates
@@ -747,6 +526,11 @@ export class CharacterManager implements ISystem {
     // Public API
     public getCharacter(playerId: string): CharacterEntity | undefined {
         return this.activeCharacters.get(playerId);
+    }
+
+    public getOpponent(character: CharacterEntity): CharacterEntity | undefined {
+        const opponentPlayerId = character.playerId === 'player1' ? 'player2' : 'player1';
+        return this.activeCharacters.get(opponentPlayerId);
     }
 
     public getCharacterVariations(characterId: string): any[] | undefined {

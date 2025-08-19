@@ -19,24 +19,76 @@ import {
     type MotionInput,
     type CommandInput,
     DEFAULT_INPUT_HISTORY,
-    DEFAULT_INPUT_BUFFER
+    DEFAULT_INPUT_BUFFER,
+    PlayerAction,
+    ControlScheme,
+    InputMapping
 } from '../../../types/input';
 
 export class InputManager implements ISystem {
     private app: pc.Application;
-    private state: InputState;
+    private playerStates: Map<string, InputState>;
     private inputHistory: InputHistory;
     private inputBuffer: InputBuffer;
     private bindings: Map<string, InputBinding>;
+    private controlSchemes: Map<string, ControlScheme>;
+    private playerControlSchemes: Map<string, string>;
     private debug: boolean = false;
 
     constructor(app: pc.Application) {
         this.app = app;
-        this.state = { ...DEFAULT_INPUT_STATE };
+        this.playerStates = new Map();
+        this.playerStates.set('player1', { ...DEFAULT_INPUT_STATE });
+        this.playerStates.set('player2', { ...DEFAULT_INPUT_STATE });
         this.inputHistory = { ...DEFAULT_INPUT_HISTORY };
         this.inputBuffer = { ...DEFAULT_INPUT_BUFFER };
         this.bindings = new Map();
+        this.controlSchemes = new Map();
+        this.playerControlSchemes = new Map();
+        this.setupControlSchemes();
         this.setupEventListeners();
+    }
+
+    private setupControlSchemes(): void {
+        const classicKeyboard: InputMapping = {
+            'KeyW': 'up',
+            'KeyS': 'down',
+            'KeyA': 'left',
+            'KeyD': 'right',
+            'KeyU': 'light_punch',
+            'KeyI': 'medium_punch',
+            'KeyO': 'heavy_punch',
+            'KeyJ': 'light_kick',
+            'KeyK': 'medium_kick',
+            'KeyL': 'heavy_kick',
+        };
+
+        const modernKeyboard: InputMapping = {
+            'KeyW': 'up',
+            'KeyS': 'down',
+            'KeyA': 'left',
+            'KeyD': 'right',
+            'KeyU': 'light_punch',
+            'KeyI': 'medium_punch',
+            'KeyO': 'heavy_punch',
+            'KeyJ': 'special_1',
+            'KeyK': 'special_2',
+            'KeyL': 'special_3',
+        };
+
+        this.controlSchemes.set('classic', {
+            keyboard: classicKeyboard,
+            gamepad: {} // To be implemented
+        });
+
+        this.controlSchemes.set('modern', {
+            keyboard: modernKeyboard,
+            gamepad: {} // To be implemented
+        });
+
+        // Set default scheme for players
+        this.playerControlSchemes.set('player1', 'classic');
+        this.playerControlSchemes.set('player2', 'classic');
     }
 
     private setupEventListeners(): void {
@@ -50,13 +102,43 @@ export class InputManager implements ISystem {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        // Handle key down events
-        console.log(`Key down: ${event.code}`);
+        // For now, assume keyboard is player 1
+        const playerId = 'player1';
+        const schemeName = this.playerControlSchemes.get(playerId);
+        if (!schemeName) return;
+
+        const scheme = this.controlSchemes.get(schemeName);
+        if (!scheme) return;
+
+        const action = scheme.keyboard[event.code];
+        if (action) {
+            const state = this.playerStates.get(playerId);
+            if (state) {
+                state[action] = true;
+            }
+        }
     }
 
     private onKeyUp(event: KeyboardEvent): void {
-        // Handle key up events
-        console.log(`Key up: ${event.code}`);
+        // For now, assume keyboard is player 1
+        const playerId = 'player1';
+        const schemeName = this.playerControlSchemes.get(playerId);
+        if (!schemeName) return;
+
+        const scheme = this.controlSchemes.get(schemeName);
+        if (!scheme) return;
+
+        const action = scheme.keyboard[event.code];
+        if (action) {
+            const state = this.playerStates.get(playerId);
+            if (state) {
+                state[action] = false;
+            }
+        }
+    }
+
+    public getPlayerState(playerId: string): InputState | undefined {
+        return this.playerStates.get(playerId);
     }
 
     private onGamepadConnected(event: GamepadEvent): void {

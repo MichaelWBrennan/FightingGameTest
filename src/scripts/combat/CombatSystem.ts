@@ -26,8 +26,11 @@ export class CombatSystem implements ISystem {
     private hitEffects: Map<string, HitEffect>;
     private debug: boolean = false;
 
-    constructor(app: pc.Application) {
+    private characterManager: any; // Use a more specific type
+
+    constructor(app: pc.Application, characterManager: any) {
         this.app = app;
+        this.characterManager = characterManager;
         this.state = { ...DEFAULT_COMBAT_STATE };
         this.comboData = { ...DEFAULT_COMBO_DATA };
         this.meterData = { ...DEFAULT_METER_DATA };
@@ -41,13 +44,55 @@ export class CombatSystem implements ISystem {
     }
 
     private onCharacterAttack(data: CombatEvent): void {
-        // Handle attack events
-        console.log(`Attack: ${data.character.name} -> ${data.attackType}`);
+        const attacker = data.character;
+        const opponent = this.characterManager.getOpponent(attacker);
+
+        if (opponent && opponent.currentState === 'parrying') {
+            // Parry success
+            this.characterManager.setCharacterState(attacker, 'hitstun', true); // Force attacker into hitstun
+            this.characterManager.setCharacterState(opponent, 'idle', true); // Return parrier to idle
+
+            // Apply frame advantage to parrier (e.g., by setting a timer on the attacker)
+            setTimeout(() => {
+                if (attacker.currentState === 'hitstun') {
+                    this.characterManager.setCharacterState(attacker, 'idle');
+                }
+            }, 200); // 200ms of stun for the attacker
+
+            this.app.fire('combat:parry', { parrier: opponent, attacker: attacker });
+            console.log(`${opponent.name} parried ${attacker.name}'s attack!`);
+        } else {
+            // Handle normal attack logic
+            console.log(`Attack: ${data.character.name} -> ${data.attackType}`);
+
+            // Fire frame data event for training mode
+            if (this.debug) {
+                this.app.fire('debug:framedata', {
+                    moveName: data.attackType,
+                    startup: data.attackData.startup,
+                    active: data.attackData.active,
+                    recovery: data.attackData.recovery,
+                    onBlock: data.attackData.blockAdvantage,
+                    onHit: data.attackData.hitAdvantage,
+                });
+            }
+        }
     }
 
     private onCharacterStateChange(data: any): void {
         // Handle state change events
         console.log(`State change: ${data.character.name} ${data.oldState} -> ${data.newState}`);
+    }
+
+    public parry(character: any): void {
+        if (this.characterManager.setCharacterState(character, 'parrying')) {
+            // Set a timer to end the parry state
+            setTimeout(() => {
+                if (character.currentState === 'parrying') {
+                    this.characterManager.setCharacterState(character, 'idle');
+                }
+            }, 100); // 100ms parry window
+        }
     }
 
     public async initialize(): Promise<void> {
