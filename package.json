@@ -8,6 +8,7 @@
     "dev:client": "cd src/client && bun run dev",
     "dev:backend": "cd src/backend && bun run dev",
     "build": "tsc --build",
+    "postbuild": "mkdir -p public && cp index.html public/index.html",
     "build:client": "cd src/client && bun run build",
     "build:backend": "cd src/backend && bun run build",
     "build:types": "tsc --emitDeclarationOnly",
