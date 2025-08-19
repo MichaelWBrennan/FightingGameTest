@@ -159,6 +159,13 @@ export class RetentionClient extends EventEmitter {
   private sessionHash: string;
   private eventQueue: IRetentionEvent[] = [];
   private offlineQueue: OfflineEventQueue;
+  private eventEndpoints: Record<string, string> = {
+    session_start: '/analytics/events',
+    match_result: '/analytics/events',
+    progression_grant: '/progression/events',
+    store_impression: '/commerce/events',
+    purchase_completed: '/commerce/events',
+  };
   private flushTimer: number | null = null;
   private isOnline: boolean = true;
 
@@ -309,26 +316,39 @@ export class RetentionClient extends EventEmitter {
     const eventsToSend = [...this.eventQueue];
     this.eventQueue = [];
 
-    try {
-      if (this.isOnline) {
-        await this.sendEvents(eventsToSend);
-        this.log(`Successfully sent ${eventsToSend.length} events`);
-        this.emit('events_sent', eventsToSend);
-      } else {
-        // Store offline for later sending
-        eventsToSend.forEach(event => this.offlineQueue.enqueue(event));
-        this.log(`Stored ${eventsToSend.length} events offline`);
+    const eventsByEndpoint: Record<string, IRetentionEvent[]> = {};
+    for (const event of eventsToSend) {
+      const endpoint = this.eventEndpoints[event.event];
+      if (endpoint) {
+        if (!eventsByEndpoint[endpoint]) {
+          eventsByEndpoint[endpoint] = [];
+        }
+        eventsByEndpoint[endpoint].push(event);
       }
-    } catch (error) {
-      this.log('Failed to send events, storing offline:', error);
-      eventsToSend.forEach(event => this.offlineQueue.enqueue(event));
-      this.emit('events_failed', { events: eventsToSend, error });
+    }
+
+    for (const endpoint in eventsByEndpoint) {
+      try {
+        if (this.isOnline) {
+          await this.sendEvents(endpoint, eventsByEndpoint[endpoint]);
+          this.log(`Successfully sent ${eventsByEndpoint[endpoint].length} events to ${endpoint}`);
+          this.emit('events_sent', { endpoint, events: eventsByEndpoint[endpoint] });
+        } else {
+          // Store offline for later sending
+          eventsByEndpoint[endpoint].forEach(event => this.offlineQueue.enqueue(event));
+          this.log(`Stored ${eventsByEndpoint[endpoint].length} events offline for ${endpoint}`);
+        }
+      } catch (error) {
+        this.log(`Failed to send events to ${endpoint}, storing offline:`, error);
+        eventsByEndpoint[endpoint].forEach(event => this.offlineQueue.enqueue(event));
+        this.emit('events_failed', { endpoint, events: eventsByEndpoint[endpoint], error });
+      }
     }
   }
 
-  private async sendEvents(events: IRetentionEvent[], retryCount: number = 0): Promise<void> {
+  private async sendEvents(endpoint: string, events: IRetentionEvent[], retryCount: number = 0): Promise<void> {
     try {
-      const response = await fetch(`${this.config.apiEndpoint}/events`, {
+      const response = await fetch(`${this.config.apiEndpoint}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

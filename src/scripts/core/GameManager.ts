@@ -2,13 +2,15 @@ import { CharacterManager } from '../characters/CharacterManager';
 import { StageLayerManager } from '../components/graphics/StageLayerManager';
 import { RotationService } from '../RotationService';
 import StageManager from './StageManager';
+import { SceneManager } from './SceneManager';
+import { ParticleManager } from './ParticleManager';
 
 /**
  * Core Game Manager for SF3:3S HD-2D Fighting Game
  * Handles main game state, scene management, and system coordination
  */
 
-import { type GameState, type BattleState, type ISystem, type PerformanceStats, type ParticlePool, type ParticleType } from '../../../types/core';
+import { type GameState, type BattleState, type ISystem, type PerformanceStats, type ParticleType } from '../../../types/core';
 
 export class GameManager implements ISystem {
     private readonly app: pc.Application;
@@ -16,6 +18,8 @@ export class GameManager implements ISystem {
     private characterManager!: CharacterManager;
     private stageManager!: StageManager;
     private rotationService!: RotationService;
+    private sceneManager!: SceneManager;
+    private particleManager!: ParticleManager;
     private initialized: boolean = false;
     private gameState: GameState = 'MENU';
     private battleState: BattleState = 'NEUTRAL';
@@ -32,10 +36,6 @@ export class GameManager implements ISystem {
     private frameStep: boolean = false;
     private nextFrame: boolean = false;
     
-    // Scene management
-    private currentScene: pc.Entity | null = null;
-    private readonly scenes: Map<string, pc.Entity> = new Map();
-    
     // System references
     private readonly systems: Map<string, ISystem> = new Map();
     
@@ -43,28 +43,6 @@ export class GameManager implements ISystem {
     private debug: boolean = false;
     private showHitboxes: boolean = false;
     private showFrameData: boolean = false;
-    
-    // Scene entities
-    private mainScene!: pc.Entity;
-    private camera!: pc.Entity;
-    private keyLight!: pc.Entity;
-    private rimLight!: pc.Entity;
-    private accentLight!: pc.Entity;
-    private backgroundContainer!: pc.Entity;
-    private midgroundContainer!: pc.Entity;
-    private backgroundLayers: pc.Entity[] = [];
-    private leftBoundary!: pc.Entity;
-    private rightBoundary!: pc.Entity;
-    private groundBoundary!: pc.Entity;
-    private stageGround!: pc.Entity;
-    private particleContainer!: pc.Entity;
-    private particlePools: ParticlePool = {
-        impact: [],
-        spark: [],
-        dust: [],
-        energy: [],
-        blood: []
-    };
 
     constructor(app: pc.Application) {
         this.app = app;
@@ -76,6 +54,14 @@ export class GameManager implements ISystem {
         
         try {
             // Initialize core systems
+            this.sceneManager = new SceneManager(this.app);
+            this.sceneManager.initialize();
+            this.registerSystem('sceneManager', this.sceneManager);
+
+            this.particleManager = new ParticleManager(this.app);
+            this.particleManager.initialize();
+            this.registerSystem('particleManager', this.particleManager);
+
             this.stageLayerManager = new StageLayerManager(this.app);
             // Note: StageLayerManager is a PlayCanvas script component, so we don't need to initialize it separately
             this.registerSystem('stageLayerManager', this.stageLayerManager);
@@ -95,9 +81,6 @@ export class GameManager implements ISystem {
             
             // Initialize game loop
             this.setupGameLoop();
-
-            // Create default entities like boundaries
-            this.createDefaultEntities();
             
             // Start a new game
             await this.startNewGame();
@@ -181,153 +164,6 @@ export class GameManager implements ISystem {
         this.app.scene.fog = pc.FOG_NONE; // No fog for clarity
         this.app.scene.exposure = 1.0;
         this.app.scene.skyboxIntensity = 0.3;
-    }
-
-    private createDefaultEntities(): void {
-        // Create stage boundaries (invisible collision)
-        this.createStageBoundaries();
-
-        // Create default stage ground
-        this.createStageGround();
-        
-        // Create particle effect pools
-        this.createParticleSystem();
-    }
-
-    private createStageBoundaries(): void {
-        // Left boundary
-        this.leftBoundary = new pc.Entity('LeftBoundary');
-        this.leftBoundary.addComponent('collision', {
-            type: 'box',
-            halfExtents: new pc.Vec3(0.1, 10, 5)
-        });
-        this.leftBoundary.setPosition(-12, 0, 0);
-        this.app.root.addChild(this.leftBoundary);
-        
-        // Right boundary
-        this.rightBoundary = new pc.Entity('RightBoundary');
-        this.rightBoundary.addComponent('collision', {
-            type: 'box',
-            halfExtents: new pc.Vec3(0.1, 10, 5)
-        });
-        this.rightBoundary.setPosition(12, 0, 0);
-        this.app.root.addChild(this.rightBoundary);
-        
-        // Ground
-        this.groundBoundary = new pc.Entity('GroundBoundary');
-        this.groundBoundary.addComponent('collision', {
-            type: 'box',
-            halfExtents: new pc.Vec3(15, 0.1, 5)
-        });
-        this.groundBoundary.setPosition(0, -5, 0);
-        this.app.root.addChild(this.groundBoundary);
-    }
-
-    private createStageGround(): void {
-        // Visible stage ground plane
-        this.stageGround = new pc.Entity('StageGround');
-        this.stageGround.addComponent('render', {
-            type: 'plane'
-        });
-        this.stageGround.setPosition(0, -5, -1);
-        this.stageGround.setLocalScale(30, 1, 10);
-        this.app.root.addChild(this.stageGround);
-    }
-
-    private createParticleSystem(): void {
-        // Particle effect container
-        this.particleContainer = new pc.Entity('ParticleEffects');
-        this.app.root.addChild(this.particleContainer);
-        
-        // Pre-create particle pools for performance
-        this.particlePools = {
-            impact: [],
-            spark: [],
-            dust: [],
-            energy: [],
-            blood: [] // For hit effects
-        };
-        
-        // Create initial particle entities (object pooling)
-        Object.keys(this.particlePools).forEach((type: string) => {
-            const particleType = type as ParticleType;
-            for (let i = 0; i < 50; i++) {
-                const particle = new pc.Entity(`${type}_particle_${i}`);
-                particle.addComponent('render', {
-                    type: 'plane'
-                });
-                particle.enabled = false;
-                this.particleContainer.addChild(particle);
-                this.particlePools[particleType].push(particle);
-            }
-        });
-    }
-
-    private async setupLighting(): Promise<void> {
-        // Key light (main character lighting)
-        this.keyLight = new pc.Entity('KeyLight');
-        this.keyLight.addComponent('light', {
-            type: pc.LIGHTTYPE_DIRECTIONAL,
-            color: new pc.Color(1.0, 0.95, 0.8), // Warm white
-            intensity: 1.2,
-            castShadows: true,
-            shadowBias: 0.0005,
-            shadowDistance: 50,
-            shadowResolution: 2048
-        });
-        this.keyLight.setEulerAngles(45, -30, 0);
-        this.mainScene.addChild(this.keyLight);
-        
-        // Rim light (for character separation and drama)
-        this.rimLight = new pc.Entity('RimLight');
-        this.rimLight.addComponent('light', {
-            type: pc.LIGHTTYPE_DIRECTIONAL,
-            color: new pc.Color(0.6, 0.8, 1.0), // Cool blue
-            intensity: 0.8,
-            castShadows: false
-        });
-        this.rimLight.setEulerAngles(-45, 150, 0);
-        this.mainScene.addChild(this.rimLight);
-        
-        // Dramatic accent light (for special moves)
-        this.accentLight = new pc.Entity('AccentLight');
-        this.accentLight.addComponent('light', {
-            type: pc.LIGHTTYPE_SPOT,
-            color: new pc.Color(1.0, 0.7, 0.3), // Orange accent
-            intensity: 0,
-            range: 20,
-            innerConeAngle: 20,
-            outerConeAngle: 35,
-            castShadows: true
-        });
-        this.accentLight.setPosition(0, 8, 5);
-        this.accentLight.lookAt(0, 0, 0);
-        this.mainScene.addChild(this.accentLight);
-    }
-
-    private createBackgroundLayers(): void {
-        // Background layer container
-        this.backgroundContainer = new pc.Entity('BackgroundLayers');
-        this.backgroundContainer.setPosition(0, 0, -5);
-        this.mainScene.addChild(this.backgroundContainer);
-        
-        // Create multiple depth layers for parallax
-        this.backgroundLayers = [];
-        const layerDepths: readonly number[] = [-20, -15, -10, -7, -5, -3]; // Far to near
-        
-        layerDepths.forEach((depth: number, index: number) => {
-            const layer = new pc.Entity(`BackgroundLayer_${index}`);
-            layer.setPosition(0, 0, depth);
-            this.backgroundContainer.addChild(layer);
-            this.backgroundLayers.push(layer);
-        });
-        
-        // Foreground/midground container for stage elements
-        this.midgroundContainer = new pc.Entity('MidgroundLayers');
-        this.midgroundContainer.setPosition(0, 0, 0);
-        this.mainScene.addChild(this.midgroundContainer);
-        
-        console.log('Background layers created:', this.backgroundLayers.length);
     }
 
     private setupGameLoop(): void {
@@ -450,13 +286,13 @@ export class GameManager implements ISystem {
         // Update dynamic lighting based on battle state
         if (this.battleState === 'SUPER') {
             // Increase dramatic lighting
-            const lightComponent = this.accentLight.light;
+            const lightComponent = this.sceneManager.accentLight.light;
             if (lightComponent) {
                 lightComponent.intensity = Math.sin(this.frameCount * 0.2) * 0.5 + 1.0;
             }
         } else {
             // Fade out accent light
-            const lightComponent = this.accentLight.light;
+            const lightComponent = this.sceneManager.accentLight.light;
             if (lightComponent) {
                 lightComponent.intensity *= 0.95;
             }
@@ -547,22 +383,11 @@ export class GameManager implements ISystem {
 
     // Utility functions
     public getParticle(type: ParticleType): pc.Entity | null {
-        const pool = this.particlePools[type];
-        if (!pool) return null;
-        
-        // Find inactive particle
-        for (const particle of pool) {
-            if (!particle.enabled) {
-                return particle;
-            }
-        }
-        
-        return null; // Pool exhausted
+        return this.particleManager.getParticle(type);
     }
 
     public releaseParticle(particle: pc.Entity): void {
-        particle.enabled = false;
-        particle.setPosition(0, -100, 0); // Move offscreen
+        this.particleManager.releaseParticle(particle);
     }
 
     // Performance monitoring
@@ -575,18 +400,8 @@ export class GameManager implements ISystem {
             triangles: this.app.stats.triangles.total,
             gameState: this.gameState,
             battleState: this.battleState,
-            activeParticles: this.getActiveParticleCount()
+            activeParticles: this.particleManager.getActiveParticleCount()
         };
-    }
-
-    private getActiveParticleCount(): number {
-        let count = 0;
-        Object.values(this.particlePools).forEach((pool: pc.Entity[]) => {
-            pool.forEach((particle: pc.Entity) => {
-                if (particle.enabled) count++;
-            });
-        });
-        return count;
     }
 
     // Cleanup

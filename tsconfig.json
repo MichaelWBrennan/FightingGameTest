@@ -65,15 +65,14 @@
     "node_modules",
     "dist",
     "**/*.js",
-    "src/client/node_modules",
-    "src/backend/node_modules"
+    "src/client/node_modules"
   ],
   "references": [
     {
       "path": "./src/client"
     },
     {
-      "path": "./src/backend"
+      "path": "./src/app"
     }
   ]
 }
