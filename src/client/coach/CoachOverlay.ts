@@ -23,7 +23,11 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
+<<<<<<< HEAD
 import { IGameState } from '../../../types/game';
+=======
+import { IGameState } from '@types/game';
+>>>>>>> main
 
 export interface CoachOverlayConfig {
   gameState: IGameState; // Game state manager interface
