@@ -1,0 +1,14 @@
+IndentWidth: 4
+BreakBeforeBraces: Custom
+NamespaceIndentation: All
+BinPackArguments: false
+SpaceBeforeCpp11BracedList: true
+Cpp11BracedListStyle: false
+BreakTemplateDeclarations: true
+ColumnLimit: 120
+# BracketAlignmentStyle: BlockIndent
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+DerivePointerAlignment: false
+# PointerAlignmentStyle: Left
+InsertNewlineAtEOF: true

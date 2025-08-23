@@ -1,0 +1,9 @@
+splat64[mips]==0.29.0
+tqdm
+watchdog
+levenshtein
+cxxfilt
+dataclasses
+pyelftools
+graphviz
+tabulate
