@@ -10,12 +10,17 @@
 // type s8 = string | null; // Placeholder
 
 export const NULL = 0;
-export const REINTERPRET_AS_U32 = (num: any): number => `/* Manual implementation needed for REINTERPRET_AS_U32 */`;
+export const REINTERPRET_AS_U32 = (num: any): number => {
+    console.warn("REINTERPRET_AS_U32: Manual implementation needed. Attempting a basic type coercion.");
+    // This is a highly speculative conversion. Actual C behavior depends on type and aliasing.
+    // Consider using DataView with ArrayBuffer for precise bit manipulation if needed.
+    return Number(num);
+};
 export const BOOL = (expr: any): number => (expr ? 1 : 0);
 export const SPR = 0x70000000;
 
 export const S32_MAX = 0x7FFFFFFF;
-export const S32_INCREMENT_WRAPAROUND = (val: number): number => (val !== S32_MAX) ? ((val + 1) % 0x80000000) : 0; // Potential wrap-around logic
+export const S32_INCREMENT_WRAPAROUND = (val: number): number => (val + 1) | 0; // Uses bitwise OR to perform 32-bit signed integer addition and wrap-around.
 
 export const ALIGN_UP = (x: number, a: number): number => (((x) + ((a) - 1)) & ~((a) - 1));
 
