@@ -1,0 +1,99 @@
+
+{
+  "light_punch": {
+    "frameData": {
+      "startup": 3,
+      "active": 2,
+      "recovery": 6,
+      "totalFrames": 11
+    },
+    "damage": {
+      "base": 30,
+      "scaling": 1.0,
+      "type": "physical"
+    },
+    "hitbox": {
+      "offset": [50, 0, 0],
+      "size": [40, 30, 20],
+      "activeFrames": [3, 4]
+    },
+    "properties": [],
+    "cancels": ["medium_punch", "heavy_punch", "special_move"],
+    "meter": {
+      "cost": 0,
+      "gain": 5
+    }
+  },
+  "medium_punch": {
+    "frameData": {
+      "startup": 6,
+      "active": 3,
+      "recovery": 9,
+      "totalFrames": 18
+    },
+    "damage": {
+      "base": 60,
+      "scaling": 1.0,
+      "type": "physical"
+    },
+    "hitbox": {
+      "offset": [60, 0, 0],
+      "size": [50, 35, 25],
+      "activeFrames": [6, 7, 8]
+    },
+    "properties": [],
+    "cancels": ["heavy_punch", "special_move"],
+    "meter": {
+      "cost": 0,
+      "gain": 8
+    }
+  },
+  "heavy_punch": {
+    "frameData": {
+      "startup": 12,
+      "active": 4,
+      "recovery": 16,
+      "totalFrames": 32
+    },
+    "damage": {
+      "base": 90,
+      "scaling": 1.0,
+      "type": "physical"
+    },
+    "hitbox": {
+      "offset": [70, 0, 0],
+      "size": [60, 40, 30],
+      "activeFrames": [12, 13, 14, 15]
+    },
+    "properties": ["launcher"],
+    "cancels": ["super_move"],
+    "meter": {
+      "cost": 0,
+      "gain": 12
+    }
+  },
+  "crouching_light_kick": {
+    "frameData": {
+      "startup": 4,
+      "active": 3,
+      "recovery": 7,
+      "totalFrames": 14
+    },
+    "damage": {
+      "base": 25,
+      "scaling": 1.0,
+      "type": "physical"
+    },
+    "hitbox": {
+      "offset": [45, -30, 0],
+      "size": [35, 20, 15],
+      "activeFrames": [4, 5, 6]
+    },
+    "properties": ["low"],
+    "cancels": ["special_move"],
+    "meter": {
+      "cost": 0,
+      "gain": 4
+    }
+  }
+}

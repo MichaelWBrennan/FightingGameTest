@@ -6,17 +6,21 @@
 
 import * as pc from 'playcanvas';
 import { InputManager } from './InputManager';
-import { AssetLoader } from './AssetLoader';
+import { ModernAssetLoader } from './ModernAssetLoader';
 import { SceneManager } from './SceneManager';
-import { ConversionManager } from '../../typescript/ConversionManager';
+import { ECSManager } from './EntitySystem';
+import { ModernCombatSystem } from '../combat/ModernCombatSystem';
+import { GameStateManager } from './StateManager';
 
 export class GameManager extends pc.ScriptType {
   private static instance: GameManager;
   
   private inputManager: InputManager;
-  private assetLoader: AssetLoader;
+  private assetLoader: ModernAssetLoader;
   private sceneManager: SceneManager;
-  private conversionManager: ConversionManager;
+  private ecsManager: ECSManager;
+  private combatSystem: ModernCombatSystem;
+  private stateManager: GameStateManager;
   
   private gameState: 'menu' | 'character_select' | 'battle' | 'training' = 'menu';
   private deltaTime: number = 0;
@@ -30,11 +34,17 @@ export class GameManager extends pc.ScriptType {
     
     GameManager.instance = this;
     
-    // Initialize core systems
+    // Initialize modern core systems
     this.inputManager = new InputManager();
-    this.assetLoader = new AssetLoader();
+    this.assetLoader = new ModernAssetLoader(this.app);
     this.sceneManager = new SceneManager();
-    this.conversionManager = new ConversionManager();
+    this.ecsManager = new ECSManager();
+    this.combatSystem = new ModernCombatSystem();
+    this.stateManager = GameStateManager.getInstance();
+    
+    // Initialize systems
+    this.ecsManager.addSystem(this.combatSystem);
+    await this.assetLoader.initialize();
     
     // Initialize PlayCanvas-specific setup
     this.setupPlayCanvasIntegration();

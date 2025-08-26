@@ -1,0 +1,75 @@
+
+{
+  "hadoken": {
+    "frameData": {
+      "startup": 15,
+      "active": 30,
+      "recovery": 20,
+      "totalFrames": 65
+    },
+    "damage": {
+      "base": 80,
+      "scaling": 0.8,
+      "type": "energy"
+    },
+    "hitbox": {
+      "offset": [100, 0, 0],
+      "size": [30, 25, 15],
+      "activeFrames": [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44]
+    },
+    "properties": ["projectile"],
+    "cancels": [],
+    "meter": {
+      "cost": 25,
+      "gain": 0
+    }
+  },
+  "shoryuken": {
+    "frameData": {
+      "startup": 3,
+      "active": 8,
+      "recovery": 25,
+      "totalFrames": 36
+    },
+    "damage": {
+      "base": 120,
+      "scaling": 0.9,
+      "type": "physical"
+    },
+    "hitbox": {
+      "offset": [40, 20, 0],
+      "size": [45, 60, 30],
+      "activeFrames": [3, 4, 5, 6, 7, 8, 9, 10]
+    },
+    "properties": ["invulnerable", "launcher"],
+    "cancels": ["super_move"],
+    "meter": {
+      "cost": 25,
+      "gain": 0
+    }
+  },
+  "tatsumaki": {
+    "frameData": {
+      "startup": 8,
+      "active": 15,
+      "recovery": 12,
+      "totalFrames": 35
+    },
+    "damage": {
+      "base": 70,
+      "scaling": 0.7,
+      "type": "physical"
+    },
+    "hitbox": {
+      "offset": [50, 0, 0],
+      "size": [40, 35, 25],
+      "activeFrames": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+    },
+    "properties": ["overhead"],
+    "cancels": [],
+    "meter": {
+      "cost": 25,
+      "gain": 0
+    }
+  }
+}
