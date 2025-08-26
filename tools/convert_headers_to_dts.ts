@@ -55,11 +55,10 @@ class HeaderToTSConverter {
 
       fs.writeFileSync(dtsPath, tsDefinition);
 
-      // Remove original .h file
-      fs.unlinkSync(headerPath);
-
+      // Keep original .h file (not deleting)
+      
       this.processedFiles++;
-      console.log(`✓ ${headerPath} -> ${dtsPath}`);
+      console.log(`✓ ${headerPath} -> ${dtsPath} (original preserved)`);
     } catch (error) {
       console.error(`✗ Failed to convert ${headerPath}:`, error);
     }
