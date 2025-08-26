@@ -89,6 +89,39 @@ export interface Vec3 {
     dot(rhs: Vec3): number;
     cross(rhs: Vec3): Vec3;
 }
+export interface Character {
+    id: string;
+    name: string;
+    health: number;
+    maxHealth: number;
+    position: Vec3;
+    facing: number;
+    currentState: string;
+    entity: Entity;
+}
+export interface AttackData {
+    damage: number;
+    startup: number;
+    active: number;
+    recovery: number;
+    hitAdvantage: number;
+    blockAdvantage: number;
+    properties?: string[];
+}
+export type CombatState = 'neutral' | 'attacking' | 'defending' | 'hitstun' | 'blockstun' | 'special_move';
+export type Direction = 'neutral' | 'up' | 'down' | 'left' | 'right' | 'forward' | 'back' | 'upForward' | 'upBack' | 'downForward' | 'downBack';
+export interface PlayerInputMappings {
+    up: string;
+    down: string;
+    left: string;
+    right: string;
+    lightPunch: string;
+    mediumPunch: string;
+    heavyPunch: string;
+    lightKick: string;
+    mediumKick: string;
+    heavyKick: string;
+}
 export interface Color {
     r: number;
     g: number;

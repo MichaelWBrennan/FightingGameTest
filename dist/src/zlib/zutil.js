@@ -56,4 +56,22 @@ export function zcalloc(_opaque, items, size) {
 export function zcfree(_opaque, _ptr) {
     // JavaScript garbage collection handles this
 }
+export function copyArray(dest, destStart, source, sourceStart, length) {
+    if (!dest || !source)
+        return;
+    for (let i = 0; i < length && i + destStart < dest.length && i + sourceStart < source.length; i++) {
+        dest[i + destStart] = source[i + sourceStart];
+    }
+}
+export function compareStrings(s1, s2) {
+    const len = Math.min(s1.length, s2.length);
+    for (let j = 0; j < len; j++) {
+        const c1 = s1[j];
+        const c2 = s2[j];
+        if (c1 !== undefined && c2 !== undefined && c1 !== c2) {
+            return c1 > c2 ? 1 : -1;
+        }
+    }
+    return s1.length - s2.length;
+}
 //# sourceMappingURL=zutil.js.map
