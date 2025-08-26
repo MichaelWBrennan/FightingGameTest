@@ -1,9 +1,8 @@
-
 /**
  * Character system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import { type pc } from './core.js';
+import type * as pc from 'playcanvas';
 
 // Character Archetype Types
 export type CharacterArchetype = 'shoto' | 'rushdown' | 'grappler' | 'zoner' | 'technical';
@@ -22,17 +21,17 @@ export interface ArchetypeTemplate {
 export type ArchetypeTemplates = Record<CharacterArchetype, ArchetypeTemplate>;
 
 // Character State Types
-export type CharacterState = 
-  | 'idle' 
-  | 'walking' 
-  | 'crouching' 
-  | 'jumping' 
-  | 'attacking' 
-  | 'blocking' 
-  | 'hitstun' 
-  | 'blockstun' 
-  | 'knocked_down' 
-  | 'special_move' 
+export type CharacterState =
+  | 'idle'
+  | 'walking'
+  | 'crouching'
+  | 'jumping'
+  | 'attacking'
+  | 'blocking'
+  | 'hitstun'
+  | 'blockstun'
+  | 'knocked_down'
+  | 'special_move'
   | 'super_move'
   | 'parrying';
 
@@ -133,31 +132,31 @@ export interface CharacterData {
   name: string;
   archetype: CharacterArchetype;
   spritePath: string;
-  
+
   // Base stats
   health: number;
   walkSpeed: number;
   dashSpeed: number;
   jumpHeight: number;
-  
+
   // Gameplay properties
   complexity: string;
   strengths: string[];
   weaknesses: string[];
   uniqueMechanics: string[];
-  
+
   // Move lists
   moves?: Record<string, AttackData>;
   specialMoves?: Record<string, AttackData>;
   superMoves?: Record<string, AttackData>;
-  
+
   // Animation data
   animations?: Record<string, AnimationData>;
-  
+
   // Visual data
   spriteSheets?: Record<string, string>;
   portraits?: Record<string, string>;
-  
+
   // Audio data
   voiceLines?: Record<string, string>;
   sfx?: Record<string, string>;
@@ -168,24 +167,24 @@ export interface CharacterEntity extends pc.Entity {
   // Character identification
   characterData: CharacterData;
   playerId: string;
-  
+
   // State management
   currentState: CharacterState;
   previousState: CharacterState;
   stateTimer: number;
   frameCount: number;
-  
+
   // Health and meter
   health: number;
   maxHealth: number;
   meter: number;
   maxMeter: number;
-  
+
   // Movement properties
   facing: number; // 1 = right, -1 = left
   velocity: pc.Vec3;
   grounded: boolean;
-  
+
   // Combat properties
   hitboxes: pc.Entity[];
   hurtboxes: pc.Entity[];
@@ -195,7 +194,7 @@ export interface CharacterEntity extends pc.Entity {
   hitstunDuration?: number;
   blockstunDuration?: number;
   currentAttackData?: AttackData;
-  
+
   // Animation properties
   currentAnimation: string;
   animationFrame: number;
@@ -204,7 +203,7 @@ export interface CharacterEntity extends pc.Entity {
   animationFrameCount?: number;
   animationDuration?: number;
   animationLoop?: boolean;
-  
+
   // Player-specific configuration
   inputPrefix?: string;
   uiSide?: 'left' | 'right';
@@ -290,7 +289,7 @@ export type PlayerId = 'player1' | 'player2';
 export function isValidCharacterState(state: string): state is CharacterState {
   const validStates: CharacterState[] = [
     'idle', 'walking', 'crouching', 'jumping', 'attacking', 'blocking',
-    'hitstun', 'blockstun', 'knocked_down', 'special_move', 'super_move'
+    'hitstun', 'blockstun', 'knocked_down', 'special_move', 'super_move', 'parrying'
   ];
   return validStates.includes(state as CharacterState);
 }

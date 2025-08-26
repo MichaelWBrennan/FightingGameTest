@@ -165,7 +165,7 @@ export class VariationOverlay {
           // Add all entries in this section
           for (const [key, value] of Object.entries(data)) {
             const fullPath = `${section}.${key}`;
-            
+
             if (this.hasPath(target, fullPath)) {
               diff.warnings.push(`Add target already exists, overwriting: ${fullPath}`);
             }
@@ -298,11 +298,11 @@ export class VariationOverlay {
       if ('add' in modification) {
         result += modification.add;
       }
-      
+
       if ('multiply' in modification) {
         result *= modification.multiply;
       }
-      
+
       if ('set' in modification) {
         result = modification.set;
       }
@@ -311,7 +311,7 @@ export class VariationOverlay {
       if ('min' in modification && result < modification.min) {
         result = modification.min;
       }
-      
+
       if ('max' in modification && result > modification.max) {
         result = modification.max;
       }
@@ -422,7 +422,7 @@ export class VariationOverlay {
       this.applyRemoves(testResult, variation.removes, diff);
       this.applyMods(testResult, variation.mods, diff);
       this.applyAdds(testResult, variation.adds, diff);
-      
+
     } catch (error) {
       diff.errors.push(error.message);
     }

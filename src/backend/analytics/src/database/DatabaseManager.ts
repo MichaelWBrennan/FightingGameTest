@@ -23,4 +23,10 @@ export class DatabaseManager {
   public async close(): Promise<void> {
     // Placeholder
   }
+
+  async query(sql: string, params?: any[]): Promise<any[]> {
+    // Placeholder implementation - replace with actual database client
+    console.log('Database query:', sql, params);
+    return [];
+  }
 }

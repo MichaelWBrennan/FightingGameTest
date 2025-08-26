@@ -67,7 +67,7 @@ export class ProgressionEngine {
       try {
         // Get current mastery state
         const currentState = await this.getMasteryState(request.userId, request.trackType, request.trackId);
-        
+
         // Calculate new XP and level
         const newXP = currentState.xp + adjustedAmount;
         const newTotalXP = currentState.totalXp + adjustedAmount;
@@ -177,7 +177,7 @@ export class ProgressionEngine {
   }> {
     try {
       const currentState = await this.getMasteryState(userId, trackType, trackId);
-      
+
       // Check if prestige is available
       const prestigeThreshold = this.getPrestigeThreshold(trackType);
       if (currentState.level < prestigeThreshold) {
@@ -407,7 +407,7 @@ export class ProgressionEngine {
 
     for (let level = fromLevel; level <= toLevel; level++) {
       const levelRewards = await this.getLevelRewards(trackType, trackId, level);
-      
+
       for (const reward of levelRewards) {
         await this.grantReward(userId, reward);
         rewards.push({
@@ -464,7 +464,7 @@ export class ProgressionEngine {
     const sampleRewards = [
       { id: `${trackType}_level_${level}`, type: 'cosmetic', name: `Level ${level} Reward`, rarity: 'common' }
     ];
-    
+
     return level % 5 === 0 ? sampleRewards : []; // Rewards every 5 levels
   }
 

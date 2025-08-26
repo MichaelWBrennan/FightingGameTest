@@ -1,5 +1,4 @@
-
-import { pc } from './core.js';
+import type * as pc from 'playcanvas';
 
 /**
  * Graphics system type definitions for SF3:3S HD-2D Fighting Game
@@ -342,3 +341,26 @@ export const DEFAULT_HD2D_SETTINGS: HD2DRenderSettings = {
   targetResolution: { width: 320, height: 240 },
   pixelScale: 4
 } as const;
+
+export interface GraphicsState {
+  renderLayers: RenderLayer[];
+  camera: Camera;
+  lighting: any;
+}
+
+export interface RenderLayer {
+  id: string;
+  sprites: Sprite[];
+  visible: boolean;
+}
+
+export interface Sprite {
+  id: string;
+  texture: pc.Texture;
+  position: pc.Vec3;
+}
+
+export interface Camera {
+  position: pc.Vec3;
+  target: pc.Vec3;
+}

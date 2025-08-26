@@ -4,9 +4,9 @@ import { Logger } from './core/Logger';
 const app = express();
 const port = 3000;
 
-app.get('/', (req: Request, res: Response) => {
-  Logger.log('Request received');
-  res.send('Hello, TypeScript!');
+app.get('/', (_req: Request, res: Response) => {
+  Logger.log('Health check endpoint called');
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.listen(port, () => {

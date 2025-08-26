@@ -1,4 +1,3 @@
-
 /**
  * Combat system type definitions for SF3:3S HD-2D Fighting Game
  */
@@ -47,38 +46,38 @@ export interface CombatSystemConfig {
 // Player Combat Data
 export interface PlayerCombatData {
   character: Character | null;
-  
+
   // State tracking
   state: CombatState;
   stateTimer: number;
-  
+
   // Attack data
   activeAttack: SpecialMoveData | null;
   attackStartFrame: number;
   attackRecovery: number;
-  
+
   // Defense data
   blocking: boolean;
   parryWindow: number;
   parryRecovery: number;
   lastParryFrame: number;
-  
+
   // Combo tracking
   comboCount: number;
   comboDamage: number;
   comboStartFrame: number;
   comboDecayTimer?: number;
-  
+
   // Meter and resources
   meter: number;
   maxMeter: number;
   tension: number;
-  
+
   // Status effects
   stunned: boolean;
   dizzy: boolean;
   invulnerable: boolean;
-  
+
   // Frame data
   hitstun: number;
   blockstun: number;
@@ -371,3 +370,65 @@ export const DEFAULT_COMBAT_CONFIG: CombatSystemConfig = {
 
 // Utility type for read-only combat config
 export type ReadonlyCombatConfig = Readonly<CombatSystemConfig>;
+
+export interface CharacterState {
+  position: pc.Vec3;
+  velocity: pc.Vec3;
+  health: number;
+  maxHealth: number;
+  state: string;
+  isGrounded: boolean;
+  onPlatform: boolean;
+  facing: number;
+  animation: string;
+}
+
+export interface HitData {
+  damage: number;
+  stunTime: number;
+  knockback: pc.Vec3;
+}
+
+export interface MeterData {
+  super: number;
+  ex: number;
+  maxSuper: number;
+  maxEx: number;
+}
+
+export interface CombatEvent {
+  type: string;
+  timestamp: number;
+  data: any;
+}
+
+export interface HitEffect {
+  type: string;
+  position: pc.Vec3;
+  duration: number;
+}
+
+export interface BlockData {
+  canBlock: boolean;
+  blockType: 'high' | 'low' | 'air';
+}
+
+export const DEFAULT_COMBAT_STATE: CombatState = {
+  player1: {} as CharacterState,
+  player2: {} as CharacterState,
+  round: 1,
+  timer: 99
+};
+
+export const DEFAULT_COMBO_DATA = {
+  hits: 0,
+  damage: 0,
+  scaling: 1.0
+};
+
+export const DEFAULT_METER_DATA: MeterData = {
+  super: 0,
+  ex: 0,
+  maxSuper: 100,
+  maxEx: 100
+};

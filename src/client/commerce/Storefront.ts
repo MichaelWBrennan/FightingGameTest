@@ -183,7 +183,7 @@ export class Storefront extends EventEmitter {
       const catalogData = await response.json();
       this.processCatalogData(catalogData);
       this.emit('catalog_loaded', { itemCount: this.catalog.size, bundleCount: this.bundles.size });
-      
+
     } catch (error) {
       this.log('Failed to load catalog:', error);
       this.emit('catalog_error', error);
@@ -368,10 +368,10 @@ export class Storefront extends EventEmitter {
       if (response.ok && result.success) {
         // Track successful purchase
         this.trackPurchaseSuccess(result);
-        
+
         // Update item ownership
         this.updateItemOwnership(itemId);
-        
+
         this.emit('purchase_completed', result);
         return result;
       } else {
@@ -548,7 +548,7 @@ export class Storefront extends EventEmitter {
 
   private isItemPurchasable(item: any): boolean {
     const now = Date.now() / 1000;
-    
+
     // Check if item is still available
     if (!item.availability.permanent) {
       if (item.availability.endTime && now > item.availability.endTime) {
@@ -599,7 +599,7 @@ export class Storefront extends EventEmitter {
     if (!result.receipt) return;
 
     const isFirstPurchase = this.isFirstPurchase();
-    
+
     this.config.retentionClient.trackPurchase({
       transactionId: result.transactionId!,
       totalAmount: result.receipt.totalAmount,
@@ -644,10 +644,10 @@ export class Storefront extends EventEmitter {
   private getItemType(itemId: string): 'skin' | 'title' | 'banner' | 'announcer' | 'vfx_palette' | 'bundle' | 'stage_variant' {
     const item = this.catalog.get(itemId);
     if (item) return item.type;
-    
+
     const bundle = this.bundles.get(itemId);
     if (bundle) return 'bundle';
-    
+
     return 'skin'; // Default fallback
   }
 

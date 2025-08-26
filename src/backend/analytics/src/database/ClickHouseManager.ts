@@ -23,4 +23,10 @@ export class ClickHouseManager {
   public async close(): Promise<void> {
     // Placeholder
   }
+
+  async query(sql: string, params?: any[]): Promise<any[]> {
+    // Placeholder implementation - replace with actual ClickHouse client
+    console.log('ClickHouse query:', sql, params);
+    return [];
+  }
 }

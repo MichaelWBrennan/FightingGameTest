@@ -109,26 +109,26 @@ export interface AttackData {
     properties?: string[];
 }
 
-export type CombatState = 
-    | 'neutral' 
-    | 'attacking' 
-    | 'defending' 
-    | 'hitstun' 
-    | 'blockstun' 
+export type CombatState =
+    | 'neutral'
+    | 'attacking'
+    | 'defending'
+    | 'hitstun'
+    | 'blockstun'
     | 'special_move';
 
 // Input Types
-export type Direction = 
-    | 'neutral' 
-    | 'up' 
-    | 'down' 
-    | 'left' 
-    | 'right' 
-    | 'forward' 
+export type Direction =
+    | 'neutral'
+    | 'up'
+    | 'down'
+    | 'left'
+    | 'right'
+    | 'forward'
     | 'back'
-    | 'upForward' 
-    | 'upBack' 
-    | 'downForward' 
+    | 'upForward'
+    | 'upBack'
+    | 'downForward'
     | 'downBack';
 
 export interface PlayerInputMappings {
@@ -173,6 +173,38 @@ export interface pc {
   x: number;
   y: number;
   z: number;
+}
+
+export interface ISystem {
+  initialize(): Promise<void>;
+  update(deltaTime: number): void;
+  destroy(): void;
+}
+
+export interface GameState {
+  players: { [playerId: string]: PlayerState };
+  round: number;
+  timer: number;
+  paused: boolean;
+}
+
+export interface TaskFunction {
+  (): void;
+}
+
+export interface GameMode {
+  name: string;
+  description: string;
+}
+
+export interface ParticlePool {
+  active: pc.Entity[];
+  inactive: pc.Entity[];
+}
+
+export interface ParticleType {
+  name: string;
+  template: pc.Entity;
 }
 
 declare global {

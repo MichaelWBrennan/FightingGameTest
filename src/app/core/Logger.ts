@@ -12,16 +12,20 @@ export class Logger {
     return Logger.instance;
   }
 
-  public info(message: string, ...args: any[]): void {
-    console.log(message, ...args);
+  static log(message: string, ...args: any[]): void {
+    console.log(`[${new Date().toISOString()}]`, message, ...args);
   }
 
-  public warn(message: string, ...args: any[]): void {
-    console.warn(message, ...args);
+  static info(message: string, ...args: any[]): void {
+    console.info(`[${new Date().toISOString()}] INFO:`, message, ...args);
   }
 
-  public error(message: string, ...args: any[]): void {
-    console.error(message, ...args);
+  static warn(message: string, ...args: any[]): void {
+    console.warn(`[${new Date().toISOString()}] WARN:`, message, ...args);
+  }
+
+  static error(message: string, ...args: any[]): void {
+    console.error(`[${new Date().toISOString()}] ERROR:`, message, ...args);
   }
 
   public debug(message: string, ...args: any[]): void {

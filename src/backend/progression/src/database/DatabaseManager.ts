@@ -90,7 +90,7 @@ export class DatabaseManager {
   async checkHealth(): Promise<boolean> {
     try {
       if (!this.pool) return false;
-      
+
       const client = await this.pool.connect();
       await client.query('SELECT 1');
       client.release();

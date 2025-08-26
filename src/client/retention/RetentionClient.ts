@@ -1,19 +1,19 @@
 /**
  * PlayCanvas RetentionClient SDK
- * 
- * Drop-in SDK for tracking session starts/ends, objectives, mastery XP, 
+ *
+ * Drop-in SDK for tracking session starts/ends, objectives, mastery XP,
  * store impressions, and purchases. All operations are non-blocking and fail-safe.
- * 
+ *
  * Usage:
  * const retention = new RetentionClient({
  *   apiEndpoint: 'https://api.yourgame.com',
  *   userId: 'u_123',
  *   apiKey: 'your-api-key'
  * });
- * 
+ *
  * retention.startSession();
  * retention.trackMatchResult({ ... });
- * 
+ *
  * How to extend:
  * - Add new event types by implementing IRetentionEvent interface
  * - Override event validation in validateEvent() method
@@ -108,6 +108,13 @@ export interface PurchaseCompletedEvent extends IRetentionEvent {
   firstPurchase?: boolean;
 }
 
+// ClubEvent interface was missing, adding a placeholder based on usage
+export interface ClubEvent extends IRetentionEvent {
+  event: 'club_event';
+  clubId: string;
+  action: string;
+}
+
 class OfflineEventQueue {
   private storageKey: string;
   private maxSize: number = 1000;
@@ -120,12 +127,12 @@ class OfflineEventQueue {
     try {
       const queue = this.getQueue();
       queue.push(event);
-      
+
       // Trim queue if too large
       if (queue.length > this.maxSize) {
         queue.splice(0, queue.length - this.maxSize);
       }
-      
+
       localStorage.setItem(this.storageKey, JSON.stringify(queue));
     } catch (error) {
       // Fail silently if localStorage is unavailable
@@ -172,7 +179,7 @@ export class RetentionClient extends EventEmitter {
 
   constructor(config: RetentionConfig) {
     super();
-    
+
     this.config = {
       batchSize: 10,
       flushIntervalMs: 30000, // 30 seconds
@@ -184,7 +191,7 @@ export class RetentionClient extends EventEmitter {
 
     this.sessionHash = `s_${uuidv4().replace(/-/g, '')}`;
     this.offlineQueue = new OfflineEventQueue(this.config.offlineStorageKey);
-    
+
     this.setupNetworkMonitoring();
     this.setupFlushTimer();
     this.processOfflineEvents();
@@ -217,7 +224,7 @@ export class RetentionClient extends EventEmitter {
   public trackMatchResult(matchData: Omit<MatchResultEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
     const event: MatchResultEvent = {
       event: 'match_result',
-      v: '1.0', 
+      v: '1.0',
       ts: Math.floor(Date.now() / 1000),
       userId: this.config.userId,
       sessionHash: this.sessionHash,
@@ -230,14 +237,15 @@ export class RetentionClient extends EventEmitter {
   /**
    * Track club-related events
    */
-  public trackClubEvent(clubData: Omit<ClubEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
+  public trackClubEvent(action: string, clubId?: string): void {
     const event: ClubEvent = {
       event: 'club_event',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
       userId: this.config.userId,
       sessionHash: this.sessionHash,
-      ...clubData
+      clubId: clubId || 'unknown',
+      action: action
     };
 
     this.trackEvent(event);
@@ -246,14 +254,17 @@ export class RetentionClient extends EventEmitter {
   /**
    * Track progression grants (XP, unlocks, etc.)
    */
-  public trackProgression(progressionData: Omit<ProgressionGrantEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
+  public trackProgression(grantType: ProgressionGrantEvent['grantType'], amount: number, reason: ProgressionGrantEvent['reason'], additionalData?: Omit<ProgressionGrantEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash' | 'grantType' | 'amount' | 'reason'>): void {
     const event: ProgressionGrantEvent = {
       event: 'progression_grant',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
       userId: this.config.userId,
       sessionHash: this.sessionHash,
-      ...progressionData
+      grantType: grantType,
+      amount: amount,
+      reason: reason,
+      ...additionalData
     };
 
     this.trackEvent(event);
@@ -262,14 +273,15 @@ export class RetentionClient extends EventEmitter {
   /**
    * Track store impressions
    */
-  public trackStoreImpression(storeData: Omit<StoreImpressionEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
+  public trackStoreImpression(section: StoreImpressionEvent['storeSection'], additionalData?: Omit<StoreImpressionEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash' | 'storeSection'>): void {
     const event: StoreImpressionEvent = {
       event: 'store_impression',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
       userId: this.config.userId,
       sessionHash: this.sessionHash,
-      ...storeData
+      storeSection: section,
+      ...additionalData
     };
 
     this.trackEvent(event);
@@ -278,14 +290,18 @@ export class RetentionClient extends EventEmitter {
   /**
    * Track completed purchases
    */
-  public trackPurchase(purchaseData: Omit<PurchaseCompletedEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void {
+  public trackPurchase(transactionId: string, totalAmount: number, currency: string, items: PurchaseCompletedEvent['items'], additionalData?: Omit<PurchaseCompletedEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash' | 'transactionId' | 'totalAmount' | 'currency' | 'items'>): void {
     const event: PurchaseCompletedEvent = {
       event: 'purchase_completed',
       v: '1.0',
       ts: Math.floor(Date.now() / 1000),
       userId: this.config.userId,
       sessionHash: this.sessionHash,
-      ...purchaseData
+      transactionId: transactionId,
+      totalAmount: totalAmount,
+      currency: currency,
+      items: items,
+      ...additionalData
     };
 
     this.trackEvent(event);
@@ -306,7 +322,7 @@ export class RetentionClient extends EventEmitter {
       clearInterval(this.flushTimer);
       this.flushTimer = null;
     }
-    
+
     return this.flushEvents();
   }
 
@@ -454,7 +470,7 @@ export class RetentionClient extends EventEmitter {
 
   private detectPlatform(): 'web' | 'mobile' | 'desktop' {
     if (typeof window === 'undefined') return 'desktop';
-    
+
     const userAgent = navigator.userAgent.toLowerCase();
     if (/mobile|android|iphone|ipad/.test(userAgent)) {
       return 'mobile';
@@ -479,7 +495,7 @@ export class RetentionClient extends EventEmitter {
     try {
       const lastSession = localStorage.getItem('retention_last_session');
       if (!lastSession) return 0;
-      
+
       const lastTime = parseInt(lastSession);
       const daysDiff = Math.floor((Date.now() - lastTime) / (1000 * 60 * 60 * 24));
       return Math.max(0, daysDiff);
