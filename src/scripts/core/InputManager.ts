@@ -1,168 +1,99 @@
-/**
- * InputManager - Fighting game input handling
- * Supports multiple input methods and fighting game notation
- */
 
 import * as pc from 'playcanvas';
-import {
-    type ISystem,
-    type InputState,
-    type PlayerInput,
-    type InputBinding,
-    type InputEvent,
-    DEFAULT_INPUT_STATE
-} from '../../../types/core';
-import {
-    type FightingInput,
-    type InputHistory,
-    type InputBuffer,
-    type MotionInput,
-    type CommandInput,
-    DEFAULT_INPUT_HISTORY,
-    DEFAULT_INPUT_BUFFER,
-    PlayerAction,
-    ControlScheme,
-    InputMapping
-} from '../../../types/input';
 
-export class InputManager implements ISystem {
-    private app: pc.Application;
-    private playerStates: Map<string, InputState>;
-    private inputHistory: InputHistory;
-    private inputBuffer: InputBuffer;
-    private bindings: Map<string, InputBinding>;
-    private controlSchemes: Map<string, ControlScheme>;
-    private playerControlSchemes: Map<string, string>;
-    private debug: boolean = false;
+const InputManager = pc.createScript('InputManager');
 
-    constructor(app: pc.Application) {
-        this.app = app;
-        this.playerStates = new Map();
-        this.playerStates.set('player1', { ...DEFAULT_INPUT_STATE });
-        this.playerStates.set('player2', { ...DEFAULT_INPUT_STATE });
-        this.inputHistory = { ...DEFAULT_INPUT_HISTORY };
-        this.inputBuffer = { ...DEFAULT_INPUT_BUFFER };
-        this.bindings = new Map();
-        this.controlSchemes = new Map();
-        this.playerControlSchemes = new Map();
-        this.setupControlSchemes();
-        this.setupEventListeners();
+InputManager.prototype.initialize = function() {
+    this.inputState = {
+        buttons: new Map(),
+        directions: { current: 'neutral', previous: 'neutral' },
+        justPressed: new Set(),
+        justReleased: new Set()
+    };
+
+    this.playerMappings = new Map([
+        ['player1', {
+            up: pc.KEY_W,
+            down: pc.KEY_S,
+            left: pc.KEY_A,
+            right: pc.KEY_D,
+            punch: pc.KEY_J,
+            kick: pc.KEY_K,
+            heavy: pc.KEY_L
+        }],
+        ['player2', {
+            up: pc.KEY_UP,
+            down: pc.KEY_DOWN,
+            left: pc.KEY_LEFT,
+            right: pc.KEY_RIGHT,
+            punch: pc.KEY_NUMPAD_1,
+            kick: pc.KEY_NUMPAD_2,
+            heavy: pc.KEY_NUMPAD_3
+        }]
+    ]);
+
+    // Bind to PlayCanvas input events
+    this.app.keyboard.on('keydown', this.onKeyDown, this);
+    this.app.keyboard.on('keyup', this.onKeyUp, this);
+    
+    // Enable gamepad support
+    if (this.app.gamepads) {
+        this.app.gamepads.on('connect', this.onGamepadConnect, this);
+        this.app.gamepads.on('disconnect', this.onGamepadDisconnect, this);
     }
+};
 
-    private setupControlSchemes(): void {
-        const classicKeyboard: InputMapping = {
-            'KeyW': 'up',
-            'KeyS': 'down',
-            'KeyA': 'left',
-            'KeyD': 'right',
-            'KeyU': 'light_punch',
-            'KeyI': 'medium_punch',
-            'KeyO': 'heavy_punch',
-            'KeyJ': 'light_kick',
-            'KeyK': 'medium_kick',
-            'KeyL': 'heavy_kick',
-        };
+InputManager.prototype.update = function(dt) {
+    // Clear frame-specific input states
+    this.inputState.justPressed.clear();
+    this.inputState.justReleased.clear();
+    
+    // Update direction state
+    this.updateDirection();
+    
+    // Handle gamepad input
+    this.handleGamepadInput();
+};
 
-        const modernKeyboard: InputMapping = {
-            'KeyW': 'up',
-            'KeyS': 'down',
-            'KeyA': 'left',
-            'KeyD': 'right',
-            'KeyU': 'light_punch',
-            'KeyI': 'medium_punch',
-            'KeyO': 'heavy_punch',
-            'KeyJ': 'special_1',
-            'KeyK': 'special_2',
-            'KeyL': 'special_3',
-        };
-
-        this.controlSchemes.set('classic', {
-            keyboard: classicKeyboard,
-            gamepad: {} // To be implemented
-        });
-
-        this.controlSchemes.set('modern', {
-            keyboard: modernKeyboard,
-            gamepad: {} // To be implemented
-        });
-
-        // Set default scheme for players
-        this.playerControlSchemes.set('player1', 'classic');
-        this.playerControlSchemes.set('player2', 'classic');
+InputManager.prototype.onKeyDown = function(event) {
+    const buttonName = this.getButtonName(event.key);
+    if (buttonName) {
+        if (!this.inputState.buttons.get(buttonName)) {
+            this.inputState.justPressed.add(buttonName);
+        }
+        this.inputState.buttons.set(buttonName, true);
     }
+};
 
-    private setupEventListeners(): void {
-        // Setup keyboard input listeners
-        window.addEventListener('keydown', this.onKeyDown.bind(this));
-        window.addEventListener('keyup', this.onKeyUp.bind(this));
-        
-        // Setup gamepad input listeners
-        window.addEventListener('gamepadconnected', this.onGamepadConnected.bind(this));
-        window.addEventListener('gamepaddisconnected', this.onGamepadDisconnected.bind(this));
+InputManager.prototype.onKeyUp = function(event) {
+    const buttonName = this.getButtonName(event.key);
+    if (buttonName) {
+        this.inputState.buttons.set(buttonName, false);
+        this.inputState.justReleased.add(buttonName);
     }
+};
 
-    private onKeyDown(event: KeyboardEvent): void {
-        // For now, assume keyboard is player 1
-        const playerId = 'player1';
-        const schemeName = this.playerControlSchemes.get(playerId);
-        if (!schemeName) return;
-
-        const scheme = this.controlSchemes.get(schemeName);
-        if (!scheme) return;
-
-        const action = scheme.keyboard[event.code];
-        if (action) {
-            const state = this.playerStates.get(playerId);
-            if (state) {
-                state[action] = true;
+InputManager.prototype.getButtonName = function(keyCode) {
+    for (const [player, mappings] of this.playerMappings) {
+        for (const [button, key] of Object.entries(mappings)) {
+            if (key === keyCode) {
+                return `${player}_${button}`;
             }
         }
     }
+    return null;
+};
 
-    private onKeyUp(event: KeyboardEvent): void {
-        // For now, assume keyboard is player 1
-        const playerId = 'player1';
-        const schemeName = this.playerControlSchemes.get(playerId);
-        if (!schemeName) return;
+InputManager.prototype.isButtonPressed = function(buttonName) {
+    return this.inputState.buttons.get(buttonName) || false;
+};
 
-        const scheme = this.controlSchemes.get(schemeName);
-        if (!scheme) return;
+InputManager.prototype.isButtonJustPressed = function(buttonName) {
+    return this.inputState.justPressed.has(buttonName);
+};
 
-        const action = scheme.keyboard[event.code];
-        if (action) {
-            const state = this.playerStates.get(playerId);
-            if (state) {
-                state[action] = false;
-            }
-        }
-    }
+InputManager.prototype.isButtonJustReleased = function(buttonName) {
+    return this.inputState.justReleased.has(buttonName);
+};
 
-    public getPlayerState(playerId: string): InputState | undefined {
-        return this.playerStates.get(playerId);
-    }
-
-    private onGamepadConnected(event: GamepadEvent): void {
-        // Handle gamepad connected events
-        console.log(`Gamepad connected: ${event.gamepad.id}`);
-    }
-
-    private onGamepadDisconnected(event: GamepadEvent): void {
-        // Handle gamepad disconnected events
-        console.log(`Gamepad disconnected: ${event.gamepad.id}`);
-    }
-
-    public async initialize(): Promise<void> {
-        console.log('Initializing Input Manager...');
-        // Initialize input manager
-        console.log('Input Manager initialized successfully');
-    }
-
-    public update(dt: number): void {
-        // Update input manager
-    }
-
-    public destroy(): void {
-        // Clean up input manager
-        console.log('InputManager destroyed');
-    }
-}
+export { InputManager };

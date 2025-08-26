@@ -1,335 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SF3:3S HD-2D Fighting Game</title>
+    <meta charset="utf-8">
+    <title>Fighting Game - PlayCanvas</title>
+    <meta name="description" content="Modern fighting game built with PlayCanvas">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        * {
+        html, body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #000;
+            height: 100%;
             font-family: 'Arial', sans-serif;
+            background: #000;
             overflow: hidden;
         }
 
         #application-canvas {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             display: block;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
         }
 
-        #loading-screen {
+        .loading-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
             z-index: 1000;
-            transition: opacity 0.5s ease-out;
-        }
-
-        .loading-title {
-            font-size: 2.5rem;
-            color: #fff;
-            text-shadow: 0 0 20px #00ffff;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .loading-subtitle {
-            font-size: 1.2rem;
-            color: #aaa;
-            margin-bottom: 2rem;
         }
 
         .loading-bar {
             width: 300px;
-            height: 6px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
+            border-radius: 2px;
+            margin-top: 20px;
             overflow: hidden;
         }
 
-        .loading-progress {
+        .loading-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00ffff, #0080ff);
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
             width: 0%;
             transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
-        #debug-info {
+        .controls {
             position: absolute;
             top: 10px;
             left: 10px;
-            color: #fff;
-            font-family: monospace;
-            font-size: 12px;
+            color: white;
             background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border-radius: 5px;
+            font-size: 12px;
             z-index: 100;
-            display: none;
-        }
-
-        .control-hints {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            text-align: center;
-            font-size: 0.9rem;
-            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="loading-title">SF3: THIRD STRIKE HD-2D</div>
-        <div class="loading-subtitle">Initializing Enhanced Graphics System...</div>
+    <div class="loading-screen" id="loading-screen">
+        <h2>Loading Fighting Game...</h2>
         <div class="loading-bar">
-            <div class="loading-progress" id="loading-progress"></div>
+            <div class="loading-fill" id="loading-fill"></div>
         </div>
+        <p id="loading-status">Initializing...</p>
     </div>
 
-    <!-- Debug Information -->
-    <div id="debug-info">
-        <div>FPS: <span id="fps">60</span></div>
-        <div>Frame Time: <span id="frame-time">16.67ms</span></div>
-        <div>Entities: <span id="entity-count">0</span></div>
-        <div>Draw Calls: <span id="draw-calls">0</span></div>
-        <div>Graphics Quality: <span id="graphics-quality">Ultra</span></div>
+    <div class="controls">
+        <div>P1: WASD + JKL | P2: Arrows + Numpad</div>
+        <div>F1: Debug | F2: Frame Step | ESC: Menu</div>
     </div>
 
-    <!-- Control Hints -->
-    <div class="control-hints">
-        <div>P1: WASD + JKLUIO | P2: Arrows + Numpad | F1: Debug | F2: Frame Step</div>
-    </div>
-
-    <!-- PlayCanvas Application Canvas -->
     <canvas id="application-canvas"></canvas>
 
     <!-- PlayCanvas Engine -->
     <script src="https://code.playcanvas.com/playcanvas-1.69.0.min.js"></script>
 
-    <!-- Core Game Scripts -->
-    <script src="src/scripts/core/GameManager.js"></script>
-    <script src="src/scripts/core/InputManager.js"></script>
-    <script src="src/scripts/graphics/SF3GraphicsManager.js"></script>
-    <script src="src/scripts/graphics/HD2DRenderer.js"></script>
-    <script src="src/scripts/graphics/PostProcessingManager.js"></script>
-    <script src="src/scripts/graphics/ParallaxManager.js"></script>
-    <script src="src/scripts/characters/CharacterManager.js"></script>
-    <script src="src/scripts/combat/CombatSystem.js"></script>
-    <script src="src/scripts/ui/UIManager.js"></script>
-    <script src="src/scripts/CharacterSelectUI.js"></script>
+    <!-- Game Scripts in proper loading order -->
+    <script type="module">
+        import { GameManager } from './src/scripts/core/GameManager.js';
+        import { InputManager } from './src/scripts/core/InputManager.js';
+        import { SceneManager } from './src/scripts/core/SceneManager.js';
+        import { AssetLoader } from './src/scripts/core/AssetLoader.js';
 
-    <!-- Application Initialization -->
-    <script>
-        // Global game state
-        window.SF3HD2D = {
-            app: null,
-            canvas: null,
-            initialized: false,
-            debug: false,
-            gameManager: null,
-            inputManager: null,
-            sf3Graphics: null,
-            hd2dRenderer: null,
-            postProcessing: null,
-            parallaxManager: null,
-            characterManager: null,
-            combatSystem: null,
-            uiManager: null
-        };
-
-        // Loading progress tracking
-        let loadingProgress = 0;
-        const loadingSteps = [
-            'Initializing PlayCanvas Engine...',
-            'Loading SF3:3S Graphics System...',
-            'Setting up HD-2D Renderer...',
-            'Creating Custom Shaders...',
-            'Loading Character Data...',
-            'Initializing Combat System...',
-            'Setting up Post-Processing...',
-            'Finalizing Scene Setup...'
-        ];
-
-        function updateLoadingProgress(step, progress) {
-            const progressElement = document.getElementById('loading-progress');
-            const subtitleElement = document.querySelector('.loading-subtitle');
-            
-            if (step < loadingSteps.length) {
-                subtitleElement.textContent = loadingSteps[step];
+        // Initialize PlayCanvas application
+        const canvas = document.getElementById('application-canvas');
+        const app = new pc.Application(canvas, {
+            mouse: new pc.Mouse(canvas),
+            keyboard: new pc.Keyboard(window),
+            gamepads: new pc.GamePads(),
+            graphicsDeviceOptions: {
+                antialias: true,
+                alpha: false,
+                preserveDrawingBuffer: false,
+                powerPreference: "high-performance"
             }
-            
-            progressElement.style.width = progress + '%';
-            loadingProgress = progress;
-        }
+        });
 
-        function hideLoadingScreen() {
-            const loadingScreen = document.getElementById('loading-screen');
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-            }, 500);
-        }
+        // Configure application
+        app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+        app.setCanvasResolution(pc.RESOLUTION_AUTO);
+        app.start();
 
-        // Initialize the application
-        async function initializeApplication() {
-            try {
-                updateLoadingProgress(0, 10);
-
-                // Get canvas element
-                window.SF3HD2D.canvas = document.getElementById('application-canvas');
-                
-                // Create PlayCanvas application
-                window.SF3HD2D.app = new pc.Application(window.SF3HD2D.canvas, {
-                    mouse: new pc.Mouse(window.SF3HD2D.canvas),
-                    keyboard: new pc.Keyboard(window),
-                    graphicsDeviceOptions: {
-                        antialias: true,
-                        alpha: false,
-                        preserveDrawingBuffer: false,
-                        preferWebGl2: true,
-                        powerPreference: 'high-performance'
-                    }
-                });
-
-                updateLoadingProgress(1, 20);
-
-                // Set up application properties
-                window.SF3HD2D.app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
-                window.SF3HD2D.app.setCanvasResolution(pc.RESOLUTION_AUTO);
-
-                // Enable WebGL extensions for enhanced graphics
-                const gl = window.SF3HD2D.app.graphicsDevice.gl;
-                if (gl.getExtension('OES_standard_derivatives')) {
-                    console.log('OES_standard_derivatives enabled for shader derivatives');
-                }
-                if (gl.getExtension('WEBGL_depth_texture')) {
-                    console.log('WEBGL_depth_texture enabled for depth-based effects');
-                }
-
-                updateLoadingProgress(2, 30);
-
-                // Initialize core systems
-                window.SF3HD2D.gameManager = new GameManager(window.SF3HD2D.app);
-                window.SF3HD2D.inputManager = new InputManager(window.SF3HD2D.app);
-                
-                updateLoadingProgress(3, 40);
-
-                // Initialize graphics systems
-                window.SF3HD2D.sf3Graphics = new SF3GraphicsManager(window.SF3HD2D.app);
-                window.SF3HD2D.hd2dRenderer = new HD2DRenderer(window.SF3HD2D.app);
-                window.SF3HD2D.postProcessing = new PostProcessingManager(window.SF3HD2D.app);
-                window.SF3HD2D.parallaxManager = new ParallaxManager(window.SF3HD2D.app);
-
-                updateLoadingProgress(4, 60);
-
-                // Initialize game systems
-                window.SF3HD2D.characterManager = new CharacterManager(window.SF3HD2D.app);
-                window.SF3HD2D.combatSystem = new CombatSystem(window.SF3HD2D.app);
-                window.SF3HD2D.uiManager = new UIManager(window.SF3HD2D.app);
-
-                updateLoadingProgress(5, 75);
-
-                // Load assets and initialize scene
-                await window.SF3HD2D.gameManager.initialize();
-                await window.SF3HD2D.sf3Graphics.initialize();
-                await window.SF3HD2D.hd2dRenderer.initialize();
-
-                updateLoadingProgress(6, 85);
-
-                // Finalize setup
-                await window.SF3HD2D.postProcessing.initialize();
-                await window.SF3HD2D.characterManager.loadCharacterData();
-                await window.SF3HD2D.uiManager.initialize();
-                
-                updateLoadingProgress(7, 95);
-
-                // Start the application
-                window.SF3HD2D.app.start();
-                window.SF3HD2D.initialized = true;
-
-                updateLoadingProgress(7, 100);
-
-                // Setup debug toggle
-                window.addEventListener('keydown', (event) => {
-                    if (event.key === 'F1') {
-                        event.preventDefault();
-                        toggleDebugInfo();
-                    }
-                });
-
-                // Hide loading screen after initialization
-                setTimeout(() => {
-                    hideLoadingScreen();
-                    console.log('SF3:3S HD-2D Fighting Game initialized successfully!');
-                }, 500);
-
-            } catch (error) {
-                console.error('Failed to initialize application:', error);
-                document.querySelector('.loading-subtitle').textContent = 'Initialization failed. Check console for details.';
-            }
-        }
-
-        function toggleDebugInfo() {
-            window.SF3HD2D.debug = !window.SF3HD2D.debug;
-            const debugInfo = document.getElementById('debug-info');
-            debugInfo.style.display = window.SF3HD2D.debug ? 'block' : 'none';
-        }
-
-        // Debug information update loop
-        function updateDebugInfo() {
-            if (window.SF3HD2D.debug && window.SF3HD2D.app) {
-                const stats = window.SF3HD2D.app.stats;
-                document.getElementById('fps').textContent = Math.round(1000 / stats.frame.ms);
-                document.getElementById('frame-time').textContent = stats.frame.ms.toFixed(2) + 'ms';
-                document.getElementById('entity-count').textContent = window.SF3HD2D.app.root.children.length;
-                document.getElementById('draw-calls').textContent = stats.drawCalls.total;
-            }
-            requestAnimationFrame(updateDebugInfo);
-        }
+        // Hide loading screen after initialization
+        app.on('start', () => {
+            document.getElementById('loading-screen').style.display = 'none';
+        });
 
         // Handle window resize
         window.addEventListener('resize', () => {
-            if (window.SF3HD2D.app) {
-                window.SF3HD2D.app.resizeCanvas();
-            }
-        });
-
-        // Handle visibility change
-        document.addEventListener('visibilitychange', () => {
-            if (window.SF3HD2D.app) {
-                if (document.hidden) {
-                    window.SF3HD2D.app.timeScale = 0;
-                } else {
-                    window.SF3HD2D.app.timeScale = 1;
-                }
-            }
-        });
-
-        // Start the application when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeApplication();
-            updateDebugInfo();
+            app.resizeCanvas();
         });
     </script>
 </body>

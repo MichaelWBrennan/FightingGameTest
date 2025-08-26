@@ -1,117 +1,103 @@
 import * as pc from 'playcanvas';
-import { ISystem } from "../../../types/core";
 
-export class SceneManager implements ISystem {
-  private app: pc.Application;
-  public mainScene!: pc.Entity;
-  public camera!: pc.Entity;
-  public keyLight!: pc.Entity;
-  public rimLight!: pc.Entity;
-  public accentLight!: pc.Entity;
-  public backgroundContainer!: pc.Entity;
-  public midgroundContainer!: pc.Entity;
-  public backgroundLayers: pc.Entity[] = [];
-  public leftBoundary!: pc.Entity;
-  public rightBoundary!: pc.Entity;
-  public groundBoundary!: pc.Entity;
-  public stageGround!: pc.Entity;
-  public particleContainer!: pc.Entity;
+const SceneManager = pc.createScript('SceneManager');
 
-  constructor(app: pc.Application) {
-    this.app = app;
-  }
+SceneManager.prototype.initialize = function() {
+    this.scenes = new Map();
+    this.currentScene = null;
+    this.transitionInProgress = false;
 
-  public initialize(): void {
-    this.mainScene = this.app.root.findByName('MainScene') as pc.Entity;
-    if (!this.mainScene) {
-      this.mainScene = new pc.Entity('MainScene');
-      this.app.root.addChild(this.mainScene);
-    }
-    this.createDefaultEntities();
-    this.setupLighting();
-  }
+    this.setupDefaultScene();
+};
 
-  private createDefaultEntities(): void {
-    this.createStageBoundaries();
-    this.createStageGround();
-  }
+SceneManager.prototype.setupDefaultScene = function() {
+    // Create main game scene
+    const mainScene = new pc.Entity('MainScene');
+    this.app.root.addChild(mainScene);
 
-  private createStageBoundaries(): void {
-    this.leftBoundary = new pc.Entity('LeftBoundary');
-    this.leftBoundary.addComponent('collision', {
-        type: 'box',
-        halfExtents: new pc.Vec3(0.1, 10, 5)
+    // Setup camera
+    const cameraEntity = new pc.Entity('MainCamera');
+    cameraEntity.addComponent('camera', {
+        clearColor: new pc.Color(0.1, 0.1, 0.1),
+        farClip: 1000,
+        nearClip: 0.1
     });
-    this.leftBoundary.setPosition(-12, 0, 0);
-    this.mainScene.addChild(this.leftBoundary);
+    cameraEntity.setPosition(0, 5, 10);
+    cameraEntity.lookAt(0, 0, 0);
+    mainScene.addChild(cameraEntity);
 
-    this.rightBoundary = new pc.Entity('RightBoundary');
-    this.rightBoundary.addComponent('collision', {
-        type: 'box',
-        halfExtents: new pc.Vec3(0.1, 10, 5)
-    });
-    this.rightBoundary.setPosition(12, 0, 0);
-    this.mainScene.addChild(this.rightBoundary);
-
-    this.groundBoundary = new pc.Entity('GroundBoundary');
-    this.groundBoundary.addComponent('collision', {
-        type: 'box',
-        halfExtents: new pc.Vec3(15, 0.1, 5)
-    });
-    this.groundBoundary.setPosition(0, -5, 0);
-    this.mainScene.addChild(this.groundBoundary);
-  }
-
-  private createStageGround(): void {
-    this.stageGround = new pc.Entity('StageGround');
-    this.stageGround.addComponent('render', {
-        type: 'plane'
-    });
-    this.stageGround.setPosition(0, -5, -1);
-    this.stageGround.setLocalScale(30, 1, 10);
-    this.mainScene.addChild(this.stageGround);
-  }
-
-  private setupLighting(): void {
-    this.keyLight = new pc.Entity('KeyLight');
-    this.keyLight.addComponent('light', {
-        type: pc.LIGHTTYPE_DIRECTIONAL,
-        color: new pc.Color(1.0, 0.95, 0.8),
-        intensity: 1.2,
+    // Setup lighting
+    const lightEntity = new pc.Entity('DirectionalLight');
+    lightEntity.addComponent('light', {
+        type: 'directional',
         castShadows: true,
+        intensity: 1,
         shadowBias: 0.0005,
-        shadowDistance: 50,
-        shadowResolution: 2048
+        shadowDistance: 50
     });
-    this.keyLight.setEulerAngles(45, -30, 0);
-    this.mainScene.addChild(this.keyLight);
+    lightEntity.setEulerAngles(45, -30, 0);
+    mainScene.addChild(lightEntity);
 
-    this.rimLight = new pc.Entity('RimLight');
-    this.rimLight.addComponent('light', {
-        type: pc.LIGHTTYPE_DIRECTIONAL,
-        color: new pc.Color(0.6, 0.8, 1.0),
-        intensity: 0.8,
-        castShadows: false
+    this.scenes.set('main', mainScene);
+    this.currentScene = 'main';
+};
+
+SceneManager.prototype.loadScene = function(sceneName, sceneConfig) {
+    if (this.transitionInProgress) {
+        console.warn('Scene transition already in progress');
+        return Promise.reject(new Error('Transition in progress'));
+    }
+
+    this.transitionInProgress = true;
+
+    return new Promise((resolve) => {
+        // Fade out current scene
+        this.fadeOut().then(() => {
+            // Unload current scene
+            if (this.currentScene && this.scenes.has(this.currentScene)) {
+                const currentSceneEntity = this.scenes.get(this.currentScene);
+                currentSceneEntity.destroy();
+                this.scenes.delete(this.currentScene);
+            }
+
+            // Load new scene
+            const newScene = this.createScene(sceneName, sceneConfig);
+            this.scenes.set(sceneName, newScene);
+            this.currentScene = sceneName;
+
+            // Fade in new scene
+            this.fadeIn().then(() => {
+                this.transitionInProgress = false;
+                resolve(newScene);
+            });
+        });
     });
-    this.rimLight.setEulerAngles(-45, 150, 0);
-    this.mainScene.addChild(this.rimLight);
+};
 
-    this.accentLight = new pc.Entity('AccentLight');
-    this.accentLight.addComponent('light', {
-        type: pc.LIGHTTYPE_SPOT,
-        color: new pc.Color(1.0, 0.7, 0.3),
-        intensity: 0,
-        range: 20,
-        innerConeAngle: 20,
-        outerConeAngle: 35,
-        castShadows: true
+SceneManager.prototype.createScene = function(name, config) {
+    const sceneEntity = new pc.Entity(name);
+    this.app.root.addChild(sceneEntity);
+
+    // Apply scene configuration
+    if (config) {
+        this.applySceneConfig(sceneEntity, config);
+    }
+
+    return sceneEntity;
+};
+
+SceneManager.prototype.fadeOut = function() {
+    return new Promise(resolve => {
+        // Implement fade transition
+        setTimeout(resolve, 500); // Placeholder
     });
-    this.accentLight.setPosition(0, 8, 5);
-    this.accentLight.lookAt(0, 0, 0);
-    this.mainScene.addChild(this.accentLight);
-  }
+};
 
-  public destroy(): void {
-    this.mainScene.destroy();
-  }
-}
+SceneManager.prototype.fadeIn = function() {
+    return new Promise(resolve => {
+        // Implement fade transition  
+        setTimeout(resolve, 500); // Placeholder
+    });
+};
+
+export { SceneManager };
