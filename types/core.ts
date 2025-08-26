@@ -94,26 +94,72 @@ export namespace pc {
   }
   
   export class Entity {
-    name: string;
-    children: Entity[];
-    parent: Entity | null;
-    addChild(entity: Entity): void;
-    addComponent(type: string, data?: any): any;
-    findByName(name: string): Entity | null;
-    destroy(): void;
+    name: string = '';
+    children: Entity[] = [];
+    parent: Entity | null = null;
+    
+    addChild(entity: Entity): void {
+      this.children.push(entity);
+      entity.parent = this;
+    }
+    
+    addComponent(type: string, data?: any): any {
+      return { type, data };
+    }
+    
+    findByName(name: string): Entity | null {
+      if (this.name === name) return this;
+      for (const child of this.children) {
+        const found = child.findByName(name);
+        if (found) return found;
+      }
+      return null;
+    }
+    
+    destroy(): void {
+      if (this.parent) {
+        const index = this.parent.children.indexOf(this);
+        if (index !== -1) {
+          this.parent.children.splice(index, 1);
+        }
+      }
+      this.children.length = 0;
+    }
   }
   
   export class Application {
     canvas: HTMLCanvasElement;
     graphicsDevice: any;
-    root: Entity;
-    constructor(canvas: HTMLCanvasElement, options?: any);
-    setCanvasFillMode(mode: any): void;
-    setCanvasResolution(resolution: any): void;
-    start(): void;
-    on(event: string, callback: (...args: any[]) => void, scope?: any): void;
-    off(event: string, callback: (...args: any[]) => void, scope?: any): void;
-    fire(event: string, ...args: any[]): void;
+    root: Entity = new Entity();
+    
+    constructor(canvas: HTMLCanvasElement, options?: any) {
+      this.canvas = canvas;
+      this.graphicsDevice = options?.graphicsDevice || null;
+    }
+    
+    setCanvasFillMode(mode: any): void {
+      // Mock implementation
+    }
+    
+    setCanvasResolution(resolution: any): void {
+      // Mock implementation
+    }
+    
+    start(): void {
+      // Mock implementation
+    }
+    
+    on(event: string, callback: (...args: any[]) => void, scope?: any): void {
+      // Mock implementation
+    }
+    
+    off(event: string, callback: (...args: any[]) => void, scope?: any): void {
+      // Mock implementation
+    }
+    
+    fire(event: string, ...args: any[]): void {
+      // Mock implementation
+    }
   }
   
   export class StandardMaterial {

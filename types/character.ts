@@ -3,7 +3,7 @@
  * Character system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import { type ISystem, type Character, type pc } from './core.js';
+import { type pc } from './core.js';
 
 // Character Archetype Types
 export type CharacterArchetype = 'shoto' | 'rushdown' | 'grappler' | 'zoner' | 'technical';

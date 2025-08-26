@@ -34,8 +34,8 @@ export function zmemcpy(dest: Uint8Array, source: Uint8Array, len: number): void
 }
 
 export function zmemcmp(s1: Uint8Array, s2: Uint8Array, len: number): number {
-    for (let j = 0; j < len; j++) {
-        if (s1[j] !== s2[j]) return 2 * (s1[j] > s2[j] ? 1 : 0) - 1;
+    for (let j = 0; j < len && j < s1.length && j < s2.length; j++) {
+        if (s1[j] !== s2[j]) return 2 * (s1[j]! > s2[j]! ? 1 : 0) - 1;
     }
     return 0;
 }
@@ -47,10 +47,10 @@ export function zmemzero(dest: Uint8Array, len: number): void {
     }
 }
 
-export function zcalloc(opaque: any, items: number, size: number): Uint8Array {
+export function zcalloc(_opaque: any, items: number, size: number): Uint8Array {
     return new Uint8Array(items * size);
 }
 
-export function zcfree(opaque: any, ptr: any): void {
+export function zcfree(_opaque: any, _ptr: any): void {
     // JavaScript garbage collection handles this
 }
