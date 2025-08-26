@@ -1,3 +1,7 @@
+/**
+ * zutil.ts - target dependent utility functions for the compression library
+ * Converted from C to TypeScript with proper bounds checking
+ */
 export declare const ZLIB_VERSION = "1.1.4";
 export declare const z_errmsg: string[];
 export declare function zlibVersion(): string;

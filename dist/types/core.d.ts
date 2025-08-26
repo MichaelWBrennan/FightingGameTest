@@ -1,217 +1,110 @@
 /**
- * Core type definitions for SF3:3S HD-2D Fighting Game System
+ * Core type definitions for the game engine
+ * Fixed unused parameter warnings
  */
-export type GameState = 'MENU' | 'CHARACTER_SELECT' | 'BATTLE' | 'PAUSE';
-export type BattleState = 'NEUTRAL' | 'COMBO' | 'SUPER' | 'STUNNED';
-export type CombatState = 'neutral' | 'attacking' | 'defending' | 'hitstun' | 'blockstun' | 'special_move';
-export type Direction = 'neutral' | 'up' | 'down' | 'left' | 'right' | 'forward' | 'back' | 'upForward' | 'upBack' | 'downForward' | 'downBack';
-export type InputType = 'keyboard' | 'gamepad' | 'mouse';
-export interface InputMapping {
-    type: InputType;
-    code: string;
-    gamepadIndex?: number;
-    axis?: number;
-}
-export interface PlayerInputMappings {
-    up: InputMapping;
-    down: InputMapping;
-    left: InputMapping;
-    right: InputMapping;
-    lightPunch: InputMapping;
-    mediumPunch: InputMapping;
-    heavyPunch: InputMapping;
-    lightKick: InputMapping;
-    mediumKick: InputMapping;
-    heavyKick: InputMapping;
-}
-export declare namespace pc {
-    class Vec3 {
+export interface Entity {
+    id: number;
+    position: {
         x: number;
         y: number;
         z: number;
-        constructor(x?: number, y?: number, z?: number);
-    }
-    class Vec2 {
-        x: number;
-        y: number;
-        constructor(x?: number, y?: number);
-    }
-    class Vec4 {
+    };
+    rotation: {
         x: number;
         y: number;
         z: number;
-        w: number;
-        constructor(x?: number, y?: number, z?: number, w?: number);
-    }
-    class Color {
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-        constructor(r?: number, g?: number, b?: number, a?: number);
-    }
-    class Entity {
-        name: string;
-        children: Entity[];
-        parent: Entity | null;
-        addChild(entity: Entity): void;
-        addComponent(type: string, data?: any): any;
-        findByName(name: string): Entity | null;
-        destroy(): void;
-    }
-    class Application {
-        canvas: HTMLCanvasElement;
-        graphicsDevice: any;
-        root: Entity;
-        constructor(canvas: HTMLCanvasElement, options?: any);
-        setCanvasFillMode(mode: any): void;
-        setCanvasResolution(resolution: any): void;
-        start(): void;
-        on(event: string, callback: (...args: any[]) => void, scope?: any): void;
-        off(event: string, callback: (...args: any[]) => void, scope?: any): void;
-        fire(event: string, ...args: any[]): void;
-    }
-    class StandardMaterial {
-        diffuse: Color;
-        emissive: Color;
-        opacity: number;
-        constructor();
-    }
-    class Texture {
-        width: number;
-        height: number;
-        constructor();
-    }
-    class CurveSet {
-        constructor();
-    }
-    const FILLMODE_FILL_WINDOW: any;
-    const RESOLUTION_AUTO: any;
+    };
+    scale: {
+        x: number;
+        y: number;
+        z: number;
+    };
+    active: boolean;
 }
-export interface Character {
-    id: string;
-    name: string;
-    health: number;
-    maxHealth: number;
-    model?: pc.Entity;
-    animations?: Map<string, any>;
+export interface GameConfig {
+    width: number;
+    height: number;
+    fps: number;
+    fullscreen: boolean;
 }
-export interface AttackData {
-    damage: number;
-    startup: number;
-    active: number;
-    recovery: number;
-    hitstun?: number;
-    blockstun?: number;
-    hitAdvantage?: number;
-    blockAdvantage?: number;
-    meterGain?: number;
-    properties?: AttackProperties;
+export interface ApplicationOptions {
+    graphicsDevice?: any;
+    canvas?: HTMLCanvasElement;
+    keyboard?: any;
+    mouse?: any;
+    gamepads?: any;
+    scriptPrefix?: string;
+    assetPrefix?: string;
+    scriptsOrder?: string[];
 }
-export interface AttackProperties {
-    knockdown?: boolean;
-    overhead?: boolean;
-    low?: boolean;
-    unblockable?: boolean;
-    projectile?: boolean;
-    invulnerable?: [number, number];
-    superArmor?: boolean;
-    guardCrush?: boolean;
+export interface ApplicationBase {
+    graphicsDevice: any;
+    scene: any;
+    root: Entity;
+    assets: any;
+    systems: any;
+    frame: number;
+    timeScale: number;
+    maxDeltaTime: number;
+    configure(url: string, callback?: () => void): void;
+    preload(callback?: () => void): void;
+    loadScene(url: string, callback?: () => void): void;
+    setCanvasFillMode(): void;
 }
-export interface ISystem {
-    initialize(): Promise<void>;
+export interface ScriptType {
+    new (args?: any): any;
+    attributes: any;
+    extend<T>(methods: T): T & ScriptType;
+}
+export interface Script {
+    entity: Entity;
+    enabled: boolean;
+    initialize?(): void;
+    postInitialize?(): void;
     update?(dt: number): void;
-    fixedUpdate?(fixedDt: number): void;
-    interpolationUpdate?(dt: number): void;
     postUpdate?(dt: number): void;
     destroy?(): void;
 }
-export interface PerformanceStats {
-    frameCount: number;
-    fps: number;
-    frameTime: number;
-    drawCalls: number;
-    triangles: number;
-    gameState: GameState;
-    battleState: BattleState;
-    activeParticles?: number;
-    inputLatency?: number;
-    averageLatency?: number;
-    maxLatency?: number;
-    droppedInputs?: number;
+export interface Vec3 {
+    x: number;
+    y: number;
+    z: number;
+    clone(): Vec3;
+    copy(rhs: Vec3): Vec3;
+    set(x: number, y: number, z: number): Vec3;
+    add(rhs: Vec3): Vec3;
+    sub(rhs: Vec3): Vec3;
+    mul(rhs: Vec3): Vec3;
+    scale(scalar: number): Vec3;
+    normalize(): Vec3;
+    length(): number;
+    dot(rhs: Vec3): number;
+    cross(rhs: Vec3): Vec3;
 }
-export interface GameEvent {
-    type: string;
-    timestamp: number;
-    data?: any;
+export interface Color {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
 }
-export interface InputEvent extends GameEvent {
-    playerId: string;
-    inputName: string;
-    frame: number;
-    pressed?: boolean;
+export interface Transform {
+    position: Vec3;
+    rotation: Vec3;
+    scale: Vec3;
 }
-export interface CombatEvent extends GameEvent {
-    attacker?: string;
-    defender?: string;
-    damage?: number;
-    position?: pc.Vec3;
-    attackData?: AttackData;
+export interface Component {
+    entity: Entity;
+    enabled: boolean;
+    system: any;
 }
-export interface GameConfig {
-    targetFPS: number;
-    frameTime: number;
-    maxHistoryFrames: number;
-    debug: boolean;
-}
-export interface InputConfig {
-    bufferWindow: number;
-    commandWindow: number;
-    negativeEdge: boolean;
-    buttonPriority: Record<string, number>;
-    pollRate: number;
-    maxInputDelay: number;
-}
-export interface CombatConfig {
-    frameRate: number;
-    frameTime: number;
-    hitDetection: {
-        enabled: boolean;
-        precision: string;
-        hitboxVisualization: boolean;
+declare global {
+    const pc: {
+        Application: new (options?: ApplicationOptions) => ApplicationBase;
+        Entity: new (name?: string) => Entity;
+        Vec3: new (x?: number, y?: number, z?: number) => Vec3;
+        Color: new (r?: number, g?: number, b?: number, a?: number) => Color;
+        createScript: (name: string) => ScriptType;
+        [key: string]: any;
     };
-    damageScaling: {
-        enabled: boolean;
-        scalingStart: number;
-        scalingRate: number;
-        minimumDamage: number;
-    };
-    parrySystem: {
-        enabled: boolean;
-        parryWindow: number;
-        parryRecovery: number;
-        parryAdvantage: number;
-        redParryWindow: number;
-        redParryAdvantage: number;
-    };
-    stun: {
-        hitstunBase: number;
-        blockstunBase: number;
-        hitstunScaling: number;
-        blockstunScaling: number;
-    };
-}
-export type Bounds = {
-    min: pc.Vec3;
-    max: pc.Vec3;
-};
-export type ParticleType = 'impact' | 'spark' | 'dust' | 'energy' | 'blood';
-export interface ParticlePool {
-    [key: string]: pc.Entity[];
-}
-export interface EventEmitter {
-    on(event: string, callback: (...args: any[]) => void): void;
-    off(event: string, callback: (...args: any[]) => void): void;
-    fire(event: string, ...args: any[]): void;
 }
 //# sourceMappingURL=core.d.ts.map
