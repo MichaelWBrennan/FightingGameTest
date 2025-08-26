@@ -42,24 +42,14 @@ export interface ApplicationBase {
     configure(url: string, callback?: () => void): void;
     preload(callback?: () => void): void;
     loadScene(url: string, callback?: () => void): void;
-    setCanvasFillMode(): void {
-        // Implementation details
-    }
-    setCanvasResolution(): void {
-        // Implementation details
-    }
+    setCanvasFillMode(): void;
+    setCanvasResolution(): void;
     start(): void;
     update(dt: number): void;
     render(): void;
-    on(): void {
-        // Event handling implementation
-    }
-    off(): void {
-        // Event handling implementation
-    }
-    fire(): void {
-        // Event firing implementation
-    }
+    on(event: string, callback: Function): void;
+    off(event: string, callback?: Function): void;
+    fire(event: string, ...args: any[]): void;
     destroy(): void;
 }
 
