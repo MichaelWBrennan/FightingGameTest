@@ -2,13 +2,13 @@ import { Mastery, Objective, XPGrant } from './progression.types';
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class ProgressionService {
-  private db: DatabaseManager;
+  private _db: DatabaseManager;
 
   constructor() {
-    this.db = DatabaseManager.getInstance();
+    this._db = DatabaseManager.getInstance();
   }
 
-  public async getMastery(userId: string): Promise<Mastery[]> {
+  public async getMastery(_userId: string): Promise<Mastery[]> {
     // Placeholder
     return [];
   }
@@ -26,7 +26,7 @@ export class ProgressionService {
     return mastery;
   }
 
-  public async getObjectives(userId: string): Promise<Objective[]> {
+  public async getObjectives(_userId: string): Promise<Objective[]> {
     // Placeholder
     return [];
   }
@@ -45,11 +45,11 @@ export class ProgressionService {
     return objective;
   }
 
-  public async prestige(userId: string, characterId: string): Promise<Mastery> {
+  public async prestige(_userId: string, _characterId: string): Promise<Mastery> {
     // Placeholder
     const mastery: Mastery = {
-      userId: userId,
-      characterId: characterId,
+      userId: _userId,
+      characterId: _characterId,
       level: 1,
       xp: 0,
       prestige: 1,

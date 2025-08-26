@@ -2,10 +2,10 @@ import { Catalog, Payment } from './commerce.types';
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class CommerceService {
-  private db: DatabaseManager;
+  private _db: DatabaseManager;
 
   constructor() {
-    this.db = DatabaseManager.getInstance();
+    this._db = DatabaseManager.getInstance();
   }
 
   public async getCatalog(): Promise<Catalog> {

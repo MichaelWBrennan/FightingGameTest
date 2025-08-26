@@ -2,10 +2,10 @@ import { AnalyticsEvent, Experiment, ChurnPrediction, Cohort, KpiMetric } from '
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class AnalyticsService {
-  private db: DatabaseManager;
+  private _db: DatabaseManager;
 
   constructor() {
-    this.db = DatabaseManager.getInstance();
+    this._db = DatabaseManager.getInstance();
   }
 
   public async ingestEvents(_events: AnalyticsEvent[]): Promise<void> {

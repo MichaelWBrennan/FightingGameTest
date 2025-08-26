@@ -261,7 +261,7 @@ export class ChurnPredictor {
       `;
 
       const profileResult = await this.db.query(profileQuery, [userId]);
-      const profile = profileResult.rows[0] || {};
+      const profile = (profileResult as any).rows ? (profileResult as any).rows[0] || {} : profileResult[0] || {};
 
       return {
         userId,

@@ -2,10 +2,10 @@ import { User, Consent, CommunicationPreferences } from './identity.types';
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class IdentityService {
-  private db: DatabaseManager;
+  private _db: DatabaseManager;
 
   constructor() {
-    this.db = DatabaseManager.getInstance();
+    this._db = DatabaseManager.getInstance();
   }
 
   public async register(userData: Pick<User, 'username' | 'email' | 'passwordHash'>): Promise<User> {

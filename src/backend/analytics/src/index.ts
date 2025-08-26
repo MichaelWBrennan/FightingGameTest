@@ -294,7 +294,7 @@ async function buildServer() {
     });
 
     // Global error handler
-    fastify.setErrorHandler(async (error, _request, _reply) => {
+    fastify.setErrorHandler(async (error, request, reply) => {
       logger.error('Request error:', {
         error: error.message,
         stack: error.stack,

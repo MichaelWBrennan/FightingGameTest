@@ -19,17 +19,17 @@ export class AnalyticsController {
     reply.send(experiment);
   }
 
-  public getChurnPrediction = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
-    const prediction = await this.analyticsService.getChurnPrediction((request.params as any).userId);
+  public getChurnPrediction = async (_request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+    const prediction = await this.analyticsService.getChurnPrediction((_request.params as any).userId);
     reply.send(prediction);
   }
 
-  public getCohorts = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+  public getCohorts = async (_request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     const cohorts = await this.analyticsService.getCohorts();
     reply.send(cohorts);
   }
 
-  public getKpiMetrics = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+  public getKpiMetrics = async (_request: FastifyRequest, reply: FastifyReply): Promise<void> => {
     const metrics = await this.analyticsService.getKpiMetrics();
     reply.send(metrics);
   }

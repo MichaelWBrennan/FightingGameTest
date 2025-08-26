@@ -1,5 +1,5 @@
 export class CohortAnalyzer {
-  constructor(db: any, clickhouse: any) {
+  constructor(_db: any, _clickhouse: any) {
     // placeholder
   }
 }
