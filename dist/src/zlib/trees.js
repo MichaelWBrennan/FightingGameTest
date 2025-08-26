@@ -41,16 +41,17 @@ function initBlock(s) {
 export function _tr_tally(s, dist, lc) {
     s.d_buf[s.last_lit] = dist;
     s.l_buf[s.last_lit++] = lc;
-    if (dist === 0) {
-        // lc is the unmatched char
+    if (s.dyn_ltree && s.dyn_ltree[lc]) {
         s.dyn_ltree[lc].freq++;
     }
-    else {
-        s.matches++;
-        // Here, lc is the match length - MIN_MATCH
-        dist--; // dist = match distance - 1
-        s.dyn_ltree[lengthCode(lc) + LITERALS + 1].freq++;
-        s.dyn_dtree[dCode(dist)].freq++;
+    if (dist !== 0) {
+        s.last_lit++;
+        if (s.dyn_ltree && s.dyn_ltree[lengthCode(lc) + LITERALS + 1]) {
+            s.dyn_ltree[lengthCode(lc) + LITERALS + 1].freq++;
+        }
+        if (s.dyn_dtree && s.dyn_dtree[dCode(dist)]) {
+            s.dyn_dtree[dCode(dist)].freq++;
+        }
     }
     return (s.last_lit === s.lit_bufsize - 1);
 }

@@ -1,7 +1,6 @@
 /**
  * Character system type definitions for SF3:3S HD-2D Fighting Game
  */
-import { type pc } from './core.js';
 export type CharacterArchetype = 'shoto' | 'rushdown' | 'grappler' | 'zoner' | 'technical';
 export interface ArchetypeTemplate {
     health: number;

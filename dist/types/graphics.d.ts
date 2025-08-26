@@ -1,4 +1,3 @@
-import { pc } from './core.js';
 /**
  * Graphics system type definitions for SF3:3S HD-2D Fighting Game
  */

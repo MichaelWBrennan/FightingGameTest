@@ -1,4 +1,3 @@
-import { pc } from './core.js';
 // Type Guards
 export function isValidEffectType(type) {
     const validTypes = ['normal', 'counter', 'block', 'parry', 'super'];
