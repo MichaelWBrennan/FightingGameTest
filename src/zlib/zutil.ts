@@ -1,4 +1,3 @@
-
 /**
  * zutil.ts - target dependent utility functions for the compression library
  * Converted from C to TypeScript with proper bounds checking
@@ -63,4 +62,26 @@ export function zcalloc(_opaque: any, items: number, size: number): Uint8Array {
 
 export function zcfree(_opaque: any, _ptr: any): void {
     // JavaScript garbage collection handles this
+}
+
+export function copyArray(dest: Uint8Array | null, destStart: number, source: Uint8Array | null, sourceStart: number, length: number): void {
+    if (!dest || !source) return;
+
+    for (let i = 0; i < length && i + destStart < dest.length && i + sourceStart < source.length; i++) {
+        dest[i + destStart] = source[i + sourceStart];
+    }
+}
+
+export function compareStrings(s1: string, s2: string): number {
+    const len = Math.min(s1.length, s2.length);
+
+    for (let j = 0; j < len; j++) {
+        const c1 = s1[j];
+        const c2 = s2[j];
+        if (c1 !== undefined && c2 !== undefined && c1 !== c2) {
+            return c1 > c2 ? 1 : -1;
+        }
+    }
+
+    return s1.length - s2.length;
 }
