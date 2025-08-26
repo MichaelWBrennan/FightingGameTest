@@ -2,6 +2,8 @@
 
 ![SF III Third Strike logo](3s_logo.webp)
 
+<!-- Last updated: 2024 -->
+
 A work-in-progress decompilation of Street Fighter III: 3rd Strike for PlayStation 2.
 
 The project aims to recreate the source code from the existing binaries which would allow to port the game to current platforms, preserve the game for future generations of fighting game players and to improve and expand upon the game.
