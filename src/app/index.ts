@@ -1,29 +1,14 @@
-import Fastify from 'fastify';
-import { identityRoutes } from './modules/identity/identity.routes';
-import { progressionRoutes } from './modules/progression/progression.routes';
-import { commerceRoutes } from './modules/commerce/commerce.routes';
-import { analyticsRoutes } from './modules/analytics/analytics.routes';
+import express, { Request, Response } from 'express';
+import { Logger } from './core/Logger';
 
-const server = Fastify({
-  logger: true
+const app = express();
+const port = 3000;
+
+app.get('/', (req: Request, res: Response) => {
+  Logger.log('Request received');
+  res.send('Hello, TypeScript!');
 });
 
-server.get('/health', async (_request, _reply) => {
-  return { status: 'ok' };
+app.listen(port, () => {
+  Logger.log(`Server running on port ${port}`);
 });
-
-server.register(identityRoutes, { prefix: '/identity' });
-server.register(progressionRoutes, { prefix: '/progression' });
-server.register(commerceRoutes, { prefix: '/commerce' });
-server.register(analyticsRoutes, { prefix: '/analytics' });
-
-const start = async () => {
-  try {
-    await server.listen({ port: 3000 });
-  } catch (err) {
-    server.log.error(err);
-    process.exit(1);
-  }
-};
-
-start();
