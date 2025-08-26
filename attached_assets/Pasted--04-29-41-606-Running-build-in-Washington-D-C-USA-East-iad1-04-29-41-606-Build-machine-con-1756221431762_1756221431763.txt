@@ -1,0 +1,909 @@
+[04:29:41.606] Running build in Washington, D.C., USA (East) – iad1
+[04:29:41.606] Build machine configuration: 2 cores, 8 GB
+[04:29:41.657] Cloning github.com/MichaelWBrennan/FightingGameTest (Branch: main, Commit: 06d235d)
+[04:29:41.771] Previous build caches not available
+[04:29:44.246] Warning: Failed to fetch one or more git submodules
+[04:29:44.247] Cloning completed: 2.590s
+[04:29:45.367] Running "vercel build"
+[04:29:45.778] Vercel CLI 46.0.2
+[04:29:46.495] Warning: Detected "engines": { "node": ">=18.0.0" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: http://vercel.link/node-version
+[04:29:46.501] Installing dependencies...
+[04:30:02.195] npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[04:30:03.152] npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[04:30:05.782] 
+[04:30:05.783] added 329 packages, removed 20 packages, and changed 10 packages in 19s
+[04:30:05.783] 
+[04:30:05.783] 75 packages are looking for funding
+[04:30:05.784]   run `npm fund` for details
+[04:30:05.828] Running "npm run build"
+[04:30:05.940] 
+[04:30:05.940] > sf3-3rd-strike-playcanvas@2.0.0 build
+[04:30:05.941] > tsc
+[04:30:05.941] 
+[04:30:10.936] src/app/index.ts(1,44): error TS7016: Could not find a declaration file for module 'express'. '/vercel/path0/node_modules/express/index.js' implicitly has an 'any' type.
+[04:30:10.937]   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+[04:30:10.938] src/app/index.ts(7,15): error TS6133: 'req' is declared but its value is never read.
+[04:30:10.938] src/app/index.ts(8,10): error TS2339: Property 'log' does not exist on type 'typeof Logger'.
+[04:30:10.938] src/app/index.ts(13,10): error TS2339: Property 'log' does not exist on type 'typeof Logger'.
+[04:30:10.938] src/app/modules/analytics/analytics.controller.ts(1,46): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.939] src/app/modules/analytics/analytics.controller.ts(27,30): error TS6133: 'request' is declared but its value is never read.
+[04:30:10.939] src/app/modules/analytics/analytics.controller.ts(32,33): error TS6133: 'request' is declared but its value is never read.
+[04:30:10.939] src/app/modules/analytics/analytics.routes.ts(1,33): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.940] src/app/modules/analytics/analytics.service.ts(5,11): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.940] src/app/modules/commerce/commerce.controller.ts(1,46): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.940] src/app/modules/commerce/commerce.routes.ts(1,33): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.940] src/app/modules/commerce/commerce.service.ts(5,11): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.941] src/app/modules/identity/identity.controller.ts(1,46): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.941] src/app/modules/identity/identity.routes.ts(1,33): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.941] src/app/modules/identity/identity.service.ts(5,11): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.943] src/app/modules/progression/progression.controller.ts(1,46): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.943] src/app/modules/progression/progression.routes.ts(1,33): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.943] src/app/modules/progression/progression.service.ts(5,11): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.943] src/app/modules/progression/progression.service.ts(11,27): error TS6133: 'userId' is declared but its value is never read.
+[04:30:10.946] src/app/modules/progression/progression.service.ts(29,30): error TS6133: 'userId' is declared but its value is never read.
+[04:30:10.946] src/backend/analytics/src/index.ts(35,21): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.947] src/backend/analytics/src/index.ts(36,20): error TS2307: Cannot find module '@fastify/helmet' or its corresponding type declarations.
+[04:30:10.947] src/backend/analytics/src/index.ts(37,18): error TS2307: Cannot find module '@fastify/cors' or its corresponding type declarations.
+[04:30:10.947] src/backend/analytics/src/index.ts(38,23): error TS2307: Cannot find module '@fastify/rate-limit' or its corresponding type declarations.
+[04:30:10.947] src/backend/analytics/src/index.ts(39,21): error TS2307: Cannot find module '@fastify/swagger' or its corresponding type declarations.
+[04:30:10.948] src/backend/analytics/src/index.ts(40,23): error TS2307: Cannot find module '@fastify/swagger-ui' or its corresponding type declarations.
+[04:30:10.948] src/backend/analytics/src/index.ts(126,30): error TS7006: Parameter '_request' implicitly has an 'any' type.
+[04:30:10.948] src/backend/analytics/src/index.ts(126,40): error TS7006: Parameter 'context' implicitly has an 'any' type.
+[04:30:10.948] src/backend/analytics/src/index.ts(193,42): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.948] src/backend/analytics/src/index.ts(193,51): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+[04:30:10.948] src/backend/analytics/src/index.ts(264,15): error TS6133: 'request' is declared but its value is never read.
+[04:30:10.949] src/backend/analytics/src/index.ts(264,15): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.949] src/backend/analytics/src/index.ts(264,24): error TS6133: 'reply' is declared but its value is never read.
+[04:30:10.949] src/backend/analytics/src/index.ts(264,24): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+[04:30:10.949] src/backend/analytics/src/index.ts(297,36): error TS7006: Parameter 'error' implicitly has an 'any' type.
+[04:30:10.949] src/backend/analytics/src/index.ts(297,43): error TS7006: Parameter '_request' implicitly has an 'any' type.
+[04:30:10.950] src/backend/analytics/src/index.ts(297,53): error TS7006: Parameter '_reply' implicitly has an 'any' type.
+[04:30:10.950] src/backend/analytics/src/index.ts(301,14): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+[04:30:10.950] src/backend/analytics/src/index.ts(302,17): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+[04:30:10.950] src/backend/analytics/src/index.ts(303,13): error TS2552: Cannot find name 'request'. Did you mean '_request'?
+[04:30:10.950] src/backend/analytics/src/index.ts(311,7): error TS2552: Cannot find name 'reply'. Did you mean '_reply'?
+[04:30:10.950] src/backend/analytics/src/index.ts(372,16): error TS2664: Invalid module name in augmentation, module 'fastify' cannot be found.
+[04:30:10.950] src/backend/analytics/src/routes/metrics.ts(1,31): error TS6133: 'fastify' is declared but its value is never read.
+[04:30:10.950] src/backend/analytics/src/routes/metrics.ts(1,45): error TS6133: 'options' is declared but its value is never read.
+[04:30:10.950] src/backend/analytics/src/services/ChurnPredictor.ts(241,52): error TS2339: Property 'query' does not exist on type 'ClickHouseManager'.
+[04:30:10.950] src/backend/analytics/src/services/ChurnPredictor.ts(263,43): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.950] src/backend/analytics/src/services/ChurnPredictor.ts(589,42): error TS2339: Property 'query' does not exist on type 'ClickHouseManager'.
+[04:30:10.950] src/backend/analytics/src/services/ChurnPredictor.ts(593,23): error TS7006: Parameter 'row' implicitly has an 'any' type.
+[04:30:10.950] src/backend/analytics/src/services/ChurnPredictor.ts(597,19): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.951] src/backend/analytics/src/services/CohortAnalyzer.ts(2,15): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.953] src/backend/analytics/src/services/CohortAnalyzer.ts(2,24): error TS6133: 'clickhouse' is declared but its value is never read.
+[04:30:10.953] src/backend/analytics/src/services/ConsentChecker.ts(2,15): error TS6133: 'identityServiceUrl' is declared but its value is never read.
+[04:30:10.953] src/backend/analytics/src/services/EventIngestionService.ts(2,15): error TS6133: 'clickhouse' is declared but its value is never read.
+[04:30:10.954] src/backend/analytics/src/services/EventIngestionService.ts(2,32): error TS6133: 'schemaRegistry' is declared but its value is never read.
+[04:30:10.954] src/backend/analytics/src/services/EventIngestionService.ts(2,53): error TS6133: 'consentChecker' is declared but its value is never read.
+[04:30:10.954] src/backend/analytics/src/services/ExperimentManager.ts(2,15): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.954] src/backend/analytics/src/services/MetricsAggregator.ts(2,15): error TS6133: 'clickhouse' is declared but its value is never read.
+[04:30:10.954] src/backend/identity/src/database/DatabaseManager.ts(15,27): error TS6133: 'config' is declared but its value is never read.
+[04:30:10.954] src/backend/identity/src/index.ts(31,21): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.954] src/backend/identity/src/index.ts(32,20): error TS2307: Cannot find module '@fastify/helmet' or its corresponding type declarations.
+[04:30:10.955] src/backend/identity/src/index.ts(33,18): error TS2307: Cannot find module '@fastify/cors' or its corresponding type declarations.
+[04:30:10.955] src/backend/identity/src/index.ts(34,23): error TS2307: Cannot find module '@fastify/rate-limit' or its corresponding type declarations.
+[04:30:10.956] src/backend/identity/src/index.ts(35,21): error TS2307: Cannot find module '@fastify/swagger' or its corresponding type declarations.
+[04:30:10.956] src/backend/identity/src/index.ts(36,23): error TS2307: Cannot find module '@fastify/swagger-ui' or its corresponding type declarations.
+[04:30:10.956] src/backend/identity/src/index.ts(101,30): error TS6133: 'request' is declared but its value is never read.
+[04:30:10.956] src/backend/identity/src/index.ts(101,30): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.957] src/backend/identity/src/index.ts(101,39): error TS7006: Parameter 'context' implicitly has an 'any' type.
+[04:30:10.957] src/backend/identity/src/index.ts(173,15): error TS6133: 'request' is declared but its value is never read.
+[04:30:10.957] src/backend/identity/src/index.ts(173,15): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.957] src/backend/identity/src/index.ts(173,24): error TS6133: 'reply' is declared but its value is never read.
+[04:30:10.957] src/backend/identity/src/index.ts(173,24): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+[04:30:10.957] src/backend/identity/src/index.ts(191,36): error TS7006: Parameter 'error' implicitly has an 'any' type.
+[04:30:10.957] src/backend/identity/src/index.ts(191,43): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.957] src/backend/identity/src/index.ts(191,52): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+[04:30:10.957] src/backend/identity/src/index.ts(259,16): error TS2664: Invalid module name in augmentation, module 'fastify' cannot be found.
+[04:30:10.957] src/backend/identity/src/routes/auth.ts(1,28): error TS6133: 'fastify' is declared but its value is never read.
+[04:30:10.957] src/backend/identity/src/routes/auth.ts(1,42): error TS6133: 'options' is declared but its value is never read.
+[04:30:10.958] src/backend/identity/src/routes/consent.ts(1,31): error TS6133: 'fastify' is declared but its value is never read.
+[04:30:10.959] src/backend/identity/src/routes/consent.ts(1,45): error TS6133: 'options' is declared but its value is never read.
+[04:30:10.960] src/backend/identity/src/routes/users.ts(1,28): error TS6133: 'fastify' is declared but its value is never read.
+[04:30:10.960] src/backend/identity/src/routes/users.ts(1,42): error TS6133: 'options' is declared but its value is never read.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(8,20): error TS2307: Cannot find module 'bcrypt' or its corresponding type declarations.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(9,17): error TS2307: Cannot find module 'jsonwebtoken' or its corresponding type declarations.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(50,36): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(207,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(271,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(315,36): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(348,36): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(381,36): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.960] src/backend/identity/src/services/AuthService.ts(414,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(32,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(80,36): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(82,30): error TS7006: Parameter 'row' implicitly has an 'any' type.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(104,36): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(136,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(163,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(204,36): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(237,40): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(278,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(281,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(294,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(306,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.961] src/backend/identity/src/services/ConsentManager.ts(311,21): error TS2339: Property 'query' does not exist on type 'DatabaseManager'.
+[04:30:10.962] src/backend/identity/src/services/UserService.ts(2,15): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.962] src/backend/identity/src/services/UserService.ts(2,24): error TS6133: 'consentManager' is declared but its value is never read.
+[04:30:10.963] src/backend/progression/src/database/DatabaseManager.ts(5,47): error TS2307: Cannot find module 'pg' or its corresponding type declarations.
+[04:30:10.963] src/backend/progression/src/index.ts(32,21): error TS2307: Cannot find module 'fastify' or its corresponding type declarations.
+[04:30:10.963] src/backend/progression/src/index.ts(33,20): error TS2307: Cannot find module '@fastify/helmet' or its corresponding type declarations.
+[04:30:10.963] src/backend/progression/src/index.ts(34,18): error TS2307: Cannot find module '@fastify/cors' or its corresponding type declarations.
+[04:30:10.963] src/backend/progression/src/index.ts(35,23): error TS2307: Cannot find module '@fastify/rate-limit' or its corresponding type declarations.
+[04:30:10.963] src/backend/progression/src/index.ts(36,21): error TS2307: Cannot find module '@fastify/swagger' or its corresponding type declarations.
+[04:30:10.963] src/backend/progression/src/index.ts(37,23): error TS2307: Cannot find module '@fastify/swagger-ui' or its corresponding type declarations.
+[04:30:10.964] src/backend/progression/src/index.ts(102,30): error TS6133: 'request' is declared but its value is never read.
+[04:30:10.964] src/backend/progression/src/index.ts(102,30): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.964] src/backend/progression/src/index.ts(102,39): error TS7006: Parameter 'context' implicitly has an 'any' type.
+[04:30:10.964] src/backend/progression/src/index.ts(157,42): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.965] src/backend/progression/src/index.ts(157,51): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+[04:30:10.965] src/backend/progression/src/index.ts(209,15): error TS6133: 'request' is declared but its value is never read.
+[04:30:10.965] src/backend/progression/src/index.ts(209,15): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.965] src/backend/progression/src/index.ts(209,24): error TS6133: 'reply' is declared but its value is never read.
+[04:30:10.965] src/backend/progression/src/index.ts(209,24): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+[04:30:10.965] src/backend/progression/src/index.ts(227,36): error TS7006: Parameter 'error' implicitly has an 'any' type.
+[04:30:10.966] src/backend/progression/src/index.ts(227,43): error TS7006: Parameter 'request' implicitly has an 'any' type.
+[04:30:10.966] src/backend/progression/src/index.ts(227,52): error TS7006: Parameter 'reply' implicitly has an 'any' type.
+[04:30:10.966] src/backend/progression/src/index.ts(295,16): error TS2664: Invalid module name in augmentation, module 'fastify' cannot be found.
+[04:30:10.966] src/backend/progression/src/routes/mastery.ts(1,31): error TS6133: 'fastify' is declared but its value is never read.
+[04:30:10.966] src/backend/progression/src/routes/mastery.ts(1,45): error TS6133: 'options' is declared but its value is never read.
+[04:30:10.966] src/backend/progression/src/routes/objectives.ts(1,33): error TS6133: 'fastify' is declared but its value is never read.
+[04:30:10.967] src/backend/progression/src/routes/objectives.ts(1,47): error TS6133: 'options' is declared but its value is never read.
+[04:30:10.967] src/backend/progression/src/routes/rewards.ts(1,30): error TS6133: 'fastify' is declared but its value is never read.
+[04:30:10.967] src/backend/progression/src/routes/rewards.ts(1,44): error TS6133: 'options' is declared but its value is never read.
+[04:30:10.967] src/backend/progression/src/services/ObjectiveManager.ts(2,15): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.967] src/backend/progression/src/services/ProgressionEngine.ts(114,9): error TS2375: Type '{ success: true; newLevel: number; levelUp: boolean; rewardsGranted: RewardGrant[] | undefined; }' is not assignable to type '{ success: boolean; newLevel?: number; levelUp?: boolean; rewardsGranted?: RewardGrant[]; error?: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:10.967]   Types of property 'rewardsGranted' are incompatible.
+[04:30:10.967]     Type 'RewardGrant[] | undefined' is not assignable to type 'RewardGrant[]'.
+[04:30:10.967]       Type 'undefined' is not assignable to type 'RewardGrant[]'.
+[04:30:10.967] src/backend/progression/src/services/ProgressionEngine.ts(150,7): error TS2375: Type '{ userId: string; trackType: string; trackId: string | undefined; level: any; xp: any; totalXp: any; prestigeLevel: any; lastPrestigeXp: any; createdAt: any; updatedAt: any; }' is not assignable to type 'MasteryState' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:10.968]   Types of property 'trackId' are incompatible.
+[04:30:10.968]     Type 'string | undefined' is not assignable to type 'string'.
+[04:30:10.968]       Type 'undefined' is not assignable to type 'string'.
+[04:30:10.968] src/backend/progression/src/services/ProgressionEngine.ts(212,31): error TS2379: Argument of type '{ userId: string; trackType: string; trackId: string | undefined; baseAmount: number; source: "prestige"; reason: string; sessionHash: string; }' is not assignable to parameter of type 'XPGrantRequest' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:10.968]   Types of property 'trackId' are incompatible.
+[04:30:10.969]     Type 'string | undefined' is not assignable to type 'string'.
+[04:30:10.969]       Type 'undefined' is not assignable to type 'string'.
+[04:30:10.969] src/backend/progression/src/services/ProgressionEngine.ts(261,30): error TS7006: Parameter 'row' implicitly has an 'any' type.
+[04:30:10.969] src/backend/progression/src/services/ProgressionEngine.ts(291,11): error TS6133: 'calculateXPForLevel' is declared but its value is never read.
+[04:30:10.970] src/backend/progression/src/services/ProgressionEngine.ts(358,7): error TS2375: Type '{ userId: string; trackType: string; trackId: string | undefined; level: any; xp: any; totalXp: any; prestigeLevel: any; lastPrestigeXp: any; createdAt: any; updatedAt: any; }' is not assignable to type 'MasteryState' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:10.970]   Types of property 'trackId' are incompatible.
+[04:30:10.970]     Type 'string | undefined' is not assignable to type 'string'.
+[04:30:10.970]       Type 'undefined' is not assignable to type 'string'.
+[04:30:10.971] src/backend/progression/src/services/ProgressionEngine.ts(461,52): error TS6133: 'trackId' is declared but its value is never read.
+[04:30:10.971] src/backend/progression/src/services/RewardManager.ts(2,15): error TS6133: 'db' is declared but its value is never read.
+[04:30:10.971] src/client/coach/coachingData.ts(4,3): error TS2353: Object literal may only specify known properties, and 'matchupDatabase' does not exist in type 'CoachingData'.
+[04:30:10.971] src/client/commerce/Storefront.ts(447,5): error TS2375: Type '{ permanent: boolean; returnWindowDays: number; returnDate: Date | undefined; description: string; }' is not assignable to type '{ permanent: boolean; returnWindowDays: number; returnDate?: Date; description: string; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:10.972]   Types of property 'returnDate' are incompatible.
+[04:30:10.972]     Type 'Date | undefined' is not assignable to type 'Date'.
+[04:30:10.972]       Type 'undefined' is not assignable to type 'Date'.
+[04:30:10.972] src/client/commerce/Storefront.ts(482,54): error TS2538: Type 'undefined' cannot be used as an index type.
+[04:30:10.972] src/client/commerce/Storefront.ts(483,48): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+[04:30:10.972]   Type 'undefined' is not assignable to type 'string'.
+[04:30:10.972] src/client/retention/MasteryEngine.ts(155,27): error TS18048: 'character' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(157,5): error TS18048: 'character' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(158,5): error TS18048: 'character' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(160,42): error TS18048: 'character' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(161,5): error TS18048: 'character' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(175,22): error TS18048: 'character' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(191,27): error TS18048: 'archetype' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(193,5): error TS18048: 'archetype' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(194,5): error TS18048: 'archetype' is possibly 'undefined'.
+[04:30:10.973] src/client/retention/MasteryEngine.ts(196,42): error TS18048: 'archetype' is possibly 'undefined'.
+[04:30:10.974] src/client/retention/MasteryEngine.ts(197,5): error TS18048: 'archetype' is possibly 'undefined'.
+[04:30:10.974] src/client/retention/MasteryEngine.ts(313,5): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+[04:30:10.974]   Type 'undefined' is not assignable to type 'boolean'.
+[04:30:10.974] src/client/retention/MasteryEngine.ts(434,11): error TS2375: Type '{ id: string; type: "title"; name: string; description: string; characterId: string | undefined; rarity: "legendary"; }' is not assignable to type 'CosmeticReward' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:10.974]   Types of property 'characterId' are incompatible.
+[04:30:10.974]     Type 'string | undefined' is not assignable to type 'string'.
+[04:30:10.974]       Type 'undefined' is not assignable to type 'string'.
+[04:30:10.974] src/client/retention/MasteryEngine.ts(451,29): error TS2532: Object is possibly 'undefined'.
+[04:30:10.975] src/client/retention/MasteryEngine.ts(452,12): error TS18048: 'challengeData' is possibly 'undefined'.
+[04:30:10.975] src/client/retention/MasteryEngine.ts(453,9): error TS18048: 'challengeData' is possibly 'undefined'.
+[04:30:10.975] src/client/retention/MasteryEngine.ts(455,13): error TS18048: 'challengeData' is possibly 'undefined'.
+[04:30:10.975] src/client/retention/MasteryEngine.ts(456,11): error TS18048: 'challengeData' is possibly 'undefined'.
+[04:30:10.975] src/client/retention/MasteryEngine.ts(457,11): error TS18048: 'challengeData' is possibly 'undefined'.
+[04:30:10.975] src/client/retention/MasteryEngine.ts(507,9): error TS2532: Object is possibly 'undefined'.
+[04:30:10.975] src/client/retention/RetentionClient.ts(24,30): error TS2307: Cannot find module 'uuid' or its corresponding type declarations.
+[04:30:10.975] src/client/retention/RetentionClient.ts(218,11): error TS2740: Type '{ event: "match_result"; v: string; ts: number; userId: string; sessionHash: string; }' is missing the following properties from type 'MatchResultEvent': matchId, ranked, characterId, opponentId, and 3 more.
+[04:30:10.976] src/client/retention/RetentionClient.ts(233,40): error TS2304: Cannot find name 'ClubEvent'.
+[04:30:10.976] src/client/retention/RetentionClient.ts(234,18): error TS2304: Cannot find name 'ClubEvent'.
+[04:30:10.976] src/client/retention/RetentionClient.ts(250,11): error TS2739: Type '{ event: "progression_grant"; v: string; ts: number; userId: string; sessionHash: string; }' is missing the following properties from type 'ProgressionGrantEvent': grantType, amount, reason
+[04:30:10.976] src/client/retention/RetentionClient.ts(266,11): error TS2741: Property 'storeSection' is missing in type '{ event: "store_impression"; v: string; ts: number; userId: string; sessionHash: string; }' but required in type 'StoreImpressionEvent'.
+[04:30:10.976] src/client/retention/RetentionClient.ts(282,11): error TS2739: Type '{ event: "purchase_completed"; v: string; ts: number; userId: string; sessionHash: string; }' is missing the following properties from type 'PurchaseCompletedEvent': transactionId, totalAmount, currency, items
+[04:30:10.976] src/client/retention/RetentionClient.ts(351,41): error TS2532: Object is possibly 'undefined'.
+[04:30:10.976] src/client/retention/RetentionClient.ts(355,11): error TS2532: Object is possibly 'undefined'.
+[04:30:10.977] src/client/retention/RetentionClient.ts(356,30): error TS2532: Object is possibly 'undefined'.
+[04:30:10.977] src/client/retention/RetentionClient.ts(360,9): error TS2532: Object is possibly 'undefined'.
+[04:30:10.977] src/client/social/Clubs.ts(628,11): error TS6133: 'generateSessionHash' is declared but its value is never read.
+[04:30:10.977] src/index.ts(2,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.977] src/scripts/CharacterLoader.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.977] src/scripts/CharacterLoader.ts(234,74): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.977] src/scripts/CharacterLoader.ts(272,80): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.978] src/scripts/CharacterLoader.ts(295,88): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.978] src/scripts/CharacterSelectUI.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.978] src/scripts/CharacterSelectUI.ts(47,11): error TS6133: 'isInitialized' is declared but its value is never read.
+[04:30:10.978] src/scripts/CharacterSelectUI.ts(227,52): error TS6133: 'index' is declared but its value is never read.
+[04:30:10.978] src/scripts/CharacterSelectUI.ts(321,28): error TS6133: 'index' is declared but its value is never read.
+[04:30:10.978] src/scripts/CharacterSelectUI.ts(356,39): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+[04:30:10.978]   Type 'undefined' is not assignable to type 'string'.
+[04:30:10.978] src/scripts/CharacterSelectUI.ts(624,38): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+[04:30:10.979]   Type 'undefined' is not assignable to type 'string'.
+[04:30:10.979] src/scripts/CharacterSelectUI.ts(640,9): error TS6133: 'newRow' is declared but its value is never read.
+[04:30:10.979] src/scripts/CharacterSelectUI.ts(804,11): error TS6133: 'variationSlots' is declared but its value is never read.
+[04:30:10.979] src/scripts/CharacterSelectUI.ts(816,36): error TS18048: 'variation' is possibly 'undefined'.
+[04:30:10.979] src/scripts/CharacterSelectUI.ts(820,36): error TS18048: 'variation' is possibly 'undefined'.
+[04:30:10.979] src/scripts/CharacterSelectUI.ts(827,45): error TS18048: 'variation' is possibly 'undefined'.
+[04:30:10.979] src/scripts/CharacterSelectUI.ts(983,32): error TS6133: 'characterId' is declared but its value is never read.
+[04:30:10.980] src/scripts/EntitlementBridge.ts(41,25): error TS2503: Cannot find namespace 'pc'.
+[04:30:10.980] src/scripts/EntitlementBridge.ts(108,32): error TS6133: 'itemId' is declared but its value is never read.
+[04:30:10.980] src/scripts/EntitlementBridge.ts(120,32): error TS6133: 'itemId' is declared but its value is never read.
+[04:30:10.980] src/scripts/EntitlementBridge.ts(132,32): error TS6133: 'itemId' is declared but its value is never read.
+[04:30:10.980] src/scripts/EntitlementBridge.ts(148,32): error TS6133: 'itemId' is declared but its value is never read.
+[04:30:10.980] src/scripts/EntitlementBridge.ts(316,29): error TS6133: 'characterId' is declared but its value is never read.
+[04:30:10.980] src/scripts/RotationService.ts(96,16): error TS2503: Cannot find namespace 'pc'.
+[04:30:10.981] src/scripts/RotationService.ts(104,25): error TS2503: Cannot find namespace 'pc'.
+[04:30:10.981] src/scripts/RotationService.ts(106,20): error TS2503: Cannot find namespace 'pc'.
+[04:30:10.981] src/scripts/RotationService.ts(172,65): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.981] src/scripts/RotationService.ts(188,56): error TS2345: Argument of type 'RegionConfig | undefined' is not assignable to parameter of type 'RegionConfig'.
+[04:30:10.981]   Type 'undefined' is not assignable to type 'RegionConfig'.
+[04:30:10.981] src/scripts/RotationService.ts(191,58): error TS2345: Argument of type 'RegionConfig | undefined' is not assignable to parameter of type 'RegionConfig'.
+[04:30:10.981]   Type 'undefined' is not assignable to type 'RegionConfig'.
+[04:30:10.982] src/scripts/RotationService.ts(199,5): error TS2375: Type '{ currentWeek: number; nextRotation: Date; activePool: string[]; region: string; eventActive: boolean; eventDescription: string | undefined; }' is not assignable to type 'RotationState' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:10.982]   Types of property 'eventDescription' are incompatible.
+[04:30:10.982]     Type 'string | undefined' is not assignable to type 'string'.
+[04:30:10.982]       Type 'undefined' is not assignable to type 'string'.
+[04:30:10.982] src/scripts/RotationService.ts(222,30): error TS18048: 'timeStr' is possibly 'undefined'.
+[04:30:10.982] src/scripts/RotationService.ts(224,47): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+[04:30:10.982]   Type 'undefined' is not assignable to type 'string'.
+[04:30:10.982] src/scripts/RotationService.ts(232,64): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+[04:30:10.983]   Type 'undefined' is not assignable to type 'number'.
+[04:30:10.983] src/scripts/RotationService.ts(233,11): error TS6133: 'msSinceWeekStart' is declared but its value is never read.
+[04:30:10.983] src/scripts/RotationService.ts(244,30): error TS18048: 'timeStr' is possibly 'undefined'.
+[04:30:10.983] src/scripts/RotationService.ts(245,47): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+[04:30:10.983]   Type 'undefined' is not assignable to type 'string'.
+[04:30:10.983] src/scripts/RotationService.ts(252,30): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+[04:30:10.983]   Type 'undefined' is not assignable to type 'number'.
+[04:30:10.984] src/scripts/RotationService.ts(319,60): error TS2538: Type 'undefined' cannot be used as an index type.
+[04:30:10.984] src/scripts/RotationService.ts(340,45): error TS2538: Type 'undefined' cannot be used as an index type.
+[04:30:10.984] src/scripts/VariationOverlay.ts(94,57): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.984] src/scripts/VariationOverlay.ts(95,89): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.985] src/scripts/VariationOverlay.ts(122,57): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.985] src/scripts/VariationOverlay.ts(148,57): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.985] src/scripts/VariationOverlay.ts(187,57): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.985] src/scripts/VariationOverlay.ts(196,39): error TS1213: Identifier expected. 'protected' is a reserved word in strict mode. Class definitions are automatically in strict mode.
+[04:30:10.985] src/scripts/VariationOverlay.ts(197,16): error TS1213: Identifier expected. 'protected' is a reserved word in strict mode. Class definitions are automatically in strict mode.
+[04:30:10.985] src/scripts/VariationOverlay.ts(197,45): error TS1213: Identifier expected. 'protected' is a reserved word in strict mode. Class definitions are automatically in strict mode.
+[04:30:10.985] src/scripts/VariationOverlay.ts(221,11): error TS6133: 'getPath' is declared but its value is never read.
+[04:30:10.985] src/scripts/VariationOverlay.ts(427,24): error TS18046: 'error' is of type 'unknown'.
+[04:30:10.985] src/scripts/characters/CharacterEntity.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(24,62): error TS6133: 'characterData' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(24,92): error TS6133: 'playerId' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(25,15): error TS2339: Property 'addComponent' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(31,15): error TS2339: Property 'addComponent' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(36,15): error TS2339: Property 'addComponent' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(45,15): error TS2339: Property 'addComponent' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(48,92): error TS6133: 'playerId' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(49,15): error TS2339: Property 'addComponent' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(50,38): error TS2339: Property 'script' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(67,15): error TS2339: Property 'setPosition' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(76,9): error TS2322: Type 'string' is not assignable to type '"left" | "right"'.
+[04:30:10.985] src/scripts/characters/CharacterFactory.ts(78,23): error TS2339: Property 'setLocalScale' does not exist on type 'CharacterEntity'.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(9,15): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(17,10): error TS6133: 'FrameData' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(19,10): error TS6133: 'PlayerConfigs' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(21,10): error TS6133: 'AttackType' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(24,10): error TS6133: 'CharacterStateChangeEvent' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(26,5): error TS6133: 'isValidCharacterState' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(29,5): error TS6133: 'DEFAULT_FRAME_DATA' is declared but its value is never read.
+[04:30:10.985] src/scripts/characters/CharacterManager.ts(116,68): error TS2339: Property 'displayName' does not exist on type 'CharacterData'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(147,58): error TS6133: 'characterId' is declared but its value is never read.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(174,39): error TS2339: Property 'getGuid' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(178,42): error TS2339: Property 'getGuid' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(185,63): error TS2339: Property 'getGuid' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(228,38): error TS2339: Property 'getPosition' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(229,19): error TS2339: Property 'setPosition' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(234,23): error TS2339: Property 'setLocalScale' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(255,37): error TS2339: Property 'rigidbody' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(286,38): error TS2339: Property 'name' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(331,37): error TS2339: Property 'getPosition' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(410,45): error TS2339: Property 'displayName' does not exist on type 'CharacterData'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(419,31): error TS2538: Type 'undefined' cannot be used as an index type.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(422,17): error TS2538: Type 'undefined' cannot be used as an index type.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(429,31): error TS2538: Type 'undefined' cannot be used as an index type.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(432,24): error TS2538: Type 'undefined' cannot be used as an index type.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(459,63): error TS2339: Property 'getGuid' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(484,37): error TS2339: Property 'rigidbody' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(503,36): error TS2339: Property 'getPosition' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(508,23): error TS2339: Property 'setPosition' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(509,41): error TS2339: Property 'rigidbody' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(523,35): error TS6133: 'dt' is declared but its value is never read.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(559,13): error TS6133: 'isValidPlayerId' is declared but its value is never read.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(566,27): error TS2339: Property 'parent' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(567,27): error TS2339: Property 'destroy' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/characters/CharacterManager.ts(574,14): error TS2339: Property 'spriteSheetCache' does not exist on type 'CharacterManager'.
+[04:30:10.986] src/scripts/characters/CharacterStateMachine.ts(34,35): error TS2339: Property 'name' does not exist on type 'CharacterEntity'.
+[04:30:10.986] src/scripts/combat/CombatSystem.ts(6,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.986] src/scripts/combat/CombatSystem.ts(7,15): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:10.986] src/scripts/combat/CombatSystem.ts(7,29): error TS6133: 'Character' is declared but its value is never read.
+[04:30:10.986] src/scripts/combat/CombatSystem.ts(7,45): error TS6133: 'AttackData' is declared but its value is never read.
+[04:30:10.986] src/scripts/combat/CombatSystem.ts(9,10): error TS2305: Module '"../../../types/combat"' has no exported member 'HitData'.
+[04:30:10.986] src/scripts/combat/CombatSystem.ts(9,10): error TS6133: 'HitData' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(10,10): error TS2459: Module '"../../../types/combat"' declares 'CombatState' locally, but it is not exported.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(12,10): error TS2305: Module '"../../../types/combat"' has no exported member 'MeterData'.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(13,10): error TS2724: '"../../../types/combat"' has no exported member named 'CombatEvent'. Did you mean 'CombatKOEvent'?
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(14,10): error TS2305: Module '"../../../types/combat"' has no exported member 'HitEffect'.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(15,10): error TS2305: Module '"../../../types/combat"' has no exported member 'BlockData'.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(15,10): error TS6133: 'BlockData' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(16,5): error TS2305: Module '"../../../types/combat"' has no exported member 'DEFAULT_COMBAT_STATE'.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(17,5): error TS2305: Module '"../../../types/combat"' has no exported member 'DEFAULT_COMBO_DATA'.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(18,5): error TS2305: Module '"../../../types/combat"' has no exported member 'DEFAULT_METER_DATA'.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(23,13): error TS6133: 'state' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(24,13): error TS6133: 'comboData' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(25,13): error TS6133: 'meterData' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(26,13): error TS6133: 'hitEffects' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/CombatSystem.ts(104,19): error TS6133: 'dt' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(6,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(59,8): error TS6133: 'ecs' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(89,26): error TS6133: 'deltaTime' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(89,45): error TS6133: 'ecs' is declared but its value is never read.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(93,9): error TS18048: 'hitbox' is possibly 'undefined'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(95,13): error TS18048: 'hitbox' is possibly 'undefined'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(95,34): error TS18048: 'hitbox' is possibly 'undefined'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(114,29): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+[04:30:10.987]   Type 'undefined' is not assignable to type 'number'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(128,35): error TS2339: Property 'hitboxes' does not exist on type 'Component'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(131,37): error TS2339: Property 'hitboxes' does not exist on type 'Component'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(135,22): error TS2339: Property 'position' does not exist on type 'Component'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(137,22): error TS2339: Property 'position' does not exist on type 'Component'.
+[04:30:10.987] src/scripts/combat/ModernCombatSystem.ts(157,58): error TS6133: 'ecs' is declared but its value is never read.
+[04:30:10.987] src/scripts/components/graphics/CameraCinematicController.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.987] src/scripts/components/graphics/CameraCinematicController.ts(58,55): error TS6133: 'dt' is declared but its value is never read.
+[04:30:10.987] src/scripts/components/graphics/PostProcessingPipeline.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:10.987] src/scripts/components/graphics/PostProcessingPipeline.ts(91,63): error TS6133: 'name' is declared but its value is never read.
+[04:30:10.988] src/scripts/components/graphics/PostProcessingPipeline.ts(91,77): error TS6133: 'value' is declared but its value is never read.
+[04:30:10.988] src/scripts/components/graphics/PostProcessingPipeline.ts(91,89): error TS6133: 'prev' is declared but its value is never read.
+[04:30:11.004] src/scripts/components/graphics/PostProcessingPipeline.ts(96,52): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.005] src/scripts/components/graphics/SpriteRendererHD2D.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.005] src/scripts/components/graphics/SpriteRendererHD2D.ts(2,1): error TS6133: 'StageLayerManager' is declared but its value is never read.
+[04:30:11.005] src/scripts/components/graphics/SpriteRendererHD2D.ts(23,37): error TS2749: 'StageLayerManager' refers to a value, but is being used as a type here. Did you mean 'typeof StageLayerManager'?
+[04:30:11.006] src/scripts/components/graphics/SpriteRendererHD2D.ts(73,48): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.006] src/scripts/components/graphics/StageLayerManager.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.006] src/scripts/components/graphics/StageLayerManager.ts(55,47): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.006] src/scripts/core/AssetLoader.ts(7,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.006] src/scripts/core/AssetLoader.ts(106,12): error TS2339: Property 'app' does not exist on type 'AssetLoader'.
+[04:30:11.006] src/scripts/core/AssetLoader.ts(107,12): error TS2339: Property 'app' does not exist on type 'AssetLoader'.
+[04:30:11.007] src/scripts/core/AssetLoader.ts(138,17): error TS2339: Property 'app' does not exist on type 'AssetLoader'.
+[04:30:11.007] src/scripts/core/CoachManager.ts(1,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.007] src/scripts/core/CoachManager.ts(6,16): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.007] src/scripts/core/CoachManager.ts(8,11): error TS6133: 'coachOverlay' is declared but its value is never read.
+[04:30:11.008] src/scripts/core/CoachManager.ts(10,20): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.008] src/scripts/core/CoachManager.ts(16,42): error TS2554: Expected 0 arguments, but got 1.
+[04:30:11.008] src/scripts/core/CoachManager.ts(54,27): error TS6133: 'playerId' is declared but its value is never read.
+[04:30:11.008] src/scripts/core/ComboTrialManager.ts(1,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.008] src/scripts/core/ComboTrialManager.ts(5,11): error TS6133: 'app' is declared but its value is never read.
+[04:30:11.008] src/scripts/core/ComboTrialManager.ts(5,16): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.008] src/scripts/core/ComboTrialManager.ts(8,20): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.009] src/scripts/core/ComboTrialManager.ts(40,21): error TS6133: 'trialId' is declared but its value is never read.
+[04:30:11.009] src/scripts/core/ComboTrialManager.ts(44,17): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.009] src/scripts/core/EntitySystem.ts(13,13): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.009] src/scripts/core/EntitySystem.ts(14,13): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.009] src/scripts/core/EntitySystem.ts(15,10): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.009] src/scripts/core/EntitySystem.ts(30,13): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.009] src/scripts/core/EntitySystem.ts(31,11): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.010] src/scripts/core/EntitySystem.ts(38,13): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.010] src/scripts/core/EntitySystem.ts(39,17): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.010] src/scripts/core/GameManager.ts(7,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.010] src/scripts/core/GameManager.ts(18,11): error TS2564: Property 'inputManager' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.010] src/scripts/core/GameManager.ts(19,11): error TS2564: Property 'assetLoader' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.010] src/scripts/core/GameManager.ts(20,11): error TS2564: Property 'sceneManager' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.010] src/scripts/core/GameManager.ts(21,11): error TS2564: Property 'ecsManager' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.011] src/scripts/core/GameManager.ts(22,11): error TS2564: Property 'combatSystem' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.011] src/scripts/core/GameManager.ts(23,11): error TS2564: Property 'stateManager' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.011] src/scripts/core/GameManager.ts(23,11): error TS6133: 'stateManager' is declared but its value is never read.
+[04:30:11.011] src/scripts/core/GameManager.ts(26,11): error TS6133: 'deltaTime' is declared but its value is never read.
+[04:30:11.011] src/scripts/core/GameManager.ts(39,51): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.011] src/scripts/core/GameManager.ts(47,5): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+[04:30:11.011] src/scripts/core/GameManager.ts(60,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(61,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(64,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(65,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(68,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(71,14): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(72,12): error TS2339: Property 'conversionManager' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(72,54): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.012] src/scripts/core/GameManager.ts(78,25): error TS2339: Property 'conversionManager' does not exist on type 'GameManager'.
+[04:30:11.013] src/scripts/core/GameManager.ts(95,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.013] src/scripts/core/GameManager.ts(105,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.013] src/scripts/core/GameManager.ts(115,10): error TS2339: Property 'app' does not exist on type 'GameManager'.
+[04:30:11.013] src/scripts/core/GameManager.ts(125,10): error TS2339: Property 'conversionManager' does not exist on type 'GameManager'.
+[04:30:11.013] src/scripts/core/GameManager.ts(131,10): error TS2339: Property 'conversionManager' does not exist on type 'GameManager'.
+[04:30:11.013] src/scripts/core/GameManager.ts(151,27): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.014] src/scripts/core/GameManager.ts(158,38): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.014] src/scripts/core/GameManager.ts(165,29): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.014] src/scripts/core/GameManager.ts(167,34): error TS2339: Property 'conversionManager' does not exist on type 'GameManager'.
+[04:30:11.014] src/scripts/core/GameManager.ts(168,31): error TS2339: Property 'conversionManager' does not exist on type 'GameManager'.
+[04:30:11.014] src/scripts/core/InputManager.ts(7,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.014] src/scripts/core/InputManager.ts(15,11): error TS2564: Property 'inputMapping' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.014] src/scripts/core/InputManager.ts(65,10): error TS2339: Property 'app' does not exist on type 'InputManager'.
+[04:30:11.014] src/scripts/core/InputManager.ts(66,10): error TS2339: Property 'app' does not exist on type 'InputManager'.
+[04:30:11.015] src/scripts/core/InputManager.ts(69,10): error TS2339: Property 'app' does not exist on type 'InputManager'.
+[04:30:11.015] src/scripts/core/InputManager.ts(70,10): error TS2339: Property 'app' does not exist on type 'InputManager'.
+[04:30:11.015] src/scripts/core/InputManager.ts(95,10): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.015] src/scripts/core/InputManager.ts(107,26): error TS2339: Property 'app' does not exist on type 'InputManager'.
+[04:30:11.015] src/scripts/core/InputManager.ts(141,5): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+[04:30:11.015]   Type 'undefined' is not assignable to type 'boolean'.
+[04:30:11.015] src/scripts/core/InputManager.ts(149,5): error TS2322: Type 'boolean | undefined' is not assignable to type 'boolean'.
+[04:30:11.016]   Type 'undefined' is not assignable to type 'boolean'.
+[04:30:11.016] src/scripts/core/ModernAssetLoader.ts(6,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.016] src/scripts/core/ModernAssetLoader.ts(51,45): error TS2531: Object is possibly 'null'.
+[04:30:11.016] src/scripts/core/ParticleManager.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.016] src/scripts/core/ParticleManager.ts(2,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.016] src/scripts/core/ParticleManager.ts(2,19): error TS2305: Module '"../../../types/core"' has no exported member 'ParticlePool'.
+[04:30:11.017] src/scripts/core/ParticleManager.ts(2,33): error TS2305: Module '"../../../types/core"' has no exported member 'ParticleType'.
+[04:30:11.017] src/scripts/core/ParticleManager.ts(57,47): error TS2345: Argument of type '(pool: pc.Entity[]) => void' is not assignable to parameter of type '(value: unknown, index: number, array: unknown[]) => void'.
+[04:30:11.017]   Types of parameters 'pool' and 'value' are incompatible.
+[04:30:11.017]     Type 'unknown' is not assignable to type 'pc.Entity[]'.
+[04:30:11.017] src/scripts/core/SceneManager.ts(7,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.017] src/scripts/core/SceneManager.ts(14,11): error TS2564: Property 'assetLoader' has no initializer and is not definitely assigned in the constructor.
+[04:30:11.018] src/scripts/core/SceneManager.ts(81,10): error TS2339: Property 'app' does not exist on type 'SceneManager'.
+[04:30:11.018] src/scripts/core/SceneManager.ts(118,10): error TS2339: Property 'app' does not exist on type 'SceneManager'.
+[04:30:11.018] src/scripts/core/SceneManager.ts(172,10): error TS2339: Property 'app' does not exist on type 'SceneManager'.
+[04:30:11.018] src/scripts/core/SceneManager.ts(202,10): error TS2339: Property 'app' does not exist on type 'SceneManager'.
+[04:30:11.018] src/scripts/core/SceneManager.ts(295,10): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.018] src/scripts/core/StageManager.ts(1,1): error TS6133: 'StageLayerManager' is declared but its value is never read.
+[04:30:11.018] src/scripts/core/StageManager.ts(2,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.019] src/scripts/core/StageManager.ts(23,13): error TS6133: 'app' is declared but its value is never read.
+[04:30:11.019] src/scripts/core/StageManager.ts(23,18): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.019] src/scripts/core/StageManager.ts(24,32): error TS2749: 'StageLayerManager' refers to a value, but is being used as a type here. Did you mean 'typeof StageLayerManager'?
+[04:30:11.019] src/scripts/core/StageManager.ts(27,22): error TS2503: Cannot find namespace 'pc'.
+[04:30:11.019] src/scripts/core/StageManager.ts(27,57): error TS2749: 'StageLayerManager' refers to a value, but is being used as a type here. Did you mean 'typeof StageLayerManager'?
+[04:30:11.019] src/scripts/core/StateManager.ts(39,17): error TS6133: 'key' is declared but its value is never read.
+[04:30:11.020] src/scripts/core/StateManager.ts(178,27): error TS2345: Argument of type '(current: GameState) => { players: { [x: string]: { character: string; health: number; meter: number; wins: number; } | { character?: string; health?: number; meter?: number; wins?: number; }; }; }' is not assignable to parameter of type 'Partial<GameState> | ((current: GameState) => Partial<GameState>)'.
+[04:30:11.020]   Type '(current: GameState) => { players: { [x: string]: { character: string; health: number; meter: number; wins: number; } | { character?: string; health?: number; meter?: number; wins?: number; }; }; }' is not assignable to type '(current: GameState) => Partial<GameState>'.
+[04:30:11.020]     Call signature return types '{ players: { [x: string]: { character: string; health: number; meter: number; wins: number; } | { character?: string; health?: number; meter?: number; wins?: number; }; }; }' and 'Partial<GameState>' are incompatible.
+[04:30:11.020]       The types of 'players' are incompatible between these types.
+[04:30:11.020]         Type '{ [x: string]: { character: string; health: number; meter: number; wins: number; } | { character?: string; health?: number; meter?: number; wins?: number; }; }' is not assignable to type '{ [playerId: string]: { character: string; health: number; meter: number; wins: number; }; }'.
+[04:30:11.020]           'string' index signatures are incompatible.
+[04:30:11.020]             Type '{ character: string; health: number; meter: number; wins: number; } | { character?: string; health?: number; meter?: number; wins?: number; }' is not assignable to type '{ character: string; health: number; meter: number; wins: number; }'.
+[04:30:11.021]               Type '{ character?: string; health?: number; meter?: number; wins?: number; }' is not assignable to type '{ character: string; health: number; meter: number; wins: number; }'.
+[04:30:11.021]                 Property 'character' is optional in type '{ character?: string; health?: number; meter?: number; wins?: number; }' but required in type '{ character: string; health: number; meter: number; wins: number; }'.
+[04:30:11.021] src/scripts/graphics/ParallaxManager.ts(7,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.021] src/scripts/graphics/ParallaxManager.ts(8,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.021] src/scripts/graphics/ParallaxManager.ts(9,1): error TS6192: All imports in import declaration are unused.
+[04:30:11.021] src/scripts/graphics/ParallaxManager.ts(131,13): error TS6133: 'performance' is declared but its value is never read.
+[04:30:11.021] src/scripts/graphics/ParallaxManager.ts(471,51): error TS6133: 'data' is declared but its value is never read.
+[04:30:11.021] src/scripts/graphics/ParallaxManager.ts(599,36): error TS2339: Property 'updateParallax' does not exist on type 'ParallaxManager'.
+[04:30:11.022] src/scripts/graphics/ParallaxManager.ts(615,34): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.022] src/scripts/graphics/ParallaxManager.ts(623,34): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.022] src/scripts/graphics/ParallaxManager.ts(627,45): error TS6133: 'layerName' is declared but its value is never read.
+[04:30:11.022] src/scripts/graphics/ParallaxManager.ts(673,24): error TS7006: Parameter 'light' implicitly has an 'any' type.
+[04:30:11.022] src/scripts/graphics/ParallaxManager.ts(727,68): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+[04:30:11.022] src/scripts/graphics/PostProcessingManager.ts(7,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.022] src/scripts/graphics/PostProcessingManager.ts(8,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.022] src/scripts/graphics/PostProcessingManager.ts(9,10): error TS6133: 'PostProcessEffect' is declared but its value is never read.
+[04:30:11.023] src/scripts/graphics/PostProcessingManager.ts(9,29): error TS6133: 'PostProcessingState' is declared but its value is never read.
+[04:30:11.023] src/scripts/graphics/PostProcessingManager.ts(653,36): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.023] src/scripts/graphics/PostProcessingManager.ts(687,34): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.023] src/scripts/graphics/SF3GraphicsManager.ts(7,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.023] src/scripts/graphics/SF3GraphicsManager.ts(8,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.023] src/scripts/graphics/SF3GraphicsManager.ts(387,36): error TS6133: 'character' is declared but its value is never read.
+[04:30:11.023] src/scripts/graphics/SF3GraphicsManager.ts(526,15): error TS6133: 'targetScale' is declared but its value is never read.
+[04:30:11.024] src/scripts/graphics/SF3GraphicsManager.ts(582,33): error TS6133: 'animator' is declared but its value is never read.
+[04:30:11.024] src/scripts/graphics/SF3GraphicsManager.ts(601,28): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.024] src/scripts/graphics/SF3GraphicsManager.ts(610,33): error TS6133: 'dt' is declared but its value is never read.
+[04:30:11.024] src/scripts/graphics/SF3GraphicsManager.ts(634,26): error TS7006: Parameter 'effect' implicitly has an 'any' type.
+[04:30:11.024] src/scripts/ui/FrameDataDisplay.ts(1,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.024] src/scripts/ui/FrameDataDisplay.ts(17,10): error TS2339: Property 'entity' does not exist on type 'FrameDataDisplay'.
+[04:30:11.024] src/scripts/ui/FrameDataDisplay.ts(19,10): error TS2339: Property 'app' does not exist on type 'FrameDataDisplay'.
+[04:30:11.024] src/scripts/ui/FrameDataDisplay.ts(36,10): error TS2339: Property 'app' does not exist on type 'FrameDataDisplay'.
+[04:30:11.025] src/scripts/ui/UIManager.ts(6,21): error TS2307: Cannot find module 'playcanvas' or its corresponding type declarations.
+[04:30:11.025] src/scripts/ui/UIManager.ts(7,10): error TS2305: Module '"../../../types/core"' has no exported member 'ISystem'.
+[04:30:11.025] src/scripts/ui/UIManager.ts(137,78): error TS6133: 'flip' is declared but its value is never read.
+[04:30:11.025] src/scripts/ui/UIManager.ts(315,37): error TS7006: Parameter 'pip' implicitly has an 'any' type.
+[04:30:11.025] src/scripts/ui/UIManager.ts(315,42): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+[04:30:11.025] src/typescript/ConversionManager.ts(17,1): error TS6133: 'SF3CompressionSystem' is declared but its value is never read.
+[04:30:11.026] src/typescript/ConversionManager.ts(181,10): error TS6133: 'deltaTime' is declared but its value is never read.
+[04:30:11.026] src/typescript/ConversionManager.ts(193,18): error TS6133: 'layer' is declared but its value is never read.
+[04:30:11.026] src/typescript/ConversionManager.ts(199,18): error TS6133: 'character' is declared but its value is never read.
+[04:30:11.026] src/typescript/ConversionManager.ts(205,18): error TS6133: 'effect' is declared but its value is never read.
+[04:30:11.026] src/typescript/audio/ADXCodec.ts(62,42): error TS2532: Object is possibly 'undefined'.
+[04:30:11.033] src/typescript/audio/ADXCodec.ts(67,10): error TS2532: Object is possibly 'undefined'.
+[04:30:11.033] src/typescript/audio/ADXCodec.ts(68,10): error TS2532: Object is possibly 'undefined'.
+[04:30:11.033] src/typescript/audio/ADXCodec.ts(71,28): error TS18048: 'state' is possibly 'undefined'.
+[04:30:11.034] src/typescript/audio/ADXCodec.ts(71,50): error TS18048: 'state' is possibly 'undefined'.
+[04:30:11.034] src/typescript/audio/ADXCodec.ts(73,32): error TS18048: 'scale' is possibly 'undefined'.
+[04:30:11.034] src/typescript/audio/ADXCodec.ts(77,7): error TS18048: 'state' is possibly 'undefined'.
+[04:30:11.034] src/typescript/audio/ADXCodec.ts(77,18): error TS18048: 'state' is possibly 'undefined'.
+[04:30:11.034] src/typescript/audio/ADXCodec.ts(78,7): error TS18048: 'state' is possibly 'undefined'.
+[04:30:11.035] src/typescript/compress/CompressionSystem.ts(59,13): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+[04:30:11.035]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.035] src/typescript/compress/CompressionSystem.ts(73,11): error TS6133: 'compressedData' is declared but its value is never read.
+[04:30:11.035] src/typescript/compress/CompressionSystem.ts(121,23): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+[04:30:11.035]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.036] src/typescript/core/FileSystem.ts(131,5): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+[04:30:11.036]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.036] src/typescript/core/FileSystem.ts(149,23): error TS6133: 'partition' is declared but its value is never read.
+[04:30:11.036] src/typescript/core/Game.ts(2,10): error TS2305: Module '"../../../types/core"' has no exported member 'GameState'.
+[04:30:11.036] src/typescript/core/Game.ts(2,21): error TS2305: Module '"../../../types/core"' has no exported member 'TaskFunction'.
+[04:30:11.037] src/typescript/core/Game.ts(2,35): error TS2305: Module '"../../../types/core"' has no exported member 'GameMode'.
+[04:30:11.037] src/typescript/core/Game.ts(35,13): error TS6133: 'inputManager' is declared but its value is never read.
+[04:30:11.037] src/typescript/core/Game.ts(38,13): error TS6133: 'effectManager' is declared but its value is never read.
+[04:30:11.037] src/typescript/core/Game.ts(39,13): error TS6133: 'playerManager' is declared but its value is never read.
+[04:30:11.038] src/typescript/core/Game.ts(89,18): error TS2551: Property 'texturecashUpdate' does not exist on type 'GameManager'. Did you mean 'textureHashUpdate'?
+[04:30:11.038] src/typescript/core/Game.ts(115,9): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+[04:30:11.038] src/typescript/core/Game.ts(125,9): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+[04:30:11.038] src/typescript/core/Game.ts(129,14): error TS2339: Property 'checkBackDemo' does not exist on type 'GameManager'.
+[04:30:11.038] src/typescript/core/Game.ts(256,9): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+[04:30:11.039] src/typescript/core/Game.ts(330,13): error TS6133: 'textureHashUpdate' is declared but its value is never read.
+[04:30:11.039] src/typescript/core/Game.ts(339,23): error TS6133: 'param' is declared but its value is never read.
+[04:30:11.039] src/typescript/core/Game.ts(340,30): error TS6133: 'param' is declared but its value is never read.
+[04:30:11.039] src/typescript/core/Game.ts(341,26): error TS6133: 'param' is declared but its value is never read.
+[04:30:11.039] src/typescript/core/Game.ts(342,21): error TS6133: 'param1' is declared but its value is never read.
+[04:30:11.040] src/typescript/core/Game.ts(342,37): error TS6133: 'param2' is declared but its value is never read.
+[04:30:11.040] src/typescript/core/Game.ts(342,53): error TS6133: 'param3' is declared but its value is never read.
+[04:30:11.040] src/typescript/core/Game.ts(343,24): error TS6133: 'id' is declared but its value is never read.
+[04:30:11.040] src/typescript/core/Game.ts(344,29): error TS6133: 'flag' is declared but its value is never read.
+[04:30:11.040] src/typescript/core/Game.ts(345,27): error TS6133: 'area' is declared but its value is never read.
+[04:30:11.041] src/typescript/core/Game.ts(346,31): error TS6133: 'list' is declared but its value is never read.
+[04:30:11.041] src/typescript/core/Game.ts(353,30): error TS6133: 'flag' is declared but its value is never read.
+[04:30:11.041] src/typescript/core/Game.ts(355,27): error TS6133: 'type' is declared but its value is never read.
+[04:30:11.041] src/typescript/core/Game.ts(358,32): error TS6133: 'list' is declared but its value is never read.
+[04:30:11.041] src/typescript/core/Game.ts(366,24): error TS6133: 'y' is declared but its value is never read.
+[04:30:11.041] src/typescript/core/Game.ts(367,23): error TS6133: 'timer' is declared but its value is never read.
+[04:30:11.042] src/typescript/core/GameState.ts(195,25): error TS2322: Type 'GameStateData | undefined' is not assignable to type 'Readonly<GameStateData> | null'.
+[04:30:11.042]   Type 'undefined' is not assignable to type 'Readonly<GameStateData> | null'.
+[04:30:11.042] src/typescript/core/InputManager.ts(5,13): error TS2740: Type '{ p1sw_0: number; p1sw_1: number; p2sw_0: number; p2sw_1: number; direction: any; lastDirection: any; buttons: Map<string, ButtonState>; buttonPressed: Map<string, boolean>; buttonReleased: Map<...>; }' is missing the following properties from type 'InputState': up, down, left, right, and 9 more.
+[04:30:11.042] src/typescript/core/InputManager.ts(10,20): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.042] src/typescript/core/InputManager.ts(11,24): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.042] src/typescript/core/InputManager.ts(36,13): error TS2353: Object literal may only specify known properties, and 'start' does not exist in type 'PlayerInputMappings'.
+[04:30:11.043] src/typescript/core/InputManager.ts(51,13): error TS2353: Object literal may only specify known properties, and 'start' does not exist in type 'PlayerInputMappings'.
+[04:30:11.043] src/typescript/core/InputManager.ts(69,53): error TS2345: Argument of type '{ pressed: true; justPressed: boolean; justReleased: false; }' is not assignable to parameter of type 'ButtonState'.
+[04:30:11.043]   Type '{ pressed: true; justPressed: boolean; justReleased: false; }' is missing the following properties from type 'ButtonState': pressFrame, releaseFrame, holdFrames
+[04:30:11.043] src/typescript/core/InputManager.ts(83,53): error TS2345: Argument of type '{ pressed: false; justPressed: false; justReleased: true; }' is not assignable to parameter of type 'ButtonState'.
+[04:30:11.043]   Type '{ pressed: false; justPressed: false; justReleased: true; }' is missing the following properties from type 'ButtonState': pressFrame, releaseFrame, holdFrames
+[04:30:11.043] src/typescript/core/InputManager.ts(114,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.044] src/typescript/core/InputManager.ts(116,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.044] src/typescript/core/InputManager.ts(118,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.044] src/typescript/core/InputManager.ts(120,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.044] src/typescript/core/InputManager.ts(122,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.044] src/typescript/core/InputManager.ts(124,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.044] src/typescript/core/InputManager.ts(126,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.044] src/typescript/core/InputManager.ts(128,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.045] src/typescript/core/InputManager.ts(130,41): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.045] src/typescript/core/InputManager.ts(156,21): error TS6133: 'key' is declared but its value is never read.
+[04:30:11.045] src/typescript/core/InputManager.ts(173,9): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.045] src/typescript/core/InputManager.ts(173,28): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.045] src/typescript/core/InputManager.ts(173,42): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.045] src/typescript/core/InputManager.ts(173,58): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.046] src/typescript/core/InputManager.ts(173,74): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.046] src/typescript/core/InputManager.ts(174,9): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.046] src/typescript/core/InputManager.ts(174,28): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.046] src/typescript/core/InputManager.ts(174,48): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.046] src/typescript/core/InputManager.ts(174,69): error TS2693: 'Direction' only refers to a type, but is being used as a value here.
+[04:30:11.046] src/typescript/core/MemoryManager.ts(27,11): error TS6133: 'defaultAlignment' is declared but its value is never read.
+[04:30:11.046] src/typescript/core/MemoryManager.ts(103,11): error TS2375: Type '{ address: number; size: number; allocated: true; tag: string | undefined; }' is not assignable to type 'MemoryBlock' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:11.047]   Types of property 'tag' are incompatible.
+[04:30:11.047]     Type 'string | undefined' is not assignable to type 'string'.
+[04:30:11.047]       Type 'undefined' is not assignable to type 'string'.
+[04:30:11.047] src/typescript/core/MemoryManager.ts(141,5): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.047] src/typescript/core/MemoryManager.ts(142,22): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.048] src/typescript/core/MemoryManager.ts(143,24): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.048] src/typescript/core/MemoryManager.ts(146,28): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.048] src/typescript/core/MemoryManager.ts(146,98): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.048] src/typescript/core/MemoryManager.ts(146,115): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.048] src/typescript/effects/EffectManager.ts(148,32): error TS2769: No overload matches this call.
+[04:30:11.048]   Overload 1 of 4, '(iterable?: Iterable<readonly [string, number]> | null | undefined): Map<string, number>', gave the following error.
+[04:30:11.048]     Argument of type '([string, number] | [string, string])[]' is not assignable to parameter of type 'Iterable<readonly [string, number]>'.
+[04:30:11.049]       The types returned by '[Symbol.iterator]().next(...)' are incompatible between these types.
+[04:30:11.049]         Type 'IteratorResult<[string, number] | [string, string], undefined>' is not assignable to type 'IteratorResult<readonly [string, number], any>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:11.049]           Type 'IteratorYieldResult<[string, number] | [string, string]>' is not assignable to type 'IteratorResult<readonly [string, number], any>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:11.049]             Type 'IteratorYieldResult<[string, number] | [string, string]>' is not assignable to type 'IteratorYieldResult<readonly [string, number]>' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+[04:30:11.049]               Type '[string, number] | [string, string]' is not assignable to type 'readonly [string, number]'.
+[04:30:11.049]                 Type '[string, string]' is not assignable to type 'readonly [string, number]'.
+[04:30:11.049]                   Type at position 1 in source is not compatible with type at position 1 in target.
+[04:30:11.049]                     Type 'string' is not assignable to type 'number'.
+[04:30:11.049]   Overload 2 of 4, '(entries?: readonly (readonly [string, number])[] | null | undefined): Map<string, number>', gave the following error.
+[04:30:11.049]     Type 'string' is not assignable to type 'number'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(6,25): error TS2307: Cannot find module '../../types/core.js' or its corresponding type declarations.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(56,11): error TS6133: 'app' is declared but its value is never read.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(84,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(85,28): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(90,18): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(97,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(98,28): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(103,18): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(110,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(111,28): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(116,18): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(123,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(124,28): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(129,18): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(136,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(137,28): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(142,18): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(154,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(155,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(156,20): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(157,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(158,20): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(227,12): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.049] src/typescript/effects/EffectSystem.ts(229,27): error TS2345: Argument of type 'EffectData | undefined' is not assignable to parameter of type 'EffectData'.
+[04:30:11.050]   Type 'undefined' is not assignable to type 'EffectData'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(234,7): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(234,28): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(235,7): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(235,28): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(236,7): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(236,28): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(239,7): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(239,28): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(242,11): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(242,37): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(243,9): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(244,9): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(244,31): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(248,7): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(249,11): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(250,9): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(255,25): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(255,39): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(256,7): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(259,11): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(261,9): error TS18048: 'effect' is possibly 'undefined'.
+[04:30:11.050] src/typescript/effects/EffectSystem.ts(277,28): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(7,25): error TS2307: Cannot find module '../../types/core.js' or its corresponding type declarations.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(43,35): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(57,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(58,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(60,20): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(229,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(230,21): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(233,21): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(234,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(245,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(246,21): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(249,21): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(250,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(261,23): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(262,21): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(265,21): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/effects/ParticleSystem.ts(266,25): error TS1361: 'pc' cannot be used as a value because it was imported using 'import type'.
+[04:30:11.050] src/typescript/graphics/GraphicsManager.ts(2,10): error TS2305: Module '"../../../types/graphics"' has no exported member 'GraphicsState'.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(2,25): error TS2305: Module '"../../../types/graphics"' has no exported member 'RenderLayer'.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(2,38): error TS2305: Module '"../../../types/graphics"' has no exported member 'Sprite'.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(2,46): error TS2305: Module '"../../../types/graphics"' has no exported member 'Camera'.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(86,31): error TS7006: Parameter 'sprite' implicitly has an 'any' type.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(91,31): error TS7006: Parameter 'effect' implicitly has an 'any' type.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(116,26): error TS6133: 'effect' is declared but its value is never read.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(142,31): error TS6133: 'layer' is declared but its value is never read.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(149,21): error TS6133: 'id' is declared but its value is never read.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(158,31): error TS7006: Parameter 'sprite' implicitly has an 'any' type.
+[04:30:11.051] src/typescript/graphics/GraphicsManager.ts(167,31): error TS7006: Parameter 'sprite' implicitly has an 'any' type.
+[04:30:11.051] src/typescript/libco/CoroutineSystem.ts(77,9): error TS6133: 'value' is declared but its value is never read.
+[04:30:11.051] src/typescript/libco/CoroutineSystem.ts(121,11): error TS6133: 'amd64Context' is declared but its value is never read.
+[04:30:11.051] src/typescript/libco/CoroutineSystem.ts(128,11): error TS6133: 'x86Context' is declared but its value is never read.
+[04:30:11.051] src/typescript/libco/CoroutineSystem.ts(135,11): error TS6133: 'armContext' is declared but its value is never read.
+[04:30:11.051] src/typescript/libco/CoroutineSystem.ts(168,15): error TS6133: 'from' is declared but its value is never read.
+[04:30:11.051] src/typescript/libco/CoroutineSystem.ts(187,32): error TS6133: 'value' is declared but its value is never read.
+[04:30:11.051] src/typescript/memory/MemoryManager.ts(26,11): error TS6133: 'memoryView' is declared but its value is never read.
+[04:30:11.051] src/typescript/memory/MemoryManager.ts(174,5): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.051] src/typescript/memory/MemoryManager.ts(175,22): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.051] src/typescript/memory/MemoryManager.ts(180,26): error TS18048: 'block' is possibly 'undefined'.
+[04:30:11.051] src/typescript/memory/PS2MemoryManager.ts(117,47): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+[04:30:11.051]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.051] src/typescript/memory/PS2MemoryManager.ts(120,11): error TS18048: 'currentAddr' is possibly 'undefined'.
+[04:30:11.051] src/typescript/memory/PS2MemoryManager.ts(123,29): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+[04:30:11.051]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.051] src/typescript/platform/SDLInput.ts(104,25): error TS2532: Object is possibly 'undefined'.
+[04:30:11.051] src/typescript/platform/SDLInput.ts(113,9): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+[04:30:11.051]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.051] src/typescript/platform/SDLRenderer.ts(22,11): error TS6133: 'canvas' is declared but its value is never read.
+[04:30:11.051] src/typescript/platform/SDLRenderer.ts(166,13): error TS6133: 'red' is declared but its value is never read.
+[04:30:11.051] src/typescript/platform/SDLRenderer.ts(167,13): error TS6133: 'green' is declared but its value is never read.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(2,10): error TS2305: Module '"../../../types/character"' has no exported member 'Character'.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(2,21): error TS6133: 'CharacterState' is declared but its value is never read.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(2,37): error TS2724: '"../../../types/character"' has no exported member named 'PlayerData'. Did you mean 'PlayerId'?
+[04:30:11.051] src/typescript/player/PlayerManager.ts(3,1): error TS6133: 'CombatState' is declared but its value is never read.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(3,10): error TS2459: Module '"../../../types/combat"' declares 'CombatState' locally, but it is not exported.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(39,20): error TS2693: 'CharacterState' only refers to a type, but is being used as a value here.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(115,38): error TS2693: 'CharacterState' only refers to a type, but is being used as a value here.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(171,42): error TS2693: 'CharacterState' only refers to a type, but is being used as a value here.
+[04:30:11.051] src/typescript/player/PlayerManager.ts(223,61): error TS2693: 'CharacterState' only refers to a type, but is being used as a value here.
+[04:30:11.051] src/typescript/sdk/PS2SDK.ts(224,14): error TS6133: 'clientData' is declared but its value is never read.
+[04:30:11.051] src/typescript/sdk/PS2SDK.ts(224,31): error TS6133: 'serverId' is declared but its value is never read.
+[04:30:11.051] src/typescript/sdk/PS2SDK.ts(229,14): error TS6133: 'clientData' is declared but its value is never read.
+[04:30:11.051] src/typescript/sdk/PS2SDK.ts(229,31): error TS6133: 'funcNum' is declared but its value is never read.
+[04:30:11.051] src/typescript/sdk/PS2SDK.ts(229,48): error TS6133: 'mode' is declared but its value is never read.
+[04:30:11.051] src/typescript/sdk/PS2SDK.ts(229,62): error TS6133: 'send' is declared but its value is never read.
+[04:30:11.052] src/typescript/sdk/PS2SDK.ts(229,73): error TS6133: 'sendSize' is declared but its value is never read.
+[04:30:11.052] src/typescript/sdk/PS2SDK.ts(229,91): error TS6133: 'recv' is declared but its value is never read.
+[04:30:11.052] src/typescript/sdk/PS2SDK.ts(229,102): error TS6133: 'recvSize' is declared but its value is never read.
+[04:30:11.052] src/typescript/sound/ADXAudioManager.ts(131,11): error TS18048: 'echoWork' is possibly 'undefined'.
+[04:30:11.052] src/typescript/sound/ADXAudioManager.ts(133,31): error TS2345: Argument of type 'EchoWork | undefined' is not assignable to parameter of type 'EchoWork'.
+[04:30:11.052]   Type 'undefined' is not assignable to type 'EchoWork'.
+[04:30:11.052] src/typescript/sound/SoundManager.ts(127,21): error TS6133: 'id' is declared but its value is never read.
+[04:30:11.052] src/typescript/system/SystemManager.ts(91,18): error TS6133: 'deltaTime' is declared but its value is never read.
+[04:30:11.052] src/zlib/adler32.ts(24,23): error TS2532: Object is possibly 'undefined'.
+[04:30:11.052] src/zlib/adler32.ts(31,23): error TS2532: Object is possibly 'undefined'.
+[04:30:11.052] src/zlib/crc32.ts(81,19): error TS2532: Object is possibly 'undefined'.
+[04:30:11.052] src/zlib/crc32.ts(81,37): error TS2532: Object is possibly 'undefined'.
+[04:30:11.052] src/zlib/crc32.ts(87,19): error TS2532: Object is possibly 'undefined'.
+[04:30:11.052] src/zlib/crc32.ts(87,37): error TS2532: Object is possibly 'undefined'.
+[04:30:11.052] src/zlib/deflate.ts(64,96): error TS6133: 'memLevel' is declared but its value is never read.
+[04:30:11.052] src/zlib/deflate.ts(64,114): error TS6133: 'strategy' is declared but its value is never read.
+[04:30:11.052] src/zlib/deflate.ts(85,5): error TS2412: Type 'undefined' is not assignable to type 'string' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+[04:30:11.052] src/zlib/deflate.ts(94,11): error TS6133: 'state' is declared but its value is never read.
+[04:30:11.052] src/zlib/deflate.ts(105,13): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+[04:30:11.052]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.052] src/zlib/deflate.ts(123,5): error TS2412: Type 'undefined' is not assignable to type 'DeflateState' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+[04:30:11.052] src/zlib/infblock.ts(6,10): error TS6133: 'inflateCodes' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(6,24): error TS6133: 'inflateCodesNew' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(38,7): error TS6133: 'STORED' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(39,7): error TS6133: 'TABLE' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(43,7): error TS6133: 'DRY' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(44,7): error TS6133: 'DONE' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(45,7): error TS6133: 'BAD' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(81,9): error TS2412: Type 'undefined' is not assignable to type 'number[]' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target.
+[04:30:11.052] src/zlib/infblock.ts(97,31): error TS6133: 's' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(97,54): error TS6133: 'z' is declared but its value is never read.
+[04:30:11.052] src/zlib/infblock.ts(97,62): error TS6133: 'r' is declared but its value is never read.
+[04:30:11.052] src/zlib/infcodes.ts(74,12): error TS2339: Property 'bitsCount' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(75,11): error TS2339: Property 'inputPos' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(77,7): error TS2339: Property 'buffer' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(77,18): error TS2532: Object is possibly 'undefined'.
+[04:30:11.052] src/zlib/infcodes.ts(77,30): error TS2339: Property 'inputPos' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(77,45): error TS2339: Property 'bitsCount' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(78,7): error TS2339: Property 'bitsCount' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(79,7): error TS2339: Property 'inputPos' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(143,5): error TS2339: Property 'buffer' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(144,5): error TS2339: Property 'bitsCount' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(145,5): error TS2339: Property 'inputPos' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(148,12): error TS2304: Cannot find name 'q'.
+[04:30:11.052] src/zlib/infcodes.ts(215,17): error TS2339: Property 'buffer' does not exist on type 'InflateCodesState'.
+[04:30:11.052] src/zlib/infcodes.ts(216,20): error TS2339: Property 'bitsCount' does not exist on type 'InflateCodesState'.
+[04:30:11.053] src/zlib/infcodes.ts(217,19): error TS2339: Property 'inputPos' does not exist on type 'InflateCodesState'.
+[04:30:11.053] src/zlib/infcodes.ts(224,7): error TS6133: 'currentInputBytesAvailable' is declared but its value is never read.
+[04:30:11.053] src/zlib/infcodes.ts(225,7): error TS6133: 'currentInputBufferView' is declared but its value is never read.
+[04:30:11.053] src/zlib/infcodes.ts(226,7): error TS6133: 'bytesInWindow' is declared but its value is never read.
+[04:30:11.053] src/zlib/infcodes.ts(252,23): error TS2345: Argument of type 'BitBufferState' is not assignable to parameter of type 'InflateCodesState'.
+[04:30:11.053]   Type 'BitBufferState' is missing the following properties from type 'InflateCodesState': mode, len, sub, lbits, and 3 more.
+[04:30:11.053] src/zlib/infcodes.ts(258,58): error TS2532: Object is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(260,21): error TS18048: 'currentNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(262,22): error TS18048: 'currentNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(265,23): error TS18048: 'currentNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(269,19): error TS18048: 'currentNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(280,52): error TS18048: 'currentNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(294,23): error TS2345: Argument of type 'BitBufferState' is not assignable to parameter of type 'InflateCodesState'.
+[04:30:11.053]   Type 'BitBufferState' is missing the following properties from type 'InflateCodesState': mode, len, sub, lbits, and 3 more.
+[04:30:11.053] src/zlib/infcodes.ts(299,43): error TS2532: Object is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(310,23): error TS2345: Argument of type 'BitBufferState' is not assignable to parameter of type 'InflateCodesState'.
+[04:30:11.053]   Type 'BitBufferState' is missing the following properties from type 'InflateCodesState': mode, len, sub, lbits, and 3 more.
+[04:30:11.053] src/zlib/infcodes.ts(315,62): error TS2532: Object is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(317,21): error TS18048: 'distNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(319,26): error TS18048: 'distNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(323,29): error TS18048: 'distNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(328,44): error TS18048: 'distNode' is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(339,23): error TS2345: Argument of type 'BitBufferState' is not assignable to parameter of type 'InflateCodesState'.
+[04:30:11.053]   Type 'BitBufferState' is missing the following properties from type 'InflateCodesState': mode, len, sub, lbits, and 3 more.
+[04:30:11.053] src/zlib/infcodes.ts(344,53): error TS2532: Object is possibly 'undefined'.
+[04:30:11.053] src/zlib/infcodes.ts(458,34): error TS6133: 'c' is declared but its value is never read.
+[04:30:11.053] src/zlib/infcodes.ts(458,42): error TS6133: 'z' is declared but its value is never read.
+[04:30:11.053] src/zlib/infcodes.ts(483,3): error TS6133: 'z' is declared but its value is never read.
+[04:30:11.053] src/zlib/infcodes.ts(500,5): error TS2353: Object literal may only specify known properties, and 'buffer' does not exist in type 'InflateCodesState'.
+[04:30:11.053] src/zlib/infcodes.ts(510,23): error TS6133: 's' is declared but its value is never read.
+[04:30:11.053] src/zlib/infcodes.ts(510,31): error TS6133: 'z' is declared but its value is never read.
+[04:30:11.053] src/zlib/inflate.ts(86,5): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+[04:30:11.053]   Type 'undefined' is not assignable to type 'number'.
+[04:30:11.053] src/zlib/inftrees.ts(12,7): error TS6133: 'BMAX' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(37,5): error TS6133: 'b' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(38,5): error TS6133: 'n' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(39,5): error TS6133: 's' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(40,5): error TS6133: 'd' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(41,5): error TS6133: 'e' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(46,5): error TS6133: 'v' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(60,5): error TS6133: 'z' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(77,5): error TS6133: 'z' is declared but its value is never read.
+[04:30:11.053] src/zlib/inftrees.ts(103,5): error TS6133: 'z' is declared but its value is never read.
+[04:30:11.053] src/zlib/infutil.ts(63,11): error TS6133: 'sourceBuffer' is declared but its value is never read.
+[04:30:11.053] src/zlib/trees.ts(57,7): error TS6133: 'MAX_BITS' is declared but its value is never read.
+[04:30:11.053] src/zlib/trees.ts(62,7): error TS6133: 'LENGTH_CODES' is declared but its value is never read.
+[04:30:11.054] src/zlib/trees.ts(63,7): error TS6133: 'HEAP_SIZE' is declared but its value is never read.
+[04:30:11.054] src/zlib/trees.ts(65,7): error TS6133: 'extra_lbits' is declared but its value is never read.
+[04:30:11.054] src/zlib/trees.ts(69,7): error TS6133: 'extra_dbits' is declared but its value is never read.
+[04:30:11.054] src/zlib/trees.ts(73,7): error TS6133: 'extra_blbits' is declared but its value is never read.
+[04:30:11.063] src/zlib/trees.ts(91,39): error TS2532: Object is possibly 'undefined'.
+[04:30:11.063] src/zlib/trees.ts(92,39): error TS2532: Object is possibly 'undefined'.
+[04:30:11.063] src/zlib/trees.ts(93,40): error TS2532: Object is possibly 'undefined'.
+[04:30:11.063] src/zlib/trees.ts(95,5): error TS2532: Object is possibly 'undefined'.
+[04:30:11.063] src/zlib/trees.ts(110,13): error TS2532: Object is possibly 'undefined'.
+[04:30:11.063] src/zlib/trees.ts(113,13): error TS2532: Object is possibly 'undefined'.
+[04:30:11.063] src/zlib/trees.ts(128,50): error TS6133: 'buf' is declared but its value is never read.
+[04:30:11.064] src/zlib/trees.ts(128,94): error TS6133: 'eof' is declared but its value is never read.
+[04:30:11.064] src/zlib/trees.ts(134,51): error TS6133: 'buf' is declared but its value is never read.
+[04:30:11.064] src/zlib/trees.ts(134,95): error TS6133: 'eof' is declared but its value is never read.
+[04:30:11.064] src/zlib/wasmLoader.ts(58,7): error TS2349: This expression is not callable.
+[04:30:11.064]   Type 'EmscriptenModuleBase' has no call signatures.
+[04:30:11.064] src/zlib/wasmLoader.ts(97,3): error TS2739: Type 'EmscriptenModule' is missing the following properties from type 'WasiInflateModule': _inflate_init, _inflate_process, _inflate_end
+[04:30:11.065] src/zlib/wasmLoader.ts(111,3): error TS2739: Type 'EmscriptenModule' is missing the following properties from type 'WasiInffastModule': _inffast_process, _inffast_init
+[04:30:11.065] src/zlib/wasmLoader.ts(124,3): error TS2741: Property '_uncompress' is missing in type 'EmscriptenModule' but required in type 'WasiUncomprModule'.
+[04:30:11.065] types/character.ts(6,1): error TS6133: 'pc' is declared but its value is never read.
+[04:30:11.065] types/character.ts(167,42): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.065] types/character.ts(186,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.065] types/character.ts(190,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.065] types/character.ts(191,14): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.066] types/character.ts(235,18): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.066] types/character.ts(303,43): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.066] types/combat.ts(6,66): error TS6133: 'pc' is declared but its value is never read.
+[04:30:11.066] types/combat.ts(115,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.066] types/combat.ts(125,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.066] types/combat.ts(132,8): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.066] types/combat.ts(133,8): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.066] types/combat.ts(194,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/combat.ts(248,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/combat.ts(259,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/combat.ts(267,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/combat.ts(274,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/graphics.ts(2,1): error TS6133: 'pc' is declared but its value is never read.
+[04:30:11.067] types/graphics.ts(2,10): error TS2866: Import 'pc' conflicts with global value used in this file, so must be declared with a type-only import when 'isolatedModules' is enabled.
+[04:30:11.067] types/graphics.ts(10,12): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/graphics.ts(11,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/graphics.ts(12,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/graphics.ts(13,15): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/graphics.ts(14,14): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/graphics.ts(15,14): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.067] types/graphics.ts(16,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(17,15): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(18,15): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(34,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(68,36): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(73,18): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(74,23): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(75,17): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(76,23): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(77,18): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(82,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(83,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(84,14): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(89,22): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.068] types/graphics.ts(96,14): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(97,16): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(98,17): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(99,21): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(100,15): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(105,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(106,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(107,12): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(140,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.069] types/graphics.ts(147,14): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(148,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(161,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(162,12): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(163,9): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(164,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(169,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(170,17): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(173,16): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(178,20): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(201,10): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(226,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(232,14): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(241,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(247,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(250,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(251,9): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(256,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(257,15): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(258,9): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.070] types/graphics.ts(265,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.089] types/graphics.ts(266,15): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.090] types/graphics.ts(267,9): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.090] types/graphics.ts(268,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.090] types/graphics.ts(275,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.090] types/graphics.ts(276,13): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.090] types/graphics.ts(277,15): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.090] types/graphics.ts(289,11): error TS2702: 'pc' only refers to a type, but is being used as a namespace here.
+[04:30:11.090] Error: Command "npm run build" exited with 2
