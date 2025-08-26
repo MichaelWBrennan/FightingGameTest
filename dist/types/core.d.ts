@@ -50,6 +50,14 @@ export interface ApplicationBase {
     preload(callback?: () => void): void;
     loadScene(url: string, callback?: () => void): void;
     setCanvasFillMode(): void;
+    setCanvasResolution(): void;
+    start(): void;
+    update(dt: number): void;
+    render(): void;
+    on(event: string, callback: Function): void;
+    off(event: string, callback?: Function): void;
+    fire(event: string, ...args: any[]): void;
+    destroy(): void;
 }
 export interface ScriptType {
     new (args?: any): any;
