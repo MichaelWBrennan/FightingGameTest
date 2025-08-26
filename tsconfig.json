@@ -1,64 +1,40 @@
+
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": false,
+    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "outDir": "./dist",
-    
-    // Strict Type Checking
+    "rootDir": "./src",
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    
-    // Additional Checks
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false,
-    
-    // Module Resolution
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    
-    // Advanced Options
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "useDefineForClassFields": true,
-    
-    // Path Mapping
+    "resolveJsonModule": true,
+    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@types/*": ["./types/*"],
-      "@core/*": ["./src/scripts/core/*"],
-      "@combat/*": ["./src/scripts/combat/*"],
-      "@characters/*": ["./src/scripts/characters/*"],
-      "@graphics/*": ["./src/scripts/graphics/*"],
-      "@ui/*": ["./src/scripts/ui/*"]
+      "@/*": ["src/*"],
+      "@core/*": ["src/core/*"],
+      "@types/*": ["types/*"],
+      "@data/*": ["data/*"]
     }
   },
-  
   "include": [
-    "src/**/*.ts",
-    "types/**/*.ts",
-    "tests/**/*.ts"
+    "src/**/*",
+    "types/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "tools/**/*",
+    "src/src/**/*",
+    "attached_assets/**/*"
   ]
 }

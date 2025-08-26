@@ -1,28 +1,45 @@
 
-import * as pc from 'playcanvas';
+import { GameEngine } from './core/GameEngine';
+import { Logger } from './core/utils/Logger';
 
-// Initialize PlayCanvas application
-const canvas = document.createElement('canvas');
-document.body.appendChild(canvas);
+class SF3Game {
+  private gameEngine: GameEngine;
 
-const app = new pc.Application(canvas, {
-    mouse: new pc.Mouse(canvas),
-    touch: new pc.TouchDevice(canvas),
-    keyboard: new pc.Keyboard(window),
-    gamepads: new pc.GamePads()
-});
+  constructor() {
+    const canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+    
+    // Style the canvas
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.display = 'block';
+    
+    this.gameEngine = new GameEngine(canvas);
+  }
 
-// Set canvas to fill window and automatically change resolution to be the same as the canvas size
-app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
-app.setCanvasResolution(pc.RESOLUTION_AUTO);
+  public async start(): Promise<void> {
+    try {
+      Logger.info('Starting Street Fighter III: 3rd Strike - TypeScript Edition');
+      await this.gameEngine.initialize();
+      
+      // Set up development characters for testing
+      const characterManager = this.gameEngine.getCharacterManager();
+      const ryu = characterManager.createCharacter('ryu', new pc.Vec3(-2, 0, 0));
+      const ken = characterManager.createCharacter('ken', new pc.Vec3(2, 0, 0));
+      
+      if (ryu && ken) {
+        characterManager.setActiveCharacters('ryu', 'ken');
+      }
+      
+      Logger.info('Game started successfully');
+    } catch (error) {
+      Logger.error('Failed to start game:', error);
+    }
+  }
+}
 
-// Ensure canvas is resized when window is resized
-window.addEventListener('resize', () => app.resizeCanvas());
+// Initialize and start the game
+const game = new SF3Game();
+game.start().catch(console.error);
 
-console.log('Street Fighter III: 3rd Strike - PlayCanvas Edition');
-console.log('TypeScript conversion complete - ready to start game development');
-
-// Start the application
-app.start();
-
-export { app };
+export { SF3Game };
