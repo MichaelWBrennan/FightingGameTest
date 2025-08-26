@@ -2,13 +2,13 @@ import express, { Request, Response } from 'express';
 import { Logger } from './core/Logger';
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.get('/', (_req: Request, res: Response) => {
-  Logger.log('Health check endpoint called');
+  Logger.info('Health check endpoint accessed');
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.listen(port, () => {
-  Logger.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+  Logger.info(`Server running on port ${PORT}`);
 });
