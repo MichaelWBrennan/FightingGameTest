@@ -1,0 +1,23 @@
+// TypeScript definitions converted from ./include/sf33rd/Source/Game/EFF44.h
+#ifndef EFF44_H
+#define EFF44_H
+
+
+
+
+extern const s16 scr_obj_num44[10];
+extern const s16 eff44_data_tbl0[16];
+extern const s16 eff44_data_tbl1[8];
+extern const s16 eff44_data_tbl2[16];
+extern const s16 eff44_data_tbl3[56];
+extern const s16 eff44_data_tbl4[8];
+extern const s16 eff44_data_tbl5[24];
+extern const s16 eff44_data_tbl6[24];
+extern const s16 eff44_data_tbl7[40];
+extern const s16 eff44_data_tbl8[32];
+extern const s16 eff44_data_tbl9[16];
+extern const s16 *scr_obj_data44[10];
+
+s32 effect_44_init(s16 type);
+
+#endif
