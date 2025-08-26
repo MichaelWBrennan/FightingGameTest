@@ -1,20 +1,50 @@
-// Based on zlib/zutil.c
-/**
- * Returns the version string of the zlib library.
- * @returns The version string.
+/* zutil.ts -- target dependent utility functions for the compression library
+ * Converted from C to TypeScript
  */
+export const ZLIB_VERSION = "1.1.4";
+export const z_errmsg = [
+    "need dictionary", /* Z_NEED_DICT       2  */
+    "stream end", /* Z_STREAM_END      1  */
+    "", /* Z_OK              0  */
+    "file error", /* Z_ERRNO         (-1) */
+    "stream error", /* Z_STREAM_ERROR  (-2) */
+    "data error", /* Z_DATA_ERROR    (-3) */
+    "insufficient memory", /* Z_MEM_ERROR     (-4) */
+    "buffer error", /* Z_BUF_ERROR     (-5) */
+    "incompatible version", /* Z_VERSION_ERROR (-6) */
+    ""
+];
 export function zlibVersion() {
-    // ZLIB_VERSION is a preprocessor define in the C code.
-    // We'll use a hardcoded string here, or it could be managed via build scripts.
-    return "1.1.4"; // Assuming this is the version based on the C code comments
+    return ZLIB_VERSION;
 }
-// Placeholder for other utility functions from zutil.c if needed.
-// Many of these are macros, compiler-specific conditional code, or platform-specific memory functions
-// that might not translate directly or be necessary in a standard TypeScript environment.
-// For example, z_error, zmemcpy, zmemcmp, zmemzero, zcalloc, zcfree would need careful consideration
-// regarding error handling, memory management, and platform compatibility if they were to be implemented.
-// The original zutil.c contains platform-specific memory allocation functions (zcalloc, zcfree)
-// and byte manipulation macros/functions (zmemcpy, zmemcmp, zmemzero) that are often
-// handled differently or are built-in in JavaScript/TypeScript environments (e.g., Array.prototype.slice, Buffer methods).
-// We will not implement those directly unless a specific need arises later.
+export function zError(err) {
+    return z_errmsg[2 - err];
+}
+export function zmemcpy(dest, source, len) {
+    if (len === 0)
+        return;
+    for (let i = 0; i < len; i++) {
+        dest[i] = source[i];
+    }
+}
+export function zmemcmp(s1, s2, len) {
+    for (let j = 0; j < len; j++) {
+        if (s1[j] !== s2[j])
+            return 2 * (s1[j] > s2[j] ? 1 : 0) - 1;
+    }
+    return 0;
+}
+export function zmemzero(dest, len) {
+    if (len === 0)
+        return;
+    for (let i = 0; i < len; i++) {
+        dest[i] = 0;
+    }
+}
+export function zcalloc(opaque, items, size) {
+    return new Uint8Array(items * size);
+}
+export function zcfree(opaque, ptr) {
+    // JavaScript garbage collection handles this
+}
 //# sourceMappingURL=zutil.js.map
