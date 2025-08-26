@@ -1,4 +1,3 @@
-
 #!/usr/bin/env ts-node
 
 /**
@@ -13,7 +12,7 @@ class HeaderToTSConverter {
 
   async convertAllHeaders(): Promise<void> {
     console.log('🔍 Finding all .h header files...');
-    
+
     const headerFiles = await this.findAllHeaderFiles();
     console.log(`📝 Found ${headerFiles.length} header files to convert`);
 
@@ -37,7 +36,7 @@ class HeaderToTSConverter {
 
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
-      
+
       if (entry.isDirectory() && !excludeDirs.includes(entry.name)) {
         await this.scanForHeaders(fullPath, headerFiles, excludeDirs);
       } else if (entry.name.endsWith('.h')) {
@@ -50,15 +49,15 @@ class HeaderToTSConverter {
     try {
       const content = fs.readFileSync(headerPath, 'utf8');
       const tsDefinition = this.convertHeaderToTypeScript(content, headerPath);
-      
+
       // Create .d.ts file path
       const dtsPath = headerPath.replace(/\.h$/, '.d.ts');
-      
+
       fs.writeFileSync(dtsPath, tsDefinition);
-      
+
       // Remove original .h file
       fs.unlinkSync(headerPath);
-      
+
       this.processedFiles++;
       console.log(`✓ ${headerPath} -> ${dtsPath}`);
     } catch (error) {
@@ -68,7 +67,7 @@ class HeaderToTSConverter {
 
   private convertHeaderToTypeScript(content: string, originalPath: string): string {
     const fileName = path.basename(originalPath, '.h');
-    
+
     let result = `/**
  * TypeScript definitions for ${fileName}
  * Converted from: ${originalPath}
@@ -112,7 +111,7 @@ class HeaderToTSConverter {
         .map(field => {
           field = field.trim();
           if (!field) return '';
-          
+
           // Basic field conversion
           const parts = field.split(/\s+/);
           if (parts.length >= 2) {
@@ -124,7 +123,7 @@ class HeaderToTSConverter {
         })
         .filter(f => f)
         .join('\n');
-      
+
       return `export interface ${name} {\n${fields}\n}`;
     });
 
@@ -143,7 +142,7 @@ class HeaderToTSConverter {
           return p;
         })
         .join(', ');
-      
+
       return `export declare function ${funcName}(${paramList}): ${returnType};`;
     });
 
