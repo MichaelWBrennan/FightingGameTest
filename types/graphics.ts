@@ -1,10 +1,9 @@
-import * as pc from 'playcanvas';
+
+import { type pc } from './core.js';
 
 /**
  * Graphics system type definitions for SF3:3S HD-2D Fighting Game
  */
-
-import { type ISystem } from './core';
 
 // Visual Style Configuration
 export interface ColorPalette {

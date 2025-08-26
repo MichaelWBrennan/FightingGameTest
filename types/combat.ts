@@ -1,8 +1,9 @@
+
 /**
  * Combat system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import { type CombatState, type AttackData, type AttackProperties, type Character } from './core.js';
+import { type CombatState, type AttackData, type Character, type pc } from './core.js';
 
 // Combat Configuration Types
 export interface HitDetectionConfig {

@@ -1,4 +1,3 @@
-import * as pc from 'playcanvas';
 
 /**
  * Core type definitions for SF3:3S HD-2D Fighting Game System
@@ -44,6 +43,81 @@ export interface PlayerInputMappings {
   lightKick: InputMapping;
   mediumKick: InputMapping;
   heavyKick: InputMapping;
+}
+
+// PlayCanvas Mock Types (for compilation without actual PlayCanvas)
+export namespace pc {
+  export class Vec3 {
+    x: number;
+    y: number;
+    z: number;
+    constructor(x?: number, y?: number, z?: number);
+  }
+  
+  export class Vec2 {
+    x: number;
+    y: number;
+    constructor(x?: number, y?: number);
+  }
+  
+  export class Vec4 {
+    x: number;
+    y: number;
+    z: number;
+    w: number;
+    constructor(x?: number, y?: number, z?: number, w?: number);
+  }
+  
+  export class Color {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+    constructor(r?: number, g?: number, b?: number, a?: number);
+  }
+  
+  export class Entity {
+    name: string;
+    children: Entity[];
+    parent: Entity | null;
+    addChild(entity: Entity): void;
+    addComponent(type: string, data?: any): any;
+    findByName(name: string): Entity | null;
+    destroy(): void;
+  }
+  
+  export class Application {
+    canvas: HTMLCanvasElement;
+    graphicsDevice: any;
+    root: Entity;
+    constructor(canvas: HTMLCanvasElement, options?: any);
+    setCanvasFillMode(mode: any): void;
+    setCanvasResolution(resolution: any): void;
+    start(): void;
+    on(event: string, callback: (...args: any[]) => void, scope?: any): void;
+    off(event: string, callback: (...args: any[]) => void, scope?: any): void;
+    fire(event: string, ...args: any[]): void;
+  }
+  
+  export class StandardMaterial {
+    diffuse: Color;
+    emissive: Color;
+    opacity: number;
+    constructor();
+  }
+  
+  export class Texture {
+    width: number;
+    height: number;
+    constructor();
+  }
+  
+  export class CurveSet {
+    constructor();
+  }
+  
+  export const FILLMODE_FILL_WINDOW: any;
+  export const RESOLUTION_AUTO: any;
 }
 
 // Character and Combat Types

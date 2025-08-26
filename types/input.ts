@@ -1,8 +1,9 @@
+
 /**
  * Input system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-export { type Direction, type PlayerInputMappings } from './core';
+export { type Direction, type PlayerInputMappings } from './core.js';
 
 // Input State Types
 export interface ButtonState {
@@ -35,8 +36,8 @@ export interface InputState {
   heavyKick: boolean;
   
   // Processed directional state
-  direction: Direction;
-  lastDirection: Direction;
+  direction: import('./core.js').Direction;
+  lastDirection: import('./core.js').Direction;
   directionFrames: number;
   
   // Button states with frame data
@@ -74,7 +75,7 @@ export interface CommandHistory {
 // Input History and Snapshots
 export interface InputSnapshot {
   frame: number;
-  direction: Direction;
+  direction: import('./core.js').Direction;
   buttons: Map<string, Omit<ButtonState, 'pressFrame' | 'releaseFrame' | 'holdFrames'>>;
   timestamp: number;
 }
@@ -110,7 +111,7 @@ export interface InputManagerState {
   inputHistory: Map<string, InputSnapshot[]>;
   maxHistoryFrames: number;
   inputConfig: InputConfiguration;
-  playerMappings: Map<string, PlayerInputMappings>;
+  playerMappings: Map<string, import('./core.js').PlayerInputMappings>;
   inputStates: Map<string, InputState>;
   previousStates: Map<string, InputState>;
   devices: InputDevice;
@@ -139,8 +140,8 @@ export interface InputReleasedEvent {
 
 export interface InputDirectionEvent {
   playerId: string;
-  direction: Direction;
-  lastDirection: Direction;
+  direction: import('./core.js').Direction;
+  lastDirection: import('./core.js').Direction;
   frame: number;
 }
 
@@ -214,10 +215,10 @@ export function isValidInputName(name: string): name is InputName {
   return validInputs.includes(name as InputName);
 }
 
-export function isValidDirection(direction: string): direction is Direction {
-  const validDirections: Direction[] = [
+export function isValidDirection(direction: string): direction is import('./core.js').Direction {
+  const validDirections: import('./core.js').Direction[] = [
     'neutral', 'up', 'down', 'left', 'right', 'forward', 'back',
     'upForward', 'upBack', 'downForward', 'downBack'
   ];
-  return validDirections.includes(direction as Direction);
+  return validDirections.includes(direction as import('./core.js').Direction);
 }
