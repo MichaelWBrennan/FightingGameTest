@@ -28,7 +28,7 @@ export function zmemcpy(dest, source, len) {
     }
 }
 export function zmemcmp(s1, s2, len) {
-    for (let j = 0; j < len; j++) {
+    for (let j = 0; j < len && j < s1.length && j < s2.length; j++) {
         if (s1[j] !== s2[j])
             return 2 * (s1[j] > s2[j] ? 1 : 0) - 1;
     }
@@ -41,10 +41,10 @@ export function zmemzero(dest, len) {
         dest[i] = 0;
     }
 }
-export function zcalloc(opaque, items, size) {
+export function zcalloc(_opaque, items, size) {
     return new Uint8Array(items * size);
 }
-export function zcfree(opaque, ptr) {
+export function zcfree(_opaque, _ptr) {
     // JavaScript garbage collection handles this
 }
 //# sourceMappingURL=zutil.js.map

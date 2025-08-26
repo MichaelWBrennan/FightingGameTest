@@ -121,25 +121,51 @@ export var pc;
                 enumerable: true,
                 configurable: true,
                 writable: true,
-                value: void 0
+                value: ''
             });
             Object.defineProperty(this, "children", {
                 enumerable: true,
                 configurable: true,
                 writable: true,
-                value: void 0
+                value: []
             });
             Object.defineProperty(this, "parent", {
                 enumerable: true,
                 configurable: true,
                 writable: true,
-                value: void 0
+                value: null
             });
+        }
+        addChild(entity) {
+            this.children.push(entity);
+            entity.parent = this;
+        }
+        addComponent(type, data) {
+            return { type, data };
+        }
+        findByName(name) {
+            if (this.name === name)
+                return this;
+            for (const child of this.children) {
+                const found = child.findByName(name);
+                if (found)
+                    return found;
+            }
+            return null;
+        }
+        destroy() {
+            if (this.parent) {
+                const index = this.parent.children.indexOf(this);
+                if (index !== -1) {
+                    this.parent.children.splice(index, 1);
+                }
+            }
+            this.children.length = 0;
         }
     }
     pc.Entity = Entity;
     class Application {
-        constructor() {
+        constructor(canvas, options) {
             Object.defineProperty(this, "canvas", {
                 enumerable: true,
                 configurable: true,
@@ -156,8 +182,28 @@ export var pc;
                 enumerable: true,
                 configurable: true,
                 writable: true,
-                value: void 0
+                value: new Entity()
             });
+            this.canvas = canvas;
+            this.graphicsDevice = options?.graphicsDevice || null;
+        }
+        setCanvasFillMode(mode) {
+            // Mock implementation
+        }
+        setCanvasResolution(resolution) {
+            // Mock implementation
+        }
+        start() {
+            // Mock implementation
+        }
+        on(event, callback, scope) {
+            // Mock implementation
+        }
+        off(event, callback, scope) {
+            // Mock implementation
+        }
+        fire(event, ...args) {
+            // Mock implementation
         }
     }
     pc.Application = Application;
