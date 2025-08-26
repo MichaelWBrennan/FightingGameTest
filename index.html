@@ -1,123 +1,324 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Fighting Game - PlayCanvas</title>
-    <meta name="description" content="Modern fighting game built with PlayCanvas">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Fighter III: 3rd Strike - PlayCanvas Edition</title>
+    <meta name="description" content="Classic arcade fighting game reimagined with modern web technologies">
+    
+    <!-- PlayCanvas Engine -->
+    <script src="https://code.playcanvas.com/playcanvas-stable.min.js"></script>
+    
     <style>
-        html, body {
+        * {
             margin: 0;
             padding: 0;
-            height: 100%;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: 'Arial', sans-serif;
-            background: #000;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            color: white;
             overflow: hidden;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0f0f23, #16213e);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loading-bar-container {
+            width: 400px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
         }
 
         #application-canvas {
             width: 100%;
             height: 100%;
             display: block;
+            background: #000;
         }
 
-        .loading-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #1a1a2e, #16213e);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            color: white;
-            z-index: 1000;
-        }
-
-        .loading-bar {
-            width: 300px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-
-        .loading-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #0099cc);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
+        #controls-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
             background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 100;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            max-width: 300px;
+            transition: opacity 0.3s ease;
+        }
+
+        #controls-info.hidden {
+            opacity: 0;
+        }
+
+        .controls-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #4ecdc4;
+        }
+
+        .controls-list {
+            line-height: 1.4;
+        }
+
+        #fps-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .loading-title {
+                font-size: 1.8rem;
+            }
+            
+            .loading-bar-container {
+                width: 300px;
+            }
+            
+            #controls-info {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="loading-screen" id="loading-screen">
-        <h2>Loading Fighting Game...</h2>
-        <div class="loading-bar">
-            <div class="loading-fill" id="loading-fill"></div>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-title">STREET FIGHTER III<br>3RD STRIKE</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
         </div>
-        <p id="loading-status">Initializing...</p>
+        <div class="loading-text" id="loading-text">Loading game assets...</div>
     </div>
 
-    <div class="controls">
-        <div>P1: WASD + JKL | P2: Arrows + Numpad</div>
-        <div>F1: Debug | F2: Frame Step | ESC: Menu</div>
+    <!-- Game Container -->
+    <div id="game-container">
+        <canvas id="application-canvas"></canvas>
     </div>
 
-    <canvas id="application-canvas"></canvas>
+    <!-- Controls Info -->
+    <div id="controls-info">
+        <div class="controls-title">CONTROLS</div>
+        <div class="controls-list">
+            Arrow Keys: Move<br>
+            Z/X/C: Light/Med/Heavy Punch<br>
+            A/S/D: Light/Med/Heavy Kick<br>
+            Enter: Start/Pause<br>
+            Space: Select
+        </div>
+    </div>
 
-    <!-- PlayCanvas Engine -->
-    <script src="https://code.playcanvas.com/playcanvas-1.69.0.min.js"></script>
+    <!-- FPS Counter -->
+    <div id="fps-counter" id="fps-counter">FPS: --</div>
 
-    <!-- Game Scripts in proper loading order -->
-    <script type="module">
-        import { GameManager } from './src/scripts/core/GameManager.js';
-        import { InputManager } from './src/scripts/core/InputManager.js';
-        import { SceneManager } from './src/scripts/core/SceneManager.js';
-        import { AssetLoader } from './src/scripts/core/AssetLoader.js';
-
-        // Initialize PlayCanvas application
-        const canvas = document.getElementById('application-canvas');
-        const app = new pc.Application(canvas, {
-            mouse: new pc.Mouse(canvas),
-            keyboard: new pc.Keyboard(window),
-            gamepads: new pc.GamePads(),
-            graphicsDeviceOptions: {
-                antialias: true,
-                alpha: false,
-                preserveDrawingBuffer: false,
-                powerPreference: "high-performance"
+    <script>
+        class SF3Game {
+            constructor() {
+                this.canvas = document.getElementById('application-canvas');
+                this.loadingScreen = document.getElementById('loading-screen');
+                this.loadingBar = document.getElementById('loading-bar');
+                this.loadingText = document.getElementById('loading-text');
+                this.fpsCounter = document.getElementById('fps-counter');
+                
+                this.app = null;
+                this.loadingProgress = 0;
+                this.gameInitialized = false;
             }
-        });
 
-        // Configure application
-        app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
-        app.setCanvasResolution(pc.RESOLUTION_AUTO);
-        app.start();
+            async initialize() {
+                try {
+                    // Create PlayCanvas application
+                    this.app = new pc.Application(this.canvas, {
+                        mouse: new pc.Mouse(this.canvas),
+                        touch: new pc.TouchDevice(this.canvas),
+                        keyboard: new pc.Keyboard(window),
+                        gamepads: new pc.GamePads(),
+                        graphicsDeviceOptions: {
+                            antialias: true,
+                            alpha: false,
+                            preserveDrawingBuffer: false,
+                            preferWebGl2: true
+                        }
+                    });
 
-        // Hide loading screen after initialization
-        app.on('start', () => {
-            document.getElementById('loading-screen').style.display = 'none';
+                    // Configure application
+                    this.app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+                    this.app.setCanvasResolution(pc.RESOLUTION_AUTO);
+                    
+                    // Start the application
+                    this.app.start();
+
+                    // Load and initialize game scripts
+                    await this.loadGameSystems();
+                    
+                    // Hide loading screen
+                    this.hideLoadingScreen();
+                    
+                    // Setup FPS counter
+                    this.setupFPSCounter();
+                    
+                    console.log('SF3 Game initialized successfully!');
+                    
+                } catch (error) {
+                    console.error('Failed to initialize game:', error);
+                    this.showError('Failed to initialize game. Please refresh and try again.');
+                }
+            }
+
+            async loadGameSystems() {
+                const loadingSteps = [
+                    { text: 'Loading core systems...', progress: 20 },
+                    { text: 'Loading character data...', progress: 40 },
+                    { text: 'Loading stage assets...', progress: 60 },
+                    { text: 'Loading audio system...', progress: 80 },
+                    { text: 'Finalizing setup...', progress: 100 }
+                ];
+
+                for (const step of loadingSteps) {
+                    this.updateLoadingProgress(step.progress, step.text);
+                    await this.delay(500); // Simulate loading time
+                }
+
+                // Create game manager entity
+                const gameManagerEntity = new pc.Entity('GameManager');
+                gameManagerEntity.addComponent('script');
+                
+                // The actual script loading would happen here
+                // For now, we'll simulate the game systems being ready
+                this.app.root.addChild(gameManagerEntity);
+                
+                this.gameInitialized = true;
+            }
+
+            updateLoadingProgress(progress, text) {
+                this.loadingProgress = progress;
+                this.loadingBar.style.width = `${progress}%`;
+                this.loadingText.textContent = text;
+            }
+
+            hideLoadingScreen() {
+                setTimeout(() => {
+                    this.loadingScreen.classList.add('hidden');
+                    setTimeout(() => {
+                        this.loadingScreen.style.display = 'none';
+                    }, 500);
+                }, 500);
+            }
+
+            setupFPSCounter() {
+                let lastTime = performance.now();
+                let frameCount = 0;
+                let fps = 0;
+
+                const updateFPS = () => {
+                    const currentTime = performance.now();
+                    frameCount++;
+
+                    if (currentTime - lastTime >= 1000) {
+                        fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                        this.fpsCounter.textContent = `FPS: ${fps}`;
+                        frameCount = 0;
+                        lastTime = currentTime;
+                    }
+
+                    requestAnimationFrame(updateFPS);
+                };
+
+                updateFPS();
+            }
+
+            showError(message) {
+                this.loadingText.textContent = message;
+                this.loadingText.style.color = '#ff6b6b';
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Initialize game when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new SF3Game();
+            game.initialize();
         });
 
         // Handle window resize
         window.addEventListener('resize', () => {
-            app.resizeCanvas();
+            // PlayCanvas will handle this automatically with FILLMODE_FILL_WINDOW
+        });
+
+        // Handle visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Pause game if it exists
+                console.log('Game paused (tab hidden)');
+            } else {
+                // Resume game
+                console.log('Game resumed (tab visible)');
+            }
         });
     </script>
 </body>

@@ -1,142 +1,190 @@
+
+/**
+ * PlayCanvas-compatible Game Manager
+ * Manages the overall game state and systems
+ */
+
 import * as pc from 'playcanvas';
+import { InputManager } from './InputManager';
+import { AssetLoader } from './AssetLoader';
+import { SceneManager } from './SceneManager';
+import { ConversionManager } from '../../typescript/ConversionManager';
 
-const GameManager = pc.createScript('GameManager');
+export class GameManager extends pc.ScriptType {
+  private static instance: GameManager;
+  
+  private inputManager: InputManager;
+  private assetLoader: AssetLoader;
+  private sceneManager: SceneManager;
+  private conversionManager: ConversionManager;
+  
+  private gameState: 'menu' | 'character_select' | 'battle' | 'training' = 'menu';
+  private deltaTime: number = 0;
+  private lastTime: number = 0;
 
-GameManager.prototype.initialize = function() {
-    this.gameState = {
-        gNo: [0, 0, 0, 0],
-        eNo: [0, 0, 0, 0],
-        dNo: [0, 0, 0, 0],
-        scNo: [0, 0, 0, 0],
-        gameTimer: 0,
-        gamePause: 0,
-        playGame: 0,
-        requestGNo: false,
-        requestENo: false,
-        allowBattleFlag: false,
-        demoFlag: false,
-        controlTime: 481,
-        timeInTime: 60,
-        roundNum: 0,
-        modeType: 0,
-        playMode: 0,
-        processCounter: 1,
-        turbo: false,
-        turboTimer: 0,
-        noTrans: false,
-        systemTimer: 0,
-        coverTimer: 0
-    };
-
-    this.inputManager = this.entity.findComponent('InputManager');
-    this.graphicsManager = this.entity.findComponent('GraphicsManager');
-    this.soundManager = this.entity.findComponent('SoundManager');
-    this.effectManager = this.entity.findComponent('EffectManager');
-    this.playerManager = this.entity.findComponent('PlayerManager');
-};
-
-GameManager.prototype.update = function(dt) {
-    this.gameTask();
-};
-
-GameManager.prototype.gameTask = function() {
-    const mainJumpTable = [
-        this.waitAutoLoad.bind(this),
-        this.loopDemo.bind(this),
-        this.game.bind(this)
-    ];
-
-    this.initColorTransReq();
-    let frameCount = this.gameState.processCounter;
-
-    if (this.gameState.modeType === 7 && !this.gameState.turbo) {
-        frameCount = this.getSysFF();
+  initialize(): void {
+    if (GameManager.instance) {
+      console.warn('GameManager already exists. Using singleton pattern.');
+      return;
     }
+    
+    GameManager.instance = this;
+    
+    // Initialize core systems
+    this.inputManager = new InputManager();
+    this.assetLoader = new AssetLoader();
+    this.sceneManager = new SceneManager();
+    this.conversionManager = new ConversionManager();
+    
+    // Initialize PlayCanvas-specific setup
+    this.setupPlayCanvasIntegration();
+    
+    // Initialize converted SF3 systems
+    this.initializeGameSystems();
+    
+    console.log('GameManager initialized with PlayCanvas integration');
+  }
 
-    for (let i = 0; i < frameCount; i++) {
-        if (i === frameCount - 1) {
-            this.gameState.noTrans = false;
-            if (this.gameState.turbo && this.gameState.processCounter > 1 && this.gameState.turboTimer !== 5) {
-                this.gameState.playGame = 0;
-                break;
-            }
-        } else {
-            this.gameState.noTrans = true;
-        }
-
-        this.gameState.playGame = 0;
-        if (this.gameState.gamePause !== 0x81) {
-            this.gameState.systemTimer++;
-        }
-
-        this.initTexcashBeforeProcess();
-        this.seqsBeforeProcess();
-
-        if (!this.nowSoftReset()) {
-            mainJumpTable[this.gameState.gNo[0]]();
-        }
-
-        this.seqsAfterProcess();
-        this.texturecashUpdate();
-        this.movePulpulWork();
-        this.checkOffVib();
-        this.checkLDREQQueue();
+  private setupPlayCanvasIntegration(): void {
+    // Set up PlayCanvas application settings
+    this.app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+    this.app.setCanvasResolution(pc.RESOLUTION_AUTO);
+    
+    // Enable batch groups for performance
+    this.app.batcher.addBatchGroup('ui', true, 100);
+    this.app.batcher.addBatchGroup('world', true, 100);
+    
+    // Set up scene settings
+    this.app.scene.ambientLight = new pc.Color(0.2, 0.2, 0.2);
+    
+    // Initialize renderer if canvas exists
+    if (this.app.graphicsDevice.canvas) {
+      this.conversionManager.initializeRenderer(this.app.graphicsDevice.canvas);
     }
+  }
 
-    this.checkScreen();
-    this.checkPosBG();
-    this.dispSoundCode();
-};
+  private initializeGameSystems(): void {
+    // Initialize all converted game systems
+    const status = this.conversionManager.getConversionStatus();
+    console.log(`Game systems initialized. Conversion: ${status.conversionProgress.toFixed(1)}% complete`);
+    
+    // Set up game-specific entities and components
+    this.createGameEntities();
+  }
 
-// Implement all game methods...
-GameManager.prototype.game = function() {
-    const gameJumpTable = [
-        this.game00.bind(this), this.game01.bind(this), this.game02.bind(this),
-        this.game03.bind(this), this.game04.bind(this), this.game05.bind(this),
-        this.game06.bind(this), this.game07.bind(this), this.game08.bind(this),
-        this.game09.bind(this), this.game10.bind(this), this.game11.bind(this),
-        this.game12.bind(this)
-    ];
+  private createGameEntities(): void {
+    // Create main camera entity
+    const cameraEntity = new pc.Entity('MainCamera');
+    cameraEntity.addComponent('camera', {
+      clearColor: new pc.Color(0, 0, 0),
+      fov: 45,
+      nearClip: 0.1,
+      farClip: 1000
+    });
+    cameraEntity.setPosition(0, 0, 10);
+    this.app.root.addChild(cameraEntity);
 
-    if (this.gameState.gNo[1] === 2 || this.gameState.gNo[1] === 9) {
-        this.gameState.playGame = 1;
-    } else if (this.gameState.gNo[1] === 8) {
-        this.gameState.playGame = 2;
+    // Create UI entity
+    const uiEntity = new pc.Entity('UI');
+    uiEntity.addComponent('screen', {
+      referenceResolution: new pc.Vec2(1920, 1080),
+      scaleBlend: 0.5,
+      scaleMode: pc.SCALEMODE_BLEND,
+      screenSpace: true
+    });
+    this.app.root.addChild(uiEntity);
+
+    // Create lighting
+    const lightEntity = new pc.Entity('DirectionalLight');
+    lightEntity.addComponent('light', {
+      type: pc.LIGHTTYPE_DIRECTIONAL,
+      color: new pc.Color(1, 1, 1),
+      intensity: 1
+    });
+    lightEntity.setEulerAngles(45, 0, 0);
+    this.app.root.addChild(lightEntity);
+  }
+
+  update(dt: number): void {
+    this.deltaTime = dt;
+    this.lastTime += dt;
+    
+    // Update all game systems
+    this.inputManager?.update(dt);
+    this.sceneManager?.update(dt);
+    this.conversionManager?.update(dt);
+    
+    // Update game state
+    this.updateGameState(dt);
+    
+    // Render frame
+    this.conversionManager?.render();
+  }
+
+  private updateGameState(dt: number): void {
+    switch (this.gameState) {
+      case 'menu':
+        this.updateMenuState(dt);
+        break;
+      case 'character_select':
+        this.updateCharacterSelectState(dt);
+        break;
+      case 'battle':
+        this.updateBattleState(dt);
+        break;
+      case 'training':
+        this.updateTrainingState(dt);
+        break;
     }
+  }
 
-    gameJumpTable[this.gameState.gNo[1]]();
-};
+  private updateMenuState(dt: number): void {
+    // Handle menu logic
+    if (this.inputManager.isButtonPressed('start')) {
+      this.changeState('character_select');
+    }
+  }
 
-// Add all other methods as prototypes...
-GameManager.prototype.waitAutoLoad = function() { /* implementation */ };
-GameManager.prototype.loopDemo = function() { /* implementation */ };
-GameManager.prototype.game00 = function() { /* implementation */ };
-GameManager.prototype.game01 = function() { /* implementation */ };
-GameManager.prototype.game02 = function() { /* implementation */ };
-GameManager.prototype.game03 = function() { /* implementation */ };
-GameManager.prototype.game04 = function() { /* implementation */ };
-GameManager.prototype.game05 = function() { /* implementation */ };
-GameManager.prototype.game06 = function() { /* implementation */ };
-GameManager.prototype.game07 = function() { /* implementation */ };
-GameManager.prototype.game08 = function() { /* implementation */ };
-GameManager.prototype.game09 = function() { /* implementation */ };
-GameManager.prototype.game10 = function() { /* implementation */ };
-GameManager.prototype.game11 = function() { /* implementation */ };
-GameManager.prototype.game12 = function() { /* implementation */ };
+  private updateCharacterSelectState(dt: number): void {
+    // Handle character selection
+    if (this.inputManager.isButtonPressed('confirm')) {
+      this.changeState('battle');
+    }
+  }
 
-// Placeholder methods to satisfy the structure - actual implementations would be needed
-GameManager.prototype.getSysFF = function() { return 1; }; // Placeholder
-GameManager.prototype.initColorTransReq = function() { /* implementation */ };
-GameManager.prototype.initTexcashBeforeProcess = function() { /* implementation */ };
-GameManager.prototype.seqsBeforeProcess = function() { /* implementation */ };
-GameManager.prototype.nowSoftReset = function() { return false; }; // Placeholder
-GameManager.prototype.seqsAfterProcess = function() { /* implementation */ };
-GameManager.prototype.texturecashUpdate = function() { /* implementation */ };
-GameManager.prototype.movePulpulWork = function() { /* implementation */ };
-GameManager.prototype.checkOffVib = function() { /* implementation */ };
-GameManager.prototype.checkLDREQQueue = function() { /* implementation */ };
-GameManager.prototype.checkScreen = function() { /* implementation */ };
-GameManager.prototype.checkPosBG = function() { /* implementation */ };
-GameManager.prototype.dispSoundCode = function() { /* implementation */ };
+  private updateBattleState(dt: number): void {
+    // Update battle systems
+    const characterSystem = this.conversionManager.getCharacterSystem();
+    const effectSystem = this.conversionManager.getEffectSystem();
+    
+    characterSystem.update();
+    effectSystem.update();
+  }
 
-export { GameManager };
+  private updateTrainingState(dt: number): void {
+    // Handle training mode
+    this.updateBattleState(dt); // Training uses battle systems
+  }
+
+  public changeState(newState: 'menu' | 'character_select' | 'battle' | 'training'): void {
+    console.log(`Game state changed from ${this.gameState} to ${newState}`);
+    this.gameState = newState;
+    this.sceneManager.loadScene(newState);
+  }
+
+  public getGameState(): string {
+    return this.gameState;
+  }
+
+  public static getInstance(): GameManager | null {
+    return GameManager.instance || null;
+  }
+
+  // PlayCanvas script registration
+  public static get scriptName(): string {
+    return 'gameManager';
+  }
+}
+
+// Register with PlayCanvas
+pc.registerScript(GameManager, 'gameManager');

@@ -1,48 +1,46 @@
+
 {
-  "name": "fighting-game-retention-system",
-  "version": "1.0.0",
-  "description": "Modern PlayCanvas fighting game with retention system",
+  "name": "sf3-3rd-strike-playcanvas",
+  "version": "2.0.0",
+  "description": "Street Fighter III: 3rd Strike - PlayCanvas Edition",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
-    "dev": "tsc --watch & serve -s . -p 5000",
-    "build": "tsc && rollup -c",
-    "build:client": "cd src/client && bun run build",
-    "build:backend": "cd src/backend && bun run build",
-    "clean": "rm -rf dist && tsc --build --clean",
-    "test": "bun test",
-    "lint": "eslint src/ types/ --ext .ts,.tsx",
-    "lint:fix": "eslint src/ types/ --ext .ts,.tsx --fix",
-    "type-check": "tsc --noEmit",
-    "serve": "serve -s . -p 5000",
-    "start": "serve -s . -p 5000"
-  },
-  "keywords": [
-    "playcanvas",
-    "fighting-game",
-    "retention",
-    "ethical-monetization",
-    "player-respecting",
-    "typescript",
-    "webgl"
-  ],
-  "author": "Fighting Game Team",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^20.19.11",
-    "@types/web": "^0.0.127",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
-    "eslint": "^8.56.0",
-    "rollup": "^4.0.0",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "serve": "^14.2.1",
-    "typescript": "^5.3.0"
+    "build": "tsc --build",
+    "dev": "tsc --watch & node dist/index.js",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "fix": "npx ts-node tools/fix_compilation_errors.ts",
+    "convert": "npx ts-node tools/complete_typescript_conversion.ts",
+    "serve": "http-server . -p 5000 -c-1"
   },
   "dependencies": {
-    "playcanvas": "^1.69.0"
+    "playcanvas": "^1.68.3",
+    "@playcanvas/web-components": "^1.0.0",
+    "express": "^4.18.2",
+    "http-server": "^14.1.1",
+    "ws": "^8.14.2"
   },
-  "peerDependencies": {
-    "playcanvas": "^1.0.0"
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/ws": "^8.5.8",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
+    "eslint": "^8.51.0",
+    "jest": "^29.7.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "keywords": [
+    "street-fighter",
+    "fighting-game",
+    "playcanvas",
+    "typescript",
+    "game-development"
+  ],
+  "author": "SF3 Development Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
