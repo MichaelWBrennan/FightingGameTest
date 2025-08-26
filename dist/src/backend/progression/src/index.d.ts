@@ -32,7 +32,7 @@ import { DatabaseManager } from './database/DatabaseManager';
 import { ProgressionEngine } from './services/ProgressionEngine';
 import { ObjectiveManager } from './services/ObjectiveManager';
 import { RewardManager } from './services/RewardManager';
-declare function buildServer(): Promise<import("fastify").FastifyInstance<import("http").Server<typeof import("http").IncomingMessage, typeof import("http").ServerResponse>, import("http").IncomingMessage, import("http").ServerResponse<import("http").IncomingMessage>, import("fastify").FastifyBaseLogger, import("fastify").FastifyTypeProviderDefault>>;
+declare function buildServer(): Promise<any>;
 declare function start(): Promise<void>;
 declare module 'fastify' {
     interface FastifyInstance {

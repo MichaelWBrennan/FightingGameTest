@@ -1,28 +1,37 @@
 /**
- * InputManager - Fighting game input handling
- * Supports multiple input methods and fighting game notation
+ * PlayCanvas Input Manager
+ * Handles input with PlayCanvas integration and SF3 compatibility
  */
 import * as pc from 'playcanvas';
-import { type ISystem, type InputState } from '../../../types/core';
-export declare class InputManager implements ISystem {
-    private app;
-    private playerStates;
-    private inputHistory;
-    private inputBuffer;
-    private bindings;
-    private controlSchemes;
-    private playerControlSchemes;
-    private debug;
-    constructor(app: pc.Application);
-    private setupControlSchemes;
+export interface InputMapping {
+    keyboard: {
+        [key: string]: string;
+    };
+    gamepad: {
+        [button: string]: string;
+    };
+}
+export declare class InputManager extends pc.ScriptType {
+    private inputMapping;
+    private previousInputState;
+    private currentInputState;
+    private gamepadIndex;
+    private deadZone;
+    initialize(): void;
+    private setupInputMapping;
     private setupEventListeners;
     private onKeyDown;
     private onKeyUp;
-    getPlayerState(playerId: string): InputState | undefined;
     private onGamepadConnected;
     private onGamepadDisconnected;
-    initialize(): Promise<void>;
     update(dt: number): void;
-    destroy(): void;
+    private updateGamepadInput;
+    private handleInputCombinations;
+    isButtonPressed(action: string): boolean;
+    isButtonHeld(action: string): boolean;
+    isButtonReleased(action: string): boolean;
+    getInputVector(): pc.Vec2;
+    setGamepadIndex(index: number): void;
+    static get scriptName(): string;
 }
 //# sourceMappingURL=InputManager.d.ts.map

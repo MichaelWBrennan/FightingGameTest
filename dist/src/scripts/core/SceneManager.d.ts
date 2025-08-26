@@ -1,26 +1,29 @@
+/**
+ * PlayCanvas Scene Manager
+ * Manages scene transitions and loading for SF3 game modes
+ */
 import * as pc from 'playcanvas';
-import { ISystem } from "../../../types/core";
-export declare class SceneManager implements ISystem {
-    private app;
-    mainScene: pc.Entity;
-    camera: pc.Entity;
-    keyLight: pc.Entity;
-    rimLight: pc.Entity;
-    accentLight: pc.Entity;
-    backgroundContainer: pc.Entity;
-    midgroundContainer: pc.Entity;
-    backgroundLayers: pc.Entity[];
-    leftBoundary: pc.Entity;
-    rightBoundary: pc.Entity;
-    groundBoundary: pc.Entity;
-    stageGround: pc.Entity;
-    particleContainer: pc.Entity;
-    constructor(app: pc.Application);
+export type SceneType = 'menu' | 'character_select' | 'battle' | 'training';
+export declare class SceneManager extends pc.ScriptType {
+    private currentScene;
+    private assetLoader;
+    private sceneEntities;
+    private transitionInProgress;
     initialize(): void;
-    private createDefaultEntities;
-    private createStageBoundaries;
-    private createStageGround;
-    private setupLighting;
-    destroy(): void;
+    private setupScenes;
+    private createMenuScene;
+    private createCharacterSelectScene;
+    private createBattleScene;
+    private createTrainingScene;
+    loadScene(sceneType: SceneType): Promise<void>;
+    private loadSceneAssets;
+    private transitionToScene;
+    private activateScene;
+    private fadeOut;
+    private fadeIn;
+    getCurrentScene(): SceneType;
+    isTransitioning(): boolean;
+    update(dt: number): void;
+    static get scriptName(): string;
 }
 //# sourceMappingURL=SceneManager.d.ts.map

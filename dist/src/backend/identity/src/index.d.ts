@@ -31,7 +31,7 @@ import { DatabaseManager } from './database/DatabaseManager';
 import { ConsentManager } from './services/ConsentManager';
 import { AuthService } from './services/AuthService';
 import { UserService } from './services/UserService';
-declare function buildServer(): Promise<import("fastify").FastifyInstance<import("http").Server<typeof import("http").IncomingMessage, typeof import("http").ServerResponse>, import("http").IncomingMessage, import("http").ServerResponse<import("http").IncomingMessage>, import("fastify").FastifyBaseLogger, import("fastify").FastifyTypeProviderDefault>>;
+declare function buildServer(): Promise<any>;
 declare function start(): Promise<void>;
 declare module 'fastify' {
     interface FastifyInstance {

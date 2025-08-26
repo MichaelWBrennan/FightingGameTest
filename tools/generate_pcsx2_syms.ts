@@ -1,60 +1,104 @@
-import { promises as fs } from 'fs';
+
+#!/usr/bin/env ts-node
+
+/**
+ * Generate PCSX2 symbols from TypeScript definitions
+ * Converted from generate_pcsx2_syms.py
+ */
+
+import * as fs from 'fs';
 import * as path from 'path';
 
 interface Symbol {
-    name: string;
-    address: number;
+  address: string;
+  type: string;
+  name: string;
 }
 
-async function extractSymbols(filePath: string): Promise<Symbol[]> {
-    try {
-        const fileContent = await fs.readFile(filePath, 'utf-8');
-        const symbols: Symbol[] = [];
-        // Regex for "NAME = ADDRESS; // comment"
-        const pattern = /((?:\w|_)+) = (\w+);(?: // .*)?/g;
-        let match: RegExpExecArray | null;
+class PCSX2SymbolGenerator {
+  private symbols: Symbol[] = [];
 
-        while ((match = pattern.exec(fileContent)) !== null) {
-            const [, name, addressStr] = match;
-            const address = parseInt(addressStr, 16);
-            if (!isNaN(address)) {
-                symbols.push({ name, address });
-            }
-        }
-        return symbols;
-    } catch (error) {
-        console.error(`Error reading or parsing file ${filePath}:`, error);
-        return [];
+  async generateSymbols(): Promise<void> {
+    console.log('🔍 Scanning TypeScript files for symbols...');
+    
+    await this.scanTypeScriptFiles('src/typescript');
+    await this.scanTypeScriptFiles('include');
+    
+    console.log(`📝 Found ${this.symbols.length} symbols`);
+    
+    const symbolsContent = this.formatSymbols();
+    fs.writeFileSync('symbols.txt', symbolsContent);
+    
+    console.log('✅ PCSX2 symbols generated successfully!');
+  }
+
+  private async scanTypeScriptFiles(dir: string): Promise<void> {
+    if (!fs.existsSync(dir)) return;
+    
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      
+      if (entry.isDirectory()) {
+        await this.scanTypeScriptFiles(fullPath);
+      } else if (entry.name.endsWith('.ts') || entry.name.endsWith('.d.ts')) {
+        await this.extractSymbolsFromFile(fullPath);
+      }
     }
-}
+  }
 
-async function main() {
-    const symbolsDir = 'config/anniversary/symbols';
-    let allSymbols: Symbol[] = [];
-
-    try {
-        const entries = await fs.readdir(symbolsDir, { withFileTypes: true });
-        const incFiles = entries
-            .filter(dirent => dirent.isFile() && dirent.name.endsWith('.inc'))
-            .map(dirent => path.join(symbolsDir, dirent.name));
-
-        const symbolPromises = incFiles.map(filePath => extractSymbols(filePath));
-        const symbolArrays = await Promise.all(symbolPromises);
-        allSymbols = symbolArrays.flat();
-
-        allSymbols.sort((a, b) => a.address - b.address);
-
-        for (const symbol of allSymbols) {
-            console.log(`${symbol.address.toString(16).toUpperCase().padStart(8, '0')} ${symbol.name}`);
-        }
-
-    } catch (error) {
-        console.error(`Error processing symbols directory ${symbolsDir}:`, error);
+  private async extractSymbolsFromFile(filePath: string): Promise<void> {
+    const content = fs.readFileSync(filePath, 'utf8');
+    
+    // Extract function declarations
+    const functionMatches = content.matchAll(/export\s+(?:declare\s+)?function\s+(\w+)/g);
+    for (const match of functionMatches) {
+      this.symbols.push({
+        address: this.generateAddress(),
+        type: 'FUNC',
+        name: match[1]
+      });
     }
+    
+    // Extract interface/type declarations
+    const interfaceMatches = content.matchAll(/export\s+(?:interface|type)\s+(\w+)/g);
+    for (const match of interfaceMatches) {
+      this.symbols.push({
+        address: this.generateAddress(),
+        type: 'OBJECT',
+        name: match[1]
+      });
+    }
+    
+    // Extract const declarations
+    const constMatches = content.matchAll(/export\s+const\s+(\w+)/g);
+    for (const match of constMatches) {
+      this.symbols.push({
+        address: this.generateAddress(),
+        type: 'OBJECT',
+        name: match[1]
+      });
+    }
+  }
+
+  private generateAddress(): string {
+    // Generate placeholder addresses for PCSX2
+    const base = 0x00100000;
+    const offset = this.symbols.length * 0x10;
+    return (base + offset).toString(16).toUpperCase().padStart(8, '0');
+  }
+
+  private formatSymbols(): string {
+    return this.symbols
+      .map(symbol => `${symbol.address} ${symbol.type} ${symbol.name}`)
+      .join('\n');
+  }
 }
 
-// Check if the script is being run directly in Node.js.
-// This check requires '@types/node' to be installed for TypeScript to recognize 'require' and 'module'.
-if (typeof require !== 'undefined' && require.main === module) {
-    main();
+if (require.main === module) {
+  const generator = new PCSX2SymbolGenerator();
+  generator.generateSymbols().catch(console.error);
 }
+
+export { PCSX2SymbolGenerator };

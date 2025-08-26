@@ -1,172 +1,165 @@
 /**
- * InputManager - Fighting game input handling
- * Supports multiple input methods and fighting game notation
+ * PlayCanvas Input Manager
+ * Handles input with PlayCanvas integration and SF3 compatibility
  */
-import { DEFAULT_INPUT_STATE } from '../../../types/core';
-import { DEFAULT_INPUT_HISTORY, DEFAULT_INPUT_BUFFER } from '../../../types/input';
-export class InputManager {
-    constructor(app) {
-        Object.defineProperty(this, "app", {
+import * as pc from 'playcanvas';
+export class InputManager extends pc.ScriptType {
+    constructor() {
+        super(...arguments);
+        Object.defineProperty(this, "inputMapping", {
             enumerable: true,
             configurable: true,
             writable: true,
             value: void 0
         });
-        Object.defineProperty(this, "playerStates", {
+        Object.defineProperty(this, "previousInputState", {
             enumerable: true,
             configurable: true,
             writable: true,
-            value: void 0
+            value: {}
         });
-        Object.defineProperty(this, "inputHistory", {
+        Object.defineProperty(this, "currentInputState", {
             enumerable: true,
             configurable: true,
             writable: true,
-            value: void 0
+            value: {}
         });
-        Object.defineProperty(this, "inputBuffer", {
+        Object.defineProperty(this, "gamepadIndex", {
             enumerable: true,
             configurable: true,
             writable: true,
-            value: void 0
+            value: 0
         });
-        Object.defineProperty(this, "bindings", {
+        Object.defineProperty(this, "deadZone", {
             enumerable: true,
             configurable: true,
             writable: true,
-            value: void 0
+            value: 0.2
         });
-        Object.defineProperty(this, "controlSchemes", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "playerControlSchemes", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "debug", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
-        this.app = app;
-        this.playerStates = new Map();
-        this.playerStates.set('player1', { ...DEFAULT_INPUT_STATE });
-        this.playerStates.set('player2', { ...DEFAULT_INPUT_STATE });
-        this.inputHistory = { ...DEFAULT_INPUT_HISTORY };
-        this.inputBuffer = { ...DEFAULT_INPUT_BUFFER };
-        this.bindings = new Map();
-        this.controlSchemes = new Map();
-        this.playerControlSchemes = new Map();
-        this.setupControlSchemes();
+    }
+    initialize() {
+        this.setupInputMapping();
         this.setupEventListeners();
     }
-    setupControlSchemes() {
-        const classicKeyboard = {
-            'KeyW': 'up',
-            'KeyS': 'down',
-            'KeyA': 'left',
-            'KeyD': 'right',
-            'KeyU': 'light_punch',
-            'KeyI': 'medium_punch',
-            'KeyO': 'heavy_punch',
-            'KeyJ': 'light_kick',
-            'KeyK': 'medium_kick',
-            'KeyL': 'heavy_kick',
+    setupInputMapping() {
+        this.inputMapping = {
+            keyboard: {
+                'ArrowUp': 'up',
+                'ArrowDown': 'down',
+                'ArrowLeft': 'left',
+                'ArrowRight': 'right',
+                'KeyZ': 'light_punch',
+                'KeyX': 'medium_punch',
+                'KeyC': 'heavy_punch',
+                'KeyA': 'light_kick',
+                'KeyS': 'medium_kick',
+                'KeyD': 'heavy_kick',
+                'Enter': 'start',
+                'Space': 'select',
+                'KeyQ': 'macro1',
+                'KeyW': 'macro2',
+                'KeyE': 'macro3'
+            },
+            gamepad: {
+                '0': 'light_punch', // A/Cross
+                '1': 'medium_punch', // B/Circle  
+                '2': 'light_kick', // X/Square
+                '3': 'heavy_punch', // Y/Triangle
+                '4': 'medium_kick', // LB/L1
+                '5': 'heavy_kick', // RB/R1
+                '8': 'select', // Select/Share
+                '9': 'start', // Start/Options
+                '12': 'up', // D-pad up
+                '13': 'down', // D-pad down
+                '14': 'left', // D-pad left
+                '15': 'right' // D-pad right
+            }
         };
-        const modernKeyboard = {
-            'KeyW': 'up',
-            'KeyS': 'down',
-            'KeyA': 'left',
-            'KeyD': 'right',
-            'KeyU': 'light_punch',
-            'KeyI': 'medium_punch',
-            'KeyO': 'heavy_punch',
-            'KeyJ': 'special_1',
-            'KeyK': 'special_2',
-            'KeyL': 'special_3',
-        };
-        this.controlSchemes.set('classic', {
-            keyboard: classicKeyboard,
-            gamepad: {} // To be implemented
-        });
-        this.controlSchemes.set('modern', {
-            keyboard: modernKeyboard,
-            gamepad: {} // To be implemented
-        });
-        // Set default scheme for players
-        this.playerControlSchemes.set('player1', 'classic');
-        this.playerControlSchemes.set('player2', 'classic');
     }
     setupEventListeners() {
-        // Setup keyboard input listeners
-        window.addEventListener('keydown', this.onKeyDown.bind(this));
-        window.addEventListener('keyup', this.onKeyUp.bind(this));
-        // Setup gamepad input listeners
-        window.addEventListener('gamepadconnected', this.onGamepadConnected.bind(this));
-        window.addEventListener('gamepaddisconnected', this.onGamepadDisconnected.bind(this));
+        // Keyboard events
+        this.app.keyboard.on(pc.EVENT_KEYDOWN, this.onKeyDown, this);
+        this.app.keyboard.on(pc.EVENT_KEYUP, this.onKeyUp, this);
+        // Gamepad events
+        this.app.gamepads.on(pc.EVENT_GAMEPADCONNECTED, this.onGamepadConnected, this);
+        this.app.gamepads.on(pc.EVENT_GAMEPADDISCONNECTED, this.onGamepadDisconnected, this);
     }
     onKeyDown(event) {
-        // For now, assume keyboard is player 1
-        const playerId = 'player1';
-        const schemeName = this.playerControlSchemes.get(playerId);
-        if (!schemeName)
-            return;
-        const scheme = this.controlSchemes.get(schemeName);
-        if (!scheme)
-            return;
-        const action = scheme.keyboard[event.code];
+        const action = this.inputMapping.keyboard[event.key];
         if (action) {
-            const state = this.playerStates.get(playerId);
-            if (state) {
-                state[action] = true;
-            }
+            this.currentInputState[action] = true;
         }
     }
     onKeyUp(event) {
-        // For now, assume keyboard is player 1
-        const playerId = 'player1';
-        const schemeName = this.playerControlSchemes.get(playerId);
-        if (!schemeName)
-            return;
-        const scheme = this.controlSchemes.get(schemeName);
-        if (!scheme)
-            return;
-        const action = scheme.keyboard[event.code];
+        const action = this.inputMapping.keyboard[event.key];
         if (action) {
-            const state = this.playerStates.get(playerId);
-            if (state) {
-                state[action] = false;
-            }
+            this.currentInputState[action] = false;
         }
     }
-    getPlayerState(playerId) {
-        return this.playerStates.get(playerId);
+    onGamepadConnected(gamepad) {
+        console.log('Gamepad connected:', gamepad.id);
     }
-    onGamepadConnected(event) {
-        // Handle gamepad connected events
-        console.log(`Gamepad connected: ${event.gamepad.id}`);
-    }
-    onGamepadDisconnected(event) {
-        // Handle gamepad disconnected events
-        console.log(`Gamepad disconnected: ${event.gamepad.id}`);
-    }
-    async initialize() {
-        console.log('Initializing Input Manager...');
-        // Initialize input manager
-        console.log('Input Manager initialized successfully');
+    onGamepadDisconnected(gamepad) {
+        console.log('Gamepad disconnected:', gamepad.id);
     }
     update(dt) {
-        // Update input manager
+        // Store previous state
+        this.previousInputState = { ...this.currentInputState };
+        // Update gamepad input
+        this.updateGamepadInput();
+        // Handle special input combinations
+        this.handleInputCombinations();
     }
-    destroy() {
-        // Clean up input manager
-        console.log('InputManager destroyed');
+    updateGamepadInput() {
+        const gamepad = this.app.gamepads.get(this.gamepadIndex);
+        if (!gamepad)
+            return;
+        // Update button states
+        for (const [buttonIndex, action] of Object.entries(this.inputMapping.gamepad)) {
+            const button = gamepad.getButton(parseInt(buttonIndex));
+            if (button) {
+                this.currentInputState[action] = button.pressed;
+            }
+        }
+        // Update analog stick input
+        const leftStick = gamepad.getAxes(0, 1);
+        if (leftStick) {
+            this.currentInputState['left'] = leftStick[0] < -this.deadZone;
+            this.currentInputState['right'] = leftStick[0] > this.deadZone;
+            this.currentInputState['up'] = leftStick[1] < -this.deadZone;
+            this.currentInputState['down'] = leftStick[1] > this.deadZone;
+        }
+    }
+    handleInputCombinations() {
+        // Handle special move combinations
+        if (this.isButtonHeld('down') && this.isButtonPressed('heavy_punch')) {
+            this.currentInputState['super_combo'] = true;
+        }
+        // Handle throw input
+        if (this.isButtonPressed('light_punch') && this.isButtonPressed('light_kick')) {
+            this.currentInputState['throw'] = true;
+        }
+    }
+    isButtonPressed(action) {
+        return this.currentInputState[action] && !this.previousInputState[action];
+    }
+    isButtonHeld(action) {
+        return this.currentInputState[action] === true;
+    }
+    isButtonReleased(action) {
+        return !this.currentInputState[action] && this.previousInputState[action];
+    }
+    getInputVector() {
+        const x = (this.isButtonHeld('right') ? 1 : 0) - (this.isButtonHeld('left') ? 1 : 0);
+        const y = (this.isButtonHeld('up') ? 1 : 0) - (this.isButtonHeld('down') ? 1 : 0);
+        return new pc.Vec2(x, y);
+    }
+    setGamepadIndex(index) {
+        this.gamepadIndex = index;
+    }
+    static get scriptName() {
+        return 'inputManager';
     }
 }
+pc.registerScript(InputManager, 'inputManager');
 //# sourceMappingURL=InputManager.js.map
