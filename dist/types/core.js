@@ -5,7 +5,7 @@
 export var pc;
 (function (pc) {
     class Vec3 {
-        constructor() {
+        constructor(x = 0, y = 0, z = 0) {
             Object.defineProperty(this, "x", {
                 enumerable: true,
                 configurable: true,
@@ -24,11 +24,14 @@ export var pc;
                 writable: true,
                 value: void 0
             });
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
     }
     pc.Vec3 = Vec3;
     class Vec2 {
-        constructor() {
+        constructor(x = 0, y = 0) {
             Object.defineProperty(this, "x", {
                 enumerable: true,
                 configurable: true,
@@ -41,11 +44,13 @@ export var pc;
                 writable: true,
                 value: void 0
             });
+            this.x = x;
+            this.y = y;
         }
     }
     pc.Vec2 = Vec2;
     class Vec4 {
-        constructor() {
+        constructor(x = 0, y = 0, z = 0, w = 0) {
             Object.defineProperty(this, "x", {
                 enumerable: true,
                 configurable: true,
@@ -70,11 +75,15 @@ export var pc;
                 writable: true,
                 value: void 0
             });
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
         }
     }
     pc.Vec4 = Vec4;
     class Color {
-        constructor() {
+        constructor(r = 1, g = 1, b = 1, a = 1) {
             Object.defineProperty(this, "r", {
                 enumerable: true,
                 configurable: true,
@@ -99,6 +108,10 @@ export var pc;
                 writable: true,
                 value: void 0
             });
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = a;
         }
     }
     pc.Color = Color;
@@ -168,6 +181,9 @@ export var pc;
                 writable: true,
                 value: void 0
             });
+            this.diffuse = new Color(1, 1, 1, 1);
+            this.emissive = new Color(0, 0, 0, 1);
+            this.opacity = 1;
         }
     }
     pc.StandardMaterial = StandardMaterial;
@@ -185,11 +201,18 @@ export var pc;
                 writable: true,
                 value: void 0
             });
+            this.width = 256;
+            this.height = 256;
         }
     }
     pc.Texture = Texture;
     class CurveSet {
+        constructor() {
+            // CurveSet implementation
+        }
     }
     pc.CurveSet = CurveSet;
+    pc.FILLMODE_FILL_WINDOW = 'FILLMODE_FILL_WINDOW';
+    pc.RESOLUTION_AUTO = 'RESOLUTION_AUTO';
 })(pc || (pc = {}));
 //# sourceMappingURL=core.js.map
