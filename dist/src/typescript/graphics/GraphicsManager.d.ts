@@ -1,0 +1,36 @@
+import { GraphicsState, Sprite, Camera } from '../../../types/graphics';
+export declare class GraphicsManager {
+    private canvas;
+    private ctx;
+    private graphicsState;
+    private renderLayers;
+    private sprites;
+    private camera;
+    constructor();
+    private createCanvas;
+    private setupGraphicsState;
+    private setupCamera;
+    private initializeRenderLayers;
+    setBackColor(r: number, g: number, b: number): void;
+    bgDrawSystem(): void;
+    private renderLayer;
+    private renderSprite;
+    private renderEffect;
+    bgMove(): void;
+    bgMoveEx(layer: number): void;
+    bgPosHoseiSub2(layer: number): void;
+    bgFamilySetAppoint(layer: number): void;
+    private updateBackgroundLayers;
+    private updateLayerAnimation;
+    private correctLayerPosition;
+    addSprite(id: string, sprite: Sprite, layerId?: number): void;
+    removeSprite(id: string): void;
+    setCamera(x: number, y: number, zoom?: number): void;
+    getCamera(): Camera;
+    getGraphicsState(): GraphicsState;
+    resize(width: number, height: number): void;
+    takeScreenshot(): string;
+    setLayerVisibility(layerId: number, visible: boolean): void;
+    setLayerOpacity(layerId: number, opacity: number): void;
+}
+//# sourceMappingURL=GraphicsManager.d.ts.map

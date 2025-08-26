@@ -1,4 +1,7 @@
-import * as pc from 'playcanvas';
+import { type pc } from './core.js';
+/**
+ * Graphics system type definitions for SF3:3S HD-2D Fighting Game
+ */
 export interface ColorPalette {
     ambient: pc.Color;
     keyLight: pc.Color;

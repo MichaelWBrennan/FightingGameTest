@@ -1,4 +1,3 @@
-import * as pc from 'playcanvas';
 // Type Guards
 export function isValidEffectType(type) {
     const validTypes = ['normal', 'counter', 'block', 'parry', 'super'];

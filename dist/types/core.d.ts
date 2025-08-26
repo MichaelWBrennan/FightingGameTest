@@ -1,4 +1,3 @@
-import * as pc from 'playcanvas';
 /**
  * Core type definitions for SF3:3S HD-2D Fighting Game System
  */
@@ -24,6 +23,70 @@ export interface PlayerInputMappings {
     lightKick: InputMapping;
     mediumKick: InputMapping;
     heavyKick: InputMapping;
+}
+export declare namespace pc {
+    class Vec3 {
+        x: number;
+        y: number;
+        z: number;
+        constructor(x?: number, y?: number, z?: number);
+    }
+    class Vec2 {
+        x: number;
+        y: number;
+        constructor(x?: number, y?: number);
+    }
+    class Vec4 {
+        x: number;
+        y: number;
+        z: number;
+        w: number;
+        constructor(x?: number, y?: number, z?: number, w?: number);
+    }
+    class Color {
+        r: number;
+        g: number;
+        b: number;
+        a: number;
+        constructor(r?: number, g?: number, b?: number, a?: number);
+    }
+    class Entity {
+        name: string;
+        children: Entity[];
+        parent: Entity | null;
+        addChild(entity: Entity): void;
+        addComponent(type: string, data?: any): any;
+        findByName(name: string): Entity | null;
+        destroy(): void;
+    }
+    class Application {
+        canvas: HTMLCanvasElement;
+        graphicsDevice: any;
+        root: Entity;
+        constructor(canvas: HTMLCanvasElement, options?: any);
+        setCanvasFillMode(mode: any): void;
+        setCanvasResolution(resolution: any): void;
+        start(): void;
+        on(event: string, callback: (...args: any[]) => void, scope?: any): void;
+        off(event: string, callback: (...args: any[]) => void, scope?: any): void;
+        fire(event: string, ...args: any[]): void;
+    }
+    class StandardMaterial {
+        diffuse: Color;
+        emissive: Color;
+        opacity: number;
+        constructor();
+    }
+    class Texture {
+        width: number;
+        height: number;
+        constructor();
+    }
+    class CurveSet {
+        constructor();
+    }
+    const FILLMODE_FILL_WINDOW: any;
+    const RESOLUTION_AUTO: any;
 }
 export interface Character {
     id: string;
