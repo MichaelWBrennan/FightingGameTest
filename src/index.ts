@@ -1,67 +1,28 @@
-/**
- * Fighting Game TypeScript Entry Point
- * 100% TypeScript Repository
- */
 
-import { GameManager } from './scripts/core/GameManager';
-import { ConversionManager } from './typescript/ConversionManager';
-import { BuildManager } from '../tools/build';
+import * as pc from 'playcanvas';
 
-// Version Information
-export const VERSION = '2.0.0';
-export const BUILD_TARGET = '100% TypeScript Repository';
+// Initialize PlayCanvas application
+const canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
 
-class Application {
-  private gameManager: GameManager | null = null;
-  private conversionManager: ConversionManager | null = null;
+const app = new pc.Application(canvas, {
+    mouse: new pc.Mouse(canvas),
+    touch: new pc.TouchDevice(canvas),
+    keyboard: new pc.Keyboard(window),
+    gamepads: new pc.GamePads()
+});
 
-  async initialize(): Promise<void> {
-    console.log(`🎮 Fighting Game ${VERSION}`);
-    console.log(`📦 Build Target: ${BUILD_TARGET}`);
+// Set canvas to fill window and automatically change resolution to be the same as the canvas size
+app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+app.setCanvasResolution(pc.RESOLUTION_AUTO);
 
-    // Initialize conversion manager to show we've completed the C to TS conversion
-    this.conversionManager = new ConversionManager();
+// Ensure canvas is resized when window is resized
+window.addEventListener('resize', () => app.resizeCanvas());
 
-    // Initialize game manager for PlayCanvas integration
-    this.gameManager = new GameManager();
+console.log('Street Fighter III: 3rd Strike - PlayCanvas Edition');
+console.log('TypeScript conversion complete - ready to start game development');
 
-    // Log conversion status
-    const status = this.conversionManager.getConversionStatus();
-    console.log(`✅ Conversion Complete: ${status.conversionProgress.toFixed(1)}%`);
-    console.log(`📁 Repository is now 100% TypeScript!`);
+// Start the application
+app.start();
 
-    await this.gameManager.initialize();
-  }
-
-  async start(): Promise<void> {
-    if (!this.gameManager) {
-      throw new Error('Application not initialized');
-    }
-
-    await this.gameManager.start();
-  }
-
-  getConversionManager(): ConversionManager | null {
-    return this.conversionManager;
-  }
-
-  getGameManager(): GameManager | null {
-    return this.gameManager;
-  }
-}
-
-// Export for module usage
-export { Application };
-
-// Auto-start when run directly
-if (typeof window !== 'undefined') {
-  // Browser environment
-  const app = new Application();
-  app.initialize().then(() => app.start()).catch(console.error);
-} else if (require.main === module) {
-  // Node.js environment
-  const app = new Application();
-  app.initialize().then(() => {
-    console.log('🚀 TypeScript application initialized successfully!');
-  }).catch(console.error);
-}
+export { app };
