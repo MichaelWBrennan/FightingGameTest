@@ -25,7 +25,7 @@ export function zlibVersion(): string {
 export function zError(err: number): string {
     const index = 2 - err;
     if (index >= 0 && index < z_errmsg.length) {
-        return z_errmsg[index];
+        return z_errmsg[index] || 'Unknown error';
     }
     return "unknown error";
 }
@@ -34,7 +34,10 @@ export function zmemcpy(dest: Uint8Array, source: Uint8Array, len: number): void
     if (len === 0) return;
     const copyLen = Math.min(len, dest.length, source.length);
     for (let i = 0; i < copyLen; i++) {
-        dest[i] = source[i];
+        const value = source[i];
+        if (value !== undefined) {
+            dest[i] = value;
+        }
     }
 }
 
@@ -42,7 +45,11 @@ export function zmemcmp(s1: Uint8Array, s2: Uint8Array, len: number): number {
     const compareLen = Math.min(len, s1.length, s2.length);
     for (let j = 0; j < compareLen; j++) {
         if (s1[j] !== s2[j]) {
-            return s1[j] > s2[j] ? 1 : -1;
+            const c1 = s1[j];
+            const c2 = s2[j];
+            if (c1 !== undefined && c2 !== undefined) {
+                return c1 > c2 ? 1 : -1;
+            }
         }
     }
     return 0;
@@ -68,7 +75,10 @@ export function copyArray(dest: Uint8Array | null, destStart: number, source: Ui
     if (!dest || !source) return;
 
     for (let i = 0; i < length && i + destStart < dest.length && i + sourceStart < source.length; i++) {
-        dest[i + destStart] = source[i + sourceStart];
+        const value = source[i + sourceStart];
+        if (value !== undefined) {
+            dest[i + destStart] = value;
+        }
     }
 }
 

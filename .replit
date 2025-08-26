@@ -4,7 +4,7 @@ modules = ["c-clang14", "nodejs-18", "python-3.12", "cpp-clang14"]
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Run TypeScript Project"
+runButton = "Build and Run"
 
 [[workflows.workflow]]
 name = "Run TypeScript Project"
@@ -14,6 +14,27 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "tsc"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node dist/index.js"
+
+[[workflows.workflow]]
+name = "Build and Run"
+author = 259688
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx ts-node tools/fix_compilation_errors.ts"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "tsc --build"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

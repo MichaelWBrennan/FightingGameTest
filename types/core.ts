@@ -163,6 +163,18 @@ export interface Component {
     system: any;
 }
 
+export interface MemoryRegion {
+  start: number;
+  size: number;
+  type: 'code' | 'data' | 'stack' | 'heap';
+}
+
+export interface pc {
+  x: number;
+  y: number;
+  z: number;
+}
+
 declare global {
     const pc: {
         Application: new (options?: ApplicationOptions) => ApplicationBase;

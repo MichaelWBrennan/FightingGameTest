@@ -72,7 +72,13 @@ export async function loadWasmModule<T extends EmscriptenModuleBase>(options: Wa
 // Example: import inflateFactory from './inflate.wasm';
 // For the purpose of this file, we'll define them as placeholders.
 
-// Placeholder for inflate module factory.
+// Fix EmscriptenModule type declarations
+interface EmscriptenModule extends EmscriptenModuleBase {
+  inflate?: any;
+  inffast?: any;
+  uncompress?: any;
+}
+
 declare const inflateFactory: () => EmscriptenModule;
 // Placeholder for inffast module factory.
 declare const inffastFactory: () => EmscriptenModule;

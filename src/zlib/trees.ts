@@ -1,4 +1,3 @@
-
 /* trees.ts -- output deflated data using Huffman coding
  * Converted from C to TypeScript
  */
@@ -79,11 +78,11 @@ export function _tr_init(s: DeflateState): void {
     s.l_desc.dyn_tree = s.dyn_ltree;
     s.d_desc.dyn_tree = s.dyn_dtree;
     s.bl_desc.dyn_tree = s.bl_tree;
-    
+
     s.bi_buf = 0;
     s.bi_valid = 0;
     s.last_eob_len = 8;
-    
+
     initBlock(s);
 }
 
@@ -92,7 +91,7 @@ function initBlock(s: DeflateState): void {
     for (let n = 0; n < L_CODES; n++) s.dyn_ltree[n].freq = 0;
     for (let n = 0; n < D_CODES; n++) s.dyn_dtree[n].freq = 0;
     for (let n = 0; n < BL_CODES; n++) s.bl_tree[n].freq = 0;
-    
+
     s.dyn_ltree[256].freq = 1; // END_BLOCK
     s.opt_len = s.static_len = 0;
     s.last_lit = s.matches = 0;
@@ -101,18 +100,20 @@ function initBlock(s: DeflateState): void {
 export function _tr_tally(s: DeflateState, dist: number, lc: number): boolean {
     s.d_buf[s.last_lit] = dist;
     s.l_buf[s.last_lit++] = lc;
-    
-    if (dist === 0) {
-        // lc is the unmatched char
+
+    if (s.dyn_ltree && s.dyn_ltree[lc]) {
         s.dyn_ltree[lc].freq++;
-    } else {
-        s.matches++;
-        // Here, lc is the match length - MIN_MATCH
-        dist--; // dist = match distance - 1
-        s.dyn_ltree[lengthCode(lc) + LITERALS + 1].freq++;
-        s.dyn_dtree[dCode(dist)].freq++;
     }
-    
+    if (dist !== 0) {
+        s.last_lit++;
+        if (s.dyn_ltree && s.dyn_ltree[lengthCode(lc) + LITERALS + 1]) {
+            s.dyn_ltree[lengthCode(lc) + LITERALS + 1].freq++;
+        }
+        if (s.dyn_dtree && s.dyn_dtree[dCode(dist)]) {
+            s.dyn_dtree[dCode(dist)].freq++;
+        }
+    }
+
     return (s.last_lit === s.lit_bufsize - 1);
 }
 
