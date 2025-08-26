@@ -51,13 +51,20 @@ export namespace pc {
     x: number;
     y: number;
     z: number;
-    constructor(x?: number, y?: number, z?: number);
+    constructor(x: number = 0, y: number = 0, z: number = 0) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
   }
   
   export class Vec2 {
     x: number;
     y: number;
-    constructor(x?: number, y?: number);
+    constructor(x: number = 0, y: number = 0) {
+      this.x = x;
+      this.y = y;
+    }
   }
   
   export class Vec4 {
@@ -65,7 +72,12 @@ export namespace pc {
     y: number;
     z: number;
     w: number;
-    constructor(x?: number, y?: number, z?: number, w?: number);
+    constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.w = w;
+    }
   }
   
   export class Color {
@@ -73,7 +85,12 @@ export namespace pc {
     g: number;
     b: number;
     a: number;
-    constructor(r?: number, g?: number, b?: number, a?: number);
+    constructor(r: number = 1, g: number = 1, b: number = 1, a: number = 1) {
+      this.r = r;
+      this.g = g;
+      this.b = b;
+      this.a = a;
+    }
   }
   
   export class Entity {
@@ -103,21 +120,30 @@ export namespace pc {
     diffuse: Color;
     emissive: Color;
     opacity: number;
-    constructor();
+    constructor() {
+      this.diffuse = new Color(1, 1, 1, 1);
+      this.emissive = new Color(0, 0, 0, 1);
+      this.opacity = 1;
+    }
   }
   
   export class Texture {
     width: number;
     height: number;
-    constructor();
+    constructor() {
+      this.width = 256;
+      this.height = 256;
+    }
   }
   
   export class CurveSet {
-    constructor();
+    constructor() {
+      // CurveSet implementation
+    }
   }
   
-  export const FILLMODE_FILL_WINDOW: any;
-  export const RESOLUTION_AUTO: any;
+  export const FILLMODE_FILL_WINDOW: any = 'FILLMODE_FILL_WINDOW';
+  export const RESOLUTION_AUTO: any = 'RESOLUTION_AUTO';
 }
 
 // Character and Combat Types
