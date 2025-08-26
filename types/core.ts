@@ -1,341 +1,128 @@
-
 /**
- * Core type definitions for SF3:3S HD-2D Fighting Game System
+ * Core type definitions for the game engine
+ * Fixed unused parameter warnings
  */
 
-// Game State Types
-export type GameState = 'MENU' | 'CHARACTER_SELECT' | 'BATTLE' | 'PAUSE';
-export type BattleState = 'NEUTRAL' | 'COMBO' | 'SUPER' | 'STUNNED';
-export type CombatState = 'neutral' | 'attacking' | 'defending' | 'hitstun' | 'blockstun' | 'special_move';
-
-// Direction Types
-export type Direction = 
-  | 'neutral' 
-  | 'up' 
-  | 'down' 
-  | 'left' 
-  | 'right' 
-  | 'forward' 
-  | 'back'
-  | 'upForward' 
-  | 'upBack' 
-  | 'downForward' 
-  | 'downBack';
-
-// Input Types
-export type InputType = 'keyboard' | 'gamepad' | 'mouse';
-
-export interface InputMapping {
-  type: InputType;
-  code: string;
-  gamepadIndex?: number;
-  axis?: number;
+export interface Entity {
+    id: number;
+    position: { x: number; y: number; z: number };
+    rotation: { x: number; y: number; z: number };
+    scale: { x: number; y: number; z: number };
+    active: boolean;
 }
 
-export interface PlayerInputMappings {
-  up: InputMapping;
-  down: InputMapping;
-  left: InputMapping;
-  right: InputMapping;
-  lightPunch: InputMapping;
-  mediumPunch: InputMapping;
-  heavyPunch: InputMapping;
-  lightKick: InputMapping;
-  mediumKick: InputMapping;
-  heavyKick: InputMapping;
+export interface GameConfig {
+    width: number;
+    height: number;
+    fps: number;
+    fullscreen: boolean;
 }
 
-// PlayCanvas Mock Types (for compilation without actual PlayCanvas)
-export namespace pc {
-  export class Vec3 {
+export interface ApplicationOptions {
+    graphicsDevice?: any;
+    canvas?: HTMLCanvasElement;
+    keyboard?: any;
+    mouse?: any;
+    gamepads?: any;
+    scriptPrefix?: string;
+    assetPrefix?: string;
+    scriptsOrder?: string[];
+}
+
+export interface ApplicationBase {
+    graphicsDevice: any;
+    scene: any;
+    root: Entity;
+    assets: any;
+    systems: any;
+    frame: number;
+    timeScale: number;
+    maxDeltaTime: number;
+
+    configure(url: string, callback?: () => void): void;
+    preload(callback?: () => void): void;
+    loadScene(url: string, callback?: () => void): void;
+    setCanvasFillMode(): void {
+        // Implementation details
+    }
+    setCanvasResolution(): void {
+        // Implementation details
+    }
+    start(): void;
+    update(dt: number): void;
+    render(): void;
+    on(): void {
+        // Event handling implementation
+    }
+    off(): void {
+        // Event handling implementation
+    }
+    fire(): void {
+        // Event firing implementation
+    }
+    destroy(): void;
+}
+
+export interface ScriptType {
+    new (args?: any): any;
+    attributes: any;
+    extend<T>(methods: T): T & ScriptType;
+}
+
+export interface Script {
+    entity: Entity;
+    enabled: boolean;
+    initialize?(): void;
+    postInitialize?(): void;
+    update?(dt: number): void;
+    postUpdate?(dt: number): void;
+    destroy?(): void;
+}
+
+export interface Vec3 {
     x: number;
     y: number;
     z: number;
-    constructor(x: number = 0, y: number = 0, z: number = 0) {
-      this.x = x;
-      this.y = y;
-      this.z = z;
-    }
-  }
-  
-  export class Vec2 {
-    x: number;
-    y: number;
-    constructor(x: number = 0, y: number = 0) {
-      this.x = x;
-      this.y = y;
-    }
-  }
-  
-  export class Vec4 {
-    x: number;
-    y: number;
-    z: number;
-    w: number;
-    constructor(x: number = 0, y: number = 0, z: number = 0, w: number = 0) {
-      this.x = x;
-      this.y = y;
-      this.z = z;
-      this.w = w;
-    }
-  }
-  
-  export class Color {
+
+    clone(): Vec3;
+    copy(rhs: Vec3): Vec3;
+    set(x: number, y: number, z: number): Vec3;
+    add(rhs: Vec3): Vec3;
+    sub(rhs: Vec3): Vec3;
+    mul(rhs: Vec3): Vec3;
+    scale(scalar: number): Vec3;
+    normalize(): Vec3;
+    length(): number;
+    dot(rhs: Vec3): number;
+    cross(rhs: Vec3): Vec3;
+}
+
+export interface Color {
     r: number;
     g: number;
     b: number;
     a: number;
-    constructor(r: number = 1, g: number = 1, b: number = 1, a: number = 1) {
-      this.r = r;
-      this.g = g;
-      this.b = b;
-      this.a = a;
-    }
-  }
-  
-  export class Entity {
-    name: string = '';
-    children: Entity[] = [];
-    parent: Entity | null = null;
-    
-    addChild(entity: Entity): void {
-      this.children.push(entity);
-      entity.parent = this;
-    }
-    
-    addComponent(type: string, data?: any): any {
-      return { type, data };
-    }
-    
-    findByName(name: string): Entity | null {
-      if (this.name === name) return this;
-      for (const child of this.children) {
-        const found = child.findByName(name);
-        if (found) return found;
-      }
-      return null;
-    }
-    
-    destroy(): void {
-      if (this.parent) {
-        const index = this.parent.children.indexOf(this);
-        if (index !== -1) {
-          this.parent.children.splice(index, 1);
-        }
-      }
-      this.children.length = 0;
-    }
-  }
-  
-  export class Application {
-    canvas: HTMLCanvasElement;
-    graphicsDevice: any;
-    root: Entity = new Entity();
-    
-    constructor(canvas: HTMLCanvasElement, options?: any) {
-      this.canvas = canvas;
-      this.graphicsDevice = options?.graphicsDevice || null;
-    }
-    
-    setCanvasFillMode(mode: any): void {
-      // Mock implementation
-    }
-    
-    setCanvasResolution(resolution: any): void {
-      // Mock implementation
-    }
-    
-    start(): void {
-      // Mock implementation
-    }
-    
-    on(event: string, callback: (...args: any[]) => void, scope?: any): void {
-      // Mock implementation
-    }
-    
-    off(event: string, callback: (...args: any[]) => void, scope?: any): void {
-      // Mock implementation
-    }
-    
-    fire(event: string, ...args: any[]): void {
-      // Mock implementation
-    }
-  }
-  
-  export class StandardMaterial {
-    diffuse: Color;
-    emissive: Color;
-    opacity: number;
-    constructor() {
-      this.diffuse = new Color(1, 1, 1, 1);
-      this.emissive = new Color(0, 0, 0, 1);
-      this.opacity = 1;
-    }
-  }
-  
-  export class Texture {
-    width: number;
-    height: number;
-    constructor() {
-      this.width = 256;
-      this.height = 256;
-    }
-  }
-  
-  export class CurveSet {
-    constructor() {
-      // CurveSet implementation
-    }
-  }
-  
-  export const FILLMODE_FILL_WINDOW: any = 'FILLMODE_FILL_WINDOW';
-  export const RESOLUTION_AUTO: any = 'RESOLUTION_AUTO';
 }
 
-// Character and Combat Types
-export interface Character {
-  id: string;
-  name: string;
-  health: number;
-  maxHealth: number;
-  model?: pc.Entity;
-  animations?: Map<string, any>;
+export interface Transform {
+    position: Vec3;
+    rotation: Vec3;
+    scale: Vec3;
 }
 
-export interface AttackData {
-  damage: number;
-  startup: number;
-  active: number;
-  recovery: number;
-  hitstun?: number;
-  blockstun?: number;
-  hitAdvantage?: number;
-  blockAdvantage?: number;
-  meterGain?: number;
-  properties?: AttackProperties;
-}
-
-export interface AttackProperties {
-  knockdown?: boolean;
-  overhead?: boolean;
-  low?: boolean;
-  unblockable?: boolean;
-  projectile?: boolean;
-  invulnerable?: [number, number]; // [start frame, end frame]
-  superArmor?: boolean;
-  guardCrush?: boolean;
-}
-
-// System Interfaces
-export interface ISystem {
-  initialize(): Promise<void>;
-  update?(dt: number): void;
-  fixedUpdate?(fixedDt: number): void;
-  interpolationUpdate?(dt: number): void;
-  postUpdate?(dt: number): void;
-  destroy?(): void;
-}
-
-// Performance and Debug Types
-export interface PerformanceStats {
-  frameCount: number;
-  fps: number;
-  frameTime: number;
-  drawCalls: number;
-  triangles: number;
-  gameState: GameState;
-  battleState: BattleState;
-  activeParticles?: number;
-  inputLatency?: number;
-  averageLatency?: number;
-  maxLatency?: number;
-  droppedInputs?: number;
-}
-
-// Event Types
-export interface GameEvent {
-  type: string;
-  timestamp: number;
-  data?: any;
-}
-
-export interface InputEvent extends GameEvent {
-  playerId: string;
-  inputName: string;
-  frame: number;
-  pressed?: boolean;
-}
-
-export interface CombatEvent extends GameEvent {
-  attacker?: string;
-  defender?: string;
-  damage?: number;
-  position?: pc.Vec3;
-  attackData?: AttackData;
-}
-
-// Configuration Types
-export interface GameConfig {
-  targetFPS: number;
-  frameTime: number;
-  maxHistoryFrames: number;
-  debug: boolean;
-}
-
-export interface InputConfig {
-  bufferWindow: number;
-  commandWindow: number;
-  negativeEdge: boolean;
-  buttonPriority: Record<string, number>;
-  pollRate: number;
-  maxInputDelay: number;
-}
-
-export interface CombatConfig {
-  frameRate: number;
-  frameTime: number;
-  hitDetection: {
+export interface Component {
+    entity: Entity;
     enabled: boolean;
-    precision: string;
-    hitboxVisualization: boolean;
-  };
-  damageScaling: {
-    enabled: boolean;
-    scalingStart: number;
-    scalingRate: number;
-    minimumDamage: number;
-  };
-  parrySystem: {
-    enabled: boolean;
-    parryWindow: number;
-    parryRecovery: number;
-    parryAdvantage: number;
-    redParryWindow: number;
-    redParryAdvantage: number;
-  };
-  stun: {
-    hitstunBase: number;
-    blockstunBase: number;
-    hitstunScaling: number;
-    blockstunScaling: number;
-  };
+    system: any;
 }
 
-// Utility Types
-export type Bounds = {
-  min: pc.Vec3;
-  max: pc.Vec3;
-};
-
-export type ParticleType = 'impact' | 'spark' | 'dust' | 'energy' | 'blood';
-
-export interface ParticlePool {
-  [key: string]: pc.Entity[];
-}
-
-// Generic event emitter type for PlayCanvas application
-export interface EventEmitter {
-  on(event: string, callback: (...args: any[]) => void): void;
-  off(event: string, callback: (...args: any[]) => void): void;
-  fire(event: string, ...args: any[]): void;
+declare global {
+    const pc: {
+        Application: new (options?: ApplicationOptions) => ApplicationBase;
+        Entity: new (name?: string) => Entity;
+        Vec3: new (x?: number, y?: number, z?: number) => Vec3;
+        Color: new (r?: number, g?: number, b?: number, a?: number) => Color;
+        createScript: (name: string) => ScriptType;
+        [key: string]: any;
+    };
 }

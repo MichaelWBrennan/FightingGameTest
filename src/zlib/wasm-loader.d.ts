@@ -5,23 +5,29 @@
  */
 
 /**
- * Represents the Emscripten Module object.
- * Emscripten generates a JavaScript object that acts as a loader and interface to the Wasm module.
- * This interface describes the essential properties of that Module object.
+ * WebAssembly Module Loader Type Definitions
  */
-interface EmscriptenModule {
-  // Path to the Wasm file.
-  wasmSource?: string | ArrayBuffer | Response;
-  // Path to the JS glue code file.
-  glueCode?: string;
-  // Options for module loading and execution.
-  // This is a simplification; Emscripten Module has many more options.
+
+export interface EmscriptenModule {
+  wasmSource?: string;
   onRuntimeInitialized?: () => void;
   print?: (text: string) => void;
   printErr?: (text: string) => void;
-
-  // Dynamically generated functions and memory.
+  FS?: any;
+  HEAP8?: Int8Array;
+  HEAP16?: Int16Array;
+  HEAP32?: Int32Array;
+  HEAPU8?: Uint8Array;
+  HEAPU16?: Uint16Array;
+  HEAPU32?: Uint32Array;
   [key: string]: any;
+}
+
+export interface EmscriptenModuleBase extends EmscriptenModule {
+  _malloc?(size: number): number;
+  _free?(ptr: number): void;
+  getValue?(ptr: number, type: string): number;
+  setValue?(ptr: number, value: number, type: string): void;
 }
 
 /**
@@ -31,8 +37,8 @@ interface EmscriptenModule {
  */
 type EmscriptenModuleLoader = (options?: any) => Promise<EmscriptenModule>;
 
-// Export a type for the loader function.
-export type { EmscriptenModule, EmscriptenModuleLoader, HuffmanTreeType };
+// Export the types for the loader function and module interfaces.
+export type { EmscriptenModule, EmscriptenModuleLoader, EmscriptenModuleBase };
 
 // Note: This is a foundational type. The actual Emscripten Module object
 // will have many more methods and properties dynamically generated based on

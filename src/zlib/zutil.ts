@@ -1,6 +1,7 @@
 
-/* zutil.ts -- target dependent utility functions for the compression library
- * Converted from C to TypeScript
+/**
+ * zutil.ts - target dependent utility functions for the compression library
+ * Converted from C to TypeScript with proper bounds checking
  */
 
 export const ZLIB_VERSION = "1.1.4";
@@ -23,26 +24,35 @@ export function zlibVersion(): string {
 }
 
 export function zError(err: number): string {
-    return z_errmsg[2 - err];
+    const index = 2 - err;
+    if (index >= 0 && index < z_errmsg.length) {
+        return z_errmsg[index];
+    }
+    return "unknown error";
 }
 
 export function zmemcpy(dest: Uint8Array, source: Uint8Array, len: number): void {
     if (len === 0) return;
-    for (let i = 0; i < len; i++) {
+    const copyLen = Math.min(len, dest.length, source.length);
+    for (let i = 0; i < copyLen; i++) {
         dest[i] = source[i];
     }
 }
 
 export function zmemcmp(s1: Uint8Array, s2: Uint8Array, len: number): number {
-    for (let j = 0; j < len && j < s1.length && j < s2.length; j++) {
-        if (s1[j] !== s2[j]) return 2 * (s1[j]! > s2[j]! ? 1 : 0) - 1;
+    const compareLen = Math.min(len, s1.length, s2.length);
+    for (let j = 0; j < compareLen; j++) {
+        if (s1[j] !== s2[j]) {
+            return s1[j] > s2[j] ? 1 : -1;
+        }
     }
     return 0;
 }
 
 export function zmemzero(dest: Uint8Array, len: number): void {
     if (len === 0) return;
-    for (let i = 0; i < len; i++) {
+    const zeroLen = Math.min(len, dest.length);
+    for (let i = 0; i < zeroLen; i++) {
         dest[i] = 0;
     }
 }

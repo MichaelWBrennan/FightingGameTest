@@ -1,0 +1,200 @@
+
+#!/usr/bin/env ts-node
+
+/**
+ * Automated C to TypeScript Conversion Tool
+ * Converts all remaining C files to TypeScript equivalents
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
+
+interface ConversionRule {
+  pattern: RegExp;
+  replacement: string;
+}
+
+interface FileConversion {
+  sourcePath: string;
+  targetPath: string;
+  category: string;
+}
+
+class CToTypeScriptConverter {
+  private conversionRules: ConversionRule[] = [
+    // Basic type conversions
+    { pattern: /\bint\b/g, replacement: 'number' },
+    { pattern: /\bfloat\b/g, replacement: 'number' },
+    { pattern: /\bdouble\b/g, replacement: 'number' },
+    { pattern: /\bchar\b/g, replacement: 'string' },
+    { pattern: /\bvoid\b/g, replacement: 'void' },
+    { pattern: /\bbool\b/g, replacement: 'boolean' },
+    
+    // Pointer conversions
+    { pattern: /\*(\w+)/g, replacement: 'Uint8Array' },
+    { pattern: /&(\w+)/g, replacement: '$1' },
+    
+    // Memory functions
+    { pattern: /malloc\(/g, replacement: 'new Uint8Array(' },
+    { pattern: /free\(/g, replacement: '// free(' },
+    { pattern: /memcpy\(/g, replacement: 'copyArray(' },
+    
+    // Control structures
+    { pattern: /#include\s*<[^>]+>/g, replacement: '// #include removed' },
+    { pattern: /#define\s+(\w+)\s+(.+)/g, replacement: 'const $1 = $2;' },
+    
+    // Function declarations
+    { pattern: /(\w+)\s+(\w+)\s*\([^)]*\)\s*{/g, replacement: '$2(): $1 {' },
+  ];
+
+  async convertAllFiles(): Promise<void> {
+    const files = await this.findAllCFiles();
+    console.log(`Found ${files.length} C files to convert`);
+
+    for (const file of files) {
+      await this.convertFile(file);
+    }
+
+    console.log('Conversion complete!');
+  }
+
+  private async findAllCFiles(): Promise<FileConversion[]> {
+    const files: FileConversion[] = [];
+    
+    const searchDirs = [
+      'src/src/anniversary',
+      'libco',
+      'zlib'
+    ];
+
+    for (const dir of searchDirs) {
+      if (fs.existsSync(dir)) {
+        await this.scanDirectory(dir, files);
+      }
+    }
+
+    return files;
+  }
+
+  private async scanDirectory(dir: string, files: FileConversion[]): Promise<void> {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      
+      if (entry.isDirectory()) {
+        await this.scanDirectory(fullPath, files);
+      } else if (entry.name.endsWith('.c')) {
+        const targetPath = this.getTargetPath(fullPath);
+        const category = this.getCategory(fullPath);
+        
+        files.push({
+          sourcePath: fullPath,
+          targetPath,
+          category
+        });
+      }
+    }
+  }
+
+  private getTargetPath(sourcePath: string): string {
+    const relativePath = sourcePath.replace(/^src\/src\/anniversary\//, '');
+    const tsPath = relativePath.replace(/\.c$/, '.ts');
+    return path.join('src/typescript/converted', tsPath);
+  }
+
+  private getCategory(sourcePath: string): string {
+    if (sourcePath.includes('EFF')) return 'effects';
+    if (sourcePath.includes('cri')) return 'audio';
+    if (sourcePath.includes('libco')) return 'coroutines';
+    if (sourcePath.includes('zlib')) return 'compression';
+    if (sourcePath.includes('port')) return 'platform';
+    if (sourcePath.includes('AcrSDK')) return 'sdk';
+    return 'game';
+  }
+
+  private async convertFile(file: FileConversion): Promise<void> {
+    try {
+      const sourceContent = fs.readFileSync(file.sourcePath, 'utf8');
+      let convertedContent = this.convertCToTypeScript(sourceContent, file.category);
+      
+      // Ensure target directory exists
+      const targetDir = path.dirname(file.targetPath);
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
+
+      fs.writeFileSync(file.targetPath, convertedContent);
+      console.log(`Converted: ${file.sourcePath} -> ${file.targetPath}`);
+    } catch (error) {
+      console.error(`Failed to convert ${file.sourcePath}:`, error);
+    }
+  }
+
+  private convertCToTypeScript(content: string, category: string): string {
+    let converted = content;
+
+    // Add TypeScript header
+    converted = this.addTypeScriptHeader(converted, category);
+
+    // Apply conversion rules
+    for (const rule of this.conversionRules) {
+      converted = converted.replace(rule.pattern, rule.replacement);
+    }
+
+    // Category-specific conversions
+    switch (category) {
+      case 'effects':
+        converted = this.convertEffectsFile(converted);
+        break;
+      case 'audio':
+        converted = this.convertAudioFile(converted);
+        break;
+      case 'platform':
+        converted = this.convertPlatformFile(converted);
+        break;
+    }
+
+    return converted;
+  }
+
+  private addTypeScriptHeader(content: string, category: string): string {
+    const header = `/**
+ * Converted from C to TypeScript
+ * Category: ${category}
+ * Generated by automated conversion tool
+ */
+
+`;
+    return header + content;
+  }
+
+  private convertEffectsFile(content: string): string {
+    // Convert effect-specific patterns
+    content = content.replace(/WORK_Other\s*\*(\w+)/g, 'effect: EffectState');
+    content = content.replace(/ewk->/g, 'effect.');
+    return content;
+  }
+
+  private convertAudioFile(content: string): string {
+    // Convert audio-specific patterns
+    content = content.replace(/SsRequest\(/g, 'audioManager.playSound(');
+    content = content.replace(/SsBgmHalfVolume\(/g, 'audioManager.setBgmVolume(');
+    return content;
+  }
+
+  private convertPlatformFile(content: string): string {
+    // Convert platform-specific patterns
+    content = content.replace(/SDL_/g, 'WebGL');
+    content = content.replace(/PS2_/g, 'Web');
+    return content;
+  }
+}
+
+// Run the converter
+if (require.main === module) {
+  const converter = new CToTypeScriptConverter();
+  converter.convertAllFiles().catch(console.error);
+}
+
+export { CToTypeScriptConverter };
