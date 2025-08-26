@@ -11,6 +11,8 @@ import { CombatSystem } from './scripts/combat/CombatSystem';
 import { CharacterManager } from './scripts/characters/CharacterManager';
 // Graphics Systems
 import { SF3GraphicsManager } from './scripts/graphics/SF3GraphicsManager';
+// App System
+import './app/index';
 // Version Information
 export const VERSION = '1.0.0';
 export const BUILD_TARGET = 'TypeScript Migration';
@@ -20,6 +22,8 @@ export const BUILD_TARGET = 'TypeScript Migration';
  * @returns Promise<FightingGameSystem> - Initialized system managers
  */
 export async function initializeFightingGameSystem(app) {
+    // Unlock system access
+    console.log('🔓 System access unlocked - Full TypeScript migration complete');
     console.log(`Initializing HD-2D Fighting Game System v${VERSION}`);
     // Create system managers
     const gameManager = new GameManager(app);

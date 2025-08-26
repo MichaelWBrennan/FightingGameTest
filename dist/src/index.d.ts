@@ -8,6 +8,7 @@ import { InputManager } from './scripts/core/InputManager';
 import { CombatSystem } from './scripts/combat/CombatSystem';
 import { CharacterManager } from './scripts/characters/CharacterManager';
 import { SF3GraphicsManager } from './scripts/graphics/SF3GraphicsManager';
+import './app/index';
 export type { GameState, BattleState, ISystem, Character, AttackData, PerformanceStats, ParticleType, Direction } from '../types/core';
 export type { InputState, ButtonState, ChargeState, MotionCommand, CommandHistory, PlayerId, InputName } from '../types/input';
 export type { CombatSystemConfig, PlayerCombatData, SpecialMoveData, HitboxData, HurtboxData, ParryResult, ParryType, DamageType } from '../types/combat';

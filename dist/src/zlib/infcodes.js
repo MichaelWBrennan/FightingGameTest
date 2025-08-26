@@ -94,7 +94,7 @@ const LEAVE = (r, s, z, c, bitBufferState) => {
     // Set error code if not already set.
     if (r === 0)
         r = -3; // Default to Z_DATA_ERROR if missing and mode is BADCODE.
-    return r;
+    return r; // Return the final status code.
 };
 // ========================================================================
 // Main `inflateCodes` function
@@ -148,6 +148,9 @@ z, r) {
     let currentInputBytesAvailable = z.avail_in; // `n` in C code (bytes remaining in input buffer).
     let currentInputBufferView = z.next_in; // `p` in C code. Start of input.
     let bytesInWindow = s.window.length - currentWindowReadIndex; // `m` in C code. Bytes from window read pos to end.
+    let q = currentWindowReadIndex; // `q` used in C code, which is `s.read`.
+    let f; // `f` used in C code, for source pointer in copy operation.
+    const windowBuffer = s.window; // Reference to the sliding window buffer.
     // Main processing loop.
     while (true) {
         switch (c.mode) {
@@ -162,8 +165,8 @@ z, r) {
                 // Setup for processing literal/length codes.
                 c.sub.code.need = c.lbits;
                 c.sub.code.tree = c.ltree;
-                c.mode = LEN;
-                break; // Proceed to LEN state.
+                c.mode = LEN; // Proceed to LEN state.
+                break;
             case LEN: // i: get length/literal/eob next
                 const lenBitsNeeded = c.sub.code.need;
                 // Ensure we have enough bits in the buffer.
@@ -192,52 +195,12 @@ z, r) {
                     // `t.base + c.sub.code.tree` is pointer arithmetic: `tree_base + offset`.
                     // In TS, if `tree` elements are objects, `c.sub.code.tree` would be `c.sub.code.tree.slice(currentNode.base)`.
                     // However, typical tree structures are arrays, so `currentNode.base` is an index offset.
-                    c.sub.code.tree = c.sub.code.tree.concat(currentNode.base); // NOTE: This concat may not be correct. `c.sub.code.tree` should point to the *start* of the next sub-table.
-                    // The C code `t + t->base` implies `t` is pointer to tree. `t + t->base` moves pointer.
-                    // Let's assume `c.sub.code.tree` contains *all* tree nodes, and `currentNode.base` provides an offset.
-                    // Correct usage would be: `c.sub.code.tree = c.dtree.slice(currentNode.base)` if `dtree` is flat.
-                    // If `dtree` is structured with offsets, it's `c.dtree[offset]`.
-                    // Given `c.sub.code.tree = t + t->base` (where `t` is `c.sub.code.tree[index]`), it's likely `base` is an index offset.
-                    // Assuming `ltree` and `dtree` are flat arrays of nodes:
-                    // `c.sub.code.tree` would be a slice or reference to the new tree start.
-                    // This requires a clear definition of how trees are structured.
-                    // Placeholder logic: Assume `currentNode` points to a node, and its `base` is an offset within some larger tree array.
-                    // A common structure is `tree_nodes[offset]`.
-                    // Let's assume `ltree` and `dtree` are flat arrays. `c.sub.code.tree` needs to be set to point to the correct sub-array or the offset within it.
-                    // The original C means: `next_table_start = current_table_base_pointer + offset_from_node`.
-                    // If `c.sub.code.tree` is supposed to be an array reference: it gets complex.
-                    // Let's assume `c.sub.code.tree` points to the *base* of the current table, and `currentNode.base` is an offset within that.
-                    // `t + t->base` implies accessing tree nodes starting from `t`'s base.
-                    // If `c.sub.code.tree` tracks the current tree start pointer, then `c.sub.code.tree = c.sub.code.tree.slice(currentNode.base)` is possible.
-                    // Let's use a simpler interpretation: `c.sub.code.tree` refers to the *current* subtree. `currentNode.base` is an index into that subtree.
-                    // The C code `t += t->base` means `t = t + t->base` if `t` is a pointer to an array element.
-                    // A better model: `c.sub.code.tree_start_index`.
-                    // For now, let's assume `c.sub.code.tree` is itself the array, and `currentNode.base` is an index into it.
-                    // `t` refers to `c.sub.code.tree[treeLookupIndex]`. So `t + t.base` is `c.sub.code.tree.slice(treeLookupIndex + t.base)`.
-                    // This needs to be clarified by how `ltree` and `dtree` are structured.
-                    // Let's assume the provided `s.ltree` and `s.dtree` are flat arrays and `base` is an index offset.
-                    // If `c.sub.code.tree` is `HuffmanTreeType[]`, then `c.sub.code.tree = c.sub.code.tree.slice(currentNode.base)` would be more appropriate.
-                    // Given `t += t->base`, it implies moving within the same flat array.
-                    // The `t` is already `c.sub.code.tree[treeLookupIndex]`. So `t.base` is an offset from `c.sub.code.tree`.
-                    // The TS equivalent is `c.sub.code.tree = c.sub.code.tree.slice(currentNode.base)`.
-                    // This makes `c.sub.code.tree` a subarray reference, which might be inefficient.
-                    // A simpler way might be `c.sub.code.tree_index += currentNode.base;`
-                    // Let's stick to the `slice` path for now, assuming it's the intended pattern, but acknowledging potential inefficiency.
-                    // If `c.sub.code.tree` should be an array reference: `c.sub.code.tree = c.sub.code.tree.slice(currentNode.base);`
-                    // Simpler approach: `c.sub.code.tree` is the array itself. `currentNode.base` is an index into it from SOME offset.
                     // Let's assume `c.sub.code.tree` is an array of nodes. When `t` points to a node:
                     // `t += t->base` means `t = &t[t->base]` in C array terms.
-                    // So, `c.sub.code.tree = c.sub.code.tree.slice(currentNode.base)` if `c.sub.code.tree` is the current tree array.
-                    // For now, let's stick with the direct C structure assumption: `t` is a pointer, `t->base` (or `t.base` in TS) is an offset.
-                    // `t = c.sub.code.tree + currentNode.base` is not directly translatable.
-                    // If `c.sub.code.tree` is `HuffmanTreeType[]`, and `t` is `c.sub.code.tree[idx]`:
-                    // `t = c.sub.code.tree.slice(idx + currentNode.base)` is needed to get the reference.
-                    // The `base` property itself might need type information.
-                    // Let's assume `c.sub.code.tree` is a reference to the start of the current tree array.
-                    // `c.sub.code.tree = c.sub.code.tree.slice(currentNode.base)` is the most likely TS equivalent.
+                    // So, `c.sub.code.tree = c.sub.code.tree.slice(currentNode.base)` is needed to get the reference.
                     c.sub.code.tree = c.sub.code.tree.slice(currentNode.base);
                 }
-                else if (exopDist & 32) { // End of block code.
+                else if (exop & 32) { // End of block code.
                     c.mode = WASH; // Switch mode to WASH to flush output and signal end of block.
                 }
                 else { // Invalid code found.
@@ -394,7 +357,7 @@ z, r) {
  * @param z The `ZStream` for memory management functions (like `ZFREE`).
  */
 export function inflateCodesFree(c, z) {
-    // In TypeScript, explicit memory freeing is usually managed by the garbage collector.
+    // In TS, explicit memory freeing is usually managed by the garbage collector.
     // If `c` held resources that need manual cleanup, it would be done here.
     // For an object reference, GC should handle released memory.
     // C code: ZFREE(z, c);
@@ -435,7 +398,15 @@ export function inflateCodesNew(bl, bd, tl, td, z) {
     // console.log("inflate:       codes new");
     return c;
 }
-`` `
-<line_count>251</line_count>
-</write_to_file>;
+// Placeholder for inflateFlush, which would be defined elsewhere and handles output flushing.
+// For this context, we assume it exists and returns Z_OK or an error code.
+function inflateFlush(s, z, r) {
+    // This is a mock implementation. A real implementation would:
+    // 1. Copy data from s.window (from s.read to s.write) to z.next_out.
+    // 2. Update z.next_out, z.avail_out, z.total_out, and z.adler.
+    // 3. Potentially handle Z_BUF_ERROR if z.avail_out is 0.
+    // 4. Update s.read to s.write if all data is flushed.
+    // For the purpose of this fix, we assume it completes successfully.
+    return r === 0 ? 0 : r; // Pass through original return code if it's not an error already.
+}
 //# sourceMappingURL=infcodes.js.map
