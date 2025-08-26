@@ -265,7 +265,7 @@ async function buildServer() {
       const dbStatus = await db.checkHealth();
       const clickhouseStatus = await clickhouse.checkHealth();
       const ingestionStatus = await eventIngestion.checkHealth();
-      
+
       return {
         status: 'healthy',
         timestamp: new Date().toISOString(),
@@ -319,7 +319,7 @@ async function buildServer() {
     // Graceful shutdown
     const gracefulShutdown = async (signal: string) => {
       logger.info(`Received ${signal}, shutting down gracefully`);
-      
+
       try {
         await fastify.close();
         await db.close();
@@ -346,10 +346,24 @@ async function buildServer() {
 async function start() {
   try {
     const server = await buildServer();
-    
-    await server.listen({
-      port: config.port,
-      host: config.host
+
+    server.listen({
+      host: '0.0.0.0',
+      port: 3001
+    }, (err, address) => {
+      if (err) throw err;
+      console.log(`Analytics service listening on ${address}`);
+    });
+
+    server.post('/analytics', async (_request, _reply) => {
+      const userId = (_request.body as any)?.userId;
+      const deviceId = (_request.body as any)?.deviceId;
+      const sessionId = (_request.body as any)?.sessionId;
+
+      // Log analytics event
+      console.log('Analytics event received', { userId, deviceId, sessionId });
+
+      _reply.send({ status: 'success' });
     });
 
     logger.info(`Analytics service started on ${config.host}:${config.port}`);
@@ -381,7 +395,7 @@ declare module 'fastify' {
     metricsAggregator: MetricsAggregator;
     consentChecker: ConsentChecker;
   }
-  
+
   interface FastifyRequest {
     user?: {
       id: string;

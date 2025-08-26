@@ -102,7 +102,7 @@ export class ChurnPredictor {
 
       // Get player behavior profile
       const profile = await this.getPlayerBehaviorProfile(userId);
-      
+
       // Apply cold-start heuristics for new players
       if (profile.daysSinceInstall <= 7) {
         return this.calculateColdStartRisk(profile);
@@ -110,10 +110,10 @@ export class ChurnPredictor {
 
       // Apply trained model for established players
       const prediction = await this.applyChurnModel(profile);
-      
+
       // Cache result
       this.predictionCache.set(userId, prediction);
-      
+
       // Store prediction for tracking
       await this.storePrediction(prediction);
 
@@ -137,7 +137,7 @@ export class ChurnPredictor {
   async getWinbackRecommendations(userId: string): Promise<WinbackAction[]> {
     try {
       const churnRisk = await this.calculateChurnRisk(userId);
-      
+
       if (churnRisk.riskTier === 'low') {
         return []; // No intervention needed
       }
@@ -165,7 +165,7 @@ export class ChurnPredictor {
 
       // Get active users from last 30 days
       const activeUsers = await this.getActiveUsers(30);
-      
+
       let processed = 0;
       let highRisk = 0;
       let mediumRisk = 0;
@@ -239,7 +239,7 @@ export class ChurnPredictor {
       `;
 
       const behaviorResult = await this.clickhouse.query(behaviorQuery, [userId]);
-      
+
       if (behaviorResult.length === 0) {
         // New user with minimal data
         return this.getMinimalProfile(userId);
@@ -297,7 +297,7 @@ export class ChurnPredictor {
   private calculateColdStartRisk(profile: PlayerBehaviorProfile): ChurnRiskScore {
     let score = 50; // Start neutral
     const factors: ChurnFactor[] = [];
-    
+
     // Days since install
     if (profile.daysSinceInstall <= 1) {
       score -= 20;
@@ -343,7 +343,7 @@ export class ChurnPredictor {
     }
 
     const riskTier = score >= 70 ? 'high' : score >= 40 ? 'medium' : 'low';
-    
+
     return {
       userId: profile.userId,
       riskTier,
@@ -383,7 +383,7 @@ export class ChurnPredictor {
 
     // Normalize score to 0-100 range
     score = Math.max(0, Math.min(100, score * 10));
-    
+
     const riskTier = score >= this.currentModel.thresholds.highRisk ? 'high' :
                     score >= this.currentModel.thresholds.mediumRisk ? 'medium' : 'low';
 

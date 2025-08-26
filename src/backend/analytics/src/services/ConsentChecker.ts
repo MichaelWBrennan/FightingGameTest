@@ -1,5 +1,3 @@
 export class ConsentChecker {
-  constructor(_identityServiceUrl: string) {
-    // placeholder
-  }
+  constructor(_identityServiceUrl: string) {}
 }
