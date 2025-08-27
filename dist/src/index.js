@@ -1,5 +1,6 @@
 import { GameEngine } from './core/GameEngine';
 import { Logger } from './core/utils/Logger';
+import * as pc from 'playcanvas';
 class SF3Game {
     constructor() {
         const canvas = document.createElement('canvas');

@@ -1,12 +1,12 @@
 
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 import { CharacterManager } from './characters/CharacterManager';
 import { CombatSystem } from './combat/CombatSystem';
-import { StageManager } from './stages/StageManager';
+// Integrate with existing PlayCanvas script-based managers under src/scripts
+import StageManager from '../scripts/core/StageManager';
 import { InputManager } from './input/InputManager';
-import { UIManager } from './ui/UIManager';
-import { AudioManager } from './audio/AudioManager';
-import { AssetManager } from './assets/AssetManager';
+import UIManager from '../scripts/ui/UIManager';
+import { AssetLoader as AssetManager } from '../scripts/core/AssetLoader';
 import { Logger } from './utils/Logger';
 
 export class GameEngine {

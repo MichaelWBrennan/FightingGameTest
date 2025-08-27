@@ -1,6 +1,6 @@
 
 import * as pc from 'playcanvas';
-import { Character, CharacterConfig } from '../../types/character';
+import { Character, CharacterConfig } from '../../../types/character';
 import { Logger } from '../utils/Logger';
 
 export class CharacterManager {

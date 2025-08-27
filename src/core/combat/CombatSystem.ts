@@ -1,6 +1,6 @@
 
 import * as pc from 'playcanvas';
-import { Character } from '../../types/character';
+import { Character } from '../../../types/character';
 import { CharacterManager } from '../characters/CharacterManager';
 import { InputManager } from '../input/InputManager';
 import { Logger } from '../utils/Logger';

@@ -2,7 +2,7 @@
  * Character system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 
 // Character Archetype Types
 export type CharacterArchetype = 'shoto' | 'rushdown' | 'grappler' | 'zoner' | 'technical';

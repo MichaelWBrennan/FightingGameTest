@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import { Character } from '../../types/character';
+import { Character } from '../../../types/character';
 export declare class CharacterManager {
     private app;
     private characters;

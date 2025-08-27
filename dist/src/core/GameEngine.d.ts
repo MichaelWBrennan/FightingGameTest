@@ -1,4 +1,4 @@
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 import { CharacterManager } from './characters/CharacterManager';
 import { CombatSystem } from './combat/CombatSystem';
 export declare class GameEngine {

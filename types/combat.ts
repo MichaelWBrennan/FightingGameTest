@@ -3,7 +3,7 @@
  */
 
 import { type CombatState, type AttackData, type Character } from './core';
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 
 // Combat Configuration Types
 export interface HitDetectionConfig {

@@ -1,6 +1,7 @@
 
 import { GameEngine } from './core/GameEngine';
 import { Logger } from './core/utils/Logger';
+import * as pc from 'playcanvas';
 
 class SF3Game {
   private gameEngine: GameEngine;
