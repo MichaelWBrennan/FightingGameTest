@@ -1,4 +1,4 @@
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 import { CharacterManager } from './characters/CharacterManager';
 import { CombatSystem } from './combat/CombatSystem';
 export declare class GameEngine {
@@ -8,8 +8,6 @@ export declare class GameEngine {
     private stageManager;
     private inputManager;
     private uiManager;
-    private audioManager;
-    private assetManager;
     private isInitialized;
     constructor(canvas: HTMLCanvasElement);
     private setupApplication;

@@ -1,6 +1,7 @@
 /**
  * Effect System Manager - Converted from EFFECT.c and EFF*.c files
  */
+import * as pc from 'playcanvas';
 export var EffectType;
 (function (EffectType) {
     EffectType[EffectType["IMPACT"] = 0] = "IMPACT";

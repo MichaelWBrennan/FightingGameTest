@@ -2,6 +2,7 @@
  * Particle System - TypeScript conversion from various EFF*.c files
  * Handles visual effects like sparks, dust, energy, etc.
  */
+import * as pc from 'playcanvas';
 export class ParticleEmitter {
     constructor(config) {
         this.particles = [];

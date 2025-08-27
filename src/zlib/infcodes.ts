@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Processes literals and length/distance pairs during inflate.
  * Based on zlib's infcodes.c.

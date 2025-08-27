@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 export class InputManager {
     constructor(app) {
         this.app = app;
@@ -105,19 +106,20 @@ export class InputManager {
         this.updateSpecialMoves();
     }
     updateGamepadInputs() {
-        const gamepad = this.gamepads.get(0);
+        const pads = this.gamepads.poll();
+        const gamepad = pads[0];
         if (gamepad) {
             // Map gamepad inputs to player 1
-            this.player1Inputs.left = gamepad.left;
-            this.player1Inputs.right = gamepad.right;
-            this.player1Inputs.up = gamepad.up;
-            this.player1Inputs.down = gamepad.down;
-            this.player1Inputs.lightPunch = gamepad.square;
-            this.player1Inputs.mediumPunch = gamepad.triangle;
-            this.player1Inputs.heavyPunch = gamepad.r1;
-            this.player1Inputs.lightKick = gamepad.cross;
-            this.player1Inputs.mediumKick = gamepad.circle;
-            this.player1Inputs.heavyKick = gamepad.r2;
+            this.player1Inputs.left = gamepad.isPressed(pc.PAD_L_STICK_BUTTON) || gamepad.isPressed(pc.PAD_LEFT);
+            this.player1Inputs.right = gamepad.isPressed(pc.PAD_RIGHT);
+            this.player1Inputs.up = gamepad.isPressed(pc.PAD_UP);
+            this.player1Inputs.down = gamepad.isPressed(pc.PAD_DOWN);
+            this.player1Inputs.lightPunch = gamepad.isPressed(pc.PAD_FACE_1);
+            this.player1Inputs.mediumPunch = gamepad.isPressed(pc.PAD_FACE_2);
+            this.player1Inputs.heavyPunch = gamepad.isPressed(pc.PAD_R_SHOULDER_1);
+            this.player1Inputs.lightKick = gamepad.isPressed(pc.PAD_FACE_3);
+            this.player1Inputs.mediumKick = gamepad.isPressed(pc.PAD_FACE_4);
+            this.player1Inputs.heavyKick = gamepad.isPressed(pc.PAD_R_SHOULDER_2);
         }
     }
     updateSpecialMoves() {

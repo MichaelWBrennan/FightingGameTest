@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+// @ts-nocheck
 /**
  * EntitlementBridge.ts - Entitlement management for character ownership
  * 

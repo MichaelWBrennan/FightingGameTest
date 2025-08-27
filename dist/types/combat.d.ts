@@ -2,7 +2,7 @@
  * Combat system type definitions for SF3:3S HD-2D Fighting Game
  */
 import { type CombatState, type AttackData, type Character } from './core';
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 export interface HitDetectionConfig {
     enabled: boolean;
     precision: 'frame-perfect' | 'approximate';

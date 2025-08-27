@@ -4,7 +4,7 @@
  * Handles visual effects like sparks, dust, energy, etc.
  */
 
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 
 export interface ParticleConfig {
   maxParticles: number;

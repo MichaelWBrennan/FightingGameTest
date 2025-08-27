@@ -1,14 +1,4 @@
-/**
- * EntitlementBridge.ts - Entitlement management for character ownership
- *
- * Single interface to ownership (dev unlocks, QA flags, platform entitlements).
- * Stubbed for now but designed for dependency injection to support platform SKUs later.
- *
- * Usage:
- *   const bridge = new EntitlementBridge();
- *   await bridge.initialize();
- *   const hasAccess = bridge.hasCharacterAccess('vanguard', 'ranked');
- */
+import * as pc from 'playcanvas';
 export class EntitlementBridge {
     constructor() {
         this.platformProviders = new Map();

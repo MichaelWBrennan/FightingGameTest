@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as pc from 'playcanvas';
 import { CharacterEntity } from './CharacterEntity';
 export class CharacterFactory {

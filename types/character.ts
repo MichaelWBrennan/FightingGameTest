@@ -2,7 +2,7 @@
  * Character system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import type * as pc from 'playcanvas';
+import * as pc from 'playcanvas';
 
 // Character Archetype Types
 export type CharacterArchetype = 'shoto' | 'rushdown' | 'grappler' | 'zoner' | 'technical';
@@ -105,6 +105,11 @@ export interface AttackData {
   recovery: number;
   blockAdvantage: number;
   hitAdvantage: number;
+  // Compatibility fields for legacy access
+  startupFrames?: number;
+  activeFrames?: number;
+  recoveryFrames?: number;
+  advantage?: number;
   hitstun?: number;
   blockstun?: number;
   properties?: AttackProperties;
@@ -130,6 +135,7 @@ export interface AttackProperties {
 export interface CharacterData {
   characterId: string;
   name: string;
+  displayName?: string;
   archetype: CharacterArchetype;
   spritePath: string;
 
@@ -138,6 +144,8 @@ export interface CharacterData {
   walkSpeed: number;
   dashSpeed: number;
   jumpHeight: number;
+  // Optional nested stats for alternate access patterns
+  stats?: { health: number; walkSpeed: number };
 
   // Gameplay properties
   complexity: string;
@@ -161,6 +169,22 @@ export interface CharacterData {
   voiceLines?: Record<string, string>;
   sfx?: Record<string, string>;
 }
+
+// Minimal runtime character type used by core systems
+export interface Character {
+  id: string;
+  name?: string;
+  entity: pc.Entity;
+  config: CharacterData;
+  health: number;
+  maxHealth?: number;
+  meter: number;
+  state: 'idle' | 'walking' | 'attacking' | 'ko';
+  currentMove: null | { name: string; data: AttackData; currentFrame: number; phase: 'startup' | 'active' | 'recovery' };
+  frameData: { startup: number; active: number; recovery: number; advantage: number };
+}
+
+export interface CharacterConfig extends CharacterData {}
 
 // Extended PlayCanvas Entity for Characters
 export interface CharacterEntity extends pc.Entity {
@@ -378,3 +402,5 @@ export const DEFAULT_FRAME_DATA: FrameData = {
   recovery: { light: 6, medium: 10, heavy: 14 },
   startup: { light: 4, medium: 7, heavy: 12 }
 } as const;
+
+export type PlayerData = any;

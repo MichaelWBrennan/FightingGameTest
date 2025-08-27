@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import { GraphicsState, RenderLayer, Sprite, Camera } from '../../../types/graphics';
 

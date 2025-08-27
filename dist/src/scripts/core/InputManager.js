@@ -85,24 +85,23 @@ export class InputManager extends pc.ScriptType {
         this.handleInputCombinations();
     }
     updateGamepadInput() {
-        const gamepad = this.app.gamepads.get(this.gamepadIndex);
+        const pads = this.app.gamepads.poll();
+        const gamepad = pads && pads.length > 0 ? pads[this.gamepadIndex] : null;
         if (!gamepad)
             return;
         // Update button states
         for (const [buttonIndex, action] of Object.entries(this.inputMapping.gamepad)) {
-            const button = gamepad.getButton(parseInt(buttonIndex));
-            if (button) {
-                this.currentInputState[action] = button.pressed;
-            }
+            const index = parseInt(buttonIndex);
+            const pressed = this.app.gamepads.isPressed(this.gamepadIndex, index);
+            this.currentInputState[action] = !!pressed;
         }
         // Update analog stick input
-        const leftStick = gamepad.getAxes(0, 1);
-        if (leftStick) {
-            this.currentInputState['left'] = leftStick[0] < -this.deadZone;
-            this.currentInputState['right'] = leftStick[0] > this.deadZone;
-            this.currentInputState['up'] = leftStick[1] < -this.deadZone;
-            this.currentInputState['down'] = leftStick[1] > this.deadZone;
-        }
+        const lx = this.app.gamepads.getAxis(this.gamepadIndex, pc.PAD_L_STICK_X);
+        const ly = this.app.gamepads.getAxis(this.gamepadIndex, pc.PAD_L_STICK_Y);
+        this.currentInputState['left'] = lx < -this.deadZone;
+        this.currentInputState['right'] = lx > this.deadZone;
+        this.currentInputState['up'] = ly < -this.deadZone;
+        this.currentInputState['down'] = ly > this.deadZone;
     }
     handleInputCombinations() {
         // Handle special move combinations
