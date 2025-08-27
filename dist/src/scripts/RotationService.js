@@ -12,60 +12,11 @@
 import { EntitlementBridge } from './EntitlementBridge';
 export class RotationService {
     constructor(app, characterManager, region = 'default') {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "characterManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "entitlementBridge", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "state", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "configUrl", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 'assets/data/rotation.config.json'
-        });
-        Object.defineProperty(this, "region", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 'default'
-        });
-        Object.defineProperty(this, "updateTimer", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "eventEmitter", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
+        this.config = null;
+        this.state = null;
+        this.configUrl = 'assets/data/rotation.config.json';
+        this.region = 'default';
+        this.updateTimer = null;
         this.app = app;
         this.characterManager = characterManager;
         this.region = region;

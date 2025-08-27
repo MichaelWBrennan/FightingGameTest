@@ -34,4 +34,3 @@ export declare class InputManager extends pc.ScriptType {
     setGamepadIndex(index: number): void;
     static get scriptName(): string;
 }
-//# sourceMappingURL=InputManager.d.ts.map

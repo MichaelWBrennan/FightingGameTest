@@ -1,136 +1,28 @@
 import * as pc from 'playcanvas';
 export class CharacterSelectUI {
     constructor(app, rotationService, characterLoader) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "rotationService", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "characterLoader", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         // UI State
-        Object.defineProperty(this, "isInitialized", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
-        Object.defineProperty(this, "currentMode", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 'casual'
-        });
-        Object.defineProperty(this, "playerSelections", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "characterSlots", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "slotOrder", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "playerCursorIndex", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "uiRoot", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.isInitialized = false;
+        this.currentMode = 'casual';
+        this.playerSelections = new Map();
+        this.characterSlots = new Map();
+        this.slotOrder = [];
+        this.playerCursorIndex = new Map();
+        this.uiRoot = null;
         // UI Elements
-        Object.defineProperty(this, "characterGrid", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "variationPanel", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "countdownDisplay", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "lockIndicators", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "featuredBanner", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.characterGrid = null;
+        this.variationPanel = null;
+        this.countdownDisplay = null;
+        this.lockIndicators = null;
+        this.featuredBanner = null;
         // Input handling
-        Object.defineProperty(this, "inputDevices", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "selectionTimeouts", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.inputDevices = new Map();
+        this.selectionTimeouts = new Map();
         // Constants
-        Object.defineProperty(this, "SELECTION_TIMEOUT", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 30000
-        }); // 30 seconds
-        Object.defineProperty(this, "GRID_COLUMNS", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 6
-        });
-        Object.defineProperty(this, "VARIATION_SLOTS", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 3
-        });
-        Object.defineProperty(this, "INCLUDE_RANDOM_SLOT", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: true
-        });
+        this.SELECTION_TIMEOUT = 30000; // 30 seconds
+        this.GRID_COLUMNS = 6;
+        this.VARIATION_SLOTS = 3;
+        this.INCLUDE_RANDOM_SLOT = true;
         this.app = app;
         this.rotationService = rotationService;
         this.characterLoader = characterLoader;

@@ -4,36 +4,11 @@
  */
 export class MemoryManager {
     constructor() {
-        Object.defineProperty(this, "pools", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "totalMemory", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "usedMemory", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "defaultAlignment", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 16
-        });
-        Object.defineProperty(this, "debugMode", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
+        this.pools = new Map();
+        this.totalMemory = 0;
+        this.usedMemory = 0;
+        this.defaultAlignment = 16;
+        this.debugMode = false;
         this.initializeDefaultPools();
     }
     /**

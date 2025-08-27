@@ -4,36 +4,10 @@
  */
 export class PS2SDKCompat {
     constructor(config = {}) {
-        Object.defineProperty(this, "threads", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "timers", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "nextThreadId", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1
-        });
-        Object.defineProperty(this, "nextTimerId", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1
-        });
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
+        this.threads = new Map();
+        this.timers = new Map();
+        this.nextThreadId = 1;
+        this.nextTimerId = 1;
         this.config = {
             threadStackSize: 64 * 1024,
             maxThreads: 32,

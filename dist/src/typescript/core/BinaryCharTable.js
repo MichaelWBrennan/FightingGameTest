@@ -4,12 +4,7 @@
  */
 export class BinaryCharTable {
     constructor(data) {
-        Object.defineProperty(this, "entries", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.entries = new Map();
         if (data) {
             this.loadFromBuffer(data);
         }

@@ -113,16 +113,6 @@ export class SF3CompressionSystem {
         return data;
     }
 }
-Object.defineProperty(SF3CompressionSystem, "LZ77_SIGNATURE", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: 'LZ77'
-});
-Object.defineProperty(SF3CompressionSystem, "ZLIB_SIGNATURE", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: 'ZLIB'
-});
+SF3CompressionSystem.LZ77_SIGNATURE = 'LZ77';
+SF3CompressionSystem.ZLIB_SIGNATURE = 'ZLIB';
 //# sourceMappingURL=CompressionSystem.js.map

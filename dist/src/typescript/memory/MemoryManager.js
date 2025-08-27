@@ -10,30 +10,8 @@ export class MemoryManager {
         return MemoryManager.instance;
     }
     constructor() {
-        Object.defineProperty(this, "heaps", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "memoryMap", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "memoryView", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "nextAddress", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0x10000000
-        }); // Mock starting address
+        this.heaps = new Map();
+        this.nextAddress = 0x10000000; // Mock starting address
         // Initialize main memory buffer (64MB mock)
         this.memoryMap = new ArrayBuffer(64 * 1024 * 1024);
         this.memoryView = new Uint8Array(this.memoryMap);

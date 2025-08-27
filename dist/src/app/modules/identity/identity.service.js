@@ -1,13 +1,7 @@
 import { DatabaseManager } from '../../core/DatabaseManager';
 export class IdentityService {
     constructor() {
-        Object.defineProperty(this, "db", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        this.db = DatabaseManager.getInstance();
+        this._db = DatabaseManager.getInstance();
     }
     async register(userData) {
         // Placeholder

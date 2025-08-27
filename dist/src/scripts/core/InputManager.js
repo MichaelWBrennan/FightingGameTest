@@ -6,36 +6,10 @@ import * as pc from 'playcanvas';
 export class InputManager extends pc.ScriptType {
     constructor() {
         super(...arguments);
-        Object.defineProperty(this, "inputMapping", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "previousInputState", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {}
-        });
-        Object.defineProperty(this, "currentInputState", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {}
-        });
-        Object.defineProperty(this, "gamepadIndex", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "deadZone", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0.2
-        });
+        this.previousInputState = {};
+        this.currentInputState = {};
+        this.gamepadIndex = 0;
+        this.deadZone = 0.2;
     }
     initialize() {
         this.setupInputMapping();

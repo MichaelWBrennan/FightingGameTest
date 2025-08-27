@@ -15,4 +15,3 @@ export declare class CoachManager implements ISystem, IGameState {
     getOpponentCharacter(playerId: string): string | null;
     getPlayerProfile(playerId: string): any;
 }
-//# sourceMappingURL=CoachManager.d.ts.map

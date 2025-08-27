@@ -4,18 +4,8 @@
  */
 export class SF3CharacterSystem {
     constructor() {
-        Object.defineProperty(this, "characters", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "movesets", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.characters = new Map();
+        this.movesets = new Map();
         this.initializeCharacters();
         this.initializeMovesets();
     }

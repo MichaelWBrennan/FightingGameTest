@@ -211,4 +211,3 @@ export declare class Clubs extends EventEmitter {
     private generateSessionHash;
     private log;
 }
-//# sourceMappingURL=Clubs.d.ts.map

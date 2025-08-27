@@ -7,4 +7,3 @@ export declare class CharacterStateMachine {
     setState(newState: CharacterState, force?: boolean): boolean;
     update(dt: number): void;
 }
-//# sourceMappingURL=CharacterStateMachine.d.ts.map

@@ -145,4 +145,3 @@ export {};
  * 4. Adding complex rotation patterns: Extend calculateActivePool with new logic
  * 5. Adding analytics: Extend getAnalyticsData and add tracking calls
  */ 
-//# sourceMappingURL=RotationService.d.ts.map

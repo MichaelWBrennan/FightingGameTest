@@ -33,4 +33,3 @@ export declare class CharacterEntity extends pc.Entity {
     uiSide: 'left' | 'right';
     constructor(name: string);
 }
-//# sourceMappingURL=CharacterEntity.d.ts.map

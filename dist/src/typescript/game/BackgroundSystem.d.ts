@@ -57,4 +57,3 @@ export declare class SF3BackgroundSystem {
         bottom: number;
     } | null;
 }
-//# sourceMappingURL=BackgroundSystem.d.ts.map

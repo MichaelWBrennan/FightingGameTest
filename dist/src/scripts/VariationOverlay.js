@@ -10,46 +10,36 @@
  */
 export class VariationOverlay {
     constructor() {
-        Object.defineProperty(this, "PROTECTED_FIELDS", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: [
-                'id',
-                'schemaVersion',
-                'displayName',
-                'archetype',
-                'normals.lp',
-                'normals.mp',
-                'normals.hp',
-                'normals.lk',
-                'normals.mk',
-                'normals.hk'
-            ]
-        });
-        Object.defineProperty(this, "NUMERIC_FIELDS", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: [
-                'damage',
-                'startup',
-                'active',
-                'recovery',
-                'onBlock',
-                'onHit',
-                'meterCost',
-                'health',
-                'defense',
-                'meterGain',
-                'weight',
-                'stun',
-                'walkF',
-                'walkB',
-                'dashF',
-                'dashB'
-            ]
-        });
+        this.PROTECTED_FIELDS = [
+            'id',
+            'schemaVersion',
+            'displayName',
+            'archetype',
+            'normals.lp',
+            'normals.mp',
+            'normals.hp',
+            'normals.lk',
+            'normals.mk',
+            'normals.hk'
+        ];
+        this.NUMERIC_FIELDS = [
+            'damage',
+            'startup',
+            'active',
+            'recovery',
+            'onBlock',
+            'onHit',
+            'meterCost',
+            'health',
+            'defense',
+            'meterGain',
+            'weight',
+            'stun',
+            'walkF',
+            'walkB',
+            'dashF',
+            'dashB'
+        ];
     }
     /**
      * Apply variation to base character data

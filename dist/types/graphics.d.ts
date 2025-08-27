@@ -1,3 +1,4 @@
+import type * as pc from 'playcanvas';
 /**
  * Graphics system type definitions for SF3:3S HD-2D Fighting Game
  */
@@ -251,4 +252,22 @@ export declare function isValidLayerName(name: string): name is LayerName;
 export declare const DEFAULT_VISUAL_STYLE: VisualStyle;
 export declare const DEFAULT_PERFORMANCE_SETTINGS: PerformanceSettings;
 export declare const DEFAULT_HD2D_SETTINGS: HD2DRenderSettings;
-//# sourceMappingURL=graphics.d.ts.map
+export interface GraphicsState {
+    renderLayers: RenderLayer[];
+    camera: Camera;
+    lighting: any;
+}
+export interface RenderLayer {
+    id: string;
+    sprites: Sprite[];
+    visible: boolean;
+}
+export interface Sprite {
+    id: string;
+    texture: pc.Texture;
+    position: pc.Vec3;
+}
+export interface Camera {
+    position: pc.Vec3;
+    target: pc.Vec3;
+}

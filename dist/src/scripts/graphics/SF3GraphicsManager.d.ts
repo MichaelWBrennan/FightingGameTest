@@ -44,4 +44,3 @@ export declare class SF3GraphicsManager implements ISystem {
     private updateStageElements;
     destroy(): void;
 }
-//# sourceMappingURL=SF3GraphicsManager.d.ts.map

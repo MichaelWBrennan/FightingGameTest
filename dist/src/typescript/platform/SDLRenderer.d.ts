@@ -41,4 +41,3 @@ export declare class SDLGameRenderer {
     endFrame(): void;
     setDrawBorders(draw: boolean): void;
 }
-//# sourceMappingURL=SDLRenderer.d.ts.map

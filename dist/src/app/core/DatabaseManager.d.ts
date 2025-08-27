@@ -6,4 +6,3 @@ export declare class DatabaseManager {
     checkHealth(): Promise<boolean>;
     close(): Promise<void>;
 }
-//# sourceMappingURL=DatabaseManager.d.ts.map

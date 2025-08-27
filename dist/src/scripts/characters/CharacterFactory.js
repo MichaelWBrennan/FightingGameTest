@@ -2,12 +2,6 @@ import * as pc from 'playcanvas';
 import { CharacterEntity } from './CharacterEntity';
 export class CharacterFactory {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         this.app = app;
     }
     createCharacter(characterData, playerId, position) {

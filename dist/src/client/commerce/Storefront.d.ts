@@ -229,4 +229,3 @@ export declare class Storefront extends EventEmitter {
     private setupEventListeners;
     private log;
 }
-//# sourceMappingURL=Storefront.d.ts.map

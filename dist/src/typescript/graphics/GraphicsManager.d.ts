@@ -33,4 +33,3 @@ export declare class GraphicsManager {
     setLayerVisibility(layerId: number, visible: boolean): void;
     setLayerOpacity(layerId: number, opacity: number): void;
 }
-//# sourceMappingURL=GraphicsManager.d.ts.map

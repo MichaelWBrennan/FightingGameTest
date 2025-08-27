@@ -38,4 +38,3 @@ export declare class CoachOverlay {
     toggle(): void;
     private getActionColor;
 }
-//# sourceMappingURL=CoachOverlay.d.ts.map

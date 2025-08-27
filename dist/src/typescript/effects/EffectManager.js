@@ -1,17 +1,7 @@
 export class EffectManager {
     constructor() {
-        Object.defineProperty(this, "effects", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "effectCounter", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
+        this.effects = new Map();
+        this.effectCounter = 0;
         this.initializeEffectSystem();
     }
     initializeEffectSystem() {

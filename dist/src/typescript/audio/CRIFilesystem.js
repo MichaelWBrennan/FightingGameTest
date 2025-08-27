@@ -4,24 +4,9 @@
  */
 export class CRIFilesystem {
     constructor() {
-        Object.defineProperty(this, "header", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "files", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "data", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.header = null;
+        this.files = new Map();
+        this.data = null;
     }
     async loadArchive(buffer) {
         const view = new DataView(buffer);

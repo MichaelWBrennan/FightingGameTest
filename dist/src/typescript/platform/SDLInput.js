@@ -4,30 +4,10 @@
  */
 export class SDLInputManager {
     constructor() {
-        Object.defineProperty(this, "gamepads", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "keyMappings", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "keyStates", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Set()
-        });
-        Object.defineProperty(this, "listeners", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
+        this.gamepads = new Map();
+        this.keyMappings = [];
+        this.keyStates = new Set();
+        this.listeners = [];
         this.setupEventListeners();
         this.setupDefaultKeyMappings();
     }

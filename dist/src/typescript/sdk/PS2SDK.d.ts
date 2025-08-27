@@ -51,4 +51,3 @@ export declare class PS2SDKCompat {
     getActiveTimerCount(): number;
 }
 export declare const ps2sdk: PS2SDKCompat;
-//# sourceMappingURL=PS2SDK.d.ts.map

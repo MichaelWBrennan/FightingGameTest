@@ -33,4 +33,3 @@ export declare function inflateTreesFixed(bl: {
 }, td: {
     tree: InflateHuft[] | null;
 }, z: any): number;
-//# sourceMappingURL=inftrees.d.ts.map

@@ -4,18 +4,8 @@
  */
 export class ADXDecoder {
     constructor() {
-        Object.defineProperty(this, "header", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "channelStates", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
+        this.header = null;
+        this.channelStates = [];
     }
     decodeHeader(buffer) {
         const view = new DataView(buffer);
@@ -61,15 +51,10 @@ export class ADXDecoder {
         return this.header;
     }
 }
-Object.defineProperty(ADXDecoder, "SCALE_TABLE", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: [
-        0x0000, 0x0800, 0x0880, 0x0900, 0x0980, 0x0A00, 0x0A80, 0x0B00,
-        0x0B80, 0x0C00, 0x0C80, 0x0D00, 0x0D80, 0x0E00, 0x0E80, 0x0F00
-    ]
-});
+ADXDecoder.SCALE_TABLE = [
+    0x0000, 0x0800, 0x0880, 0x0900, 0x0980, 0x0A00, 0x0A80, 0x0B00,
+    0x0B80, 0x0C00, 0x0C80, 0x0D00, 0x0D80, 0x0E00, 0x0E80, 0x0F00
+];
 export class ADXEncoder {
     static encode(pcmData, sampleRate, channels) {
         // Basic ADX encoding implementation

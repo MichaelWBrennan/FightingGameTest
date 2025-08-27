@@ -98,6 +98,11 @@ export interface PurchaseCompletedEvent extends IRetentionEvent {
     taxAmount?: number;
     firstPurchase?: boolean;
 }
+export interface ClubEvent extends IRetentionEvent {
+    event: 'club_event';
+    clubId: string;
+    action: string;
+}
 export declare class RetentionClient extends EventEmitter {
     private config;
     private sessionHash;
@@ -118,19 +123,19 @@ export declare class RetentionClient extends EventEmitter {
     /**
      * Track club-related events
      */
-    trackClubEvent(clubData: Omit<ClubEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void;
+    trackClubEvent(action: string, clubId?: string): void;
     /**
      * Track progression grants (XP, unlocks, etc.)
      */
-    trackProgression(progressionData: Omit<ProgressionGrantEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void;
+    trackProgression(grantType: ProgressionGrantEvent['grantType'], amount: number, reason: ProgressionGrantEvent['reason'], additionalData?: Omit<ProgressionGrantEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash' | 'grantType' | 'amount' | 'reason'>): void;
     /**
      * Track store impressions
      */
-    trackStoreImpression(storeData: Omit<StoreImpressionEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void;
+    trackStoreImpression(section: StoreImpressionEvent['storeSection'], additionalData?: Omit<StoreImpressionEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash' | 'storeSection'>): void;
     /**
      * Track completed purchases
      */
-    trackPurchase(purchaseData: Omit<PurchaseCompletedEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash'>): void;
+    trackPurchase(transactionId: string, totalAmount: number, currency: string, items: PurchaseCompletedEvent['items'], additionalData?: Omit<PurchaseCompletedEvent, 'event' | 'v' | 'ts' | 'userId' | 'sessionHash' | 'transactionId' | 'totalAmount' | 'currency' | 'items'>): void;
     /**
      * Manually flush all queued events
      */
@@ -154,4 +159,3 @@ export declare class RetentionClient extends EventEmitter {
     private updateLastSessionTime;
     private log;
 }
-//# sourceMappingURL=RetentionClient.d.ts.map

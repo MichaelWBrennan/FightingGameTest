@@ -2,7 +2,7 @@
  * Particle System - TypeScript conversion from various EFF*.c files
  * Handles visual effects like sparks, dust, energy, etc.
  */
-import { type pc } from '../../types/core.js';
+import type * as pc from 'playcanvas';
 export interface ParticleConfig {
     maxParticles: number;
     lifetime: number;
@@ -128,4 +128,3 @@ export declare class ParticleSystem {
     getActiveParticleCount(): number;
 }
 export declare const particleSystem: ParticleSystem;
-//# sourceMappingURL=ParticleSystem.d.ts.map

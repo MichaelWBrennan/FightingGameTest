@@ -7,7 +7,6 @@ import * as pc from 'playcanvas';
 import { type ISystem, type Character, type AttackData } from '../../../types/core';
 import {
     type HitData,
-    type CombatState,
     type ComboData,
     type MeterData,
     type CombatEvent,
@@ -17,6 +16,10 @@ import {
     DEFAULT_COMBO_DATA,
     DEFAULT_METER_DATA
 } from '../../../types/combat';
+type CombatState = ReturnType<typeof createCombatState>;
+function createCombatState() {
+    return { ...DEFAULT_COMBAT_STATE } as any;
+}
 
 export class CombatSystem implements ISystem {
     private app: pc.Application;
@@ -31,7 +34,7 @@ export class CombatSystem implements ISystem {
     constructor(app: pc.Application, characterManager: any) {
         this.app = app;
         this.characterManager = characterManager;
-        this.state = { ...DEFAULT_COMBAT_STATE };
+        this.state = createCombatState();
         this.comboData = { ...DEFAULT_COMBO_DATA };
         this.meterData = { ...DEFAULT_METER_DATA };
         this.hitEffects = new Map();

@@ -17,4 +17,3 @@ export declare class BinaryCharTable {
     getCharEntry(charCode: number): CharTableEntry | undefined;
     getAllEntries(): CharTableEntry[];
 }
-//# sourceMappingURL=BinaryCharTable.d.ts.map

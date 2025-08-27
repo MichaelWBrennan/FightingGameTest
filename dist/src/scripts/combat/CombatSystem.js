@@ -3,53 +3,15 @@
  * Handles hit detection, damage calculation, and combat state
  */
 import { DEFAULT_COMBAT_STATE, DEFAULT_COMBO_DATA, DEFAULT_METER_DATA } from '../../../types/combat';
+function createCombatState() {
+    return { ...DEFAULT_COMBAT_STATE };
+}
 export class CombatSystem {
     constructor(app, characterManager) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "state", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "comboData", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "meterData", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "hitEffects", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "debug", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
-        Object.defineProperty(this, "characterManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        }); // Use a more specific type
+        this.debug = false;
         this.app = app;
         this.characterManager = characterManager;
-        this.state = { ...DEFAULT_COMBAT_STATE };
+        this.state = createCombatState();
         this.comboData = { ...DEFAULT_COMBO_DATA };
         this.meterData = { ...DEFAULT_METER_DATA };
         this.hitEffects = new Map();

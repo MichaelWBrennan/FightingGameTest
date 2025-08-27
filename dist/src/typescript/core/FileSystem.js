@@ -26,30 +26,10 @@ export class FileSystemManager {
         return FileSystemManager.instance;
     }
     constructor() {
-        Object.defineProperty(this, "diskDriveErrorType", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0xFFFF
-        });
-        Object.defineProperty(this, "adxFileHandle", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "appFileSizes", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "AFS_FILE_COUNT", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1000
-        });
+        this.diskDriveErrorType = 0xFFFF;
+        this.adxFileHandle = null;
+        this.appFileSizes = [];
+        this.AFS_FILE_COUNT = 1000;
         this.initializeFileSizes();
     }
     initializeFileSizes() {

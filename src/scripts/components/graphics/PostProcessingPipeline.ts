@@ -1,4 +1,4 @@
-import * as pc from 'playcanvas';
+import type * as pc from 'playcanvas';
 
 const PostProcessingPipeline = pc.createScript('postProcessingPipeline');
 

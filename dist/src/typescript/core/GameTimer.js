@@ -3,54 +3,12 @@
  */
 export class GameTimer {
     constructor(config = {}) {
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "frameStats", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "lastTime", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "accumulator", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "frameCounter", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "fpsTimer", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "paused", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
-        Object.defineProperty(this, "timeScale", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1.0
-        });
+        this.lastTime = 0;
+        this.accumulator = 0;
+        this.frameCounter = 0;
+        this.fpsTimer = 0;
+        this.paused = false;
+        this.timeScale = 1.0;
         this.config = {
             targetFPS: 60,
             fixedTimeStep: 1 / 60,

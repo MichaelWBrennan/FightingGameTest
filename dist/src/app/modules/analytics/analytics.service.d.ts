@@ -1,6 +1,6 @@
 import { AnalyticsEvent, Experiment, ChurnPrediction, Cohort, KpiMetric } from './analytics.types';
 export declare class AnalyticsService {
-    private db;
+    private _db;
     constructor();
     ingestEvents(_events: AnalyticsEvent[]): Promise<void>;
     getExperiment(_userId: string, _experimentId: string): Promise<Experiment | null>;
@@ -8,4 +8,3 @@ export declare class AnalyticsService {
     getCohorts(): Promise<Cohort[]>;
     getKpiMetrics(): Promise<KpiMetric[]>;
 }
-//# sourceMappingURL=analytics.service.d.ts.map

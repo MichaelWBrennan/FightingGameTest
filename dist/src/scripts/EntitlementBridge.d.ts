@@ -104,4 +104,3 @@ export declare class EntitlementBridge {
  * 5. Web: Integrate with Stripe, PayPal, or other payment processors
  * 6. Backend: Add server-side validation for all purchases
  */ 
-//# sourceMappingURL=EntitlementBridge.d.ts.map

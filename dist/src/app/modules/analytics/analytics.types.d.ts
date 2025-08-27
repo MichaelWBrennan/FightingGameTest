@@ -25,4 +25,3 @@ export interface KpiMetric {
     value: number;
     period: 'daily' | 'weekly' | 'monthly';
 }
-//# sourceMappingURL=analytics.types.d.ts.map

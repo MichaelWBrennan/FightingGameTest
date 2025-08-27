@@ -24,4 +24,3 @@ declare class StageManager implements ISystem {
     destroyStage(): void;
 }
 export default StageManager;
-//# sourceMappingURL=StageManager.d.ts.map

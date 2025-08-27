@@ -1,7 +1,7 @@
 /**
  * Effect System Manager - Converted from EFFECT.c and EFF*.c files
  */
-import { type pc } from '../../types/core.js';
+import type * as pc from 'playcanvas';
 export declare enum EffectType {
     IMPACT = 0,
     SPARK = 1,
@@ -103,4 +103,3 @@ export declare class EffectSystem {
      */
     spawnBlockEffect(position: pc.Vec3): void;
 }
-//# sourceMappingURL=EffectSystem.d.ts.map

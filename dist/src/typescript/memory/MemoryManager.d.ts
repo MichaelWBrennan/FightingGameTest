@@ -70,4 +70,3 @@ export declare class MemoryManager {
      */
     compactHeap(heapName: string): void;
 }
-//# sourceMappingURL=MemoryManager.d.ts.map

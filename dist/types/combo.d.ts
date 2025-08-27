@@ -11,4 +11,3 @@ export interface ComboTrial {
     difficulty: 'easy' | 'medium' | 'hard' | 'expert';
     combo: ComboStep[];
 }
-//# sourceMappingURL=combo.d.ts.map

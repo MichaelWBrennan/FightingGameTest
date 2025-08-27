@@ -41,4 +41,3 @@ declare class PostProcessingManager implements ISystem {
     destroy(): void;
 }
 export default PostProcessingManager;
-//# sourceMappingURL=PostProcessingManager.d.ts.map

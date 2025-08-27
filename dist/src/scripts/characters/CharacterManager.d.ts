@@ -55,4 +55,3 @@ export declare class CharacterManager implements ISystem {
     private isValidPlayerId;
     destroy(): void;
 }
-//# sourceMappingURL=CharacterManager.d.ts.map

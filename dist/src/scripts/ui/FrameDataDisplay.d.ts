@@ -5,4 +5,3 @@ export declare class FrameDataDisplay extends pc.ScriptType {
     private onFrameData;
     destroy(): void;
 }
-//# sourceMappingURL=FrameDataDisplay.d.ts.map

@@ -32,4 +32,3 @@ export declare class SF3SystemManager {
     getConfig(): SystemConfig;
     updateConfig(updates: Partial<SystemConfig>): void;
 }
-//# sourceMappingURL=SystemManager.d.ts.map

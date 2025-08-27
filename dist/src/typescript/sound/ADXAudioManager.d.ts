@@ -98,4 +98,3 @@ export declare class ADXAudioManager {
      */
     resumeAudio(): Promise<void>;
 }
-//# sourceMappingURL=ADXAudioManager.d.ts.map

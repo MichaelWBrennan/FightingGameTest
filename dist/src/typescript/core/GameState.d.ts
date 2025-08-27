@@ -93,4 +93,3 @@ export declare class GameStateManager {
      */
     getTimeDisplay(): string;
 }
-//# sourceMappingURL=GameState.d.ts.map

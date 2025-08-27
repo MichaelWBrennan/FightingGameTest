@@ -30,24 +30,8 @@ export class GameStateManager {
         return GameStateManager.instance;
     }
     constructor() {
-        Object.defineProperty(this, "state", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "stateHistory", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "maxHistorySize", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 60
-        }); // 1 second at 60fps
+        this.stateHistory = [];
+        this.maxHistorySize = 60; // 1 second at 60fps
         this.state = {
             currentPhase: GamePhase.BOOT,
             battlePhase: BattlePhase.INTRO,

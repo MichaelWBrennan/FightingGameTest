@@ -1,17 +1,6 @@
 export class ComboTrialManager {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "trials", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.trials = new Map();
         this.app = app;
     }
     async initialize() {

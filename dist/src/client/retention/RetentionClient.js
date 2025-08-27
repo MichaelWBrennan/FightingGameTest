@@ -23,18 +23,7 @@ import { EventEmitter } from 'eventemitter3';
 import { v4 as uuidv4 } from 'uuid';
 class OfflineEventQueue {
     constructor(storageKey) {
-        Object.defineProperty(this, "storageKey", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "maxSize", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1000
-        });
+        this.maxSize = 1000;
         this.storageKey = storageKey;
     }
     enqueue(event) {
@@ -76,55 +65,17 @@ class OfflineEventQueue {
 export class RetentionClient extends EventEmitter {
     constructor(config) {
         super();
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "sessionHash", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "eventQueue", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "offlineQueue", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "eventEndpoints", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                session_start: '/analytics/events',
-                match_result: '/analytics/events',
-                progression_grant: '/progression/events',
-                store_impression: '/commerce/events',
-                purchase_completed: '/commerce/events',
-                club_event: '/social/events',
-            }
-        });
-        Object.defineProperty(this, "flushTimer", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "isOnline", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: true
-        });
+        this.eventQueue = [];
+        this.eventEndpoints = {
+            session_start: '/analytics/events',
+            match_result: '/analytics/events',
+            progression_grant: '/progression/events',
+            store_impression: '/commerce/events',
+            purchase_completed: '/commerce/events',
+            club_event: '/social/events',
+        };
+        this.flushTimer = null;
+        this.isOnline = true;
         this.config = {
             batchSize: 10,
             flushIntervalMs: 30000, // 30 seconds
@@ -175,56 +126,65 @@ export class RetentionClient extends EventEmitter {
     /**
      * Track club-related events
      */
-    trackClubEvent(clubData) {
+    trackClubEvent(action, clubId) {
         const event = {
             event: 'club_event',
             v: '1.0',
             ts: Math.floor(Date.now() / 1000),
             userId: this.config.userId,
             sessionHash: this.sessionHash,
-            ...clubData
+            clubId: clubId || 'unknown',
+            action: action
         };
         this.trackEvent(event);
     }
     /**
      * Track progression grants (XP, unlocks, etc.)
      */
-    trackProgression(progressionData) {
+    trackProgression(grantType, amount, reason, additionalData) {
         const event = {
             event: 'progression_grant',
             v: '1.0',
             ts: Math.floor(Date.now() / 1000),
             userId: this.config.userId,
             sessionHash: this.sessionHash,
-            ...progressionData
+            grantType: grantType,
+            amount: amount,
+            reason: reason,
+            ...additionalData
         };
         this.trackEvent(event);
     }
     /**
      * Track store impressions
      */
-    trackStoreImpression(storeData) {
+    trackStoreImpression(section, additionalData) {
         const event = {
             event: 'store_impression',
             v: '1.0',
             ts: Math.floor(Date.now() / 1000),
             userId: this.config.userId,
             sessionHash: this.sessionHash,
-            ...storeData
+            storeSection: section,
+            ...additionalData
         };
         this.trackEvent(event);
     }
     /**
      * Track completed purchases
      */
-    trackPurchase(purchaseData) {
+    trackPurchase(transactionId, totalAmount, currency, items, additionalData) {
         const event = {
             event: 'purchase_completed',
             v: '1.0',
             ts: Math.floor(Date.now() / 1000),
             userId: this.config.userId,
             sessionHash: this.sessionHash,
-            ...purchaseData
+            transactionId: transactionId,
+            totalAmount: totalAmount,
+            currency: currency,
+            items: items,
+            ...additionalData
         };
         this.trackEvent(event);
     }

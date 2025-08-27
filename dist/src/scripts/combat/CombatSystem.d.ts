@@ -21,4 +21,3 @@ export declare class CombatSystem implements ISystem {
     update(dt: number): void;
     destroy(): void;
 }
-//# sourceMappingURL=CombatSystem.d.ts.map

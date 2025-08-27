@@ -1,3 +1,3 @@
-declare const CameraCinematicController: any;
+import * as pc from 'playcanvas';
+declare const CameraCinematicController: typeof pc.ScriptType;
 export { CameraCinematicController };
-//# sourceMappingURL=CameraCinematicController.d.ts.map

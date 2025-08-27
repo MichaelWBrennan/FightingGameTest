@@ -9,4 +9,3 @@ export declare class CharacterFactory {
     private setupCharacterGraphics;
     private initializeCharacterState;
 }
-//# sourceMappingURL=CharacterFactory.d.ts.map

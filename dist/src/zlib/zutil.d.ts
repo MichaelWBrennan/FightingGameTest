@@ -13,4 +13,3 @@ export declare function zcalloc(_opaque: any, items: number, size: number): Uint
 export declare function zcfree(_opaque: any, _ptr: any): void;
 export declare function copyArray(dest: Uint8Array | null, destStart: number, source: Uint8Array | null, sourceStart: number, length: number): void;
 export declare function compareStrings(s1: string, s2: string): number;
-//# sourceMappingURL=zutil.d.ts.map

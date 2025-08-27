@@ -4,4 +4,3 @@ export declare function compress2(dest: Uint8Array, destLen: {
 export declare function compress(dest: Uint8Array, destLen: {
     value: number;
 }, source: Uint8Array, sourceLen: number): number;
-//# sourceMappingURL=compress.d.ts.map

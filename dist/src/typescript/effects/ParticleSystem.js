@@ -4,42 +4,11 @@
  */
 export class ParticleEmitter {
     constructor(config) {
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "particles", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "nextId", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "emissionTimer", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "active", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: true
-        });
-        Object.defineProperty(this, "position", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new pc.Vec3()
-        });
+        this.particles = [];
+        this.nextId = 0;
+        this.emissionTimer = 0;
+        this.active = true;
+        this.position = new pc.Vec3();
         this.config = { ...config };
         this.initializeParticles();
     }
@@ -185,18 +154,8 @@ export class ParticleEmitter {
 }
 export class ParticleSystem {
     constructor() {
-        Object.defineProperty(this, "emitters", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "presets", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.emitters = new Map();
+        this.presets = new Map();
         this.initializePresets();
     }
     /**

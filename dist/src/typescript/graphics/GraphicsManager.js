@@ -1,41 +1,7 @@
 export class GraphicsManager {
     constructor() {
-        Object.defineProperty(this, "canvas", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "ctx", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "graphicsState", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "renderLayers", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "sprites", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "camera", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
+        this.renderLayers = new Map();
+        this.sprites = new Map();
         this.canvas = this.createCanvas();
         this.ctx = this.canvas.getContext('2d');
         this.setupGraphicsState();

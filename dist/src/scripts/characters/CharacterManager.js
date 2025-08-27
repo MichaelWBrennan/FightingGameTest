@@ -4,97 +4,35 @@ import { CharacterFactory } from './CharacterFactory';
 import { CharacterStateMachine } from './CharacterStateMachine';
 export class CharacterManager {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "initialized", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
-        Object.defineProperty(this, "factory", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
+        this.initialized = false;
         // Character registry
-        Object.defineProperty(this, "characters", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "characterData", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "characterVariations", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "activeCharacters", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        }); // player1, player2
-        Object.defineProperty(this, "stateMachines", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.characters = new Map();
+        this.characterData = new Map();
+        this.characterVariations = new Map();
+        this.activeCharacters = new Map(); // player1, player2
+        this.stateMachines = new Map();
         // Animation system
-        Object.defineProperty(this, "animationSystem", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                frameRate: 60,
-                frameTime: 1000 / 60,
-                currentFrame: 0,
-                interpolation: true,
-                blending: true,
-                spriteSheets: new Map(),
-                animations: new Map()
-            }
-        });
+        this.animationSystem = {
+            frameRate: 60,
+            frameTime: 1000 / 60,
+            currentFrame: 0,
+            interpolation: true,
+            blending: true,
+            spriteSheets: new Map(),
+            animations: new Map()
+        };
         // SF3:3S character archetypes with balanced stats
-        Object.defineProperty(this, "archetypeTemplates", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: { ...DEFAULT_ARCHETYPE_TEMPLATES }
-        });
+        this.archetypeTemplates = { ...DEFAULT_ARCHETYPE_TEMPLATES };
         // Character state management
-        Object.defineProperty(this, "characterStates", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: { ...DEFAULT_CHARACTER_STATES }
-        });
+        this.characterStates = { ...DEFAULT_CHARACTER_STATES };
         // Physics configuration
-        Object.defineProperty(this, "physicsConfig", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                gravity: -980, // pixels/second²
-                groundFriction: 0.8,
-                airFriction: 0.95,
-                bounceThreshold: 100,
-                maxFallSpeed: -600
-            }
-        });
+        this.physicsConfig = {
+            gravity: -980, // pixels/second²
+            groundFriction: 0.8,
+            airFriction: 0.95,
+            bounceThreshold: 100,
+            maxFallSpeed: -600
+        };
         this.app = app;
         this.factory = new CharacterFactory(app);
     }

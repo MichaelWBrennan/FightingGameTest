@@ -11,4 +11,3 @@ export declare class IdentityController {
     getCommunicationPreferences: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     updateCommunicationPreferences: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 }
-//# sourceMappingURL=identity.controller.d.ts.map

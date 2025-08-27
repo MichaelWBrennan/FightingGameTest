@@ -4,57 +4,25 @@
  */
 export class SF3SystemManager {
     constructor(config = {}) {
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "metrics", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "lastFrameTime", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "frameCount", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 0
-        });
-        Object.defineProperty(this, "running", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
-        Object.defineProperty(this, "gameLoop", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: () => {
-                if (!this.running)
-                    return;
-                const currentTime = performance.now();
-                const deltaTime = currentTime - this.lastFrameTime;
-                this.updateMetrics(deltaTime);
-                this.update(deltaTime);
-                this.render();
-                this.lastFrameTime = currentTime;
-                if (this.config.vsync) {
-                    requestAnimationFrame(this.gameLoop);
-                }
-                else {
-                    setTimeout(this.gameLoop, 1000 / this.config.targetFPS);
-                }
+        this.lastFrameTime = 0;
+        this.frameCount = 0;
+        this.running = false;
+        this.gameLoop = () => {
+            if (!this.running)
+                return;
+            const currentTime = performance.now();
+            const deltaTime = currentTime - this.lastFrameTime;
+            this.updateMetrics(deltaTime);
+            this.update(deltaTime);
+            this.render();
+            this.lastFrameTime = currentTime;
+            if (this.config.vsync) {
+                requestAnimationFrame(this.gameLoop);
             }
-        });
+            else {
+                setTimeout(this.gameLoop, 1000 / this.config.targetFPS);
+            }
+        };
         this.config = {
             targetFPS: 60,
             vsync: true,

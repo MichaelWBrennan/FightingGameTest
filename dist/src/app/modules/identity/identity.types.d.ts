@@ -21,4 +21,3 @@ export interface CommunicationPreferences {
     push_events: boolean;
     updatedAt: Date;
 }
-//# sourceMappingURL=identity.types.d.ts.map

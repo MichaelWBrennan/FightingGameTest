@@ -23,30 +23,8 @@ import { EventEmitter } from 'eventemitter3';
 export class MasteryEngine extends EventEmitter {
     constructor(config) {
         super();
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "data", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "rewardTable", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {}
-        });
-        Object.defineProperty(this, "archetypeChallenges", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
+        this.rewardTable = {};
+        this.archetypeChallenges = [];
         this.config = config;
         this.data = this.loadMasteryData();
         this.setupRewardTables();

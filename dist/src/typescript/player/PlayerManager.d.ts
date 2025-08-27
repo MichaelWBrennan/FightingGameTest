@@ -25,4 +25,3 @@ export declare class PlayerManager {
     getPlayerCount(): number;
     clearPlayers(): void;
 }
-//# sourceMappingURL=PlayerManager.d.ts.map

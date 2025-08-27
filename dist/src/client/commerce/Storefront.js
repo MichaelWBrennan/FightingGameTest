@@ -29,36 +29,10 @@ import { EventEmitter } from 'eventemitter3';
 export class Storefront extends EventEmitter {
     constructor(config) {
         super();
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "catalog", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "bundles", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "sections", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "currentImpression", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.catalog = new Map();
+        this.bundles = new Map();
+        this.sections = new Map();
+        this.currentImpression = null;
         this.config = config;
         this.setupEventListeners();
     }

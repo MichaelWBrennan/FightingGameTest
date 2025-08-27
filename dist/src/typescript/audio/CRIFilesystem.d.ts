@@ -24,4 +24,3 @@ export declare class CRIFilesystem {
     listFiles(): string[];
     getFileInfo(filename: string): CRIFileEntry | null;
 }
-//# sourceMappingURL=CRIFilesystem.d.ts.map

@@ -1,14 +1,5 @@
 import * as pc from 'playcanvas';
 export class FrameDataDisplay extends pc.ScriptType {
-    constructor() {
-        super(...arguments);
-        Object.defineProperty(this, "textElement", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-    }
     initialize() {
         this.textElement = new pc.Entity('FrameDataText');
         this.textElement.addComponent('element', {

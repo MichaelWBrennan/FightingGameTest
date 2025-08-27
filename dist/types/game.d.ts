@@ -10,4 +10,3 @@ export interface IGameState {
     getOpponentCharacter(playerId: string): string | null;
     getPlayerProfile(playerId: string): any;
 }
-//# sourceMappingURL=game.d.ts.map

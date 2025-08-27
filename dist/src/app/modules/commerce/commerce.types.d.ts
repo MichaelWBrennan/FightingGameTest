@@ -24,4 +24,3 @@ export interface Payment {
     status: 'pending' | 'completed' | 'failed';
     createdAt: Date;
 }
-//# sourceMappingURL=commerce.types.d.ts.map

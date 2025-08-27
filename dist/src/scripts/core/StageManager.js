@@ -1,23 +1,6 @@
 class StageManager {
     constructor(app, stageLayerManager) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "stageLayerManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "currentStageId", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.currentStageId = null;
         this.app = app;
         this.stageLayerManager = stageLayerManager;
     }

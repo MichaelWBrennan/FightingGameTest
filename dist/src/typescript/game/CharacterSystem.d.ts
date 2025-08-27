@@ -48,4 +48,3 @@ export declare class SF3CharacterSystem {
     getCharacters(): CharacterData[];
     getMoves(characterName: string): MoveData[];
 }
-//# sourceMappingURL=CharacterSystem.d.ts.map

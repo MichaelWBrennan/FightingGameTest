@@ -27,36 +27,10 @@ import { EventEmitter } from 'eventemitter3';
 export class Clubs extends EventEmitter {
     constructor(config) {
         super();
-        Object.defineProperty(this, "config", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "userClubs", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "clubMembers", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "clubActivities", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "pendingInvites", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
+        this.userClubs = new Map();
+        this.clubMembers = new Map();
+        this.clubActivities = new Map();
+        this.pendingInvites = [];
         this.config = {
             enablePushNotifications: false,
             maxClubsPerUser: 3,

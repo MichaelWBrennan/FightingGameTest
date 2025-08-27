@@ -8,4 +8,3 @@ export declare class ProgressionController {
     completeObjective: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     prestige: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 }
-//# sourceMappingURL=progression.controller.d.ts.map

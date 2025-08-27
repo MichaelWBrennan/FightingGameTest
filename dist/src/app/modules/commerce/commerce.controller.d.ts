@@ -6,4 +6,3 @@ export declare class CommerceController {
     createPayment: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     getPaymentStatus: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 }
-//# sourceMappingURL=commerce.controller.d.ts.map

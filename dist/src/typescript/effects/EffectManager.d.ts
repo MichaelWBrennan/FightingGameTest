@@ -34,4 +34,3 @@ export declare class EffectManager {
     effectWorkQuickInit(): void;
     moveEffectWork(layer: number): void;
 }
-//# sourceMappingURL=EffectManager.d.ts.map

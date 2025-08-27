@@ -60,4 +60,3 @@ declare class ParallaxManager implements ISystem {
     destroy(): void;
 }
 export default ParallaxManager;
-//# sourceMappingURL=ParallaxManager.d.ts.map

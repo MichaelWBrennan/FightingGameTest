@@ -19,4 +19,3 @@ export declare class SF3CompressionSystem {
     private static findLongestMatch;
     private static compressZlib;
 }
-//# sourceMappingURL=CompressionSystem.d.ts.map

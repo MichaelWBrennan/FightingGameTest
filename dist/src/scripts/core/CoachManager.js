@@ -1,24 +1,6 @@
 import { CoachOverlay } from '../../client/coach/CoachOverlay';
 export class CoachManager {
     constructor(app, gameManager) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "gameManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        }); // Reference to the GameManager
-        Object.defineProperty(this, "coachOverlay", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         this.app = app;
         this.gameManager = gameManager;
     }

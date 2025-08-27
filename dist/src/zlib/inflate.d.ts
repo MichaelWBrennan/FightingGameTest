@@ -28,4 +28,3 @@ export interface ZStream {
 export declare function inflateInit(stream: ZStream): number;
 export declare function inflate(stream: ZStream, flush: number): number;
 export declare function inflateEnd(stream: ZStream): number;
-//# sourceMappingURL=inflate.d.ts.map

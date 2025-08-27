@@ -1,12 +1,12 @@
 import express from 'express';
 import { Logger } from './core/Logger';
 const app = express();
-const port = 3000;
-app.get('/', (req, res) => {
-    Logger.log('Request received');
-    res.send('Hello, TypeScript!');
+const PORT = process.env.PORT || 3000;
+app.get('/', (_req, res) => {
+    Logger.info('Health check endpoint accessed');
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
-app.listen(port, () => {
-    Logger.log(`Server running on port ${port}`);
+app.listen(PORT, () => {
+    Logger.info(`Server running on port ${PORT}`);
 });
 //# sourceMappingURL=index.js.map

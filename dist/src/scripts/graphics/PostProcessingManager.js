@@ -6,128 +6,82 @@
 import * as pc from 'playcanvas';
 class PostProcessingManager {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "initialized", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
+        this.initialized = false;
         // Post-processing configuration
-        Object.defineProperty(this, "effects", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                depthOfField: {
-                    enabled: true,
-                    focusDistance: 15.0,
-                    focusRange: 5.0,
-                    blurRadius: 1.5,
-                    maxBlur: 2.0,
-                    bokehIntensity: 0.8,
-                    adaptiveFocus: true
-                },
-                bloom: {
-                    enabled: true,
-                    threshold: 0.7,
-                    intensity: 0.9,
-                    radius: 0.8,
-                    passes: 3,
-                    quality: 'high'
-                },
-                colorGrading: {
-                    enabled: true,
-                    contrast: 1.1,
-                    saturation: 1.15,
-                    brightness: 0.05,
-                    warmth: 0.1,
-                    vignette: 0.3,
-                    filmGrain: 0.15
-                },
-                lightingEffects: {
-                    enabled: true,
-                    volumetricFog: true,
-                    lightShafts: true,
-                    screenSpaceReflections: false,
-                    ambientOcclusion: true
-                },
-                fightingGameEffects: {
-                    enabled: true,
-                    hitPause: false,
-                    screenShake: { intensity: 0, duration: 0, decay: 0, frequency: 0, active: false },
-                    flashEffect: { color: new pc.Color(1, 1, 1), intensity: 0, duration: 0, active: false },
-                    slowMotion: { factor: 1.0, duration: 0, active: false },
-                    dramaTicLighting: false
-                }
+        this.effects = {
+            depthOfField: {
+                enabled: true,
+                focusDistance: 15.0,
+                focusRange: 5.0,
+                blurRadius: 1.5,
+                maxBlur: 2.0,
+                bokehIntensity: 0.8,
+                adaptiveFocus: true
+            },
+            bloom: {
+                enabled: true,
+                threshold: 0.7,
+                intensity: 0.9,
+                radius: 0.8,
+                passes: 3,
+                quality: 'high'
+            },
+            colorGrading: {
+                enabled: true,
+                contrast: 1.1,
+                saturation: 1.15,
+                brightness: 0.05,
+                warmth: 0.1,
+                vignette: 0.3,
+                filmGrain: 0.15
+            },
+            lightingEffects: {
+                enabled: true,
+                volumetricFog: true,
+                lightShafts: true,
+                screenSpaceReflections: false,
+                ambientOcclusion: true
+            },
+            fightingGameEffects: {
+                enabled: true,
+                hitPause: false,
+                screenShake: { intensity: 0, duration: 0, decay: 0, frequency: 0, active: false },
+                flashEffect: { color: new pc.Color(1, 1, 1), intensity: 0, duration: 0, active: false },
+                slowMotion: { factor: 1.0, duration: 0, active: false },
+                dramaTicLighting: false
             }
-        });
+        };
         // Render targets for multi-pass rendering
-        Object.defineProperty(this, "renderTargets", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                sceneColor: null,
-                sceneDepth: null,
-                blurHorizontal: null,
-                blurVertical: null,
-                bloom: null,
-                final: null
-            }
-        });
+        this.renderTargets = {
+            sceneColor: null,
+            sceneDepth: null,
+            blurHorizontal: null,
+            blurVertical: null,
+            bloom: null,
+            final: null
+        };
         // Post-processing materials/shaders
-        Object.defineProperty(this, "materials", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                depthOfField: null,
-                bloom: null,
-                colorGrading: null,
-                combine: null,
-                blur: null
-            }
-        });
+        this.materials = {
+            depthOfField: null,
+            bloom: null,
+            colorGrading: null,
+            combine: null,
+            blur: null
+        };
         // Effect cameras for multi-pass rendering
-        Object.defineProperty(this, "cameras", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                postProcess: null,
-                depth: null
-            }
-        });
+        this.cameras = {
+            postProcess: null,
+            depth: null
+        };
         // Performance settings
-        Object.defineProperty(this, "quality", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 'ultra'
-        }); // ultra, high, medium, low
-        Object.defineProperty(this, "resolution", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                scale: 1.0,
-                minScale: 0.5,
-                maxScale: 1.0
-            }
-        });
+        this.quality = 'ultra'; // ultra, high, medium, low
+        this.resolution = {
+            scale: 1.0,
+            minScale: 0.5,
+            maxScale: 1.0
+        };
         // Entities
-        Object.defineProperty(this, "fullScreenQuad", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.fullScreenQuad = null;
         this.app = app;
     }
     async initialize() {

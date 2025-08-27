@@ -11,4 +11,3 @@ export declare class ParticleManager implements ISystem {
     getActiveParticleCount(): number;
     destroy(): void;
 }
-//# sourceMappingURL=ParticleManager.d.ts.map

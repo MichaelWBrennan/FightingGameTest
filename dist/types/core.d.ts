@@ -143,19 +143,31 @@ export interface MemoryRegion {
     size: number;
     type: 'code' | 'data' | 'stack' | 'heap';
 }
-export interface pc {
-    x: number;
-    y: number;
-    z: number;
+export interface ISystem {
+    initialize(): Promise<void>;
+    update(deltaTime: number): void;
+    destroy(): void;
 }
-declare global {
-    const pc: {
-        Application: new (options?: ApplicationOptions) => ApplicationBase;
-        Entity: new (name?: string) => Entity;
-        Vec3: new (x?: number, y?: number, z?: number) => Vec3;
-        Color: new (r?: number, g?: number, b?: number, a?: number) => Color;
-        createScript: (name: string) => ScriptType;
-        [key: string]: any;
+export interface GameState {
+    players: {
+        [playerId: string]: any;
     };
+    round: number;
+    timer: number;
+    paused: boolean;
 }
-//# sourceMappingURL=core.d.ts.map
+export interface TaskFunction {
+    (): void;
+}
+export interface GameMode {
+    name: string;
+    description: string;
+}
+export interface ParticlePool {
+    active: pc.Entity[];
+    inactive: pc.Entity[];
+}
+export interface ParticleType {
+    name: string;
+    template: pc.Entity;
+}

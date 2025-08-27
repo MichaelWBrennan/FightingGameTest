@@ -30,4 +30,3 @@ export declare class SDLInputManager {
     private notifyListeners;
     setKeyMapping(keyCode: string, buttonIndex: number): void;
 }
-//# sourceMappingURL=SDLInput.d.ts.map

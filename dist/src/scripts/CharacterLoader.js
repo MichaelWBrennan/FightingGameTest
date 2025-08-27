@@ -12,36 +12,9 @@ import { VariationOverlay } from './VariationOverlay';
 import crypto from 'crypto';
 export class CharacterLoader {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "variationOverlay", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "cache", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "variationCache", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "compiledCache", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.cache = new Map();
+        this.variationCache = new Map();
+        this.compiledCache = new Map();
         this.app = app;
         this.variationOverlay = new VariationOverlay();
     }

@@ -294,13 +294,13 @@ export class AuthService {
       type: 'refresh'
     };
 
-    const accessToken = jwt.sign(accessTokenPayload, this.jwtSecret, {
-      expiresIn: this.tokenExpiry
-    });
+    const accessToken = jwt.sign(accessTokenPayload, this.jwtSecret as unknown as jwt.Secret, {
+      expiresIn: this.tokenExpiry as unknown as number
+    } as jwt.SignOptions);
 
-    const refreshToken = jwt.sign(refreshTokenPayload, this.jwtSecret, {
-      expiresIn: this.refreshTokenExpiry
-    });
+    const refreshToken = jwt.sign(refreshTokenPayload, this.jwtSecret as unknown as jwt.Secret, {
+      expiresIn: this.refreshTokenExpiry as unknown as number
+    } as jwt.SignOptions);
 
     return {
       accessToken,

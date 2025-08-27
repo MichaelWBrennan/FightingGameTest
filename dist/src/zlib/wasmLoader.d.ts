@@ -40,4 +40,3 @@ export declare const loadInffastModule: () => Promise<WasiInffastModule>;
  */
 export declare const loadUncompressModule: () => Promise<WasiUncomprModule>;
 export {};
-//# sourceMappingURL=wasmLoader.d.ts.map

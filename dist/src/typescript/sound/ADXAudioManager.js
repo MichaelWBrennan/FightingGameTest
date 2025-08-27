@@ -10,30 +10,10 @@ export class ADXAudioManager {
         return ADXAudioManager.instance;
     }
     constructor() {
-        Object.defineProperty(this, "echoWorkArray", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "ECHO_WORK_MAX", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 8
-        });
-        Object.defineProperty(this, "audioContext", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "gainNode", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.echoWorkArray = [];
+        this.ECHO_WORK_MAX = 8;
+        this.audioContext = null;
+        this.gainNode = null;
         this.initializeEchoWork();
         this.initializeAudio();
     }

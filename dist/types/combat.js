@@ -45,4 +45,21 @@ export const DEFAULT_COMBAT_CONFIG = {
         blockstunScaling: 1.0
     }
 };
+export const DEFAULT_COMBAT_STATE = {
+    player1: {},
+    player2: {},
+    round: 1,
+    timer: 99
+};
+export const DEFAULT_COMBO_DATA = {
+    hits: 0,
+    damage: 0,
+    scaling: 1.0
+};
+export const DEFAULT_METER_DATA = {
+    super: 0,
+    ex: 0,
+    maxSuper: 100,
+    maxEx: 100
+};
 //# sourceMappingURL=combat.js.map

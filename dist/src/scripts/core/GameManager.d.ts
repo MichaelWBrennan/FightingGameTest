@@ -8,7 +8,9 @@ export declare class GameManager extends pc.ScriptType {
     private inputManager;
     private assetLoader;
     private sceneManager;
-    private conversionManager;
+    private ecsManager;
+    private combatSystem;
+    private stateManager;
     private gameState;
     private deltaTime;
     private lastTime;
@@ -27,4 +29,3 @@ export declare class GameManager extends pc.ScriptType {
     static getInstance(): GameManager | null;
     static get scriptName(): string;
 }
-//# sourceMappingURL=GameManager.d.ts.map

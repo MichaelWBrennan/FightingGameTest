@@ -1,30 +1,13 @@
 import * as pc from 'playcanvas';
 export class ParticleManager {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "particleContainer", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "particlePools", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                impact: [],
-                spark: [],
-                dust: [],
-                energy: [],
-                blood: []
-            }
-        });
+        this.particlePools = {
+            impact: [],
+            spark: [],
+            dust: [],
+            energy: [],
+            blood: []
+        };
         this.app = app;
     }
     initialize() {

@@ -1,15 +1,9 @@
 import { DatabaseManager } from '../../core/DatabaseManager';
 export class ProgressionService {
     constructor() {
-        Object.defineProperty(this, "db", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        this.db = DatabaseManager.getInstance();
+        this._db = DatabaseManager.getInstance();
     }
-    async getMastery(userId) {
+    async getMastery(_userId) {
         // Placeholder
         return [];
     }
@@ -25,7 +19,7 @@ export class ProgressionService {
         };
         return mastery;
     }
-    async getObjectives(userId) {
+    async getObjectives(_userId) {
         // Placeholder
         return [];
     }
@@ -42,11 +36,11 @@ export class ProgressionService {
         };
         return objective;
     }
-    async prestige(userId, characterId) {
+    async prestige(_userId, _characterId) {
         // Placeholder
         const mastery = {
-            userId: userId,
-            characterId: characterId,
+            userId: _userId,
+            characterId: _characterId,
             level: 1,
             xp: 0,
             prestige: 1,

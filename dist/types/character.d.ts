@@ -1,6 +1,7 @@
 /**
  * Character system type definitions for SF3:3S HD-2D Fighting Game
  */
+import type * as pc from 'playcanvas';
 export type CharacterArchetype = 'shoto' | 'rushdown' | 'grappler' | 'zoner' | 'technical';
 export interface ArchetypeTemplate {
     health: number;
@@ -209,4 +210,3 @@ export declare function isCharacterEntity(entity: pc.Entity): entity is Characte
 export declare const DEFAULT_ARCHETYPE_TEMPLATES: ArchetypeTemplates;
 export declare const DEFAULT_CHARACTER_STATES: CharacterStates;
 export declare const DEFAULT_FRAME_DATA: FrameData;
-//# sourceMappingURL=character.d.ts.map

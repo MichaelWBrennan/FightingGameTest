@@ -6,18 +6,6 @@
 import * as pc from 'playcanvas';
 export class SF3GraphicsManager {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "state", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         this.app = app;
         this.state = {
             initialized: false,

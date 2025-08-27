@@ -29,4 +29,3 @@ export declare class AssetLoader extends pc.ScriptType {
     preloadEssentialAssets(): Promise<pc.Asset[]>;
     static get scriptName(): string;
 }
-//# sourceMappingURL=AssetLoader.d.ts.map

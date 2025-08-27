@@ -27,4 +27,3 @@ export declare class ADXDecoder {
 export declare class ADXEncoder {
     static encode(pcmData: Int16Array, sampleRate: number, channels: number): ArrayBuffer;
 }
-//# sourceMappingURL=ADXCodec.d.ts.map

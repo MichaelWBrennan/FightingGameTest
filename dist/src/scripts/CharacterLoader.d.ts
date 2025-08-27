@@ -164,4 +164,3 @@ export {};
  * 4. Adding new variation types: Update Variation interface and VariationOverlay
  * 5. Schema evolution: Increment schemaVersion and add migration logic
  */ 
-//# sourceMappingURL=CharacterLoader.d.ts.map

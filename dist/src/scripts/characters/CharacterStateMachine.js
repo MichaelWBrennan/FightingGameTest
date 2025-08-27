@@ -1,17 +1,5 @@
 export class CharacterStateMachine {
     constructor(character, states) {
-        Object.defineProperty(this, "character", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "states", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
         this.character = character;
         this.states = states;
     }

@@ -114,4 +114,3 @@ export {};
  * 4. Adding transformation logic: Create new apply* methods and call from applyVariation
  * 5. Adding complex merging: Extend setPath with type-specific merge strategies
  */ 
-//# sourceMappingURL=VariationOverlay.d.ts.map

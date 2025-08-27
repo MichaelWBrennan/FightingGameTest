@@ -1,41 +1,10 @@
 export class SoundManager {
     constructor() {
-        Object.defineProperty(this, "audioContext", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "bgmVolume", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1.0
-        });
-        Object.defineProperty(this, "sfxVolume", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1.0
-        });
-        Object.defineProperty(this, "currentBgm", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "audioBuffers", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "activeSounds", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.bgmVolume = 1.0;
+        this.sfxVolume = 1.0;
+        this.currentBgm = null;
+        this.audioBuffers = new Map();
+        this.activeSounds = new Map();
         this.audioContext = new AudioContext();
         this.initializeAudio();
     }

@@ -45,4 +45,3 @@ export declare class SF3EffectSystem {
     removeEffect(id: number): void;
     clearAllEffects(): void;
 }
-//# sourceMappingURL=EffectSystem.d.ts.map

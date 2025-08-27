@@ -83,4 +83,3 @@ export declare class GameManager {
     getGameState(): GameState;
     setGameMode(mode: GameMode): void;
 }
-//# sourceMappingURL=Game.d.ts.map

@@ -40,4 +40,3 @@ export declare const inflateMask: number[];
  */
 export declare function inflateFlush(s: InflateBlocksState, z: ZStream, r: number): number;
 export {};
-//# sourceMappingURL=infutil.d.ts.map

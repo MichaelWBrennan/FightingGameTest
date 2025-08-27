@@ -4,30 +4,10 @@
  */
 export class SF3BackgroundSystem {
     constructor() {
-        Object.defineProperty(this, "stages", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "currentStage", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "cameraPosition", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: { x: 0, y: 0 }
-        });
-        Object.defineProperty(this, "suziOffset", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: { x: 0, y: 0 }
-        });
+        this.stages = new Map();
+        this.currentStage = null;
+        this.cameraPosition = { x: 0, y: 0 };
+        this.suziOffset = { x: 0, y: 0 };
         this.initializeStages();
     }
     initializeStages() {

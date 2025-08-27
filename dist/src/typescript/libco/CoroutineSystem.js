@@ -4,65 +4,30 @@
  */
 export class CoroutineSystem {
     constructor() {
-        Object.defineProperty(this, "coroutines", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "nextId", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1
-        });
-        Object.defineProperty(this, "currentCoroutine", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.coroutines = new Map();
+        this.nextId = 1;
+        this.currentCoroutine = null;
         // Platform-specific implementations (converted from C files)
         // amd64 equivalent
-        Object.defineProperty(this, "amd64Context", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                rsp: 0,
-                rbp: 0,
-                rip: 0
-            }
-        });
+        this.amd64Context = {
+            rsp: 0,
+            rbp: 0,
+            rip: 0
+        };
         // x86 equivalent  
-        Object.defineProperty(this, "x86Context", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                esp: 0,
-                ebp: 0,
-                eip: 0
-            }
-        });
+        this.x86Context = {
+            esp: 0,
+            ebp: 0,
+            eip: 0
+        };
         // ARM equivalent
-        Object.defineProperty(this, "armContext", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                r0: 0, r1: 0, r2: 0, r3: 0,
-                r4: 0, r5: 0, r6: 0, r7: 0,
-                sp: 0, lr: 0, pc: 0
-            }
-        });
+        this.armContext = {
+            r0: 0, r1: 0, r2: 0, r3: 0,
+            r4: 0, r5: 0, r6: 0, r7: 0,
+            sp: 0, lr: 0, pc: 0
+        };
         // SJLJ (setjmp/longjmp) implementation
-        Object.defineProperty(this, "jmpBuf", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.jmpBuf = new Map();
     }
     createCoroutine(func) {
         const id = this.nextId++;

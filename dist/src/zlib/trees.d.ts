@@ -51,4 +51,3 @@ export declare function _tr_tally(s: DeflateState, dist: number, lc: number): bo
 export declare function _tr_flush_block(s: DeflateState, buf: Uint8Array | null, stored_len: number, eof: boolean): void;
 export declare function _tr_stored_block(s: DeflateState, buf: Uint8Array | null, stored_len: number, eof: boolean): void;
 export declare function _tr_align(s: DeflateState): void;
-//# sourceMappingURL=trees.d.ts.map

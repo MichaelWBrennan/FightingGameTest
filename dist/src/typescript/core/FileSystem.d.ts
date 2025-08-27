@@ -55,4 +55,3 @@ export declare class FileSystemManager {
     getDiskDriveErrorType(): number;
     setAppFileSize(fileNumber: number, size: number): void;
 }
-//# sourceMappingURL=FileSystem.d.ts.map

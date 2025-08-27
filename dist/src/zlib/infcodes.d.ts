@@ -79,4 +79,3 @@ export declare function inflateCodesFree(c: any, z: ZStream): void;
  */
 export declare function inflateCodesNew(bl: number, bd: number, tl: HuffmanTreeType[] | null, td: HuffmanTreeType[] | null, z: ZStream): InflateCodesState | null;
 export {};
-//# sourceMappingURL=infcodes.d.ts.map

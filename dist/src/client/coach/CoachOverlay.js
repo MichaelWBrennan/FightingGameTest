@@ -23,18 +23,7 @@
  */
 export class CoachOverlay {
     constructor() {
-        Object.defineProperty(this, "element", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "isVisible", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
+        this.isVisible = false;
         this.element = this.createElement();
         document.body.appendChild(this.element);
     }

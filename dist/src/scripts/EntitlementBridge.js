@@ -11,36 +11,9 @@
  */
 export class EntitlementBridge {
     constructor() {
-        Object.defineProperty(this, "entitlements", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "platformProviders", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "eventEmitter", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "updateInterval", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "isInitialized", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
+        this.platformProviders = new Map();
+        this.updateInterval = null;
+        this.isInitialized = false;
         this.entitlements = {
             ownedCharacters: [],
             platformSKUs: [],

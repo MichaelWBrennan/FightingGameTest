@@ -4,122 +4,72 @@
  */
 export class SF3EffectSystem {
     constructor() {
-        Object.defineProperty(this, "effects", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "nextId", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1
-        });
-        Object.defineProperty(this, "effectRegistry", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.effects = new Map();
+        this.nextId = 1;
+        this.effectRegistry = new Map();
         // Individual effect creators (converted from C)
-        Object.defineProperty(this, "createHitSpark", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: (params) => ({
-                id: 0,
-                type: 'EFF00',
-                active: true,
-                timer: 0,
-                params,
-                frameIndex: 0,
-                totalFrames: 12
-            })
+        this.createHitSpark = (params) => ({
+            id: 0,
+            type: 'EFF00',
+            active: true,
+            timer: 0,
+            params,
+            frameIndex: 0,
+            totalFrames: 12
         });
-        Object.defineProperty(this, "createBlockSpark", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: (params) => ({
-                id: 0,
-                type: 'EFF01',
-                active: true,
-                timer: 0,
-                params,
-                frameIndex: 0,
-                totalFrames: 8
-            })
+        this.createBlockSpark = (params) => ({
+            id: 0,
+            type: 'EFF01',
+            active: true,
+            timer: 0,
+            params,
+            frameIndex: 0,
+            totalFrames: 8
         });
-        Object.defineProperty(this, "createFireball", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: (params) => ({
-                id: 0,
-                type: 'EFF02',
-                active: true,
-                timer: 0,
-                params,
-                frameIndex: 0,
-                totalFrames: 24
-            })
+        this.createFireball = (params) => ({
+            id: 0,
+            type: 'EFF02',
+            active: true,
+            timer: 0,
+            params,
+            frameIndex: 0,
+            totalFrames: 24
         });
-        Object.defineProperty(this, "createShockwave", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: (params) => ({
-                id: 0,
-                type: 'EFF04',
-                active: true,
-                timer: 0,
-                params,
-                frameIndex: 0,
-                totalFrames: 16
-            })
+        this.createShockwave = (params) => ({
+            id: 0,
+            type: 'EFF04',
+            active: true,
+            timer: 0,
+            params,
+            frameIndex: 0,
+            totalFrames: 16
         });
-        Object.defineProperty(this, "createLightning", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: (params) => ({
-                id: 0,
-                type: 'EFF07',
-                active: true,
-                timer: 0,
-                params,
-                frameIndex: 0,
-                totalFrames: 20
-            })
+        this.createLightning = (params) => ({
+            id: 0,
+            type: 'EFF07',
+            active: true,
+            timer: 0,
+            params,
+            frameIndex: 0,
+            totalFrames: 20
         });
-        Object.defineProperty(this, "createIceEffect", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: (params) => ({
-                id: 0,
-                type: 'EFF09',
-                active: true,
-                timer: 0,
-                params,
-                frameIndex: 0,
-                totalFrames: 30
-            })
+        this.createIceEffect = (params) => ({
+            id: 0,
+            type: 'EFF09',
+            active: true,
+            timer: 0,
+            params,
+            frameIndex: 0,
+            totalFrames: 30
         });
-        Object.defineProperty(this, "createWindEffect", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: (params) => ({
-                id: 0,
-                type: 'EFF10',
-                active: true,
-                timer: 0,
-                params,
-                frameIndex: 0,
-                totalFrames: 40
-            })
+        this.createWindEffect = (params) => ({
+            id: 0,
+            type: 'EFF10',
+            active: true,
+            timer: 0,
+            params,
+            frameIndex: 0,
+            totalFrames: 40
         });
         this.registerAllEffects();
     }

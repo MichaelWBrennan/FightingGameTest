@@ -6,43 +6,18 @@ import * as pc from 'playcanvas';
 export class AssetLoader extends pc.ScriptType {
     constructor() {
         super(...arguments);
-        Object.defineProperty(this, "loadedAssets", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "loadingPromises", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "characterAssets", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: [
-                'ryu_sprites', 'ken_sprites', 'chun_sprites', 'akuma_sprites',
-                'ryu_audio', 'ken_audio', 'chun_audio', 'akuma_audio'
-            ]
-        });
-        Object.defineProperty(this, "stageAssets", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: [
-                'new_york_bg', 'metro_city_bg', 'underground_bg', 'training_bg'
-            ]
-        });
-        Object.defineProperty(this, "uiAssets", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: [
-                'ui_fonts', 'ui_buttons', 'ui_panels', 'ui_effects'
-            ]
-        });
+        this.loadedAssets = new Map();
+        this.loadingPromises = new Map();
+        this.characterAssets = [
+            'ryu_sprites', 'ken_sprites', 'chun_sprites', 'akuma_sprites',
+            'ryu_audio', 'ken_audio', 'chun_audio', 'akuma_audio'
+        ];
+        this.stageAssets = [
+            'new_york_bg', 'metro_city_bg', 'underground_bg', 'training_bg'
+        ];
+        this.uiAssets = [
+            'ui_fonts', 'ui_buttons', 'ui_panels', 'ui_effects'
+        ];
     }
     initialize() {
         this.setupAssetRegistry();

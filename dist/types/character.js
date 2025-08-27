@@ -5,7 +5,7 @@
 export function isValidCharacterState(state) {
     const validStates = [
         'idle', 'walking', 'crouching', 'jumping', 'attacking', 'blocking',
-        'hitstun', 'blockstun', 'knocked_down', 'special_move', 'super_move'
+        'hitstun', 'blockstun', 'knocked_down', 'special_move', 'super_move', 'parrying'
     ];
     return validStates.includes(state);
 }

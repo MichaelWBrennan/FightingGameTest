@@ -6,163 +6,82 @@
 import * as pc from 'playcanvas';
 class ParallaxManager {
     constructor(app) {
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "initialized", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
+        this.initialized = false;
         // Parallax configuration based on HD-2D depth layers
-        Object.defineProperty(this, "layerConfig", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                skybox: {
-                    depth: -100,
-                    speed: 0.05,
-                    name: 'Skybox',
-                    opacity: 0.8,
-                    blur: 0.3
-                },
-                farBackground: {
-                    depth: -50,
-                    speed: 0.1,
-                    name: 'Far Background',
-                    opacity: 0.9,
-                    blur: 0.2
-                },
-                midBackground: {
-                    depth: -25,
-                    speed: 0.3,
-                    name: 'Mid Background',
-                    opacity: 0.95,
-                    blur: 0.1
-                },
-                nearBackground: {
-                    depth: -15,
-                    speed: 0.5,
-                    name: 'Near Background',
-                    opacity: 1.0,
-                    blur: 0.05
-                },
-                playground: {
-                    depth: -8,
-                    speed: 0.7,
-                    name: 'Playground',
-                    opacity: 1.0,
-                    blur: 0.0
-                },
-                stageForeground: {
-                    depth: -3,
-                    speed: 0.9,
-                    name: 'Stage Foreground',
-                    opacity: 1.0,
-                    blur: 0.0
-                }
+        this.layerConfig = {
+            skybox: {
+                depth: -100,
+                speed: 0.05,
+                name: 'Skybox',
+                opacity: 0.8,
+                blur: 0.3
+            },
+            farBackground: {
+                depth: -50,
+                speed: 0.1,
+                name: 'Far Background',
+                opacity: 0.9,
+                blur: 0.2
+            },
+            midBackground: {
+                depth: -25,
+                speed: 0.3,
+                name: 'Mid Background',
+                opacity: 0.95,
+                blur: 0.1
+            },
+            nearBackground: {
+                depth: -15,
+                speed: 0.5,
+                name: 'Near Background',
+                opacity: 1.0,
+                blur: 0.05
+            },
+            playground: {
+                depth: -8,
+                speed: 0.7,
+                name: 'Playground',
+                opacity: 1.0,
+                blur: 0.0
+            },
+            stageForeground: {
+                depth: -3,
+                speed: 0.9,
+                name: 'Stage Foreground',
+                opacity: 1.0,
+                blur: 0.0
             }
-        });
+        };
         // Active parallax layers
-        Object.defineProperty(this, "parallaxLayers", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "layerEntities", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.parallaxLayers = new Map();
+        this.layerEntities = new Map();
         // Camera tracking
-        Object.defineProperty(this, "cameraPosition", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new pc.Vec3(0, 0, 0)
-        });
-        Object.defineProperty(this, "lastCameraPosition", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new pc.Vec3(0, 0, 0)
-        });
-        Object.defineProperty(this, "cameraVelocity", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new pc.Vec3(0, 0, 0)
-        });
+        this.cameraPosition = new pc.Vec3(0, 0, 0);
+        this.lastCameraPosition = new pc.Vec3(0, 0, 0);
+        this.cameraVelocity = new pc.Vec3(0, 0, 0);
         // Dynamic elements
-        Object.defineProperty(this, "dynamicElements", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "animatedElements", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
+        this.dynamicElements = new Map();
+        this.animatedElements = [];
         // Stage-specific data
-        Object.defineProperty(this, "currentStage", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "stageData", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.currentStage = null;
+        this.stageData = new Map();
         // Performance settings
-        Object.defineProperty(this, "performance", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                cullingDistance: 100,
-                maxElements: 50,
-                updateFrequency: 60,
-                frameSkip: 0
-            }
-        });
+        this.performance = {
+            cullingDistance: 100,
+            maxElements: 50,
+            updateFrequency: 60,
+            frameSkip: 0
+        };
         // Visual effects
-        Object.defineProperty(this, "effects", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                windSpeed: 0.5,
-                timeOfDay: 0.5, // 0 = night, 1 = day
-                weather: 'clear', // clear, rain, wind, storm
-                atmosphere: 1.0
-            }
-        });
+        this.effects = {
+            windSpeed: 0.5,
+            timeOfDay: 0.5, // 0 = night, 1 = day
+            weather: 'clear', // clear, rain, wind, storm
+            atmosphere: 1.0
+        };
         // Entities
-        Object.defineProperty(this, "parallaxContainer", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "mainCamera", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.parallaxContainer = null;
+        this.mainCamera = null;
         this.app = app;
         this.setupDefaultStages();
     }

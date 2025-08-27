@@ -39,4 +39,3 @@ export declare class PS2MemoryManager {
     getAllocations(): AllocationBlock[];
     dumpMemoryMap(): void;
 }
-//# sourceMappingURL=PS2MemoryManager.d.ts.map

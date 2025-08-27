@@ -7,30 +7,9 @@ import { AssetLoader } from './AssetLoader';
 export class SceneManager extends pc.ScriptType {
     constructor() {
         super(...arguments);
-        Object.defineProperty(this, "currentScene", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 'menu'
-        });
-        Object.defineProperty(this, "assetLoader", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "sceneEntities", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "transitionInProgress", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
+        this.currentScene = 'menu';
+        this.sceneEntities = new Map();
+        this.transitionInProgress = false;
     }
     initialize() {
         this.assetLoader = new AssetLoader();

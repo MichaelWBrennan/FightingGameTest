@@ -32,4 +32,3 @@ declare class UIManager implements ISystem {
     destroy(): void;
 }
 export default UIManager;
-//# sourceMappingURL=UIManager.d.ts.map

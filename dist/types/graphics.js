@@ -13,17 +13,7 @@ export const DEFAULT_VISUAL_STYLE = {
     frameBlending: true,
     motionBlur: true,
     rubberBandMotion: true,
-    colorPalette: {
-        ambient: new pc.Color(0.15, 0.18, 0.22),
-        keyLight: new pc.Color(0.95, 0.90, 0.85),
-        rimLight: new pc.Color(0.60, 0.75, 0.95),
-        shadowTint: new pc.Color(0.25, 0.30, 0.45),
-        playerOne: new pc.Color(0.95, 0.85, 0.70),
-        playerTwo: new pc.Color(0.70, 0.85, 0.95),
-        hitSpark: new pc.Color(1.0, 0.9, 0.6),
-        blockSpark: new pc.Color(0.8, 0.9, 1.0),
-        counterHit: new pc.Color(1.0, 0.4, 0.4)
-    },
+    colorPalette: {},
     stageReaction: true,
     backgroundAnimation: true,
     dynamicElements: true

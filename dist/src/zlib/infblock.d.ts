@@ -30,4 +30,3 @@ export declare function inflateBlocks(s: InflateBlocksState, z: any, r: number):
 export declare function inflateBlocksFree(s: InflateBlocksState, z: any): number;
 export declare function inflateSetDictionary(s: InflateBlocksState, d: Uint8Array, n: number): void;
 export declare function inflateBlocksSyncPoint(s: InflateBlocksState): boolean;
-//# sourceMappingURL=infblock.d.ts.map

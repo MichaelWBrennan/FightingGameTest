@@ -22,36 +22,11 @@ export class EffectSystem {
         return EffectSystem.instance;
     }
     constructor() {
-        Object.defineProperty(this, "effects", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "effectPool", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "maxEffects", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 1000
-        });
-        Object.defineProperty(this, "templates", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "app", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
+        this.effects = [];
+        this.effectPool = [];
+        this.maxEffects = 1000;
+        this.templates = new Map();
+        this.app = null;
         this.initializeTemplates();
         this.initializePool();
     }

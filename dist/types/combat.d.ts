@@ -1,7 +1,8 @@
 /**
  * Combat system type definitions for SF3:3S HD-2D Fighting Game
  */
-import { type CombatState, type AttackData, type Character } from './core.js';
+import { type CombatState, type AttackData, type Character } from './core';
+import type * as pc from 'playcanvas';
 export interface HitDetectionConfig {
     enabled: boolean;
     precision: 'frame-perfect' | 'approximate';
@@ -260,4 +261,51 @@ export declare function isValidDamageType(type: string): type is DamageType;
 export declare function isValidParryType(type: string): type is ParryType;
 export declare const DEFAULT_COMBAT_CONFIG: CombatSystemConfig;
 export type ReadonlyCombatConfig = Readonly<CombatSystemConfig>;
-//# sourceMappingURL=combat.d.ts.map
+export interface CharacterState {
+    position: pc.Vec3;
+    velocity: pc.Vec3;
+    health: number;
+    maxHealth: number;
+    state: string;
+    isGrounded: boolean;
+    onPlatform: boolean;
+    facing: number;
+    animation: string;
+}
+export interface HitData {
+    damage: number;
+    stunTime: number;
+    knockback: pc.Vec3;
+}
+export interface MeterData {
+    super: number;
+    ex: number;
+    maxSuper: number;
+    maxEx: number;
+}
+export interface CombatEvent {
+    type: string;
+    timestamp: number;
+    data: any;
+}
+export interface HitEffect {
+    type: string;
+    position: pc.Vec3;
+    duration: number;
+}
+export interface BlockData {
+    canBlock: boolean;
+    blockType: 'high' | 'low' | 'air';
+}
+export declare const DEFAULT_COMBAT_STATE: {
+    readonly player1: CharacterState;
+    readonly player2: CharacterState;
+    readonly round: 1;
+    readonly timer: 99;
+};
+export declare const DEFAULT_COMBO_DATA: {
+    hits: number;
+    damage: number;
+    scaling: number;
+};
+export declare const DEFAULT_METER_DATA: MeterData;

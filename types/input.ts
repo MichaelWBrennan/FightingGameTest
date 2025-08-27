@@ -3,7 +3,7 @@
  * Input system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-export { type Direction, type PlayerInputMappings } from './core.js';
+export { type Direction, type PlayerInputMappings } from './core';
 
 // Input State Types
 export interface ButtonState {
@@ -36,8 +36,8 @@ export interface InputState {
   heavyKick: boolean;
   
   // Processed directional state
-  direction: import('./core.js').Direction;
-  lastDirection: import('./core.js').Direction;
+  direction: import('./core').Direction;
+  lastDirection: import('./core').Direction;
   directionFrames: number;
   
   // Button states with frame data
@@ -111,7 +111,7 @@ export interface InputManagerState {
   inputHistory: Map<string, InputSnapshot[]>;
   maxHistoryFrames: number;
   inputConfig: InputConfiguration;
-  playerMappings: Map<string, import('./core.js').PlayerInputMappings>;
+  playerMappings: Map<string, import('./core').PlayerInputMappings>;
   inputStates: Map<string, InputState>;
   previousStates: Map<string, InputState>;
   devices: InputDevice;
@@ -215,10 +215,10 @@ export function isValidInputName(name: string): name is InputName {
   return validInputs.includes(name as InputName);
 }
 
-export function isValidDirection(direction: string): direction is import('./core.js').Direction {
-  const validDirections: import('./core.js').Direction[] = [
+export function isValidDirection(direction: string): direction is import('./core').Direction {
+  const validDirections: import('./core').Direction[] = [
     'neutral', 'up', 'down', 'left', 'right', 'forward', 'back',
     'upForward', 'upBack', 'downForward', 'downBack'
   ];
-  return validDirections.includes(direction as import('./core.js').Direction);
+  return validDirections.includes(direction as import('./core').Direction);
 }

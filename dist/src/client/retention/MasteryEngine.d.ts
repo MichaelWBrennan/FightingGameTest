@@ -140,4 +140,3 @@ export declare class MasteryEngine extends EventEmitter {
     private setupRewardTables;
     private setupArchetypeChallenges;
 }
-//# sourceMappingURL=MasteryEngine.d.ts.map

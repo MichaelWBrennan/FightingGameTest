@@ -21,4 +21,3 @@ export interface XPGrant {
     amount: number;
     reason: string;
 }
-//# sourceMappingURL=progression.types.d.ts.map

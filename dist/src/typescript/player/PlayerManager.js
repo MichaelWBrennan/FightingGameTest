@@ -1,17 +1,7 @@
 export class PlayerManager {
     constructor() {
-        Object.defineProperty(this, "players", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "maxPlayers", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: 2
-        });
+        this.players = new Map();
+        this.maxPlayers = 2;
         this.initializePlayers();
     }
     initializePlayers() {

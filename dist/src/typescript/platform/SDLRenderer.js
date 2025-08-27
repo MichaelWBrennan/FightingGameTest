@@ -4,36 +4,9 @@
  */
 export class SDLGameRenderer {
     constructor(canvas) {
-        Object.defineProperty(this, "gl", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "canvas", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "program", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: null
-        });
-        Object.defineProperty(this, "renderTasks", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "drawRectBorders", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: false
-        });
+        this.program = null;
+        this.renderTasks = [];
+        this.drawRectBorders = false;
         this.canvas = canvas;
         const gl = canvas.getContext('webgl');
         if (!gl)

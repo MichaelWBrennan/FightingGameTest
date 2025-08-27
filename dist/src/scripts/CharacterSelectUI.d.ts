@@ -211,4 +211,3 @@ export {};
  * 4. Adding custom UI themes: Create theme system with color/style variants
  * 5. Adding accessibility: Add screen reader support and keyboard navigation
  */ 
-//# sourceMappingURL=CharacterSelectUI.d.ts.map

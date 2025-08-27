@@ -10,4 +10,3 @@ export declare class ComboTrialManager implements ISystem {
     startTrial(trialId: string): void;
     update(dt: number): void;
 }
-//# sourceMappingURL=ComboTrialManager.d.ts.map

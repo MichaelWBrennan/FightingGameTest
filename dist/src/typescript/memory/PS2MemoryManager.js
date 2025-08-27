@@ -4,30 +4,9 @@
  */
 export class PS2MemoryManager {
     constructor() {
-        Object.defineProperty(this, "memory", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "regions", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: []
-        });
-        Object.defineProperty(this, "allocations", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
-        Object.defineProperty(this, "freeBlocks", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        }); // address -> size
+        this.regions = [];
+        this.allocations = new Map();
+        this.freeBlocks = new Map(); // address -> size
         this.memory = new ArrayBuffer(PS2MemoryManager.MAIN_MEMORY_SIZE +
             PS2MemoryManager.SOUND_MEMORY_SIZE +
             PS2MemoryManager.VIDEO_MEMORY_SIZE);
@@ -146,22 +125,7 @@ export class PS2MemoryManager {
         }
     }
 }
-Object.defineProperty(PS2MemoryManager, "MAIN_MEMORY_SIZE", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: 32 * 1024 * 1024
-}); // 32MB
-Object.defineProperty(PS2MemoryManager, "SOUND_MEMORY_SIZE", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: 2 * 1024 * 1024
-}); // 2MB
-Object.defineProperty(PS2MemoryManager, "VIDEO_MEMORY_SIZE", {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: 4 * 1024 * 1024
-}); // 4MB
+PS2MemoryManager.MAIN_MEMORY_SIZE = 32 * 1024 * 1024; // 32MB
+PS2MemoryManager.SOUND_MEMORY_SIZE = 2 * 1024 * 1024; // 2MB
+PS2MemoryManager.VIDEO_MEMORY_SIZE = 4 * 1024 * 1024; // 4MB
 //# sourceMappingURL=PS2MemoryManager.js.map

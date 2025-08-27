@@ -36,4 +36,3 @@ export declare class CoroutineSystem {
 }
 export declare function exampleCoroutine(): Generator<string, void, unknown>;
 export declare const coroutineSystem: CoroutineSystem;
-//# sourceMappingURL=CoroutineSystem.d.ts.map

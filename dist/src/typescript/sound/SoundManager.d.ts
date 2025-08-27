@@ -22,4 +22,3 @@ export declare class SoundManager {
     isPlayingBgm(): boolean;
     getActiveSoundCount(): number;
 }
-//# sourceMappingURL=SoundManager.d.ts.map

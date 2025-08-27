@@ -48,4 +48,3 @@ export declare function deflateInit2(strm: ZStream, level: number, method: numbe
 export declare function deflate(strm: ZStream, flush: number): number;
 export declare function deflateEnd(strm: ZStream): number;
 export {};
-//# sourceMappingURL=deflate.d.ts.map

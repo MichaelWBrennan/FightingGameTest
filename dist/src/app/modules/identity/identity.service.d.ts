@@ -1,6 +1,6 @@
 import { User, Consent, CommunicationPreferences } from './identity.types';
 export declare class IdentityService {
-    private db;
+    private _db;
     constructor();
     register(userData: Pick<User, 'username' | 'email' | 'passwordHash'>): Promise<User>;
     login(_credentials: Pick<User, 'email' | 'passwordHash'>): Promise<{
@@ -13,4 +13,3 @@ export declare class IdentityService {
     getCommunicationPreferences(_userId: string): Promise<CommunicationPreferences | null>;
     updateCommunicationPreferences(preferencesData: CommunicationPreferences): Promise<CommunicationPreferences>;
 }
-//# sourceMappingURL=identity.service.d.ts.map

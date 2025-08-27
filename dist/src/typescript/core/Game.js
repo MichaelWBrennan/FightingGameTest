@@ -5,65 +5,30 @@ import { EffectManager } from '../effects/EffectManager';
 import { PlayerManager } from '../player/PlayerManager';
 export class GameManager {
     constructor() {
-        Object.defineProperty(this, "gameState", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                gNo: [0, 0, 0, 0],
-                eNo: [0, 0, 0, 0],
-                dNo: [0, 0, 0, 0],
-                scNo: [0, 0, 0, 0],
-                gameTimer: 0,
-                gamePause: 0,
-                playGame: 0,
-                requestGNo: false,
-                requestENo: false,
-                allowBattleFlag: false,
-                demoFlag: false,
-                controlTime: 481,
-                timeInTime: 60,
-                roundNum: 0,
-                modeType: 0,
-                playMode: 0,
-                processCounter: 1,
-                turbo: false,
-                turboTimer: 0,
-                noTrans: false,
-                systemTimer: 0,
-                coverTimer: 0
-            }
-        });
-        Object.defineProperty(this, "inputManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "graphicsManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "soundManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "effectManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
-        Object.defineProperty(this, "playerManager", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: void 0
-        });
+        this.gameState = {
+            gNo: [0, 0, 0, 0],
+            eNo: [0, 0, 0, 0],
+            dNo: [0, 0, 0, 0],
+            scNo: [0, 0, 0, 0],
+            gameTimer: 0,
+            gamePause: 0,
+            playGame: 0,
+            requestGNo: false,
+            requestENo: false,
+            allowBattleFlag: false,
+            demoFlag: false,
+            controlTime: 481,
+            timeInTime: 60,
+            roundNum: 0,
+            modeType: 0,
+            playMode: 0,
+            processCounter: 1,
+            turbo: false,
+            turboTimer: 0,
+            noTrans: false,
+            systemTimer: 0,
+            coverTimer: 0
+        };
         this.inputManager = new InputManager();
         this.graphicsManager = new GraphicsManager();
         this.soundManager = new SoundManager();

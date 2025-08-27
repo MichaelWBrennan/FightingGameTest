@@ -26,4 +26,3 @@ export declare class SceneManager extends pc.ScriptType {
     update(dt: number): void;
     static get scriptName(): string;
 }
-//# sourceMappingURL=SceneManager.d.ts.map

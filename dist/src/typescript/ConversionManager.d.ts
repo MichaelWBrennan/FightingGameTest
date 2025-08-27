@@ -51,4 +51,3 @@ export declare class ConversionManager {
     generateConversionReport(): string;
 }
 export declare const conversionManager: ConversionManager;
-//# sourceMappingURL=ConversionManager.d.ts.map

@@ -68,4 +68,3 @@ export declare class GameTimer {
     updateConfig(config: Partial<TimerConfig>): void;
 }
 export declare const gameTimer: GameTimer;
-//# sourceMappingURL=GameTimer.d.ts.map
