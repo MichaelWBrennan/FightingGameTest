@@ -92,6 +92,21 @@ var SF3App = (() => {
       Logger.info("Character manager initialized");
     }
     async loadCharacterConfigs() {
+      try {
+        const dbResponse = await fetch("/data/characters_db.json");
+        if (dbResponse.ok) {
+          const db = await dbResponse.json();
+          const keys = Object.keys(db);
+          for (const key of keys) {
+            const normalized = this.normalizeCharacterConfig(db[key]);
+            this.characterConfigs.set(key, normalized);
+          }
+          Logger.info(`Loaded ${keys.length} characters from consolidated database`);
+          return;
+        }
+      } catch (e) {
+        Logger.warn("Consolidated character database not found; falling back to individual files");
+      }
       const characterNames = ["ryu", "ken", "chun_li", "sagat", "zangief"];
       for (const name of characterNames) {
         try {
