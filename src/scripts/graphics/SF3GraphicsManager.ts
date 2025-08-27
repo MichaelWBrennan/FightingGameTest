@@ -19,6 +19,7 @@ import {
     SuperMoveEvent,
     ParryEvent
 } from '../../../types/graphics';
+import { ShaderUtils } from '../../core/graphics/ShaderUtils';
 
 interface SF3GraphicsManagerState {
     initialized: boolean;
@@ -147,12 +148,8 @@ export class SF3GraphicsManager implements ISystem {
         this.state.materials.characterBase.useSkybox = false;
         this.state.materials.characterBase.useFog = false;
         
-        // Character highlight material for focus/selection
-        this.state.materials.characterHighlight = new pc.StandardMaterial();
-        this.state.materials.characterHighlight.diffuse = new pc.Color(1.2, 1.1, 1.0);
-        this.state.materials.characterHighlight.emissive = new pc.Color(0.1, 0.1, 0.15);
-        this.state.materials.characterHighlight.opacity = 0.9;
-        this.state.materials.characterHighlight.blendType = pc.BLEND_NORMAL;
+        // Character highlight material (custom shader)
+        this.state.materials.characterHighlight = ShaderUtils.createCharacterHighlightMaterial(this.app);
         
         // Impact effect material
         this.state.materials.impactEffect = new pc.StandardMaterial();
@@ -165,10 +162,8 @@ export class SF3GraphicsManager implements ISystem {
         this.state.materials.backgroundElements.diffuse = new pc.Color(0.8, 0.85, 0.9);
         this.state.materials.backgroundElements.ambient = this.state.visualStyle.colorPalette.ambient;
         
-        // Stage reactive material (for interactive elements)
-        this.state.materials.stageReactive = new pc.StandardMaterial();
-        this.state.materials.stageReactive.diffuse = new pc.Color(1, 1, 1);
-        this.state.materials.stageReactive.emissive = new pc.Color(0, 0, 0);
+        // Stage reactive material (could use rim lighting for emphasis)
+        this.state.materials.stageReactive = ShaderUtils.createRimLightingMaterial(this.app) as unknown as pc.StandardMaterial;
         
         console.log('Materials created successfully');
     }
