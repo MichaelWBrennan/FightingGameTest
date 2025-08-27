@@ -38,6 +38,9 @@
     "tools/**/*",
     "src/src/**/*",
     "src/backend/**/*",
-    "attached_assets/**/*"
+    "attached_assets/**/*",
+    "src/scripts/**/*",
+    "src/typescript/**/*",
+    "zlib/**/*"
   ]
 }
