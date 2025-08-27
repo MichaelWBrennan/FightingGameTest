@@ -2,6 +2,7 @@ import * as pc from 'playcanvas';
 import { CharacterHighlightShader } from '../../typescript/shaders/CharacterHighlightShader';
 import { RimLightingShader } from '../../typescript/shaders/RimLightingShader';
 import { SpriteNormalMappingShader } from '../../typescript/shaders/SpriteNormalMappingShader';
+import { DepthPostProcessShader } from '../../typescript/shaders/DepthPostProcessShader';
 
 export class ShaderUtils {
     public static createMaterialFromShaders(app: pc.Application, vertexShader: string, fragmentShader: string): pc.Material {
@@ -91,6 +92,33 @@ export class ShaderUtils {
         mat.setParameter('animationFrame', 0.0);
         mat.setParameter('spriteSheetSize', new Float32Array([1, 1]));
         mat.setParameter('frameSize', new Float32Array([1, 1]));
+        return mat;
+    }
+
+    public static createDepthPostProcessMaterial(app: pc.Application): pc.Material {
+        const mat = this.createMaterialFromShaders(app, DepthPostProcessShader.vertexShader, DepthPostProcessShader.fragmentShader);
+        // Defaults
+        const device = app.graphicsDevice;
+        mat.setParameter('uScreenSize', new Float32Array([device.width, device.height]));
+        mat.setParameter('uInvScreenSize', new Float32Array([1 / Math.max(1, device.width), 1 / Math.max(1, device.height)]));
+        mat.setParameter('uNearClip', 0.1);
+        mat.setParameter('uFarClip', 1000.0);
+        mat.setParameter('uFocusDistance', 15.0);
+        mat.setParameter('uFocusRange', 5.0);
+        mat.setParameter('uBokehRadius', 1.5);
+        mat.setParameter('uBokehIntensity', 0.8);
+        mat.setParameter('uFogColor', new Float32Array([0.7, 0.8, 0.9]));
+        mat.setParameter('uFogDensity', 0.0);
+        mat.setParameter('uFogStart', 10.0);
+        mat.setParameter('uFogEnd', 50.0);
+        mat.setParameter('uAtmosphericPerspective', 0.0);
+        mat.setParameter('uAtmosphereColor', new Float32Array([0.7, 0.8, 0.9]));
+        mat.setParameter('uHeatHaze', 0.0);
+        mat.setParameter('uColorSeparation', 0.0);
+        mat.setParameter('uScreenShake', 0.0);
+        mat.setParameter('uScreenShakeOffset', new Float32Array([0, 0]));
+        mat.setParameter('uTimeScale', 1.0);
+        mat.setParameter('uTime', 0.0);
         return mat;
     }
 }

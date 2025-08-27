@@ -5,6 +5,7 @@
  */
 
 import * as pc from 'playcanvas';
+import { ShaderUtils } from '../../core/graphics/ShaderUtils';
 import { ISystem } from '../../../types/core';
 import { PostProcessEffect, PostProcessingState, ScreenShake, HitFlash, SlowMotion } from '../../../types/graphics';
 
@@ -298,35 +299,35 @@ class PostProcessingManager implements ISystem {
     }
 
     private async createPostProcessingMaterials(): Promise<void> {
-        // Depth of Field material
-        this.materials.depthOfField = new pc.StandardMaterial();
-        this.materials.depthOfField.chunks.PS_LIGHTING = this.getDOFFragmentShader();
-        this.materials.depthOfField.blendType = pc.BLEND_NONE;
-        this.materials.depthOfField.depthTest = false;
-        this.materials.depthOfField.depthWrite = false;
+        // Depth material driven by our TS shader
+        const depthMat = ShaderUtils.createDepthPostProcessMaterial(this.app) as unknown as pc.StandardMaterial;
+        depthMat.blendType = pc.BLEND_NONE;
+        depthMat.depthTest = false;
+        depthMat.depthWrite = false;
+        this.materials.depthOfField = depthMat;
         
-        // Bloom material
+        // Bloom material (placeholder simple additive pass)
         this.materials.bloom = new pc.StandardMaterial();
         this.materials.bloom.chunks.PS_LIGHTING = this.getBloomFragmentShader();
         this.materials.bloom.blendType = pc.BLEND_ADDITIVE;
         this.materials.bloom.depthTest = false;
         this.materials.bloom.depthWrite = false;
         
-        // Blur material
+        // Blur material (placeholder)
         this.materials.blur = new pc.StandardMaterial();
         this.materials.blur.chunks.PS_LIGHTING = this.getBlurFragmentShader();
         this.materials.blur.blendType = pc.BLEND_NONE;
         this.materials.blur.depthTest = false;
         this.materials.blur.depthWrite = false;
         
-        // Color grading material
+        // Color grading material (placeholder)
         this.materials.colorGrading = new pc.StandardMaterial();
         this.materials.colorGrading.chunks.PS_LIGHTING = this.getColorGradingFragmentShader();
         this.materials.colorGrading.blendType = pc.BLEND_NONE;
         this.materials.colorGrading.depthTest = false;
         this.materials.colorGrading.depthWrite = false;
         
-        // Final combine material
+        // Final combine material (placeholder)
         this.materials.combine = new pc.StandardMaterial();
         this.materials.combine.chunks.PS_LIGHTING = this.getCombineFragmentShader();
         this.materials.combine.blendType = pc.BLEND_NONE;
@@ -685,9 +686,22 @@ class PostProcessingManager implements ISystem {
     }
 
     private renderPostProcessing(dt: number): void {
-        // Multi-pass post-processing would be implemented here
-        // For now, we'll just update the parameters
-        // In a full implementation, this would render each effect pass
+        if (!this.fullScreenQuad || !this.materials.depthOfField || !this.renderTargets.sceneColor) return;
+        const device = this.app.graphicsDevice;
+
+        // Update dynamic uniforms
+        const timeSec = Date.now() * 0.001;
+        (this.materials.depthOfField as pc.Material).setParameter('uTime', timeSec);
+        (this.materials.depthOfField as pc.Material).setParameter('uScreenSize', new Float32Array([device.width, device.height]));
+        (this.materials.depthOfField as pc.Material).setParameter('uInvScreenSize', new Float32Array([1 / Math.max(1, device.width), 1 / Math.max(1, device.height)]));
+
+        // Bind input textures (scene color as both color and depth placeholder if no depth RT)
+        (this.materials.depthOfField as pc.Material).setParameter('texture_colorBuffer', this.renderTargets.sceneColor.colorBuffer);
+        const depthBufferTex = this.renderTargets.sceneDepth ? this.renderTargets.sceneDepth.colorBuffer : this.renderTargets.sceneColor.colorBuffer;
+        (this.materials.depthOfField as pc.Material).setParameter('texture_depthBuffer', depthBufferTex);
+
+        // Render fullscreen quad with DOF shader
+        this.fullScreenQuad.render.material = this.materials.depthOfField;
     }
 
     // Quality management
