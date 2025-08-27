@@ -1,0 +1,8 @@
+export declare class DatabaseManager {
+    private static instance;
+    private constructor();
+    static getInstance(): DatabaseManager;
+    initialize(_config: any): Promise<void>;
+    checkHealth(): Promise<boolean>;
+    close(): Promise<void>;
+}
