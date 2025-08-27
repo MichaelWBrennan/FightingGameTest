@@ -18,6 +18,7 @@ export class GameEngine {
   private uiManager: UIManager;
   // private assetManager: any;
   private isInitialized = false;
+  private updateHandler: ((dt: number) => void) | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -59,12 +60,21 @@ export class GameEngine {
       // Preload assets if needed using AssetLoader script
       await this.characterManager.initialize();
       // StageManager/UIManager initialize through their own methods if needed
+      await this.stageManager.initialize();
       await this.uiManager.initialize();
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
       
       this.isInitialized = true;
       this.app.start();
+
+      // Wire main update loop
+      this.updateHandler = (dt: number) => {
+        this.inputManager.update();
+        this.characterManager.update(dt);
+        this.combatSystem.update(dt);
+      };
+      this.app.on('update', this.updateHandler);
       
       Logger.info('Game engine fully initialized');
     } catch (error) {
@@ -86,6 +96,10 @@ export class GameEngine {
   }
 
   public destroy(): void {
+    if (this.updateHandler) {
+      this.app.off('update', this.updateHandler);
+      this.updateHandler = null;
+    }
     this.app.destroy();
     Logger.info('Game engine destroyed');
   }

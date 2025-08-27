@@ -4,9 +4,10 @@
   "description": "Street Fighter III: 3rd Strike - PlayCanvas Edition",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsc",
-    "dev": "npx ts-node src/index.ts",
-    "start": "npx ts-node src/index.ts",
+    "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020",
+    "build": "npm run build:client",
+    "dev": "npm run build:client -- --watch",
+    "start": "npm run build && npm run serve",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "fix": "npx ts-node tools/fix_compilation_errors.ts",
@@ -37,6 +38,7 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
+    "esbuild": "^0.21.5",
     "@types/node": "^20.8.0",
     "@types/ws": "^8.5.8",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
