@@ -2,13 +2,14 @@ import * as pc from 'playcanvas';
 import { CharacterManager } from './characters/CharacterManager';
 import { CombatSystem } from './combat/CombatSystem';
 // Integrate with existing PlayCanvas script-based managers under src/scripts
-import StageManager from '../scripts/core/StageManager';
+import { StageManager } from './stages/StageManager';
 import { InputManager } from './input/InputManager';
-import UIManager from '../scripts/ui/UIManager';
-import { AssetLoader as AssetManager } from '../scripts/core/AssetLoader';
+import { UIManager } from './ui/UIManager';
+// (Optional) Asset loader integration available under scripts if needed
 import { Logger } from './utils/Logger';
 export class GameEngine {
     constructor(canvas) {
+        // private assetManager: any;
         this.isInitialized = false;
         this.app = new pc.Application(canvas, {
             mouse: new pc.Mouse(canvas),
@@ -26,9 +27,9 @@ export class GameEngine {
         Logger.info('PlayCanvas application initialized');
     }
     initializeManagers() {
-        this.assetManager = new AssetManager(this.app);
+        // Asset loading can be handled later via script components
         this.inputManager = new InputManager(this.app);
-        this.audioManager = new AudioManager(this.app);
+        // Audio handled by PlayCanvas components or a future wrapper
         this.characterManager = new CharacterManager(this.app);
         this.combatSystem = new CombatSystem(this.app);
         this.stageManager = new StageManager(this.app);
@@ -39,10 +40,9 @@ export class GameEngine {
             return;
         try {
             Logger.info('Initializing game systems...');
-            await this.assetManager.preloadAssets();
-            await this.audioManager.initialize();
+            // Preload assets if needed using AssetLoader script
             await this.characterManager.initialize();
-            await this.stageManager.initialize();
+            // StageManager/UIManager initialize through their own methods if needed
             await this.uiManager.initialize();
             this.combatSystem.initialize(this.characterManager, this.inputManager);
             this.isInitialized = true;

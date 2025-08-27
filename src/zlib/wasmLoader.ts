@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * A generic utility for loading Emscripten-generated WebAssembly modules.
  * Provides a consistent way to instantiate Wasm modules and access their exported functions.

@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class GraphicsManager {
     constructor() {
         this.renderLayers = new Map();

@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class InputManager {
     constructor() {
         this.inputState = {

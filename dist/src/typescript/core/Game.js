@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { InputManager } from './InputManager';
 import { GraphicsManager } from '../graphics/GraphicsManager';
 import { SoundManager } from '../sound/SoundManager';

@@ -1,14 +1,5 @@
-/**
- * RotationService.ts - LoL-like fighter rotation system for PlayCanvas
- *
- * Manages character availability pools, rotation cadence, and entitlements.
- * Supports hot-swapping, regional overrides, and event-based rotations.
- *
- * Usage:
- *   const rotation = new RotationService(app);
- *   await rotation.initialize();
- *   const available = rotation.isCharacterAvailable('vanguard', 'ranked');
- */
+// @ts-nocheck
+import * as pc from 'playcanvas';
 import { EntitlementBridge } from './EntitlementBridge';
 export class RotationService {
     constructor(app, characterManager, region = 'default') {

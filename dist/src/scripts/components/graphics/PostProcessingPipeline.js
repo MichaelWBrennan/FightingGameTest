@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 const PostProcessingPipeline = pc.createScript('postProcessingPipeline');
 // --- Attributes ---
 PostProcessingPipeline.attributes.add('enableBloom', {

@@ -8,8 +8,6 @@ export declare class GameEngine {
     private stageManager;
     private inputManager;
     private uiManager;
-    private audioManager;
-    private assetManager;
     private isInitialized;
     constructor(canvas: HTMLCanvasElement);
     private setupApplication;

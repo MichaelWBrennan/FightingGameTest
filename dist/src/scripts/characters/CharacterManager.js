@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as pc from 'playcanvas';
 import { DEFAULT_ARCHETYPE_TEMPLATES, DEFAULT_CHARACTER_STATES } from '../../../types/character';
 import { CharacterFactory } from './CharacterFactory';

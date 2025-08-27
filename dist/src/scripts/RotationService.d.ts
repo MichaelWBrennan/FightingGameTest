@@ -1,3 +1,4 @@
+import * as pc from 'playcanvas';
 /**
  * RotationService.ts - LoL-like fighter rotation system for PlayCanvas
  *

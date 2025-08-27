@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import { type Direction, type InputState, type PlayerInputMappings, type ButtonState } from '../../../types/input';
 

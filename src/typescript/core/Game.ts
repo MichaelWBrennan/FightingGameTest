@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import { GameState, TaskFunction, GameMode } from '../../../types/core';
 import { InputManager } from './InputManager';

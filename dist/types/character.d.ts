@@ -73,6 +73,10 @@ export interface AttackData {
     recovery: number;
     blockAdvantage: number;
     hitAdvantage: number;
+    startupFrames?: number;
+    activeFrames?: number;
+    recoveryFrames?: number;
+    advantage?: number;
     hitstun?: number;
     blockstun?: number;
     properties?: AttackProperties;
@@ -95,12 +99,17 @@ export interface AttackProperties {
 export interface CharacterData {
     characterId: string;
     name: string;
+    displayName?: string;
     archetype: CharacterArchetype;
     spritePath: string;
     health: number;
     walkSpeed: number;
     dashSpeed: number;
     jumpHeight: number;
+    stats?: {
+        health: number;
+        walkSpeed: number;
+    };
     complexity: string;
     strengths: string[];
     weaknesses: string[];
@@ -113,6 +122,30 @@ export interface CharacterData {
     portraits?: Record<string, string>;
     voiceLines?: Record<string, string>;
     sfx?: Record<string, string>;
+}
+export interface Character {
+    id: string;
+    name?: string;
+    entity: pc.Entity;
+    config: CharacterData;
+    health: number;
+    maxHealth?: number;
+    meter: number;
+    state: 'idle' | 'walking' | 'attacking' | 'ko';
+    currentMove: null | {
+        name: string;
+        data: AttackData;
+        currentFrame: number;
+        phase: 'startup' | 'active' | 'recovery';
+    };
+    frameData: {
+        startup: number;
+        active: number;
+        recovery: number;
+        advantage: number;
+    };
+}
+export interface CharacterConfig extends CharacterData {
 }
 export interface CharacterEntity extends pc.Entity {
     characterData: CharacterData;
@@ -210,3 +243,4 @@ export declare function isCharacterEntity(entity: pc.Entity): entity is Characte
 export declare const DEFAULT_ARCHETYPE_TEMPLATES: ArchetypeTemplates;
 export declare const DEFAULT_CHARACTER_STATES: CharacterStates;
 export declare const DEFAULT_FRAME_DATA: FrameData;
+export type PlayerData = any;
