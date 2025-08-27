@@ -1,3 +1,3 @@
-declare const SpriteRendererHD2D: any;
+import * as pc from 'playcanvas';
+declare const SpriteRendererHD2D: typeof pc.ScriptType;
 export { SpriteRendererHD2D };
-//# sourceMappingURL=SpriteRendererHD2D.d.ts.map

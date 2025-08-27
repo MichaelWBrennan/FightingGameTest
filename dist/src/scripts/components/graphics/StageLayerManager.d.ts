@@ -1,3 +1,3 @@
-declare const StageLayerManager: any;
+import * as pc from 'playcanvas';
+declare const StageLayerManager: typeof pc.ScriptType;
 export { StageLayerManager };
-//# sourceMappingURL=StageLayerManager.d.ts.map

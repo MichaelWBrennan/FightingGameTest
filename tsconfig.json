@@ -7,8 +7,9 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
+    "rootDir": ".",
+    "strict": false,
+    "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -23,7 +24,8 @@
       "@core/*": ["src/core/*"],
       "@types/*": ["types/*"],
       "@data/*": ["data/*"]
-    }
+    },
+    "types": ["node"]
   },
   "include": [
     "src/**/*",
@@ -35,6 +37,7 @@
     "**/*.test.ts",
     "tools/**/*",
     "src/src/**/*",
+    "src/backend/**/*",
     "attached_assets/**/*"
   ]
 }

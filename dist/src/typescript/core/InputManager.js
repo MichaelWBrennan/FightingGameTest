@@ -1,27 +1,17 @@
 export class InputManager {
     constructor() {
-        Object.defineProperty(this, "inputState", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: {
-                p1sw_0: 0,
-                p1sw_1: 0,
-                p2sw_0: 0,
-                p2sw_1: 0,
-                direction: Direction.NEUTRAL,
-                lastDirection: Direction.NEUTRAL,
-                buttons: new Map(),
-                buttonPressed: new Map(),
-                buttonReleased: new Map()
-            }
-        });
-        Object.defineProperty(this, "playerMappings", {
-            enumerable: true,
-            configurable: true,
-            writable: true,
-            value: new Map()
-        });
+        this.inputState = {
+            p1sw_0: 0,
+            p1sw_1: 0,
+            p2sw_0: 0,
+            p2sw_1: 0,
+            direction: 'neutral',
+            lastDirection: 'neutral',
+            buttons: new Map(),
+            buttonPressed: new Map(),
+            buttonReleased: new Map()
+        };
+        this.playerMappings = new Map();
         this.initializeDefaultMappings();
         this.setupEventListeners();
     }
@@ -103,31 +93,31 @@ export class InputManager {
         const p1Left = this.isButtonPressed('player1_left');
         const p1Right = this.isButtonPressed('player1_right');
         if (p1Up && p1Left) {
-            this.inputState.direction = Direction.UP_LEFT;
+            this.inputState.direction = 'upBack';
         }
         else if (p1Up && p1Right) {
-            this.inputState.direction = Direction.UP_RIGHT;
+            this.inputState.direction = 'upForward';
         }
         else if (p1Down && p1Left) {
-            this.inputState.direction = Direction.DOWN_LEFT;
+            this.inputState.direction = 'downBack';
         }
         else if (p1Down && p1Right) {
-            this.inputState.direction = Direction.DOWN_RIGHT;
+            this.inputState.direction = 'downForward';
         }
         else if (p1Up) {
-            this.inputState.direction = Direction.UP;
+            this.inputState.direction = 'up';
         }
         else if (p1Down) {
-            this.inputState.direction = Direction.DOWN;
+            this.inputState.direction = 'down';
         }
         else if (p1Left) {
-            this.inputState.direction = Direction.LEFT;
+            this.inputState.direction = 'left';
         }
         else if (p1Right) {
-            this.inputState.direction = Direction.RIGHT;
+            this.inputState.direction = 'right';
         }
         else {
-            this.inputState.direction = Direction.NEUTRAL;
+            this.inputState.direction = 'neutral';
         }
     }
     isButtonPressed(buttonName) {
@@ -161,8 +151,7 @@ export class InputManager {
 }
 export function isValidDirection(direction) {
     const validDirections = [
-        Direction.NEUTRAL, Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT,
-        Direction.UP_LEFT, Direction.UP_RIGHT, Direction.DOWN_LEFT, Direction.DOWN_RIGHT
+        'neutral', 'up', 'down', 'left', 'right', 'upBack', 'upForward', 'downBack', 'downForward'
     ];
     return validDirections.includes(direction);
 }

@@ -1,4 +1,4 @@
-import { Direction, InputState, PlayerInputMappings } from '../../../types/input';
+import { type Direction, type InputState, type PlayerInputMappings } from '../../../types/input';
 export declare class InputManager {
     private inputState;
     private playerMappings;
@@ -19,4 +19,3 @@ export declare class InputManager {
     setPlayerMapping(player: string, mappings: PlayerInputMappings): void;
 }
 export declare function isValidDirection(direction: string): direction is Direction;
-//# sourceMappingURL=InputManager.d.ts.map

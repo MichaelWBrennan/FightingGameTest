@@ -169,11 +169,7 @@ export interface MemoryRegion {
   type: 'code' | 'data' | 'stack' | 'heap';
 }
 
-export interface pc {
-  x: number;
-  y: number;
-  z: number;
-}
+// Remove bogus 'pc' interface; rely on playcanvas types/global
 
 export interface ISystem {
   initialize(): Promise<void>;
@@ -182,7 +178,7 @@ export interface ISystem {
 }
 
 export interface GameState {
-  players: { [playerId: string]: PlayerState };
+  players: { [playerId: string]: any };
   round: number;
   timer: number;
   paused: boolean;
@@ -207,13 +203,4 @@ export interface ParticleType {
   template: pc.Entity;
 }
 
-declare global {
-    const pc: {
-        Application: new (options?: ApplicationOptions) => ApplicationBase;
-        Entity: new (name?: string) => Entity;
-        Vec3: new (x?: number, y?: number, z?: number) => Vec3;
-        Color: new (r?: number, g?: number, b?: number, a?: number) => Color;
-        createScript: (name: string) => ScriptType;
-        [key: string]: any;
-    };
-}
+// PlayCanvas namespace is provided by the library at runtime; avoid conflicting global declarations

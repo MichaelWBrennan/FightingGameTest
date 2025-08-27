@@ -2,7 +2,8 @@
  * Combat system type definitions for SF3:3S HD-2D Fighting Game
  */
 
-import { type CombatState, type AttackData, type Character, type pc } from './core.js';
+import { type CombatState, type AttackData, type Character } from './core';
+import type * as pc from 'playcanvas';
 
 // Combat Configuration Types
 export interface HitDetectionConfig {
@@ -413,12 +414,12 @@ export interface BlockData {
   blockType: 'high' | 'low' | 'air';
 }
 
-export const DEFAULT_COMBAT_STATE: CombatState = {
+export const DEFAULT_COMBAT_STATE = {
   player1: {} as CharacterState,
   player2: {} as CharacterState,
   round: 1,
   timer: 99
-};
+} as const;
 
 export const DEFAULT_COMBO_DATA = {
   hits: 0,

@@ -1,5 +1,5 @@
 
-import { Direction, InputState, PlayerInputMappings, ButtonState } from '../../../types/input';
+import { type Direction, type InputState, type PlayerInputMappings, type ButtonState } from '../../../types/input';
 
 export class InputManager {
     private inputState: InputState = {
@@ -7,8 +7,8 @@ export class InputManager {
         p1sw_1: 0,
         p2sw_0: 0,
         p2sw_1: 0,
-        direction: Direction.NEUTRAL,
-        lastDirection: Direction.NEUTRAL,
+        direction: 'neutral' as Direction,
+        lastDirection: 'neutral' as Direction,
         buttons: new Map<string, ButtonState>(),
         buttonPressed: new Map<string, boolean>(),
         buttonReleased: new Map<string, boolean>()
@@ -111,23 +111,23 @@ export class InputManager {
         const p1Right = this.isButtonPressed('player1_right');
 
         if (p1Up && p1Left) {
-            this.inputState.direction = Direction.UP_LEFT;
+            this.inputState.direction = 'upBack' as Direction;
         } else if (p1Up && p1Right) {
-            this.inputState.direction = Direction.UP_RIGHT;
+            this.inputState.direction = 'upForward' as Direction;
         } else if (p1Down && p1Left) {
-            this.inputState.direction = Direction.DOWN_LEFT;
+            this.inputState.direction = 'downBack' as Direction;
         } else if (p1Down && p1Right) {
-            this.inputState.direction = Direction.DOWN_RIGHT;
+            this.inputState.direction = 'downForward' as Direction;
         } else if (p1Up) {
-            this.inputState.direction = Direction.UP;
+            this.inputState.direction = 'up' as Direction;
         } else if (p1Down) {
-            this.inputState.direction = Direction.DOWN;
+            this.inputState.direction = 'down' as Direction;
         } else if (p1Left) {
-            this.inputState.direction = Direction.LEFT;
+            this.inputState.direction = 'left' as Direction;
         } else if (p1Right) {
-            this.inputState.direction = Direction.RIGHT;
+            this.inputState.direction = 'right' as Direction;
         } else {
-            this.inputState.direction = Direction.NEUTRAL;
+            this.inputState.direction = 'neutral' as Direction;
         }
     }
 
@@ -170,8 +170,7 @@ export class InputManager {
 
 export function isValidDirection(direction: string): direction is Direction {
     const validDirections: Direction[] = [
-        Direction.NEUTRAL, Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT,
-        Direction.UP_LEFT, Direction.UP_RIGHT, Direction.DOWN_LEFT, Direction.DOWN_RIGHT
-    ];
+        'neutral','up','down','left','right','upBack','upForward','downBack','downForward'
+    ] as unknown as Direction[];
     return validDirections.includes(direction as Direction);
 }

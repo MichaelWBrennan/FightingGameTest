@@ -1,7 +1,7 @@
 /**
  * Input system type definitions for SF3:3S HD-2D Fighting Game
  */
-export { type Direction, type PlayerInputMappings } from './core.js';
+export { type Direction, type PlayerInputMappings } from './core';
 export interface ButtonState {
     pressed: boolean;
     justPressed: boolean;
@@ -27,8 +27,8 @@ export interface InputState {
     lightKick: boolean;
     mediumKick: boolean;
     heavyKick: boolean;
-    direction: import('./core.js').Direction;
-    lastDirection: import('./core.js').Direction;
+    direction: import('./core').Direction;
+    lastDirection: import('./core').Direction;
     directionFrames: number;
     buttons: Map<string, ButtonState>;
     chargeStates: Map<string, ChargeState>;
@@ -83,7 +83,7 @@ export interface InputManagerState {
     inputHistory: Map<string, InputSnapshot[]>;
     maxHistoryFrames: number;
     inputConfig: InputConfiguration;
-    playerMappings: Map<string, import('./core.js').PlayerInputMappings>;
+    playerMappings: Map<string, import('./core').PlayerInputMappings>;
     inputStates: Map<string, InputState>;
     previousStates: Map<string, InputState>;
     devices: InputDevice;
@@ -142,5 +142,4 @@ export type PlayerId = 'player1' | 'player2';
 export type InputName = 'up' | 'down' | 'left' | 'right' | 'lightPunch' | 'mediumPunch' | 'heavyPunch' | 'lightKick' | 'mediumKick' | 'heavyKick';
 export declare function isValidPlayerId(id: string): id is PlayerId;
 export declare function isValidInputName(name: string): name is InputName;
-export declare function isValidDirection(direction: string): direction is import('./core.js').Direction;
-//# sourceMappingURL=input.d.ts.map
+export declare function isValidDirection(direction: string): direction is import('./core').Direction;
