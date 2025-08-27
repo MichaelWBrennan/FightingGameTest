@@ -174,152 +174,25 @@
     <div id="fps-counter" id="fps-counter">FPS: --</div>
 
     <script>
-        class SF3Game {
-            constructor() {
-                this.canvas = document.getElementById('application-canvas');
-                this.loadingScreen = document.getElementById('loading-screen');
-                this.loadingBar = document.getElementById('loading-bar');
-                this.loadingText = document.getElementById('loading-text');
-                this.fpsCounter = document.getElementById('fps-counter');
-                
-                this.app = null;
-                this.loadingProgress = 0;
-                this.gameInitialized = false;
-            }
-
-            async initialize() {
-                try {
-                    // Create PlayCanvas application
-                    this.app = new pc.Application(this.canvas, {
-                        mouse: new pc.Mouse(this.canvas),
-                        touch: new pc.TouchDevice(this.canvas),
-                        keyboard: new pc.Keyboard(window),
-                        gamepads: new pc.GamePads(),
-                        graphicsDeviceOptions: {
-                            antialias: true,
-                            alpha: false,
-                            preserveDrawingBuffer: false,
-                            preferWebGl2: true
-                        }
-                    });
-
-                    // Configure application
-                    this.app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
-                    this.app.setCanvasResolution(pc.RESOLUTION_AUTO);
-                    
-                    // Start the application
-                    this.app.start();
-
-                    // Load and initialize game scripts
-                    await this.loadGameSystems();
-                    
-                    // Hide loading screen
-                    this.hideLoadingScreen();
-                    
-                    // Setup FPS counter
-                    this.setupFPSCounter();
-                    
-                    console.log('SF3 Game initialized successfully!');
-                    
-                } catch (error) {
-                    console.error('Failed to initialize game:', error);
-                    this.showError('Failed to initialize game. Please refresh and try again.');
-                }
-            }
-
-            async loadGameSystems() {
-                const loadingSteps = [
-                    { text: 'Loading core systems...', progress: 20 },
-                    { text: 'Loading character data...', progress: 40 },
-                    { text: 'Loading stage assets...', progress: 60 },
-                    { text: 'Loading audio system...', progress: 80 },
-                    { text: 'Finalizing setup...', progress: 100 }
-                ];
-
-                for (const step of loadingSteps) {
-                    this.updateLoadingProgress(step.progress, step.text);
-                    await this.delay(500); // Simulate loading time
-                }
-
-                // Create game manager entity
-                const gameManagerEntity = new pc.Entity('GameManager');
-                gameManagerEntity.addComponent('script');
-                
-                // The actual script loading would happen here
-                // For now, we'll simulate the game systems being ready
-                this.app.root.addChild(gameManagerEntity);
-                
-                this.gameInitialized = true;
-            }
-
-            updateLoadingProgress(progress, text) {
-                this.loadingProgress = progress;
-                this.loadingBar.style.width = `${progress}%`;
-                this.loadingText.textContent = text;
-            }
-
-            hideLoadingScreen() {
-                setTimeout(() => {
-                    this.loadingScreen.classList.add('hidden');
-                    setTimeout(() => {
-                        this.loadingScreen.style.display = 'none';
-                    }, 500);
-                }, 500);
-            }
-
-            setupFPSCounter() {
-                let lastTime = performance.now();
-                let frameCount = 0;
-                let fps = 0;
-
-                const updateFPS = () => {
-                    const currentTime = performance.now();
-                    frameCount++;
-
-                    if (currentTime - lastTime >= 1000) {
-                        fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
-                        this.fpsCounter.textContent = `FPS: ${fps}`;
-                        frameCount = 0;
-                        lastTime = currentTime;
-                    }
-
-                    requestAnimationFrame(updateFPS);
-                };
-
-                updateFPS();
-            }
-
-            showError(message) {
-                this.loadingText.textContent = message;
-                this.loadingText.style.color = '#ff6b6b';
-            }
-
-            delay(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
+      window.addEventListener('DOMContentLoaded', () => {
+        if (!window.SF3App || !window.SF3App.defaultStart) {
+          const el = document.getElementById('loading-text');
+          if (el) el.textContent = 'Loading bundle...';
         }
-
-        // Initialize game when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            const game = new SF3Game();
-            game.initialize();
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            // PlayCanvas will handle this automatically with FILLMODE_FILL_WINDOW
-        });
-
-        // Handle visibility change
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                // Pause game if it exists
-                console.log('Game paused (tab hidden)');
-            } else {
-                // Resume game
-                console.log('Game resumed (tab visible)');
-            }
-        });
+      });
+    </script>
+    <script src="/public/bundle.js"></script>
+    <script>
+      // The bundle exports SF3App with defaultStart(canvas)
+      (function () {
+        const canvas = document.getElementById('application-canvas');
+        if (window.SF3App && typeof window.SF3App.defaultStart === 'function') {
+          window.SF3App.defaultStart(canvas).then(() => {
+            const loading = document.getElementById('loading-screen');
+            if (loading) loading.classList.add('hidden');
+          });
+        }
+      })();
     </script>
 </body>
 </html>

@@ -24,13 +24,46 @@ export class CharacterManager {
     for (const name of characterNames) {
       try {
         const response = await fetch(`/data/characters/${name}.json`);
-        const config: CharacterConfig = await response.json();
+        const rawConfig: CharacterConfig = await response.json();
+        const config = this.normalizeCharacterConfig(rawConfig);
         this.characterConfigs.set(name, config);
         Logger.info(`Loaded character config: ${name}`);
       } catch (error) {
         Logger.error(`Failed to load character ${name}:`, error);
       }
     }
+  }
+
+  private normalizeCharacterConfig(config: CharacterConfig): CharacterConfig {
+    // Ensure stats exist with required fields using top-level fallbacks
+    const normalizedStats = {
+      health: (config as any).stats?.health ?? (config as any).health ?? 1000,
+      walkSpeed: (config as any).stats?.walkSpeed ?? (config as any).walkSpeed ?? 2
+    } as any;
+
+    // Flatten nested move groups like { moves: { normals: { ... }, specials: { ... } } }
+    let flattenedMoves: Record<string, any> | undefined = undefined;
+    const movesAny = (config as any).moves as any;
+    if (movesAny && typeof movesAny === 'object') {
+      const groups = ['normals', 'specials', 'supers', 'throws', 'unique'];
+      flattenedMoves = {};
+      for (const key of Object.keys(movesAny)) {
+        if (groups.includes(key) && movesAny[key] && typeof movesAny[key] === 'object') {
+          Object.assign(flattenedMoves, movesAny[key]);
+        } else if (movesAny[key] && typeof movesAny[key] === 'object') {
+          // Top-level moves already
+          flattenedMoves[key] = movesAny[key];
+        }
+      }
+    }
+
+    const normalized = {
+      ...config,
+      stats: normalizedStats,
+      moves: flattenedMoves ?? (config as any).moves
+    } as CharacterConfig as any;
+
+    return normalized;
   }
 
   public createCharacter(characterId: string, position: pc.Vec3): Character | null {
