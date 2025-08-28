@@ -17,6 +17,8 @@ import { GameStateStack } from './state/GameStateStack';
 import { BootState } from './state/BootState';
 import { MenuState } from './state/MenuState';
 import { MatchState } from './state/MatchState';
+import { ProceduralSpriteGenerator } from './graphics/ProceduralSpriteGenerator';
+import { SpriteRegistry } from './graphics/SpriteRegistry';
 
 export class GameEngine {
   private app: pc.Application;
@@ -32,6 +34,8 @@ export class GameEngine {
   private pipeline: UpdatePipeline;
   private debugOverlay: any | null = null;
   private stateStack: GameStateStack;
+  private spriteGenerator: ProceduralSpriteGenerator;
+  private spriteRegistry: SpriteRegistry;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -58,6 +62,10 @@ export class GameEngine {
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
     this.services.register('config', new (require('./utils/ConfigService').ConfigService)());
+    this.spriteGenerator = new ProceduralSpriteGenerator(this.app);
+    this.spriteRegistry = new SpriteRegistry(this.app);
+    this.services.register('spriteGen', this.spriteGenerator);
+    this.services.register('sprites', this.spriteRegistry);
 
     // State stack
     this.stateStack = new GameStateStack();
@@ -121,6 +129,10 @@ export class GameEngine {
       if (this.postProcessingManager) {
         await this.postProcessingManager.initialize();
       }
+
+      // Generate basic procedural sprites for placeholders
+      const checker = this.spriteGenerator.createTexture({ width: 256, height: 256, type: 'checker', tile: 16, colorA: [200,200,200,255], colorB: [80,80,80,255] });
+      this.spriteRegistry.register('checkerboard', checker);
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
       

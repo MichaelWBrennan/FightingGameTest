@@ -119,7 +119,7 @@ var SF3App = (() => {
   });
 
   // src/core/GameEngine.ts
-  var pc7 = __toESM(require_playcanvas_shim());
+  var pc8 = __toESM(require_playcanvas_shim());
 
   // src/core/characters/CharacterManager.ts
   var pc = __toESM(require_playcanvas_shim());
@@ -2505,6 +2505,78 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/graphics/ProceduralSpriteGenerator.ts
+  var pc7 = __toESM(require_playcanvas_shim());
+  var ProceduralSpriteGenerator = class {
+    constructor(app) {
+      this.app = app;
+    }
+    createTexture(opts) {
+      const w = Math.max(1, Math.floor(opts.width));
+      const h = Math.max(1, Math.floor(opts.height));
+      const device = this.app.graphicsDevice;
+      const tex = new pc7.Texture(device, { width: w, height: h, format: pc7.PIXELFORMAT_R8_G8_B8_A8 });
+      const pixels = new Uint8Array(w * h * 4);
+      const a = opts.colorA || [255, 255, 255, 255];
+      const b = opts.colorB || [0, 0, 0, 255];
+      const tile = Math.max(1, opts.tile || 8);
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4;
+          switch (opts.type) {
+            case "solid": {
+              pixels[i] = a[0];
+              pixels[i + 1] = a[1];
+              pixels[i + 2] = a[2];
+              pixels[i + 3] = a[3];
+              break;
+            }
+            case "gradient": {
+              const t = y / (h - 1);
+              pixels[i] = Math.round(a[0] * (1 - t) + b[0] * t);
+              pixels[i + 1] = Math.round(a[1] * (1 - t) + b[1] * t);
+              pixels[i + 2] = Math.round(a[2] * (1 - t) + b[2] * t);
+              pixels[i + 3] = Math.round(a[3] * (1 - t) + b[3] * t);
+              break;
+            }
+            case "checker": {
+              const cx = Math.floor(x / tile);
+              const cy = Math.floor(y / tile);
+              const useA = (cx + cy) % 2 === 0;
+              const c = useA ? a : b;
+              pixels[i] = c[0];
+              pixels[i + 1] = c[1];
+              pixels[i + 2] = c[2];
+              pixels[i + 3] = c[3];
+              break;
+            }
+          }
+        }
+      }
+      tex.lock();
+      new Uint8Array(tex.lockedMipmaps[0][0].data.buffer).set(pixels);
+      tex.unlock();
+      return tex;
+    }
+  };
+
+  // src/core/graphics/SpriteRegistry.ts
+  var SpriteRegistry = class {
+    constructor(app) {
+      this.textures = /* @__PURE__ */ new Map();
+      this.app = app;
+    }
+    register(id, tex) {
+      this.textures.set(id, tex);
+    }
+    get(id) {
+      return this.textures.get(id);
+    }
+    all() {
+      return Array.from(this.textures.keys());
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2513,11 +2585,11 @@ var SF3App = (() => {
       // private assetManager: any;
       this.isInitialized = false;
       this.updateHandler = null;
-      this.app = new pc7.Application(canvas, {
-        mouse: new pc7.Mouse(canvas),
-        touch: new pc7.TouchDevice(canvas),
-        keyboard: new pc7.Keyboard(window),
-        gamepads: new pc7.GamePads()
+      this.app = new pc8.Application(canvas, {
+        mouse: new pc8.Mouse(canvas),
+        touch: new pc8.TouchDevice(canvas),
+        keyboard: new pc8.Keyboard(window),
+        gamepads: new pc8.GamePads()
       });
       this.setupApplication();
       this.initializeManagers();
@@ -2529,6 +2601,10 @@ var SF3App = (() => {
       this.services.register("events", this.eventBus);
       this.services.register("flags", this.featureFlags);
       this.services.register("config", new (init_ConfigService(), __toCommonJS(ConfigService_exports)).ConfigService());
+      this.spriteGenerator = new ProceduralSpriteGenerator(this.app);
+      this.spriteRegistry = new SpriteRegistry(this.app);
+      this.services.register("spriteGen", this.spriteGenerator);
+      this.services.register("sprites", this.spriteRegistry);
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {
         switch (state) {
@@ -2542,8 +2618,8 @@ var SF3App = (() => {
       });
     }
     setupApplication() {
-      this.app.setCanvasFillMode(pc7.FILLMODE_FILL_WINDOW);
-      this.app.setCanvasResolution(pc7.RESOLUTION_AUTO);
+      this.app.setCanvasFillMode(pc8.FILLMODE_FILL_WINDOW);
+      this.app.setCanvasResolution(pc8.RESOLUTION_AUTO);
       window.addEventListener("resize", () => this.app.resizeCanvas());
       Logger.info("PlayCanvas application initialized");
     }
@@ -2574,6 +2650,8 @@ var SF3App = (() => {
         if (this.postProcessingManager) {
           await this.postProcessingManager.initialize();
         }
+        const checker = this.spriteGenerator.createTexture({ width: 256, height: 256, type: "checker", tile: 16, colorA: [200, 200, 200, 255], colorB: [80, 80, 80, 255] });
+        this.spriteRegistry.register("checkerboard", checker);
         this.combatSystem.initialize(this.characterManager, this.inputManager);
         this.isInitialized = true;
         this.app.start();
@@ -2618,15 +2696,15 @@ var SF3App = (() => {
   };
 
   // src/index.ts
-  var pc8 = __toESM(require_playcanvas_shim());
+  var pc9 = __toESM(require_playcanvas_shim());
   async function defaultStart(canvas) {
     const targetCanvas = canvas || createCanvas();
     const engine = new GameEngine(targetCanvas);
     Logger.info("Starting Street Fighter III: 3rd Strike - PlayCanvas Edition");
     await engine.initialize();
     const characterManager = engine.getCharacterManager();
-    const ryu = characterManager.createCharacter("ryu", new pc8.Vec3(-2, 0, 0));
-    const ken = characterManager.createCharacter("ken", new pc8.Vec3(2, 0, 0));
+    const ryu = characterManager.createCharacter("ryu", new pc9.Vec3(-2, 0, 0));
+    const ken = characterManager.createCharacter("ken", new pc9.Vec3(2, 0, 0));
     if (ryu && ken) {
       characterManager.setActiveCharacters("ryu", "ken");
     }
