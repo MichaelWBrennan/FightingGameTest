@@ -1,0 +1,268 @@
+{
+  "stageId": "gothic_crypt",
+  "name": "Gothic Underground Crypt", 
+  "description": "Ancient underground crypt with ribbed vaulting, cryptic tombs, and flickering candlelight casting dancing shadows",
+  "theme": "gothic",
+  "atmosphere": "mysterious",
+  "lighting": {
+    "ambientColor": [0.1, 0.1, 0.2, 1.0],
+    "mainLightColor": [1.0, 0.8, 0.4, 1.0],
+    "mainLightDirection": [0.0, -1.0, 0.2],
+    "shadowIntensity": 1.0,
+    "enableDynamicLighting": true,
+    "candleLighting": true,
+    "flickering": true
+  },
+  "camera": {
+    "boundaryLeft": -700,
+    "boundaryRight": 700,
+    "boundaryTop": -300,
+    "boundaryBottom": 100,
+    "defaultZoom": 1.1,
+    "maxZoom": 1.6,
+    "minZoom": 0.7,
+    "followSmoothness": 0.12
+  },
+  "ground": {
+    "height": 0,
+    "friction": 0.9,
+    "material": "ancient_stone",
+    "bounds": {
+      "left": -500,
+      "right": 500
+    }
+  },
+  "backgroundLayers": [
+    {
+      "name": "deep_darkness",
+      "depth": -3.0,
+      "parallaxMultiplier": -0.1,
+      "texturePath": "res://assets/stages/gothic_crypt/deep_darkness.png",
+      "position": [0, -200],
+      "scale": [2.0, 2.0],
+      "tint": [0.05, 0.05, 0.1, 1.0]
+    },
+    {
+      "name": "distant_chambers",
+      "depth": -2.5,
+      "parallaxMultiplier": -0.3,
+      "texturePath": "res://assets/stages/gothic_crypt/distant_chambers.png",
+      "position": [0, -150],
+      "scale": [1.8, 1.8],
+      "tint": [0.2, 0.2, 0.3, 0.8],
+      "atmosphericPerspective": true
+    },
+    {
+      "name": "main_vaulting",
+      "depth": -2.0,
+      "parallaxMultiplier": -0.5,
+      "texturePath": "res://assets/stages/gothic_crypt/ribbed_vaults.png",
+      "position": [0, -120],
+      "scale": [1.5, 1.5],
+      "tint": [0.4, 0.4, 0.5, 1.0],
+      "enableLighting": true,
+      "shadowCasting": true
+    },
+    {
+      "name": "tomb_structures",
+      "depth": -1.5,
+      "parallaxMultiplier": -0.7,
+      "texturePath": "res://assets/stages/gothic_crypt/tomb_structures.png",
+      "position": [0, -80],
+      "scale": [1.3, 1.3],
+      "tint": [0.5, 0.5, 0.6, 1.0],
+      "shadowCasting": true
+    },
+    {
+      "name": "altar_area",
+      "depth": -1.0,
+      "parallaxMultiplier": -0.9,
+      "texturePath": "res://assets/stages/gothic_crypt/altar_area.png",
+      "position": [0, -40],
+      "scale": [1.1, 1.1],
+      "tint": [0.6, 0.6, 0.7, 1.0],
+      "enableLighting": true
+    },
+    {
+      "name": "candle_stands",
+      "depth": -0.8,
+      "parallaxMultiplier": -1.0,
+      "texturePath": "res://assets/stages/gothic_crypt/candle_stands.png",
+      "position": [0, -20],
+      "scale": [1.0, 1.0],
+      "tint": [0.8, 0.7, 0.6, 1.0],
+      "enableAnimatedLighting": true,
+      "lightingAnimation": {
+        "flicker": true,
+        "intensity": [0.8, 1.2],
+        "speed": 2.0
+      }
+    },
+    {
+      "name": "stone_floor",
+      "depth": 0.0,
+      "parallaxMultiplier": -1.1,
+      "texturePath": "res://assets/stages/gothic_crypt/stone_floor.png",
+      "position": [0, 70],
+      "scale": [1.0, 1.0],
+      "tint": [0.5, 0.5, 0.6, 1.0]
+    },
+    {
+      "name": "floor_symbols",
+      "depth": 0.1,
+      "parallaxMultiplier": -1.15,
+      "texturePath": "res://assets/stages/gothic_crypt/floor_symbols.png",
+      "position": [0, 75],
+      "scale": [1.0, 1.0],
+      "tint": [0.7, 0.6, 0.5, 0.8],
+      "animation": {
+        "type": "pulse_glow",
+        "amplitude": 0.3,
+        "speed": 0.5
+      }
+    }
+  ],
+  "foregroundLayers": [
+    {
+      "name": "hanging_bones",
+      "depth": 0.5,
+      "parallaxMultiplier": 1.1,
+      "texturePath": "res://assets/stages/gothic_crypt/hanging_bones.png",
+      "position": [0, -40],
+      "scale": [0.9, 0.9],
+      "tint": [0.8, 0.8, 0.8, 0.6],
+      "animation": {
+        "type": "gentle_sway",
+        "amplitude": 5,
+        "speed": 0.15
+      }
+    },
+    {
+      "name": "foreground_pillars",
+      "depth": 1.2,
+      "parallaxMultiplier": 1.4,
+      "texturePath": "res://assets/stages/gothic_crypt/fg_pillars.png",
+      "position": [0, 0],
+      "scale": [0.7, 0.7],
+      "tint": [0.3, 0.3, 0.4, 0.9]
+    }
+  ],
+  "particleEffects": [
+    {
+      "name": "candle_smoke",
+      "type": "ambient",
+      "position": [-200, -20],
+      "particleType": "Smoke",
+      "emission": {
+        "amount": 20,
+        "rate": 1.0
+      },
+      "properties": {
+        "scale": [0.8, 2.0],
+        "speed": [8, 20],
+        "lifetime": [3.0, 6.0],
+        "color": [0.6, 0.6, 0.7, 0.3],
+        "gravity": [0, -15]
+      }
+    },
+    {
+      "name": "candle_smoke_right",
+      "type": "ambient", 
+      "position": [200, -20],
+      "particleType": "Smoke",
+      "emission": {
+        "amount": 20,
+        "rate": 1.0
+      },
+      "properties": {
+        "scale": [0.8, 2.0],
+        "speed": [8, 20],
+        "lifetime": [3.0, 6.0],
+        "color": [0.6, 0.6, 0.7, 0.3],
+        "gravity": [0, -15]
+      }
+    },
+    {
+      "name": "mystical_wisps",
+      "type": "environmental",
+      "position": [0, -60],
+      "particleType": "MysticalWisp",
+      "emission": {
+        "amount": 15,
+        "rate": 0.5
+      },
+      "properties": {
+        "scale": [1.0, 2.0],
+        "speed": [5, 15],
+        "lifetime": [8.0, 12.0],
+        "color": [0.6, 0.8, 1.0, 0.4],
+        "colorVariation": true,
+        "floatingMotion": true
+      }
+    },
+    {
+      "name": "dust_particles",
+      "type": "ambient",
+      "position": [0, -100],
+      "particleType": "Dust",
+      "emission": {
+        "amount": 60,
+        "rate": 2.5
+      },
+      "properties": {
+        "scale": [0.3, 1.0],
+        "speed": [3, 12],
+        "lifetime": [5.0, 10.0],
+        "color": [0.8, 0.8, 0.9, 0.2]
+      }
+    }
+  ],
+  "audio": {
+    "ambientTrack": "res://assets/audio/stages/gothic_crypt_ambient.ogg",
+    "musicTrack": "res://assets/audio/music/gothic_crypt_theme.ogg",
+    "combatStingers": [
+      "res://assets/audio/stages/crypt_echo_1.ogg",
+      "res://assets/audio/stages/crypt_echo_2.ogg",
+      "res://assets/audio/stages/bone_rattle.ogg"
+    ],
+    "ambientVolume": 0.35,
+    "musicVolume": 0.65,
+    "reverb": {
+      "roomSize": 0.95,
+      "damping": 0.4,
+      "wetLevel": 0.7
+    }
+  },
+  "specialEffects": [
+    {
+      "name": "candle_flare",
+      "trigger": "super_move",
+      "effect": "multi_candle_flare",
+      "duration": 1.0,
+      "color": [1.0, 0.8, 0.4, 1.0],
+      "targetLayers": ["candle_stands"]
+    },
+    {
+      "name": "mystical_symbol_glow",
+      "trigger": "combo_hit",
+      "effect": "symbol_activation",
+      "duration": 2.0,
+      "targetLayer": "floor_symbols",
+      "glowIntensity": 2.0
+    },
+    {
+      "name": "bone_rattle",
+      "trigger": "heavy_impact",
+      "effect": "layer_shake",
+      "duration": 0.5,
+      "targetLayer": "hanging_bones",
+      "shakeIntensity": 10.0
+    }
+  ],
+  "balancing": {
+    "competitiveViable": true,
+    "asymmetrical": false,
+    "hazards": false,
+    "interactables": false
+  }
+}

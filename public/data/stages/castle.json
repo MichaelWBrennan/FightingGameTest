@@ -1,0 +1,264 @@
+{
+  "stageId": "gothic_castle",
+  "name": "Gothic Castle Courtyard",
+  "description": "A dark castle courtyard with towering battlements, ancient gargoyles, and moonlight filtering through storm clouds",
+  "theme": "gothic",
+  "atmosphere": "ominous",
+  "lighting": {
+    "ambientColor": [0.2, 0.2, 0.3, 1.0],
+    "mainLightColor": [0.8, 0.9, 1.0, 1.0],
+    "mainLightDirection": [0.2, -0.8, 0.5],
+    "shadowIntensity": 0.9,
+    "enableDynamicLighting": true,
+    "moonlighting": true
+  },
+  "camera": {
+    "boundaryLeft": -900,
+    "boundaryRight": 900,
+    "boundaryTop": -500,
+    "boundaryBottom": 150,
+    "defaultZoom": 0.9,
+    "maxZoom": 1.4,
+    "minZoom": 0.5,
+    "followSmoothness": 0.08
+  },
+  "ground": {
+    "height": 0,
+    "friction": 0.95,
+    "material": "cobblestone",
+    "bounds": {
+      "left": -700,
+      "right": 700
+    }
+  },
+  "backgroundLayers": [
+    {
+      "name": "stormy_sky",
+      "depth": -4.0,
+      "parallaxMultiplier": -0.05,
+      "texturePath": "res://assets/stages/gothic_castle/stormy_sky.png",
+      "position": [0, -400],
+      "scale": [2.5, 2.5],
+      "tint": [0.6, 0.7, 0.8, 1.0],
+      "shader": "res://assets/shaders/stages/StormySky.gdshader",
+      "animation": {
+        "type": "scroll",
+        "speed": [5, 2],
+        "direction": [-1, 0.2]
+      }
+    },
+    {
+      "name": "distant_mountains",
+      "depth": -3.0,
+      "parallaxMultiplier": -0.2,
+      "texturePath": "res://assets/stages/gothic_castle/distant_mountains.png",
+      "position": [0, -250],
+      "scale": [2.0, 2.0],
+      "tint": [0.4, 0.5, 0.7, 0.9],
+      "atmosphericPerspective": true
+    },
+    {
+      "name": "castle_towers_far",
+      "depth": -2.5,
+      "parallaxMultiplier": -0.4,
+      "texturePath": "res://assets/stages/gothic_castle/towers_far.png",
+      "position": [0, -180],
+      "scale": [1.6, 1.6],
+      "tint": [0.5, 0.6, 0.8, 1.0]
+    },
+    {
+      "name": "castle_walls",
+      "depth": -2.0,
+      "parallaxMultiplier": -0.6,
+      "texturePath": "res://assets/stages/gothic_castle/castle_walls.png",
+      "position": [0, -120],
+      "scale": [1.4, 1.4],
+      "tint": [0.7, 0.7, 0.8, 1.0],
+      "enableLighting": true
+    },
+    {
+      "name": "main_towers",
+      "depth": -1.5,
+      "parallaxMultiplier": -0.8,
+      "texturePath": "res://assets/stages/gothic_castle/main_towers.png",
+      "position": [0, -80],
+      "scale": [1.2, 1.2],
+      "tint": [0.8, 0.8, 0.9, 1.0],
+      "shadowCasting": true
+    },
+    {
+      "name": "courtyard_structures",
+      "depth": -1.0,
+      "parallaxMultiplier": -1.0,
+      "texturePath": "res://assets/stages/gothic_castle/courtyard_structures.png",
+      "position": [0, -40],
+      "scale": [1.0, 1.0],
+      "tint": [0.9, 0.9, 1.0, 1.0],
+      "enableLighting": true,
+      "shadowCasting": true
+    },
+    {
+      "name": "gargoyles",
+      "depth": -0.8,
+      "parallaxMultiplier": -1.1,
+      "texturePath": "res://assets/stages/gothic_castle/gargoyles.png",
+      "position": [0, -20],
+      "scale": [1.0, 1.0],
+      "tint": [0.6, 0.6, 0.7, 1.0],
+      "animation": {
+        "type": "subtle_sway",
+        "amplitude": 2,
+        "speed": 0.1
+      }
+    },
+    {
+      "name": "cobblestone_floor",
+      "depth": 0.0,
+      "parallaxMultiplier": -1.2,
+      "texturePath": "res://assets/stages/gothic_castle/cobblestone.png",
+      "position": [0, 80],
+      "scale": [1.0, 1.0],
+      "tint": [0.7, 0.7, 0.8, 1.0]
+    }
+  ],
+  "foregroundLayers": [
+    {
+      "name": "hanging_chains",
+      "depth": 0.5,
+      "parallaxMultiplier": 1.1,
+      "texturePath": "res://assets/stages/gothic_castle/chains.png",
+      "position": [0, -60],
+      "scale": [0.9, 0.9],
+      "tint": [0.8, 0.8, 0.8, 0.7],
+      "animation": {
+        "type": "sway",
+        "amplitude": 15,
+        "speed": 0.2
+      }
+    },
+    {
+      "name": "foreground_pillars",
+      "depth": 1.0,
+      "parallaxMultiplier": 1.3,
+      "texturePath": "res://assets/stages/gothic_castle/fg_pillars.png",
+      "position": [0, 0],
+      "scale": [0.8, 0.8],
+      "tint": [0.5, 0.5, 0.6, 0.8]
+    }
+  ],
+  "particleEffects": [
+    {
+      "name": "falling_ash",
+      "type": "ambient",
+      "position": [0, -200],
+      "particleType": "Ash",
+      "emission": {
+        "amount": 80,
+        "rate": 3.0
+      },
+      "properties": {
+        "scale": [0.3, 0.8],
+        "speed": [20, 50],
+        "lifetime": [4.0, 8.0],
+        "color": [0.9, 0.9, 0.9, 0.2],
+        "gravity": [0, 30]
+      }
+    },
+    {
+      "name": "torch_embers",
+      "type": "environmental",
+      "position": [-300, -40],
+      "particleType": "Embers",
+      "emission": {
+        "amount": 30,
+        "rate": 1.5
+      },
+      "properties": {
+        "scale": [0.5, 1.5],
+        "speed": [10, 25],
+        "lifetime": [2.0, 4.0],
+        "color": [1.0, 0.6, 0.2, 0.8]
+      }
+    },
+    {
+      "name": "torch_embers_right",
+      "type": "environmental",
+      "position": [300, -40],
+      "particleType": "Embers",
+      "emission": {
+        "amount": 30,
+        "rate": 1.5
+      },
+      "properties": {
+        "scale": [0.5, 1.5],
+        "speed": [10, 25],
+        "lifetime": [2.0, 4.0],
+        "color": [1.0, 0.6, 0.2, 0.8]
+      }
+    },
+    {
+      "name": "mist",
+      "type": "ambient",
+      "position": [0, 60],
+      "particleType": "Mist",
+      "emission": {
+        "amount": 40,
+        "rate": 1.0
+      },
+      "properties": {
+        "scale": [2.0, 4.0],
+        "speed": [5, 15],
+        "lifetime": [6.0, 10.0],
+        "color": [0.8, 0.8, 0.9, 0.1]
+      }
+    }
+  ],
+  "audio": {
+    "ambientTrack": "res://assets/audio/stages/gothic_castle_ambient.ogg",
+    "musicTrack": "res://assets/audio/music/gothic_castle_theme.ogg",
+    "combatStingers": [
+      "res://assets/audio/stages/castle_echo_1.ogg",
+      "res://assets/audio/stages/castle_echo_2.ogg",
+      "res://assets/audio/stages/wind_howl.ogg"
+    ],
+    "ambientVolume": 0.4,
+    "musicVolume": 0.7,
+    "reverb": {
+      "roomSize": 0.9,
+      "damping": 0.2,
+      "wetLevel": 0.6
+    }
+  },
+  "specialEffects": [
+    {
+      "name": "lightning_strike",
+      "trigger": "super_move",
+      "effect": "screen_flash_with_thunder",
+      "duration": 0.3,
+      "color": [0.9, 0.9, 1.0, 0.8],
+      "followUp": "thunder_sound"
+    },
+    {
+      "name": "gargoyle_eyes_glow",
+      "trigger": "low_health",
+      "effect": "layer_glow",
+      "duration": 2.0,
+      "targetLayer": "gargoyles",
+      "glowColor": [1.0, 0.3, 0.3, 0.6]
+    },
+    {
+      "name": "torch_flare",
+      "trigger": "heavy_hit",
+      "effect": "particle_burst",
+      "duration": 1.5,
+      "particleType": "Fire",
+      "intensity": 2.0
+    }
+  ],
+  "balancing": {
+    "competitiveViable": true,
+    "asymmetrical": false,
+    "hazards": false,
+    "interactables": false
+  }
+}

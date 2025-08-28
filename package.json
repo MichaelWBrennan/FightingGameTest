@@ -6,6 +6,7 @@
   "scripts": {
     "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020",
     "build": "npm run build:client",
+    "postbuild": "mkdir -p public/data && cp -r data/* public/data/ || true",
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
     "test": "jest",

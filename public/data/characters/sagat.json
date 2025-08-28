@@ -1,0 +1,439 @@
+{
+  "characterId": "sagat",
+  "name": "FighterE",
+  "displayName": "FighterE",
+  "description": "The King of Muay Thai. A towering zoner who controls space with devastating projectiles and long-range attacks.",
+  "archetype": "zoner",
+  "complexity": "medium",
+  "counterplayTags": ["rushdown", "anti_zoning"],
+  "meterInteractions": ["ex_specials", "super_meter"],
+  "uniqueMechanics": ["tiger_shot", "long_range_normals", "anti_air_mastery"],
+  "health": 1100,
+  "meter": 100,
+  "walkSpeed": 130,
+  "runSpeed": 200,
+  "jumpHeight": 280,
+  "weight": 120,
+  "dlcCharacter": false,
+  "releaseDate": "2024-12-01",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "sagat_idle_muay_thai_stance",
+    "walkForward": "sagat_walk_forward_measured",
+    "walkBackward": "sagat_walk_backward_defensive",
+    "jump": "sagat_jump_high_knee",
+    "crouch": "sagat_crouch_low_stance",
+    "block": "sagat_block_arms_crossed",
+    "crouchBlock": "sagat_crouch_block_defensive",
+    "hit": "sagat_hit_heavy_impact",
+    "knockdown": "sagat_knockdown_fall_back"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Standing Jab",
+        "damage": 40,
+        "startupFrames": 5,
+        "activeFrames": 3,
+        "recoveryFrames": 7,
+        "blockAdvantage": 0,
+        "hitAdvantage": 3,
+        "comboType": "opener",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 7,
+            "position": [70, 0],
+            "size": [45, 25],
+            "damage": 40,
+            "hitstun": 10,
+            "blockstun": 7
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Standing Straight",
+        "damage": 85,
+        "startupFrames": 7,
+        "activeFrames": 4,
+        "recoveryFrames": 9,
+        "blockAdvantage": -1,
+        "hitAdvantage": 2,
+        "comboType": "linker",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 7,
+            "endFrame": 10,
+            "position": [80, 0],
+            "size": [55, 30],
+            "damage": 85,
+            "hitstun": 14,
+            "blockstun": 9
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Tiger Uppercut",
+        "damage": 130,
+        "startupFrames": 11,
+        "activeFrames": 6,
+        "recoveryFrames": 16,
+        "blockAdvantage": -7,
+        "hitAdvantage": -1,
+        "comboType": "ender",
+        "properties": ["launcher", "anti_air"],
+        "hitboxes": [
+          {
+            "startFrame": 11,
+            "endFrame": 16,
+            "position": [60, -40],
+            "size": [50, 80],
+            "damage": 130,
+            "hitstun": 25,
+            "blockstun": 14,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Low Kick",
+        "damage": 50,
+        "startupFrames": 6,
+        "activeFrames": 3,
+        "recoveryFrames": 8,
+        "blockAdvantage": -1,
+        "hitAdvantage": 2,
+        "comboType": "opener",
+        "properties": ["low", "cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 6,
+            "endFrame": 8,
+            "position": [60, 40],
+            "size": [50, 25],
+            "damage": 50,
+            "hitstun": 11,
+            "blockstun": 8
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "High Knee",
+        "damage": 95,
+        "startupFrames": 9,
+        "activeFrames": 4,
+        "recoveryFrames": 11,
+        "blockAdvantage": -2,
+        "hitAdvantage": 1,
+        "comboType": "linker",
+        "properties": ["cancelable"],
+        "hitboxes": [
+          {
+            "startFrame": 9,
+            "endFrame": 12,
+            "position": [70, -10],
+            "size": [60, 45],
+            "damage": 95,
+            "hitstun": 16,
+            "blockstun": 10
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Tiger Knee",
+        "damage": 140,
+        "startupFrames": 13,
+        "activeFrames": 5,
+        "recoveryFrames": 18,
+        "blockAdvantage": -8,
+        "hitAdvantage": -3,
+        "comboType": "ender",
+        "properties": ["launcher", "overhead"],
+        "hitboxes": [
+          {
+            "startFrame": 13,
+            "endFrame": 17,
+            "position": [85, -20],
+            "size": [70, 50],
+            "damage": 140,
+            "hitstun": 28,
+            "blockstun": 16,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "tiger_shot": {
+        "name": "Tiger Shot",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch - High projectile",
+        "damage": 80,
+        "startupFrames": 14,
+        "activeFrames": 0,
+        "recoveryFrames": 28,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": ["projectile", "high"],
+        "projectile": {
+          "speed": 350,
+          "lifetime": 150,
+          "size": [60, 25],
+          "damage": 80,
+          "hitstun": 16,
+          "blockstun": 12
+        }
+      },
+      "low_tiger_shot": {
+        "name": "Low Tiger Shot",
+        "input": "236K",
+        "description": "Quarter-circle forward + Kick - Low projectile",
+        "damage": 75,
+        "startupFrames": 16,
+        "activeFrames": 0,
+        "recoveryFrames": 30,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": ["projectile", "low"],
+        "projectile": {
+          "speed": 320,
+          "lifetime": 140,
+          "size": [65, 20],
+          "damage": 75,
+          "hitstun": 15,
+          "blockstun": 11
+        }
+      },
+      "tiger_uppercut": {
+        "name": "Tiger Uppercut",
+        "input": "623P",
+        "description": "Dragon punch motion + Punch - Anti-air special",
+        "damage": 150,
+        "startupFrames": 4,
+        "activeFrames": 8,
+        "recoveryFrames": 32,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": ["invincible", "launcher", "anti_air"],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 11,
+            "position": [40, -50],
+            "size": [55, 90],
+            "damage": 150,
+            "hitstun": 30,
+            "blockstun": 18,
+            "knockdown": true
+          }
+        ]
+      },
+      "tiger_knee": {
+        "name": "Tiger Knee",
+        "input": "623K",
+        "description": "Dragon punch motion + Kick - Advancing attack",
+        "damage": 120,
+        "startupFrames": 10,
+        "activeFrames": 6,
+        "recoveryFrames": 20,
+        "meterCost": 0,
+        "comboType": "linker",
+        "properties": ["armor", "advancing"],
+        "hitboxes": [
+          {
+            "startFrame": 10,
+            "endFrame": 15,
+            "position": [75, -15],
+            "size": [65, 60],
+            "damage": 120,
+            "hitstun": 22,
+            "blockstun": 15,
+            "knockdown": false
+          }
+        ]
+      }
+    },
+    "supers": {
+      "tiger_cannon": {
+        "name": "Tiger Cannon",
+        "input": "236236P",
+        "description": "Quarter-circle forward x2 + Punch - Massive projectile",
+        "damage": 320,
+        "startupFrames": 10,
+        "activeFrames": 0,
+        "recoveryFrames": 50,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": ["super", "projectile", "armor_break"],
+        "projectile": {
+          "speed": 450,
+          "lifetime": 200,
+          "size": [100, 50],
+          "damage": 320,
+          "hitstun": 45,
+          "blockstun": 30,
+          "hits": 1
+        }
+      },
+      "tiger_destruction": {
+        "name": "Tiger Destruction",
+        "input": "236236K",
+        "description": "Quarter-circle forward x2 + Kick - Multiple tiger shots",
+        "damage": 280,
+        "startupFrames": 8,
+        "activeFrames": 0,
+        "recoveryFrames": 55,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": ["super", "projectile", "multi_hit"],
+        "projectile": {
+          "speed": 400,
+          "lifetime": 180,
+          "size": [50, 30],
+          "damage": 70,
+          "hitstun": 12,
+          "blockstun": 8,
+          "hits": 4
+        }
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Zoning Combo",
+      "inputs": ["lightPunch", "mediumPunch", "tiger_shot"],
+      "damage": 205,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Anti-Air Combo",
+      "inputs": ["tiger_uppercut"],
+      "damage": 150,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Tiger Destruction",
+      "inputs": ["mediumKick", "tiger_destruction"],
+      "damage": 375,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Max Damage",
+      "inputs": ["heavyKick", "tiger_cannon"],
+      "damage": 460,
+      "difficulty": "hard"
+    }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "pure",
+      "name": "Pure Zoner",
+      "description": "Maximum projectile effectiveness and keep-away potential.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "trap",
+      "name": "Trap Zoner",
+      "description": "Setup-focused zoning with enhanced setups and okizeme options.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.95,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.9,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05
+      },
+      "moveModifiers": {
+        "tiger_shot": {
+          "recoveryFrameBonus": 3,
+          "addedProperties": ["trap_setup", "delayed_explosion"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+trap_setups", "+okizeme_options"],
+      "additionalMoves": {
+        "special_tiger_trap": {
+          "name": "Tiger Trap",
+          "input": "214214P",
+          "description": "Places a delayed tiger shot that explodes after a few seconds",
+          "damage": 110,
+          "startupFrames": 20,
+          "activeFrames": 0,
+          "recoveryFrames": 30,
+          "meterCost": 25,
+          "comboType": "ender",
+          "properties": ["trap", "delayed", "setup"],
+          "projectile": {
+            "speed": 0,
+            "lifetime": 300,
+            "size": [60, 30],
+            "damage": 110,
+            "hitstun": 20,
+            "blockstun": 15,
+            "hits": 1
+          }
+        }
+      }
+    },
+    {
+      "subArchetypeId": "mobile",
+      "name": "Mobile Zoner",
+      "description": "Movement-based zoning with enhanced mobility and repositioning tools.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.2,
+        "runSpeedMultiplier": 1.25,
+        "jumpHeightMultiplier": 1.1,
+        "weightMultiplier": 0.9
+      },
+      "moveModifiers": {
+        "tiger_knee": {
+          "startupFrameBonus": -3,
+          "recoveryFrameBonus": -5,
+          "addedProperties": ["mobility", "repositioning"],
+          "removedProperties": []
+        }
+      },
+      "uniqueMechanicChanges": ["+enhanced_mobility", "+air_projectiles", "+repositioning"],
+      "additionalMoves": {
+        "special_tiger_dash": {
+          "name": "Tiger Dash",
+          "input": "66P",
+          "description": "Quick forward movement with attack option",
+          "damage": 60,
+          "startupFrames": 8,
+          "activeFrames": 12,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": ["mobility", "advancing", "cancelable"],
+          "hitboxes": [
+            {
+              "startFrame": 8,
+              "endFrame": 19,
+              "position": [80, 0],
+              "size": [50, 35],
+              "damage": 60,
+              "hitstun": 10,
+              "blockstun": 8,
+              "knockdown": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
