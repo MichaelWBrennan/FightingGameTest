@@ -29,3 +29,6 @@ ctx.c
 .splache
 temp
 rom
+node_modules
+types/**/*.js
+types/**/*.js.map
