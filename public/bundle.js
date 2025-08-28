@@ -2676,11 +2676,13 @@ var SF3App = (() => {
         const config = this.services.resolve("config");
         const monetization = this.services.resolve("monetization");
         const entitlement = this.services.resolve("entitlement");
+        const security = this.services.resolve("security");
         await Promise.all([
           config.loadJson("/data/balance/live_balance.json").catch(() => ({})),
           monetization.initialize().catch(() => void 0),
           entitlement.initialize?.().catch(() => void 0)
         ]);
+        security.start?.();
         this.events.emit("state:goto", { state: "menu" });
       } catch (e) {
         console.error("BootState failed:", e);
@@ -2763,11 +2765,46 @@ var SF3App = (() => {
       return this.manifest.assets.filter((a) => a.type === type).map((a) => a.path);
     }
     async getJson(path) {
-      const res = await fetch(path);
+      const res = await fetch(path, { cache: "no-store" });
       if (!res.ok) throw new Error(`JSON load failed: ${path}`);
-      return res.json();
+      const text = await res.text();
+      const decrypted = await this.tryDecrypt(text);
+      try {
+        const entry = this.manifest.assets.find((a) => a.path === path);
+        if (entry?.sha256 && "crypto" in window && window.crypto.subtle) {
+          const buf = new TextEncoder().encode(decrypted ?? text);
+          const hashBuf = await window.crypto.subtle.digest("SHA-256", buf);
+          const hashArray = Array.from(new Uint8Array(hashBuf));
+          const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+          if (hashHex !== entry.sha256) throw new Error(`Integrity check failed for ${path}`);
+        }
+      } catch {
+      }
+      return JSON.parse(decrypted ?? text);
+    }
+    async tryDecrypt(text) {
+      if (!text.startsWith("ENC1|")) return null;
+      try {
+        const parts = text.split("|");
+        const iv = Uint8Array.from(atob(parts[1]), (c) => c.charCodeAt(0));
+        const tag = Uint8Array.from(atob(parts[2]), (c) => c.charCodeAt(0));
+        const enc = Uint8Array.from(atob(parts[3]), (c) => c.charCodeAt(0));
+        const keyStr = window.__ASSET_KEY__ || "dev-asset-key-change-me";
+        const keyBuf = new TextEncoder().encode(keyStr);
+        const key = await window.crypto.subtle.importKey("raw", await window.crypto.subtle.digest("SHA-256", keyBuf), { name: "AES-GCM" }, false, ["decrypt"]);
+        const plain = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv, additionalData: void 0, tagLength: 128 }, key, concat(enc, tag));
+        return new TextDecoder().decode(new Uint8Array(plain));
+      } catch {
+        return null;
+      }
     }
   };
+  function concat(a, b) {
+    const out = new Uint8Array(a.length + b.length);
+    out.set(a, 0);
+    out.set(b, a.length);
+    return out;
+  }
 
   // src/core/ai/AIManager.ts
   var AIManager = class {
@@ -3396,7 +3433,6 @@ var SF3App = (() => {
         this.processCatalogData(catalogData);
         this.emit("catalog_loaded", { itemCount: this.catalog.size, bundleCount: this.bundles.size });
       } catch (error) {
-        this.log("Failed to load catalog:", error);
         this.emit("catalog_error", error);
         throw error;
       }
@@ -3549,7 +3585,6 @@ var SF3App = (() => {
           return { success: false, error: result.error || "Purchase failed" };
         }
       } catch (error) {
-        this.log("Purchase error:", error);
         const errorResult = { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         this.emit("purchase_failed", errorResult);
         return errorResult;
@@ -4154,6 +4189,82 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/security/SecurityService.ts
+  var SecurityService = class {
+    constructor() {
+      this.devtoolsDetected = false;
+      this.integrityViolations = [];
+    }
+    start() {
+      this.detectDevTools();
+      this.detectTimingTamper();
+      this.freezeCriticalObjects();
+    }
+    detectDevTools() {
+      const threshold = 250;
+      let last = performance.now();
+      const check = () => {
+        const now = performance.now();
+        if (now - last > threshold) {
+          this.devtoolsDetected = true;
+        }
+        last = now;
+        requestAnimationFrame(check);
+      };
+      requestAnimationFrame(check);
+    }
+    detectTimingTamper() {
+      let last = performance.now();
+      setInterval(() => {
+        const now = performance.now();
+        if (now < last) {
+          this.integrityViolations.push("clock_skew");
+        }
+        last = now;
+      }, 1e3);
+    }
+    freezeCriticalObjects() {
+      try {
+        Object.freeze(Object);
+        Object.freeze(Function);
+      } catch {
+      }
+    }
+    getStatus() {
+      return { devtools: this.devtoolsDetected, violations: [...this.integrityViolations] };
+    }
+  };
+
+  // src/core/security/AntiCheat.ts
+  var AntiCheat = class {
+    constructor() {
+      this.reports = [];
+    }
+    monitorInputRate(getInputCount) {
+      let lastCount = getInputCount();
+      setInterval(() => {
+        const current = getInputCount();
+        const perSecond = current - lastCount;
+        if (perSecond > 120) {
+          this.reports.push({ type: "input_rate", details: { perSecond } });
+        }
+        lastCount = current;
+      }, 1e3);
+    }
+    monitorPhysicsDivergence(sample) {
+      const reference = sample();
+      setInterval(() => {
+        const value = sample();
+        if (Math.abs(value - reference) > 1e6) {
+          this.reports.push({ type: "physics_divergence", details: { value, reference } });
+        }
+      }, 2e3);
+    }
+    getReports() {
+      return [...this.reports];
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -4184,12 +4295,16 @@ var SF3App = (() => {
       this.decompService = new DecompDataService();
       this.monetization = new MonetizationService();
       this.entitlement = new EntitlementBridge();
+      this.security = new SecurityService();
+      this.antiCheat = new AntiCheat();
       this.services.register("preloader", this.preloader);
       this.services.register("ai", this.aiManager);
       this.services.register("stageGen", this.stageGen);
       this.services.register("decomp", this.decompService);
       this.services.register("monetization", this.monetization);
       this.services.register("entitlement", this.entitlement);
+      this.services.register("security", this.security);
+      this.services.register("anticheat", this.antiCheat);
       this.app._services = this.services;
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {

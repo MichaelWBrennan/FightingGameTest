@@ -1,8 +1,9 @@
 #!/usr/bin/env ts-node
 import * as fs from 'fs';
 import * as path from 'path';
+import { createHash } from 'crypto';
 
-interface ManifestEntry { path: string; type: 'json' | 'image' | 'audio' | 'other'; }
+interface ManifestEntry { path: string; type: 'json' | 'image' | 'audio' | 'other'; sha256?: string; }
 
 function guessType(p: string): ManifestEntry['type'] {
 	const ext = p.split('.').pop()?.toLowerCase();
@@ -14,6 +15,15 @@ function guessType(p: string): ManifestEntry['type'] {
 	}
 }
 
+function hashFile(filePath: string): string | undefined {
+	try {
+		const buf = fs.readFileSync(filePath);
+		return createHash('sha256').update(buf).digest('hex');
+	} catch {
+		return undefined;
+	}
+}
+
 function walk(dir: string, baseOut: string, out: ManifestEntry[]): void {
 	for (const entry of fs.readdirSync(dir)) {
 		const p = path.join(dir, entry);
@@ -21,7 +31,7 @@ function walk(dir: string, baseOut: string, out: ManifestEntry[]): void {
 		if (stat.isDirectory()) walk(p, baseOut, out);
 		else {
 			const rel = path.relative(baseOut, p).replace(/\\/g, '/');
-			out.push({ path: `/data/${rel}`, type: guessType(rel) });
+			out.push({ path: `/data/${rel}`, type: guessType(rel), sha256: hashFile(p) });
 		}
 	}
 }
@@ -35,7 +45,7 @@ function main() {
 	// Ensure store catalog listed if present
 	const catalogPath = path.join(dataDir, 'store', 'catalog.json');
 	if (fs.existsSync(catalogPath) && !entries.find(e => e.path.endsWith('/store/catalog.json'))) {
-		entries.push({ path: '/data/store/catalog.json', type: 'json' });
+		entries.push({ path: '/data/store/catalog.json', type: 'json', sha256: hashFile(catalogPath) });
 	}
 	fs.mkdirSync(publicAssetsDir, { recursive: true });
 	fs.writeFileSync(outFile, JSON.stringify({ assets: entries }, null, 2));

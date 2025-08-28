@@ -23,6 +23,8 @@ import { ProceduralStageGenerator } from './procgen/ProceduralStageGenerator';
 import { DecompDataService } from './utils/DecompDataService';
 import { MonetizationService } from './monetization/MonetizationService';
 import { EntitlementBridge } from '../scripts/EntitlementBridge';
+import { SecurityService } from './security/SecurityService';
+import { AntiCheat } from './security/AntiCheat';
 
 export class GameEngine {
   private app: pc.Application;
@@ -44,6 +46,8 @@ export class GameEngine {
   private decompService: DecompDataService;
   private monetization: MonetizationService;
   private entitlement: EntitlementBridge;
+  private security: SecurityService;
+  private antiCheat: AntiCheat;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -76,12 +80,16 @@ export class GameEngine {
     this.decompService = new DecompDataService();
     this.monetization = new MonetizationService();
     this.entitlement = new EntitlementBridge();
+    this.security = new SecurityService();
+    this.antiCheat = new AntiCheat();
     this.services.register('preloader', this.preloader);
     this.services.register('ai', this.aiManager);
     this.services.register('stageGen', this.stageGen);
     this.services.register('decomp', this.decompService);
     this.services.register('monetization', this.monetization);
     this.services.register('entitlement', this.entitlement);
+    this.services.register('security', this.security);
+    this.services.register('anticheat', this.antiCheat);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
