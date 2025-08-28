@@ -1615,6 +1615,37 @@ var SF3App = (() => {
     }
   `;
 
+  // src/typescript/shaders/StageStormySkyShader.ts
+  var StageStormySkyShader = class {
+  };
+  StageStormySkyShader.vertexShader = `
+		attribute vec3 vertex_position;
+		attribute vec2 vertex_texCoord0;
+		uniform mat4 matrix_model;
+		uniform mat4 matrix_view;
+		uniform mat4 matrix_projection;
+		varying vec2 vUv0;
+		void main(){
+			vUv0 = vertex_texCoord0;
+			gl_Position = matrix_projection * matrix_view * matrix_model * vec4(vertex_position,1.0);
+		}
+	`;
+  StageStormySkyShader.fragmentShader = `
+		#ifdef GL_ES
+		precision mediump float;
+		#endif
+		varying vec2 vUv0;
+		uniform sampler2D texture_diffuseMap;
+		uniform vec2 uScrollSpeed;
+		uniform float uTime;
+		uniform vec4 uTint;
+		void main(){
+			vec2 uv = vUv0 + uScrollSpeed * uTime * 0.001;
+			vec4 col = texture2D(texture_diffuseMap, uv);
+			gl_FragColor = vec4(col.rgb * uTint.rgb, col.a * uTint.a);
+		}
+	`;
+
   // src/core/graphics/ShaderUtils.ts
   var ShaderUtils = class {
     static createMaterialFromShaders(app, vertexShader, fragmentShader) {
@@ -1722,6 +1753,13 @@ var SF3App = (() => {
       mat.setParameter("uScreenShakeOffset", new Float32Array([0, 0]));
       mat.setParameter("uTimeScale", 1);
       mat.setParameter("uTime", 0);
+      return mat;
+    }
+    static createStageStormySkyMaterial(app) {
+      const mat = this.createMaterialFromShaders(app, StageStormySkyShader.vertexShader, StageStormySkyShader.fragmentShader);
+      mat.setParameter("uScrollSpeed", new Float32Array([0.01, 2e-3]));
+      mat.setParameter("uTime", 0);
+      mat.setParameter("uTint", new Float32Array([0.6, 0.7, 0.8, 1]));
       return mat;
     }
   };

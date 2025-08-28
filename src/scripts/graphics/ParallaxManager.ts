@@ -7,6 +7,7 @@
 import * as pc from 'playcanvas';
 import { ISystem } from '../../../types/core';
 import { ParallaxLayer, ParallaxSettings } from '../../../types/graphics';
+import { ShaderUtils } from '../../core/graphics/ShaderUtils';
 
 interface LayerConfig {
     depth: number;
@@ -369,6 +370,10 @@ class ParallaxManager implements ISystem {
             if (element) {
                 layer.entity.addChild(element);
                 layer.elements.push(element);
+                // Apply shader mappings when element name hints match
+                if (elementData.name === 'stormy_sky' || layerName === 'skybox') {
+                    this.applyStageShader(element, 'stormy_sky');
+                }
                 
                 // Add to animated elements if needed
                 if (elementData.animated || elementData.sway) {
@@ -557,6 +562,19 @@ class ParallaxManager implements ISystem {
             type: 'plane',
             material: this.createSolidMaterial(data.color || '#666666')
         });
+    }
+
+    private applyStageShader(entity: pc.Entity, shaderName: string): void {
+        switch (shaderName) {
+            case 'stormy_sky': {
+                const mat = ShaderUtils.createStageStormySkyMaterial(this.app) as unknown as pc.StandardMaterial;
+                if (entity.render?.material && (entity.render.material as any).diffuseMap) {
+                    mat.setParameter('texture_diffuseMap', (entity.render.material as any).diffuseMap);
+                }
+                entity.render!.material = mat;
+                break;
+            }
+        }
     }
 
     private createSolidMaterial(color: string): pc.StandardMaterial {
