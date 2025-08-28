@@ -9,6 +9,7 @@
     "postbuild": "mkdir -p public/data && cp -r data/* public/data/ || true",
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
+    "preview": "ts-node tools/dev_server.ts",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "fix": "npx ts-node tools/fix_compilation_errors.ts",
