@@ -41,6 +41,30 @@ var SF3App = (() => {
     }
   });
 
+  // src/core/utils/ConfigService.ts
+  var ConfigService_exports = {};
+  __export(ConfigService_exports, {
+    ConfigService: () => ConfigService
+  });
+  var ConfigService;
+  var init_ConfigService = __esm({
+    "src/core/utils/ConfigService.ts"() {
+      ConfigService = class {
+        constructor() {
+          this.cache = /* @__PURE__ */ new Map();
+        }
+        async loadJson(path, bust = false) {
+          if (!bust && this.cache.has(path)) return this.cache.get(path);
+          const res = await fetch(path);
+          if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
+          const data = await res.json();
+          this.cache.set(path, data);
+          return data;
+        }
+      };
+    }
+  });
+
   // src/core/debug/DebugOverlay.ts
   var DebugOverlay_exports = {};
   __export(DebugOverlay_exports, {
@@ -95,7 +119,7 @@ var SF3App = (() => {
   });
 
   // src/core/GameEngine.ts
-  var pc6 = __toESM(require_playcanvas_shim());
+  var pc7 = __toESM(require_playcanvas_shim());
 
   // src/core/characters/CharacterManager.ts
   var pc = __toESM(require_playcanvas_shim());
@@ -2287,6 +2311,104 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/state/GameStateStack.ts
+  var GameStateStack = class {
+    constructor() {
+      this.stack = [];
+    }
+    get current() {
+      return this.stack[this.stack.length - 1];
+    }
+    async push(state) {
+      const prev = this.current;
+      this.stack.push(state);
+      await state.enter(prev);
+    }
+    async pop() {
+      const state = this.stack.pop();
+      if (state) await state.exit(this.current);
+    }
+    async replace(state) {
+      const prev = this.stack.pop();
+      if (prev) await prev.exit(state);
+      this.stack.push(state);
+      await state.enter(prev);
+    }
+    update(dt) {
+      this.current?.update(dt);
+    }
+  };
+
+  // src/core/state/BootState.ts
+  var BootState = class {
+    constructor(app, services, events) {
+      this.name = "boot";
+      this.app = app;
+      this.services = services;
+      this.events = events;
+    }
+    async enter() {
+      try {
+        const config = this.services.resolve("config");
+        await Promise.all([
+          config.loadJson("/data/balance/live_balance.json").catch(() => ({}))
+        ]);
+        this.events.emit("state:goto", { state: "menu" });
+      } catch (e) {
+        console.error("BootState failed:", e);
+        this.events.emit("state:goto", { state: "menu" });
+      }
+    }
+    exit() {
+    }
+    update(dt) {
+    }
+  };
+
+  // src/core/state/MenuState.ts
+  var pc6 = __toESM(require_playcanvas_shim());
+  var MenuState = class {
+    constructor(app, events) {
+      this.name = "menu";
+      this.menuEntity = null;
+      this.onKey = (e) => {
+        if (e.key === "Enter") {
+          this.events.emit("state:goto", { state: "match" });
+        }
+      };
+      this.app = app;
+      this.events = events;
+    }
+    enter() {
+      this.menuEntity = new pc6.Entity("MainMenu");
+      this.menuEntity.addComponent("element", { type: pc6.ELEMENTTYPE_TEXT, text: "Press Enter to Start", anchor: new pc6.Vec4(0.5, 0.5, 0.5, 0.5), pivot: new pc6.Vec2(0.5, 0.5) });
+      this.app.root.addChild(this.menuEntity);
+      window.addEventListener("keydown", this.onKey);
+    }
+    exit() {
+      window.removeEventListener("keydown", this.onKey);
+      this.menuEntity?.destroy();
+      this.menuEntity = null;
+    }
+    update(dt) {
+    }
+  };
+
+  // src/core/state/MatchState.ts
+  var MatchState = class {
+    constructor(app, events) {
+      this.name = "match";
+      this.app = app;
+      this.events = events;
+    }
+    enter() {
+    }
+    exit() {
+    }
+    update(dt) {
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2295,11 +2417,11 @@ var SF3App = (() => {
       // private assetManager: any;
       this.isInitialized = false;
       this.updateHandler = null;
-      this.app = new pc6.Application(canvas, {
-        mouse: new pc6.Mouse(canvas),
-        touch: new pc6.TouchDevice(canvas),
-        keyboard: new pc6.Keyboard(window),
-        gamepads: new pc6.GamePads()
+      this.app = new pc7.Application(canvas, {
+        mouse: new pc7.Mouse(canvas),
+        touch: new pc7.TouchDevice(canvas),
+        keyboard: new pc7.Keyboard(window),
+        gamepads: new pc7.GamePads()
       });
       this.setupApplication();
       this.initializeManagers();
@@ -2310,10 +2432,22 @@ var SF3App = (() => {
       this.services.register("app", this.app);
       this.services.register("events", this.eventBus);
       this.services.register("flags", this.featureFlags);
+      this.services.register("config", new (init_ConfigService(), __toCommonJS(ConfigService_exports)).ConfigService());
+      this.stateStack = new GameStateStack();
+      this.eventBus.on("state:goto", async ({ state }) => {
+        switch (state) {
+          case "menu":
+            await this.stateStack.replace(new MenuState(this.app, this.eventBus));
+            break;
+          case "match":
+            await this.stateStack.replace(new MatchState(this.app, this.eventBus));
+            break;
+        }
+      });
     }
     setupApplication() {
-      this.app.setCanvasFillMode(pc6.FILLMODE_FILL_WINDOW);
-      this.app.setCanvasResolution(pc6.RESOLUTION_AUTO);
+      this.app.setCanvasFillMode(pc7.FILLMODE_FILL_WINDOW);
+      this.app.setCanvasResolution(pc7.RESOLUTION_AUTO);
       window.addEventListener("resize", () => this.app.resizeCanvas());
       Logger.info("PlayCanvas application initialized");
     }
@@ -2346,8 +2480,10 @@ var SF3App = (() => {
         this.combatSystem.initialize(this.characterManager, this.inputManager);
         this.isInitialized = true;
         this.app.start();
+        await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
         this.updateHandler = (dt) => {
           this.pipeline.update(dt);
+          this.stateStack.update(dt);
           if (!this.debugOverlay && typeof window !== "undefined") {
             try {
               const { DebugOverlay: DebugOverlay2 } = (init_DebugOverlay(), __toCommonJS(DebugOverlay_exports));
@@ -2385,15 +2521,15 @@ var SF3App = (() => {
   };
 
   // src/index.ts
-  var pc7 = __toESM(require_playcanvas_shim());
+  var pc8 = __toESM(require_playcanvas_shim());
   async function defaultStart(canvas) {
     const targetCanvas = canvas || document.getElementById("application-canvas");
     const engine = new GameEngine(targetCanvas);
     Logger.info("Starting Street Fighter III: 3rd Strike - PlayCanvas Edition");
     await engine.initialize();
     const characterManager = engine.getCharacterManager();
-    const ryu = characterManager.createCharacter("ryu", new pc7.Vec3(-2, 0, 0));
-    const ken = characterManager.createCharacter("ken", new pc7.Vec3(2, 0, 0));
+    const ryu = characterManager.createCharacter("ryu", new pc8.Vec3(-2, 0, 0));
+    const ken = characterManager.createCharacter("ken", new pc8.Vec3(2, 0, 0));
     if (ryu && ken) {
       characterManager.setActiveCharacters("ryu", "ken");
     }

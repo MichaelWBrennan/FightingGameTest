@@ -13,6 +13,10 @@ import { EventBus } from './utils/EventBus';
 import { ServiceContainer } from './utils/ServiceContainer';
 import { FeatureFlags } from './utils/FeatureFlags';
 import { UpdatePipeline, UpdatableSystem } from './UpdatePipeline';
+import { GameStateStack } from './state/GameStateStack';
+import { BootState } from './state/BootState';
+import { MenuState } from './state/MenuState';
+import { MatchState } from './state/MatchState';
 
 export class GameEngine {
   private app: pc.Application;
@@ -27,6 +31,7 @@ export class GameEngine {
   private featureFlags: FeatureFlags;
   private pipeline: UpdatePipeline;
   private debugOverlay: any | null = null;
+  private stateStack: GameStateStack;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -52,6 +57,22 @@ export class GameEngine {
     this.services.register('app', this.app);
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
+    this.services.register('config', new (require('./utils/ConfigService').ConfigService)());
+
+    // State stack
+    this.stateStack = new GameStateStack();
+
+    // State transitions via EventBus
+    this.eventBus.on('state:goto', async ({ state }: any) => {
+      switch (state) {
+        case 'menu':
+          await this.stateStack.replace(new MenuState(this.app, this.eventBus));
+          break;
+        case 'match':
+          await this.stateStack.replace(new MatchState(this.app, this.eventBus));
+          break;
+      }
+    });
   }
 
   private setupApplication(): void {
@@ -104,9 +125,13 @@ export class GameEngine {
       this.isInitialized = true;
       this.app.start();
 
+      // Push boot state
+      await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
+
       // Wire main update loop
       this.updateHandler = (dt: number) => {
         this.pipeline.update(dt);
+        this.stateStack.update(dt);
         if (!this.debugOverlay && typeof window !== 'undefined') {
           try { const { DebugOverlay } = require('./debug/DebugOverlay'); this.debugOverlay = new DebugOverlay(); } catch {}
         }
