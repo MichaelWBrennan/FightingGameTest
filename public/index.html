@@ -14,6 +14,15 @@
     <script src="/bundle.js"></script>
     <script>
       (function(){
+        window.addEventListener('error', function(e){
+          try{
+            const msg = (e && e.error && e.error.stack) ? e.error.stack : (e && e.message) || 'Unknown error';
+            const el = document.createElement('div');
+            el.style.cssText = 'position:fixed;left:0;right:0;top:0;background:#200;color:#f88;padding:8px;white-space:pre-wrap;font:12px monospace;z-index:99999;';
+            el.textContent = 'Runtime Error: ' + msg;
+            document.body.appendChild(el);
+          } catch {}
+        });
         if (window.SF3App && typeof window.SF3App.defaultStart === 'function') {
           window.SF3App.defaultStart(null);
         } else {
