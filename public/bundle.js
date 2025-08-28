@@ -4215,6 +4215,36 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/security/AntiCheat.ts
+  var AntiCheat = class {
+    constructor() {
+      this.reports = [];
+    }
+    monitorInputRate(getInputCount) {
+      let lastCount = getInputCount();
+      setInterval(() => {
+        const current = getInputCount();
+        const perSecond = current - lastCount;
+        if (perSecond > 120) {
+          this.reports.push({ type: "input_rate", details: { perSecond } });
+        }
+        lastCount = current;
+      }, 1e3);
+    }
+    monitorPhysicsDivergence(sample) {
+      const reference = sample();
+      setInterval(() => {
+        const value = sample();
+        if (Math.abs(value - reference) > 1e6) {
+          this.reports.push({ type: "physics_divergence", details: { value, reference } });
+        }
+      }, 2e3);
+    }
+    getReports() {
+      return [...this.reports];
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -4246,6 +4276,7 @@ var SF3App = (() => {
       this.monetization = new MonetizationService();
       this.entitlement = new EntitlementBridge();
       this.security = new SecurityService();
+      this.antiCheat = new AntiCheat();
       this.services.register("preloader", this.preloader);
       this.services.register("ai", this.aiManager);
       this.services.register("stageGen", this.stageGen);
@@ -4253,6 +4284,7 @@ var SF3App = (() => {
       this.services.register("monetization", this.monetization);
       this.services.register("entitlement", this.entitlement);
       this.services.register("security", this.security);
+      this.services.register("anticheat", this.antiCheat);
       this.app._services = this.services;
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {
