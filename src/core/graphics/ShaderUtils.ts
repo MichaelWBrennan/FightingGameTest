@@ -3,6 +3,7 @@ import { CharacterHighlightShader } from '../../typescript/shaders/CharacterHigh
 import { RimLightingShader } from '../../typescript/shaders/RimLightingShader';
 import { SpriteNormalMappingShader } from '../../typescript/shaders/SpriteNormalMappingShader';
 import { DepthPostProcessShader } from '../../typescript/shaders/DepthPostProcessShader';
+import { StageStormySkyShader } from '../../typescript/shaders/StageStormySkyShader';
 
 export class ShaderUtils {
     public static createMaterialFromShaders(app: pc.Application, vertexShader: string, fragmentShader: string): pc.Material {
@@ -119,6 +120,14 @@ export class ShaderUtils {
         mat.setParameter('uScreenShakeOffset', new Float32Array([0, 0]));
         mat.setParameter('uTimeScale', 1.0);
         mat.setParameter('uTime', 0.0);
+        return mat;
+    }
+
+    public static createStageStormySkyMaterial(app: pc.Application): pc.Material {
+        const mat = this.createMaterialFromShaders(app, StageStormySkyShader.vertexShader, StageStormySkyShader.fragmentShader);
+        mat.setParameter('uScrollSpeed', new Float32Array([0.01, 0.002]));
+        mat.setParameter('uTime', 0.0);
+        mat.setParameter('uTint', new Float32Array([0.6, 0.7, 0.8, 1.0]));
         return mat;
     }
 }
