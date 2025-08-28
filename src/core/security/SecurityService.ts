@@ -9,15 +9,15 @@ export class SecurityService {
   }
 
   private detectDevTools(): void {
-    const threshold = 200;
+    // Silent heuristic: measure layout thrash variance without debugger trap
+    const threshold = 250;
+    let last = performance.now();
     const check = () => {
-      const start = performance.now();
-      debugger;
-      const elapsed = performance.now() - start;
-      if (elapsed > threshold) {
+      const now = performance.now();
+      if (now - last > threshold) {
         this.devtoolsDetected = true;
-        console.warn('SecurityService: DevTools detected');
       }
+      last = now;
       requestAnimationFrame(check);
     };
     requestAnimationFrame(check);

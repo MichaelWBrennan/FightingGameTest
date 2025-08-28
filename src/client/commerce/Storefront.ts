@@ -185,7 +185,6 @@ export class Storefront extends EventEmitter {
       this.emit('catalog_loaded', { itemCount: this.catalog.size, bundleCount: this.bundles.size });
 
     } catch (error) {
-      this.log('Failed to load catalog:', error);
       this.emit('catalog_error', error);
       throw error;
     }
@@ -380,7 +379,6 @@ export class Storefront extends EventEmitter {
       }
 
     } catch (error) {
-      this.log('Purchase error:', error);
       const errorResult = { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
       this.emit('purchase_failed', errorResult);
       return errorResult;
