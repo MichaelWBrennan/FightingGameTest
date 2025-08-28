@@ -92,6 +92,8 @@ export class GameEngine {
     this.combatSystem = new CombatSystem(this.app);
     this.stageManager = new StageManager(this.app);
     this.uiManager = new UIManager(this.app);
+    // expose for states
+    (this.app as any)._ui = this.uiManager;
     this.postProcessingManager = new PostProcessingManager(this.app);
 
     // Register update order

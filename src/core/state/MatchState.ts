@@ -1,5 +1,6 @@
 import * as pc from 'playcanvas';
 import { GameState } from './GameStateStack';
+import { UIManager } from '../ui/UIManager';
 
 export class MatchState implements GameState {
 	public name = 'match';
@@ -12,7 +13,8 @@ export class MatchState implements GameState {
 	}
 
 	enter(): void {
-		// Match setup would go here (characters, stage, timers)
+		const ui = (this.app as any)._ui as UIManager | undefined;
+		ui?.showHUD();
 	}
 
 	exit(): void {}

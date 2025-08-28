@@ -579,19 +579,77 @@ var SF3App = (() => {
   };
 
   // src/core/ui/UIManager.ts
+  var pc4 = __toESM(require_playcanvas_shim());
   var UIManager = class {
     constructor(app) {
+      this.root = null;
+      this.menu = null;
+      this.hud = null;
       this.app = app;
     }
     async initialize() {
+      this.root = new pc4.Entity("UIRoot");
+      this.root.addComponent("screen", {
+        referenceResolution: new pc4.Vec2(1920, 1080),
+        scaleMode: pc4.SCALEMODE_BLEND,
+        scaleBlend: 0.5,
+        screenSpace: true
+      });
+      this.app.root.addChild(this.root);
+    }
+    showMenu() {
+      this.hideHUD();
+      if (this.menu) {
+        this.menu.enabled = true;
+        return;
+      }
+      this.menu = new pc4.Entity("MenuUI");
+      this.menu.addComponent("element", { type: pc4.ELEMENTTYPE_GROUP, anchor: new pc4.Vec4(0, 0, 1, 1) });
+      const label = new pc4.Entity("MenuLabel");
+      label.addComponent("element", { type: pc4.ELEMENTTYPE_TEXT, text: "Press Enter to Start", fontSize: 48, pivot: new pc4.Vec2(0.5, 0.5), anchor: new pc4.Vec4(0.5, 0.5, 0.5, 0.5) });
+      this.menu.addChild(label);
+      this.root?.addChild(this.menu);
+    }
+    hideMenu() {
+      if (this.menu) this.menu.enabled = false;
+    }
+    showHUD() {
+      this.hideMenu();
+      if (this.hud) {
+        this.hud.enabled = true;
+        return;
+      }
+      this.hud = new pc4.Entity("MatchHUD");
+      this.hud.addComponent("element", { type: pc4.ELEMENTTYPE_GROUP, anchor: new pc4.Vec4(0, 0, 1, 1) });
+      const p1 = new pc4.Entity("P1");
+      p1.addComponent("element", { type: pc4.ELEMENTTYPE_TEXT, text: "P1: 1000", fontSize: 32, anchor: new pc4.Vec4(0, 1, 0, 1), pivot: new pc4.Vec2(0, 1) });
+      const p2 = new pc4.Entity("P2");
+      p2.addComponent("element", { type: pc4.ELEMENTTYPE_TEXT, text: "P2: 1000", fontSize: 32, anchor: new pc4.Vec4(1, 1, 1, 1), pivot: new pc4.Vec2(1, 1) });
+      this.hud.addChild(p1);
+      this.hud.addChild(p2);
+      this.root?.addChild(this.hud);
+    }
+    hideHUD() {
+      if (this.hud) this.hud.enabled = false;
+    }
+    updateHUD(p1Health, p2Health) {
+      if (!this.hud) return;
+      const p1 = this.hud.findByName("P1");
+      const p2 = this.hud.findByName("P2");
+      if (p1 && p1.element) {
+        p1.element.text = `P1: ${Math.max(0, Math.floor(p1Health))}`;
+      }
+      if (p2 && p2.element) {
+        p2.element.text = `P2: ${Math.max(0, Math.floor(p2Health))}`;
+      }
     }
   };
 
   // src/scripts/graphics/PostProcessingManager.ts
-  var pc5 = __toESM(require_playcanvas_shim());
+  var pc6 = __toESM(require_playcanvas_shim());
 
   // src/core/graphics/ShaderUtils.ts
-  var pc4 = __toESM(require_playcanvas_shim());
+  var pc5 = __toESM(require_playcanvas_shim());
 
   // src/typescript/shaders/CharacterHighlightShader.ts
   var CharacterHighlightShader = class {
@@ -1560,17 +1618,17 @@ var SF3App = (() => {
   // src/core/graphics/ShaderUtils.ts
   var ShaderUtils = class {
     static createMaterialFromShaders(app, vertexShader, fragmentShader) {
-      const shader = new pc4.Shader(app.graphicsDevice, {
+      const shader = new pc5.Shader(app.graphicsDevice, {
         attributes: {
-          vertex_position: pc4.SEMANTIC_POSITION,
-          vertex_texCoord0: pc4.SEMANTIC_TEXCOORD0,
-          vertex_normal: pc4.SEMANTIC_NORMAL,
-          vertex_tangent: pc4.SEMANTIC_TANGENT
+          vertex_position: pc5.SEMANTIC_POSITION,
+          vertex_texCoord0: pc5.SEMANTIC_TEXCOORD0,
+          vertex_normal: pc5.SEMANTIC_NORMAL,
+          vertex_tangent: pc5.SEMANTIC_TANGENT
         },
         vshader: vertexShader,
         fshader: fragmentShader
       });
-      const material = new pc4.Material();
+      const material = new pc5.Material();
       material.shader = shader;
       return material;
     }
@@ -1711,7 +1769,7 @@ var SF3App = (() => {
           enabled: true,
           hitPause: false,
           screenShake: { intensity: 0, duration: 0, decay: 0, frequency: 0, active: false },
-          flashEffect: { color: new pc5.Color(1, 1, 1), intensity: 0, duration: 0, active: false },
+          flashEffect: { color: new pc6.Color(1, 1, 1), intensity: 0, duration: 0, active: false },
           slowMotion: { factor: 1, duration: 0, active: false },
           dramaTicLighting: false
         }
@@ -1769,71 +1827,71 @@ var SF3App = (() => {
       const device = this.app.graphicsDevice;
       const width = Math.floor(device.width * this.resolution.scale);
       const height = Math.floor(device.height * this.resolution.scale);
-      this.renderTargets.sceneColor = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.sceneColor = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width,
           height,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: true,
         samples: this.quality === "ultra" ? 4 : 1
       });
-      this.renderTargets.sceneDepth = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.sceneDepth = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width,
           height,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
       const blurWidth = Math.floor(width * 0.5);
       const blurHeight = Math.floor(height * 0.5);
-      this.renderTargets.blurHorizontal = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.blurHorizontal = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width: blurWidth,
           height: blurHeight,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
-      this.renderTargets.blurVertical = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.blurVertical = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width: blurWidth,
           height: blurHeight,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
-      this.renderTargets.bloom = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.bloom = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width: blurWidth,
           height: blurHeight,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
@@ -1841,28 +1899,28 @@ var SF3App = (() => {
     }
     async createPostProcessingMaterials() {
       const depthMat = ShaderUtils.createDepthPostProcessMaterial(this.app);
-      depthMat.blendType = pc5.BLEND_NONE;
+      depthMat.blendType = pc6.BLEND_NONE;
       depthMat.depthTest = false;
       depthMat.depthWrite = false;
       this.materials.depthOfField = depthMat;
-      this.materials.bloom = new pc5.StandardMaterial();
+      this.materials.bloom = new pc6.StandardMaterial();
       this.materials.bloom.chunks.PS_LIGHTING = this.getBloomFragmentShader();
-      this.materials.bloom.blendType = pc5.BLEND_ADDITIVE;
+      this.materials.bloom.blendType = pc6.BLEND_ADDITIVE;
       this.materials.bloom.depthTest = false;
       this.materials.bloom.depthWrite = false;
-      this.materials.blur = new pc5.StandardMaterial();
+      this.materials.blur = new pc6.StandardMaterial();
       this.materials.blur.chunks.PS_LIGHTING = this.getBlurFragmentShader();
-      this.materials.blur.blendType = pc5.BLEND_NONE;
+      this.materials.blur.blendType = pc6.BLEND_NONE;
       this.materials.blur.depthTest = false;
       this.materials.blur.depthWrite = false;
-      this.materials.colorGrading = new pc5.StandardMaterial();
+      this.materials.colorGrading = new pc6.StandardMaterial();
       this.materials.colorGrading.chunks.PS_LIGHTING = this.getColorGradingFragmentShader();
-      this.materials.colorGrading.blendType = pc5.BLEND_NONE;
+      this.materials.colorGrading.blendType = pc6.BLEND_NONE;
       this.materials.colorGrading.depthTest = false;
       this.materials.colorGrading.depthWrite = false;
-      this.materials.combine = new pc5.StandardMaterial();
+      this.materials.combine = new pc6.StandardMaterial();
       this.materials.combine.chunks.PS_LIGHTING = this.getCombineFragmentShader();
-      this.materials.combine.blendType = pc5.BLEND_NONE;
+      this.materials.combine.blendType = pc6.BLEND_NONE;
       this.materials.combine.depthTest = false;
       this.materials.combine.depthWrite = false;
       console.log("Post-processing materials created");
@@ -2028,10 +2086,10 @@ var SF3App = (() => {
         }`;
     }
     setupPostProcessingCameras() {
-      this.cameras.postProcess = new pc5.Entity("PostProcessCamera");
+      this.cameras.postProcess = new pc6.Entity("PostProcessCamera");
       this.cameras.postProcess.addComponent("camera", {
-        clearColor: new pc5.Color(0, 0, 0, 0),
-        projection: pc5.PROJECTION_ORTHOGRAPHIC,
+        clearColor: new pc6.Color(0, 0, 0, 0),
+        projection: pc6.PROJECTION_ORTHOGRAPHIC,
         orthoHeight: 1,
         nearClip: 0,
         farClip: 1,
@@ -2041,7 +2099,7 @@ var SF3App = (() => {
       this.app.root.addChild(this.cameras.postProcess);
     }
     createEffectEntities() {
-      this.fullScreenQuad = new pc5.Entity("FullScreenQuad");
+      this.fullScreenQuad = new pc6.Entity("FullScreenQuad");
       this.fullScreenQuad.addComponent("render", {
         type: "plane"
       });
@@ -2075,7 +2133,7 @@ var SF3App = (() => {
     }
     // Fighting game specific effects
     triggerHitFlash(color = [1, 1, 1], intensity = 0.8, duration = 100) {
-      this.effects.fightingGameEffects.flashEffect.color = new pc5.Color(color[0], color[1], color[2]);
+      this.effects.fightingGameEffects.flashEffect.color = new pc6.Color(color[0], color[1], color[2]);
       this.effects.fightingGameEffects.flashEffect.intensity = intensity;
       this.effects.fightingGameEffects.flashEffect.duration = duration;
       this.effects.fightingGameEffects.flashEffect.active = true;
@@ -2366,7 +2424,6 @@ var SF3App = (() => {
   };
 
   // src/core/state/MenuState.ts
-  var pc6 = __toESM(require_playcanvas_shim());
   var MenuState = class {
     constructor(app, events) {
       this.name = "menu";
@@ -2380,15 +2437,14 @@ var SF3App = (() => {
       this.events = events;
     }
     enter() {
-      this.menuEntity = new pc6.Entity("MainMenu");
-      this.menuEntity.addComponent("element", { type: pc6.ELEMENTTYPE_TEXT, text: "Press Enter to Start", anchor: new pc6.Vec4(0.5, 0.5, 0.5, 0.5), pivot: new pc6.Vec2(0.5, 0.5) });
-      this.app.root.addChild(this.menuEntity);
+      const ui = this.app._ui;
+      ui?.showMenu();
       window.addEventListener("keydown", this.onKey);
     }
     exit() {
       window.removeEventListener("keydown", this.onKey);
-      this.menuEntity?.destroy();
-      this.menuEntity = null;
+      const ui = this.app._ui;
+      ui?.hideMenu();
     }
     update(dt) {
     }
@@ -2402,6 +2458,8 @@ var SF3App = (() => {
       this.events = events;
     }
     enter() {
+      const ui = this.app._ui;
+      ui?.showHUD();
     }
     exit() {
     }
@@ -2457,6 +2515,7 @@ var SF3App = (() => {
       this.combatSystem = new CombatSystem(this.app);
       this.stageManager = new StageManager(this.app);
       this.uiManager = new UIManager(this.app);
+      this.app._ui = this.uiManager;
       this.postProcessingManager = new PostProcessingManager_default(this.app);
       const inputUpdatable = { name: "input", priority: 10, update: (dt) => this.inputManager.update() };
       const characterUpdatable = { name: "characters", priority: 20, update: (dt) => this.characterManager.update(dt) };
