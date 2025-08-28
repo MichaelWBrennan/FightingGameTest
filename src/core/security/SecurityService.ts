@@ -35,10 +35,9 @@ export class SecurityService {
   }
 
   private freezeCriticalObjects(): void {
-    try {
-      Object.freeze(Object);
-      Object.freeze(Function);
-    } catch {}
+    // Disabled: Freezing global constructors can break third-party engines like PlayCanvas
+    // Intentionally left as a no-op to avoid destabilizing runtime
+    try { /* no-op */ } catch {}
   }
 
   public getStatus(): { devtools: boolean; violations: string[] } {
