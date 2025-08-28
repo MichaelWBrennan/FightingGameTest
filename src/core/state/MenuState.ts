@@ -17,6 +17,11 @@ export class MenuState implements GameState {
 		// Show UI-managed menu
 		const ui = (this.app as any)._ui as UIManager | undefined;
 		ui?.showMenu();
+		try {
+			const services = (this.app as any)._services as any;
+			const monetization = services?.resolve?.('monetization');
+			monetization?.storefront?.startStoreImpression?.('featured');
+		} catch {}
 		window.addEventListener('keydown', this.onKey);
 	}
 
@@ -24,6 +29,11 @@ export class MenuState implements GameState {
 		window.removeEventListener('keydown', this.onKey);
 		const ui = (this.app as any)._ui as UIManager | undefined;
 		ui?.hideMenu();
+		try {
+			const services = (this.app as any)._services as any;
+			const monetization = services?.resolve?.('monetization');
+			monetization?.storefront?.endStoreImpression?.();
+		} catch {}
 	}
 
 	update(dt: number): void {}

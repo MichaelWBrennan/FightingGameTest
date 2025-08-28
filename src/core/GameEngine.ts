@@ -21,6 +21,8 @@ import { PreloadManager } from './utils/PreloadManager';
 import { AIManager } from './ai/AIManager';
 import { ProceduralStageGenerator } from './procgen/ProceduralStageGenerator';
 import { DecompDataService } from './utils/DecompDataService';
+import { MonetizationService } from './monetization/MonetizationService';
+import { EntitlementBridge } from '../scripts/EntitlementBridge';
 
 export class GameEngine {
   private app: pc.Application;
@@ -40,6 +42,8 @@ export class GameEngine {
   private aiManager: AIManager;
   private stageGen: ProceduralStageGenerator;
   private decompService: DecompDataService;
+  private monetization: MonetizationService;
+  private entitlement: EntitlementBridge;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -70,10 +74,14 @@ export class GameEngine {
     this.aiManager = new AIManager(this.app);
     this.stageGen = new ProceduralStageGenerator();
     this.decompService = new DecompDataService();
+    this.monetization = new MonetizationService();
+    this.entitlement = new EntitlementBridge();
     this.services.register('preloader', this.preloader);
     this.services.register('ai', this.aiManager);
     this.services.register('stageGen', this.stageGen);
     this.services.register('decomp', this.decompService);
+    this.services.register('monetization', this.monetization);
+    this.services.register('entitlement', this.entitlement);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
