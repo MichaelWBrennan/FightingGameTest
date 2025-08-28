@@ -1,0 +1,6 @@
+public/bundle.js linguist-generated
+public/bundle.js.map linguist-generated
+public/assets/** linguist-generated
+node_modules/** linguist-vendored
+public/data/** linguist-generated
+sfiii-decomp/** linguist-vendored
