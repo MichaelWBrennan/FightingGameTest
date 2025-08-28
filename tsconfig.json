@@ -25,6 +25,9 @@
       "@core/*": ["src/core/*"],
       "@types/*": ["types/*"],
       "@data/*": ["data/*"],
+      "@engine/*": ["src/core/*"],
+      "@graphics/*": ["src/scripts/graphics/*"],
+      "@shaders/*": ["src/typescript/shaders/*"],
       "playcanvas": ["types/playcanvas-shim.ts"]
     },
     "types": ["node"]

@@ -8,6 +8,7 @@ import { InputManager } from './input/InputManager';
 import { UIManager } from './ui/UIManager';
 // (Optional) Asset loader integration available under scripts if needed
 import { Logger } from './utils/Logger';
+import PostProcessingManager from '../scripts/graphics/PostProcessingManager';
 
 export class GameEngine {
   private app: pc.Application;
@@ -16,6 +17,7 @@ export class GameEngine {
   private stageManager: StageManager;
   private inputManager: InputManager;
   private uiManager: UIManager;
+  private postProcessingManager: PostProcessingManager | null = null;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -49,6 +51,7 @@ export class GameEngine {
     this.combatSystem = new CombatSystem(this.app);
     this.stageManager = new StageManager(this.app);
     this.uiManager = new UIManager(this.app);
+    this.postProcessingManager = new PostProcessingManager(this.app);
   }
 
   public async initialize(): Promise<void> {
@@ -62,6 +65,9 @@ export class GameEngine {
       // StageManager/UIManager initialize through their own methods if needed
       await this.stageManager.initialize();
       await this.uiManager.initialize();
+      if (this.postProcessingManager) {
+        await this.postProcessingManager.initialize();
+      }
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
       
@@ -73,6 +79,7 @@ export class GameEngine {
         this.inputManager.update();
         this.characterManager.update(dt);
         this.combatSystem.update(dt);
+        this.postProcessingManager?.update(dt);
       };
       this.app.on('update', this.updateHandler);
       
