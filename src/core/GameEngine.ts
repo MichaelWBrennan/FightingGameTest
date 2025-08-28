@@ -26,6 +26,7 @@ export class GameEngine {
   private services: ServiceContainer;
   private featureFlags: FeatureFlags;
   private pipeline: UpdatePipeline;
+  private debugOverlay: any | null = null;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -73,10 +74,10 @@ export class GameEngine {
     this.postProcessingManager = new PostProcessingManager(this.app);
 
     // Register update order
-    const inputUpdatable: UpdatableSystem = { priority: 10, update: dt => this.inputManager.update() };
-    const characterUpdatable: UpdatableSystem = { priority: 20, update: dt => this.characterManager.update(dt) };
-    const combatUpdatable: UpdatableSystem = { priority: 30, update: dt => this.combatSystem.update(dt) };
-    const postFxUpdatable: UpdatableSystem = { priority: 90, update: dt => this.postProcessingManager?.update(dt) };
+    const inputUpdatable: UpdatableSystem = { name: 'input', priority: 10, update: dt => this.inputManager.update() };
+    const characterUpdatable: UpdatableSystem = { name: 'characters', priority: 20, update: dt => this.characterManager.update(dt) };
+    const combatUpdatable: UpdatableSystem = { name: 'combat', priority: 30, update: dt => this.combatSystem.update(dt) };
+    const postFxUpdatable: UpdatableSystem = { name: 'postfx', priority: 90, update: dt => this.postProcessingManager?.update(dt) };
     this.pipeline.add(inputUpdatable);
     this.pipeline.add(characterUpdatable);
     this.pipeline.add(combatUpdatable);
@@ -106,6 +107,11 @@ export class GameEngine {
       // Wire main update loop
       this.updateHandler = (dt: number) => {
         this.pipeline.update(dt);
+        if (!this.debugOverlay && typeof window !== 'undefined') {
+          try { const { DebugOverlay } = require('./debug/DebugOverlay'); this.debugOverlay = new DebugOverlay(); } catch {}
+        }
+        this.debugOverlay?.update();
+        this.debugOverlay?.setTimings(this.pipeline.getTimings());
       };
       this.app.on('update', this.updateHandler);
       

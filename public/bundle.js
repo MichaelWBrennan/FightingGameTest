@@ -5,6 +5,9 @@ var SF3App = (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __esm = (fn, res) => function __init() {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  };
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
@@ -35,6 +38,53 @@ var SF3App = (() => {
     "types/playcanvas-shim.ts"(exports, module) {
       var pcGlobal = globalThis.pc;
       module.exports = pcGlobal;
+    }
+  });
+
+  // src/core/debug/DebugOverlay.ts
+  var DebugOverlay_exports = {};
+  __export(DebugOverlay_exports, {
+    DebugOverlay: () => DebugOverlay
+  });
+  var DebugOverlay;
+  var init_DebugOverlay = __esm({
+    "src/core/debug/DebugOverlay.ts"() {
+      DebugOverlay = class {
+        constructor() {
+          this.lastTime = performance.now();
+          this.frames = 0;
+          this.fps = 0;
+          this.container = document.createElement("div");
+          this.container.style.position = "fixed";
+          this.container.style.top = "8px";
+          this.container.style.left = "8px";
+          this.container.style.background = "rgba(0,0,0,0.5)";
+          this.container.style.color = "#0f0";
+          this.container.style.font = "12px monospace";
+          this.container.style.padding = "6px 8px";
+          this.container.style.borderRadius = "4px";
+          this.container.style.zIndex = "9999";
+          this.fpsLabel = document.createElement("div");
+          this.timingsLabel = document.createElement("div");
+          this.container.appendChild(this.fpsLabel);
+          this.container.appendChild(this.timingsLabel);
+          document.body.appendChild(this.container);
+        }
+        update() {
+          this.frames++;
+          const now = performance.now();
+          if (now - this.lastTime >= 1e3) {
+            this.fps = Math.round(this.frames * 1e3 / (now - this.lastTime));
+            this.frames = 0;
+            this.lastTime = now;
+            this.fpsLabel.textContent = `FPS: ${this.fps}`;
+          }
+        }
+        setTimings(samples) {
+          const text = samples.map((s) => `${s.name}:${s.ms.toFixed(2)}ms`).join("  ");
+          this.timingsLabel.textContent = text;
+        }
+      };
     }
   });
 
@@ -2211,6 +2261,7 @@ var SF3App = (() => {
   var UpdatePipeline = class {
     constructor() {
       this.systems = [];
+      this.samples = [];
     }
     add(system) {
       this.systems.push(system);
@@ -2220,7 +2271,16 @@ var SF3App = (() => {
       this.systems = this.systems.filter((s) => s !== system);
     }
     update(deltaTime) {
-      for (const sys of this.systems) sys.update(deltaTime);
+      this.samples.length = 0;
+      for (const sys of this.systems) {
+        const start = performance.now();
+        sys.update(deltaTime);
+        const end = performance.now();
+        this.samples.push({ name: sys.name || "system", ms: end - start });
+      }
+    }
+    getTimings() {
+      return this.samples.slice();
     }
     clear() {
       this.systems.length = 0;
@@ -2231,6 +2291,7 @@ var SF3App = (() => {
   var GameEngine = class {
     constructor(canvas) {
       this.postProcessingManager = null;
+      this.debugOverlay = null;
       // private assetManager: any;
       this.isInitialized = false;
       this.updateHandler = null;
@@ -2263,10 +2324,10 @@ var SF3App = (() => {
       this.stageManager = new StageManager(this.app);
       this.uiManager = new UIManager(this.app);
       this.postProcessingManager = new PostProcessingManager_default(this.app);
-      const inputUpdatable = { priority: 10, update: (dt) => this.inputManager.update() };
-      const characterUpdatable = { priority: 20, update: (dt) => this.characterManager.update(dt) };
-      const combatUpdatable = { priority: 30, update: (dt) => this.combatSystem.update(dt) };
-      const postFxUpdatable = { priority: 90, update: (dt) => this.postProcessingManager?.update(dt) };
+      const inputUpdatable = { name: "input", priority: 10, update: (dt) => this.inputManager.update() };
+      const characterUpdatable = { name: "characters", priority: 20, update: (dt) => this.characterManager.update(dt) };
+      const combatUpdatable = { name: "combat", priority: 30, update: (dt) => this.combatSystem.update(dt) };
+      const postFxUpdatable = { name: "postfx", priority: 90, update: (dt) => this.postProcessingManager?.update(dt) };
       this.pipeline.add(inputUpdatable);
       this.pipeline.add(characterUpdatable);
       this.pipeline.add(combatUpdatable);
@@ -2287,6 +2348,15 @@ var SF3App = (() => {
         this.app.start();
         this.updateHandler = (dt) => {
           this.pipeline.update(dt);
+          if (!this.debugOverlay && typeof window !== "undefined") {
+            try {
+              const { DebugOverlay: DebugOverlay2 } = (init_DebugOverlay(), __toCommonJS(DebugOverlay_exports));
+              this.debugOverlay = new DebugOverlay2();
+            } catch {
+            }
+          }
+          this.debugOverlay?.update();
+          this.debugOverlay?.setTimings(this.pipeline.getTimings());
         };
         this.app.on("update", this.updateHandler);
         Logger.info("Game engine fully initialized");
