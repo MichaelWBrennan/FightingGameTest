@@ -1,1 +1,0 @@
-{"version":3,"file":"FrameDataDisplay.d.ts","sourceRoot":"","sources":["../../../../src/scripts/ui/FrameDataDisplay.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,MAAM,YAAY,CAAC;AAEjC,qBAAa,gBAAiB,SAAQ,EAAE,CAAC,UAAU;IACjD,OAAO,CAAC,WAAW,CAAa;IAEzB,UAAU,IAAI,IAAI;IAgBzB,OAAO,CAAC,WAAW;IAaZ,OAAO,IAAI,IAAI;CAGvB"}

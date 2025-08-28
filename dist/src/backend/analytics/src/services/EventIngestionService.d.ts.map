@@ -1,1 +1,0 @@
-{"version":3,"file":"EventIngestionService.d.ts","sourceRoot":"","sources":["../../../../../../src/backend/analytics/src/services/EventIngestionService.ts"],"names":[],"mappings":"AAAA,qBAAa,qBAAqB;gBACpB,UAAU,EAAE,GAAG,EAAE,cAAc,EAAE,GAAG,EAAE,cAAc,EAAE,GAAG;IAIxD,WAAW,IAAI,OAAO,CAAC,OAAO,CAAC;CAG7C"}
