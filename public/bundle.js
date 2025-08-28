@@ -119,7 +119,7 @@ var SF3App = (() => {
   });
 
   // src/core/GameEngine.ts
-  var pc8 = __toESM(require_playcanvas_shim());
+  var pc7 = __toESM(require_playcanvas_shim());
 
   // src/core/characters/CharacterManager.ts
   var pc = __toESM(require_playcanvas_shim());
@@ -2513,78 +2513,6 @@ var SF3App = (() => {
     }
   };
 
-  // src/core/graphics/ProceduralSpriteGenerator.ts
-  var pc7 = __toESM(require_playcanvas_shim());
-  var ProceduralSpriteGenerator = class {
-    constructor(app) {
-      this.app = app;
-    }
-    createTexture(opts) {
-      const w = Math.max(1, Math.floor(opts.width));
-      const h = Math.max(1, Math.floor(opts.height));
-      const device = this.app.graphicsDevice;
-      const tex = new pc7.Texture(device, { width: w, height: h, format: pc7.PIXELFORMAT_R8_G8_B8_A8 });
-      const pixels = new Uint8Array(w * h * 4);
-      const a = opts.colorA || [255, 255, 255, 255];
-      const b = opts.colorB || [0, 0, 0, 255];
-      const tile = Math.max(1, opts.tile || 8);
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          const i = (y * w + x) * 4;
-          switch (opts.type) {
-            case "solid": {
-              pixels[i] = a[0];
-              pixels[i + 1] = a[1];
-              pixels[i + 2] = a[2];
-              pixels[i + 3] = a[3];
-              break;
-            }
-            case "gradient": {
-              const t = y / (h - 1);
-              pixels[i] = Math.round(a[0] * (1 - t) + b[0] * t);
-              pixels[i + 1] = Math.round(a[1] * (1 - t) + b[1] * t);
-              pixels[i + 2] = Math.round(a[2] * (1 - t) + b[2] * t);
-              pixels[i + 3] = Math.round(a[3] * (1 - t) + b[3] * t);
-              break;
-            }
-            case "checker": {
-              const cx = Math.floor(x / tile);
-              const cy = Math.floor(y / tile);
-              const useA = (cx + cy) % 2 === 0;
-              const c = useA ? a : b;
-              pixels[i] = c[0];
-              pixels[i + 1] = c[1];
-              pixels[i + 2] = c[2];
-              pixels[i + 3] = c[3];
-              break;
-            }
-          }
-        }
-      }
-      tex.lock();
-      new Uint8Array(tex.lockedMipmaps[0][0].data.buffer).set(pixels);
-      tex.unlock();
-      return tex;
-    }
-  };
-
-  // src/core/graphics/SpriteRegistry.ts
-  var SpriteRegistry = class {
-    constructor(app) {
-      this.textures = /* @__PURE__ */ new Map();
-      this.app = app;
-    }
-    register(id, tex) {
-      this.textures.set(id, tex);
-    }
-    get(id) {
-      return this.textures.get(id);
-    }
-    all() {
-      return Array.from(this.textures.keys());
-    }
-  };
-
   // src/core/utils/PreloadManager.ts
   var PreloadManager = class {
     constructor() {
@@ -2605,6 +2533,111 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/ai/AIManager.ts
+  var AIManager = class {
+    constructor(app) {
+      this.policies = /* @__PURE__ */ new Map();
+      this.active = null;
+      this.dda = { difficulty: 1 };
+      this.app = app;
+    }
+    registerPolicy(name, policy) {
+      this.policies.set(name, policy);
+    }
+    activate(name) {
+      if (this.policies.has(name)) this.active = name;
+    }
+    setDifficulty(x) {
+      this.dda.difficulty = Math.max(0.1, Math.min(3, x));
+    }
+    update(dt) {
+      if (!this.active) return;
+      const policy = this.policies.get(this.active);
+      policy?.({ dt, app: this.app, state: { difficulty: this.dda.difficulty } });
+    }
+  };
+
+  // src/core/procgen/ProceduralStageGenerator.ts
+  var ProceduralStageGenerator = class {
+    constructor(seed = Date.now()) {
+      this.rng = mulberry32(seed >>> 0);
+    }
+    generate(opts = {}) {
+      const theme = opts.theme || "training";
+      switch (theme) {
+        case "urban":
+          return this.urban();
+        case "gothic":
+          return this.gothic();
+        default:
+          return this.training();
+      }
+    }
+    training() {
+      return {
+        name: "Training (Procedural)",
+        layers: {
+          skybox: { type: "gradient", elements: [] },
+          farBackground: { type: "mountains", elements: this.mountains(3) },
+          midBackground: { type: "buildings", elements: this.buildings(4) },
+          nearBackground: { type: "trees", elements: this.trees(3) },
+          playground: { type: "stage_floor", elements: [{ type: "platform", x: 0, y: -5, width: 40, height: 2 }] }
+        }
+      };
+    }
+    gothic() {
+      return {
+        name: "Gothic (Procedural)",
+        layers: {
+          skybox: { type: "stormy_sky", elements: [{ type: "plane", name: "stormy_sky" }] },
+          farBackground: { type: "mountains", elements: this.mountains(2) },
+          midBackground: { type: "castle", elements: this.buildings(3) },
+          nearBackground: { type: "gargoyles", elements: this.trees(2) },
+          playground: { type: "cobblestone", elements: [{ type: "platform", x: 0, y: -5, width: 40, height: 2 }] }
+        }
+      };
+    }
+    urban() {
+      return {
+        name: "Urban (Procedural)",
+        layers: {
+          skybox: { type: "cityscape", elements: [] },
+          farBackground: { type: "cityscape", elements: this.buildings(5) },
+          midBackground: { type: "street", elements: this.buildings(3) },
+          nearBackground: { type: "crowd", elements: this.buildings(2) },
+          playground: { type: "street_stage", elements: [{ type: "asphalt", x: 0, y: -5, width: 50, height: 3 }] }
+        }
+      };
+    }
+    mountains(n) {
+      const arr = [];
+      for (let i = 0; i < n; i++) arr.push({ type: "mountain", x: (i - n / 2) * 100, y: -20 + this.rand(-5, 5), width: this.rand(30, 50), height: this.rand(20, 30), color: "#4A5568" });
+      return arr;
+    }
+    buildings(n) {
+      const arr = [];
+      for (let i = 0; i < n; i++) arr.push({ type: "building", x: (i - n / 2) * 80, y: -10, width: this.rand(20, 60), height: this.rand(40, 120), color: "#6B7280" });
+      return arr;
+    }
+    trees(n) {
+      const arr = [];
+      for (let i = 0; i < n; i++) arr.push({ type: "tree", x: (i - n / 2) * 60, y: -6, scale: this.rand(1, 2), sway: true });
+      return arr;
+    }
+    rand(min, max) {
+      return min + (max - min) * this.rng();
+    }
+  };
+  function mulberry32(a) {
+    return function() {
+      a |= 0;
+      a = a + 1831565813 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2613,11 +2646,11 @@ var SF3App = (() => {
       // private assetManager: any;
       this.isInitialized = false;
       this.updateHandler = null;
-      this.app = new pc8.Application(canvas, {
-        mouse: new pc8.Mouse(canvas),
-        touch: new pc8.TouchDevice(canvas),
-        keyboard: new pc8.Keyboard(window),
-        gamepads: new pc8.GamePads()
+      this.app = new pc7.Application(canvas, {
+        mouse: new pc7.Mouse(canvas),
+        touch: new pc7.TouchDevice(canvas),
+        keyboard: new pc7.Keyboard(window),
+        gamepads: new pc7.GamePads()
       });
       this.setupApplication();
       this.initializeManagers();
@@ -2629,12 +2662,13 @@ var SF3App = (() => {
       this.services.register("events", this.eventBus);
       this.services.register("flags", this.featureFlags);
       this.services.register("config", new (init_ConfigService(), __toCommonJS(ConfigService_exports)).ConfigService());
-      this.spriteGenerator = new ProceduralSpriteGenerator(this.app);
-      this.spriteRegistry = new SpriteRegistry(this.app);
       this.preloader = new PreloadManager();
-      this.services.register("spriteGen", this.spriteGenerator);
-      this.services.register("sprites", this.spriteRegistry);
+      this.aiManager = new AIManager(this.app);
+      this.stageGen = new ProceduralStageGenerator();
       this.services.register("preloader", this.preloader);
+      this.services.register("ai", this.aiManager);
+      this.services.register("stageGen", this.stageGen);
+      this.app._services = this.services;
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {
         switch (state) {
@@ -2648,8 +2682,8 @@ var SF3App = (() => {
       });
     }
     setupApplication() {
-      this.app.setCanvasFillMode(pc8.FILLMODE_FILL_WINDOW);
-      this.app.setCanvasResolution(pc8.RESOLUTION_AUTO);
+      this.app.setCanvasFillMode(pc7.FILLMODE_FILL_WINDOW);
+      this.app.setCanvasResolution(pc7.RESOLUTION_AUTO);
       window.addEventListener("resize", () => this.app.resizeCanvas());
       Logger.info("PlayCanvas application initialized");
     }
@@ -2665,8 +2699,10 @@ var SF3App = (() => {
       const characterUpdatable = { name: "characters", priority: 20, update: (dt) => this.characterManager.update(dt) };
       const combatUpdatable = { name: "combat", priority: 30, update: (dt) => this.combatSystem.update(dt) };
       const postFxUpdatable = { name: "postfx", priority: 90, update: (dt) => this.postProcessingManager?.update(dt) };
+      const aiUpdatable = { name: "ai", priority: 25, update: (dt) => this.aiManager.update(dt) };
       this.pipeline.add(inputUpdatable);
       this.pipeline.add(characterUpdatable);
+      this.pipeline.add(aiUpdatable);
       this.pipeline.add(combatUpdatable);
       this.pipeline.add(postFxUpdatable);
     }
@@ -2681,8 +2717,6 @@ var SF3App = (() => {
           await this.postProcessingManager.initialize();
         }
         await this.preloader.loadManifest("/assets/manifest.json");
-        const checker = this.spriteGenerator.createTexture({ width: 256, height: 256, type: "checker", tile: 16, colorA: [200, 200, 200, 255], colorB: [80, 80, 80, 255] });
-        this.spriteRegistry.register("checkerboard", checker);
         this.combatSystem.initialize(this.characterManager, this.inputManager);
         this.isInitialized = true;
         this.app.start();
@@ -2727,15 +2761,15 @@ var SF3App = (() => {
   };
 
   // src/index.ts
-  var pc9 = __toESM(require_playcanvas_shim());
+  var pc8 = __toESM(require_playcanvas_shim());
   async function defaultStart(canvas) {
     const targetCanvas = canvas || createCanvas();
     const engine = new GameEngine(targetCanvas);
     Logger.info("Starting Street Fighter III: 3rd Strike - PlayCanvas Edition");
     await engine.initialize();
     const characterManager = engine.getCharacterManager();
-    const ryu = characterManager.createCharacter("ryu", new pc9.Vec3(-2, 0, 0));
-    const ken = characterManager.createCharacter("ken", new pc9.Vec3(2, 0, 0));
+    const ryu = characterManager.createCharacter("ryu", new pc8.Vec3(-2, 0, 0));
+    const ken = characterManager.createCharacter("ken", new pc8.Vec3(2, 0, 0));
     if (ryu && ken) {
       characterManager.setActiveCharacters("ryu", "ken");
     }
