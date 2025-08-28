@@ -33,7 +33,7 @@ export class StageManager {
 
     // Test cube
     const box = new pc.Entity('TestBox');
-    box.addComponent('model', { type: 'box' });
+    box.addComponent('render', { type: 'box' });
     box.setPosition(0, 0.5, 0);
     this.app.root.addChild(box);
   }
