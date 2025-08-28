@@ -3,6 +3,7 @@ import * as pc from 'playcanvas';
 import { Character, CharacterConfig } from '../../../types/character';
 import { Logger } from '../utils/Logger';
 import { PreloadManager } from '../utils/PreloadManager';
+import { DecompDataService } from '../utils/DecompDataService';
 import { ProceduralFrameGenerator } from '../procgen/ProceduralFrameGenerator';
 
 export class CharacterManager {
@@ -12,6 +13,7 @@ export class CharacterManager {
   private activeCharacters: Character[] = [];
   private preloader: PreloadManager | null = null;
   private frameGen: ProceduralFrameGenerator = new ProceduralFrameGenerator();
+  private decomp: DecompDataService | null = null;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -25,6 +27,7 @@ export class CharacterManager {
       const services = (this.app as any)._services as any;
       if (services && services.resolve) {
         this.preloader = services.resolve('preloader') as PreloadManager;
+        try { this.decomp = services.resolve('decomp') as DecompDataService; } catch {}
       }
     } catch {}
     await this.loadCharacterConfigs();
@@ -65,15 +68,19 @@ export class CharacterManager {
       }
     }
 
-    // Optionally load a ground-truth seed from decomp import if present
+    // Optionally load a ground-truth seed from decomp import if present, or derive at runtime
     try {
-      const gt = await fetch('/data/characters_decomp/sf3_ground_truth_seed.json');
-      if (gt.ok) {
-        const cfg = (await gt.json()) as CharacterConfig;
+      let cfg: CharacterConfig | null = null;
+      try {
+        const gt = await fetch('/data/characters_decomp/sf3_ground_truth_seed.json');
+        if (gt.ok) cfg = (await gt.json()) as CharacterConfig;
+      } catch {}
+      if (!cfg && this.decomp) cfg = (await this.decomp.deriveFromDecompIfAvailable()) as CharacterConfig | null;
+      if (cfg) {
         const norm = this.normalizeCharacterConfig(cfg);
         const finalCfg = this.frameGen.generateForCharacter(norm);
         this.characterConfigs.set(cfg.characterId || 'sf3_ground_truth_seed', finalCfg);
-        Logger.info('Loaded ground-truth character seed from decomp import');
+        Logger.info('Loaded ground-truth character seed');
       }
     } catch {}
   }

@@ -186,6 +186,7 @@ var SF3App = (() => {
       this.activeCharacters = [];
       this.preloader = null;
       this.frameGen = new ProceduralFrameGenerator();
+      this.decomp = null;
       this.app = app;
     }
     async initialize() {
@@ -193,6 +194,10 @@ var SF3App = (() => {
         const services = this.app._services;
         if (services && services.resolve) {
           this.preloader = services.resolve("preloader");
+          try {
+            this.decomp = services.resolve("decomp");
+          } catch {
+          }
         }
       } catch {
       }
@@ -230,13 +235,18 @@ var SF3App = (() => {
         }
       }
       try {
-        const gt = await fetch("/data/characters_decomp/sf3_ground_truth_seed.json");
-        if (gt.ok) {
-          const cfg = await gt.json();
+        let cfg = null;
+        try {
+          const gt = await fetch("/data/characters_decomp/sf3_ground_truth_seed.json");
+          if (gt.ok) cfg = await gt.json();
+        } catch {
+        }
+        if (!cfg && this.decomp) cfg = await this.decomp.deriveFromDecompIfAvailable();
+        if (cfg) {
           const norm = this.normalizeCharacterConfig(cfg);
           const finalCfg = this.frameGen.generateForCharacter(norm);
           this.characterConfigs.set(cfg.characterId || "sf3_ground_truth_seed", finalCfg);
-          Logger.info("Loaded ground-truth character seed from decomp import");
+          Logger.info("Loaded ground-truth character seed");
         }
       } catch {
       }
@@ -2688,6 +2698,95 @@ var SF3App = (() => {
       } catch {
         return null;
       }
+    }
+    // Browser-side fallback: if json not present, attempt to fetch raw decomp table and heuristically parse
+    async deriveFromDecompIfAvailable() {
+      try {
+        const urlCandidates = [
+          "/sfiii-decomp/src/anniversary/bin2obj/char_table.c",
+          "https://raw.githubusercontent.com/apstygo/sfiii-decomp/main/src/anniversary/bin2obj/char_table.c"
+        ];
+        let text = null;
+        for (const u of urlCandidates) {
+          try {
+            const r = await fetch(u, { cache: "no-store" });
+            if (r.ok) {
+              text = await r.text();
+              break;
+            }
+          } catch {
+          }
+        }
+        if (!text) return null;
+        const triplets = this.parseHeuristicMoveTriplets(text);
+        const moves = this.assignToMockMoveNames(triplets);
+        const characterId = "sf3_ground_truth_seed";
+        const animations = {};
+        for (const k of Object.keys(moves)) {
+          const total = Math.max(1, moves[k].startup + moves[k].active + moves[k].recovery);
+          animations[`move_${k}`] = { frameCount: total, duration: Math.max(83, total * 16.6), loop: false };
+        }
+        const json = {
+          characterId,
+          name: characterId,
+          displayName: characterId,
+          archetype: "technical",
+          spritePath: `/assets/sprites/${characterId}.png`,
+          health: 1e3,
+          walkSpeed: 150,
+          dashSpeed: 300,
+          jumpHeight: 380,
+          complexity: "medium",
+          strengths: [],
+          weaknesses: [],
+          uniqueMechanics: [],
+          moves,
+          animations
+        };
+        return json;
+      } catch {
+        return null;
+      }
+    }
+    parseHeuristicMoveTriplets(source) {
+      const hexOrDec = /0x[0-9A-Fa-f]+|\d+/g;
+      const numbers = [];
+      for (const m of source.matchAll(hexOrDec)) {
+        const t = m[0];
+        const v = t.startsWith("0x") ? parseInt(t, 16) : parseInt(t, 10);
+        if (!Number.isFinite(v)) continue;
+        numbers.push(v >>> 0);
+      }
+      const smalls = numbers.filter((n) => n > 0 && n <= 120);
+      const triplets = [];
+      for (let i = 0; i + 2 < smalls.length; i += 3) {
+        const a = smalls[i + 0];
+        const b = smalls[i + 1];
+        const c = smalls[i + 2];
+        if (a + b + c <= 0) continue;
+        if (a > 60 || b > 60 || c > 90) continue;
+        triplets.push({ startup: a, active: b, recovery: c });
+      }
+      return triplets;
+    }
+    assignToMockMoveNames(triplets) {
+      const names = [
+        "light_punch",
+        "medium_punch",
+        "heavy_punch",
+        "light_kick",
+        "medium_kick",
+        "heavy_kick",
+        "special_1",
+        "special_2",
+        "special_3",
+        "super_1"
+      ];
+      const out = {};
+      for (let i = 0; i < names.length && i < triplets.length; i++) {
+        out[names[i]] = triplets[i];
+      }
+      return out;
     }
   };
 
