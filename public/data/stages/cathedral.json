@@ -1,0 +1,200 @@
+{
+  "stageId": "gothic_cathedral",
+  "name": "Gothic Cathedral",
+  "description": "A magnificent Gothic cathedral with soaring spires and stained glass windows casting colored light across the battlefield",
+  "theme": "gothic",
+  "atmosphere": "dramatic",
+  "lighting": {
+    "ambientColor": [0.3, 0.2, 0.4, 1.0],
+    "mainLightColor": [1.0, 0.9, 0.8, 1.0],
+    "mainLightDirection": [-0.3, -0.7, 0.6],
+    "shadowIntensity": 0.8,
+    "enableDynamicLighting": true,
+    "stainedGlassLighting": true
+  },
+  "camera": {
+    "boundaryLeft": -800,
+    "boundaryRight": 800,
+    "boundaryTop": -400,
+    "boundaryBottom": 200,
+    "defaultZoom": 1.0,
+    "maxZoom": 1.5,
+    "minZoom": 0.6,
+    "followSmoothness": 0.1
+  },
+  "ground": {
+    "height": 0,
+    "friction": 1.0,
+    "material": "stone",
+    "bounds": {
+      "left": -600,
+      "right": 600
+    }
+  },
+  "backgroundLayers": [
+    {
+      "name": "sky",
+      "depth": -3.0,
+      "parallaxMultiplier": -0.1,
+      "texturePath": "res://assets/stages/gothic_cathedral/sky_bg.png",
+      "position": [0, -300],
+      "scale": [2.0, 2.0],
+      "tint": [0.8, 0.9, 1.0, 1.0],
+      "shader": "res://assets/shaders/stages/GothicSky.gdshader"
+    },
+    {
+      "name": "distant_spires",
+      "depth": -2.5,
+      "parallaxMultiplier": -0.3,
+      "texturePath": "res://assets/stages/gothic_cathedral/distant_spires.png",
+      "position": [0, -200],
+      "scale": [1.8, 1.8],
+      "tint": [0.6, 0.7, 0.9, 0.8],
+      "atmosphericPerspective": true
+    },
+    {
+      "name": "cathedral_exterior",
+      "depth": -2.0,
+      "parallaxMultiplier": -0.5,
+      "texturePath": "res://assets/stages/gothic_cathedral/cathedral_exterior.png",
+      "position": [0, -150],
+      "scale": [1.5, 1.5],
+      "tint": [0.8, 0.8, 0.9, 1.0]
+    },
+    {
+      "name": "main_cathedral",
+      "depth": -1.0,
+      "parallaxMultiplier": -0.8,
+      "texturePath": "res://assets/stages/gothic_cathedral/main_cathedral.png",
+      "position": [0, -100],
+      "scale": [1.2, 1.2],
+      "tint": [1.0, 1.0, 1.0, 1.0],
+      "enableLighting": true
+    },
+    {
+      "name": "stained_glass",
+      "depth": -0.8,
+      "parallaxMultiplier": -0.9,
+      "texturePath": "res://assets/stages/gothic_cathedral/stained_glass.png",
+      "position": [0, -80],
+      "scale": [1.1, 1.1],
+      "tint": [1.2, 1.1, 1.0, 0.9],
+      "blendMode": "add",
+      "enableAnimatedLighting": true,
+      "lightingAnimation": {
+        "colorShift": true,
+        "intensityPulse": true,
+        "speed": 0.5
+      }
+    },
+    {
+      "name": "cathedral_interior",
+      "depth": -0.5,
+      "parallaxMultiplier": -1.0,
+      "texturePath": "res://assets/stages/gothic_cathedral/interior_pillars.png",
+      "position": [0, 50],
+      "scale": [1.0, 1.0],
+      "tint": [0.9, 0.9, 1.0, 1.0],
+      "shadowCasting": true
+    },
+    {
+      "name": "floor_details",
+      "depth": 0.1,
+      "parallaxMultiplier": -1.2,
+      "texturePath": "res://assets/stages/gothic_cathedral/floor_pattern.png",
+      "position": [0, 80],
+      "scale": [1.0, 1.0],
+      "tint": [0.8, 0.8, 0.9, 1.0]
+    }
+  ],
+  "foregroundLayers": [
+    {
+      "name": "floating_debris",
+      "depth": 1.0,
+      "parallaxMultiplier": 1.2,
+      "texturePath": "res://assets/stages/gothic_cathedral/debris.png",
+      "position": [0, -50],
+      "scale": [0.8, 0.8],
+      "tint": [1.0, 1.0, 1.0, 0.6],
+      "animation": {
+        "type": "float",
+        "amplitude": 20,
+        "speed": 0.3
+      }
+    }
+  ],
+  "particleEffects": [
+    {
+      "name": "dust_motes",
+      "type": "ambient",
+      "position": [0, -100],
+      "particleType": "Dust",
+      "emission": {
+        "amount": 50,
+        "rate": 2.0
+      },
+      "properties": {
+        "scale": [0.5, 1.2],
+        "speed": [10, 30],
+        "lifetime": [3.0, 6.0],
+        "color": [1.0, 0.9, 0.8, 0.3]
+      }
+    },
+    {
+      "name": "stained_glass_light_rays",
+      "type": "environmental",
+      "position": [0, -80],
+      "particleType": "LightRay",
+      "emission": {
+        "amount": 20,
+        "rate": 0.5
+      },
+      "properties": {
+        "scale": [2.0, 4.0],
+        "speed": [5, 15],
+        "lifetime": [8.0, 12.0],
+        "color": [1.0, 0.8, 0.6, 0.2],
+        "colorVariation": true
+      }
+    }
+  ],
+  "audio": {
+    "ambientTrack": "res://assets/audio/stages/gothic_cathedral_ambient.ogg",
+    "musicTrack": "res://assets/audio/music/gothic_cathedral_theme.ogg",
+    "combatStingers": [
+      "res://assets/audio/stages/cathedral_echo_1.ogg",
+      "res://assets/audio/stages/cathedral_echo_2.ogg"
+    ],
+    "ambientVolume": 0.3,
+    "musicVolume": 0.6,
+    "reverb": {
+      "roomSize": 0.8,
+      "damping": 0.3,
+      "wetLevel": 0.5
+    }
+  },
+  "specialEffects": [
+    {
+      "name": "lightning_flash",
+      "trigger": "super_move",
+      "effect": "screen_flash",
+      "duration": 0.2,
+      "color": [1.0, 1.0, 0.8, 0.6],
+      "followUp": "thunder_sound"
+    },
+    {
+      "name": "stained_glass_shimmer",
+      "trigger": "combo_hit",
+      "effect": "color_shift",
+      "duration": 1.0,
+      "targetLayer": "stained_glass",
+      "intensity": 1.5
+    }
+  ],
+  "balancing": {
+    "competitiveViable": true,
+    "asymmetrical": false,
+    "hazards": false,
+    "interactables": false
+  }
+}
