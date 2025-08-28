@@ -9,6 +9,10 @@ import { UIManager } from './ui/UIManager';
 // (Optional) Asset loader integration available under scripts if needed
 import { Logger } from './utils/Logger';
 import PostProcessingManager from '../scripts/graphics/PostProcessingManager';
+import { EventBus } from './utils/EventBus';
+import { ServiceContainer } from './utils/ServiceContainer';
+import { FeatureFlags } from './utils/FeatureFlags';
+import { UpdatePipeline, UpdatableSystem } from './UpdatePipeline';
 
 export class GameEngine {
   private app: pc.Application;
@@ -18,6 +22,10 @@ export class GameEngine {
   private inputManager: InputManager;
   private uiManager: UIManager;
   private postProcessingManager: PostProcessingManager | null = null;
+  private eventBus: EventBus;
+  private services: ServiceContainer;
+  private featureFlags: FeatureFlags;
+  private pipeline: UpdatePipeline;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -32,6 +40,17 @@ export class GameEngine {
 
     this.setupApplication();
     this.initializeManagers();
+
+    // Core infrastructure
+    this.eventBus = new EventBus();
+    this.services = new ServiceContainer();
+    this.featureFlags = new FeatureFlags();
+    this.pipeline = new UpdatePipeline();
+
+    // Register services
+    this.services.register('app', this.app);
+    this.services.register('events', this.eventBus);
+    this.services.register('flags', this.featureFlags);
   }
 
   private setupApplication(): void {
@@ -52,6 +71,16 @@ export class GameEngine {
     this.stageManager = new StageManager(this.app);
     this.uiManager = new UIManager(this.app);
     this.postProcessingManager = new PostProcessingManager(this.app);
+
+    // Register update order
+    const inputUpdatable: UpdatableSystem = { priority: 10, update: dt => this.inputManager.update() };
+    const characterUpdatable: UpdatableSystem = { priority: 20, update: dt => this.characterManager.update(dt) };
+    const combatUpdatable: UpdatableSystem = { priority: 30, update: dt => this.combatSystem.update(dt) };
+    const postFxUpdatable: UpdatableSystem = { priority: 90, update: dt => this.postProcessingManager?.update(dt) };
+    this.pipeline.add(inputUpdatable);
+    this.pipeline.add(characterUpdatable);
+    this.pipeline.add(combatUpdatable);
+    this.pipeline.add(postFxUpdatable);
   }
 
   public async initialize(): Promise<void> {
@@ -76,10 +105,7 @@ export class GameEngine {
 
       // Wire main update loop
       this.updateHandler = (dt: number) => {
-        this.inputManager.update();
-        this.characterManager.update(dt);
-        this.combatSystem.update(dt);
-        this.postProcessingManager?.update(dt);
+        this.pipeline.update(dt);
       };
       this.app.on('update', this.updateHandler);
       

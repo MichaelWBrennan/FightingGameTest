@@ -2146,6 +2146,87 @@ var SF3App = (() => {
   };
   var PostProcessingManager_default = PostProcessingManager;
 
+  // src/core/utils/EventBus.ts
+  var EventBus = class {
+    constructor() {
+      this.handlers = /* @__PURE__ */ new Map();
+    }
+    on(event, handler) {
+      if (!this.handlers.has(event)) this.handlers.set(event, /* @__PURE__ */ new Set());
+      this.handlers.get(event).add(handler);
+    }
+    off(event, handler) {
+      this.handlers.get(event)?.delete(handler);
+    }
+    emit(event, payload) {
+      this.handlers.get(event)?.forEach((h) => h(payload));
+    }
+    clear() {
+      this.handlers.clear();
+    }
+  };
+
+  // src/core/utils/ServiceContainer.ts
+  var ServiceContainer = class {
+    constructor() {
+      this.services = /* @__PURE__ */ new Map();
+    }
+    register(key, instance) {
+      this.services.set(key, instance);
+    }
+    resolve(key) {
+      if (!this.services.has(key)) {
+        throw new Error(`Service not registered: ${key}`);
+      }
+      return this.services.get(key);
+    }
+    has(key) {
+      return this.services.has(key);
+    }
+    clear() {
+      this.services.clear();
+    }
+  };
+
+  // src/core/utils/FeatureFlags.ts
+  var FeatureFlags = class {
+    constructor() {
+      this.flags = /* @__PURE__ */ new Map();
+    }
+    enable(key) {
+      this.flags.set(key, true);
+    }
+    disable(key) {
+      this.flags.set(key, false);
+    }
+    set(key, value) {
+      this.flags.set(key, value);
+    }
+    isEnabled(key, defaultValue = false) {
+      return this.flags.has(key) ? !!this.flags.get(key) : defaultValue;
+    }
+  };
+
+  // src/core/UpdatePipeline.ts
+  var UpdatePipeline = class {
+    constructor() {
+      this.systems = [];
+    }
+    add(system) {
+      this.systems.push(system);
+      this.systems.sort((a, b) => a.priority - b.priority);
+    }
+    remove(system) {
+      this.systems = this.systems.filter((s) => s !== system);
+    }
+    update(deltaTime) {
+      for (const sys of this.systems) sys.update(deltaTime);
+    }
+    clear() {
+      this.systems.length = 0;
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2161,6 +2242,13 @@ var SF3App = (() => {
       });
       this.setupApplication();
       this.initializeManagers();
+      this.eventBus = new EventBus();
+      this.services = new ServiceContainer();
+      this.featureFlags = new FeatureFlags();
+      this.pipeline = new UpdatePipeline();
+      this.services.register("app", this.app);
+      this.services.register("events", this.eventBus);
+      this.services.register("flags", this.featureFlags);
     }
     setupApplication() {
       this.app.setCanvasFillMode(pc6.FILLMODE_FILL_WINDOW);
@@ -2175,6 +2263,14 @@ var SF3App = (() => {
       this.stageManager = new StageManager(this.app);
       this.uiManager = new UIManager(this.app);
       this.postProcessingManager = new PostProcessingManager_default(this.app);
+      const inputUpdatable = { priority: 10, update: (dt) => this.inputManager.update() };
+      const characterUpdatable = { priority: 20, update: (dt) => this.characterManager.update(dt) };
+      const combatUpdatable = { priority: 30, update: (dt) => this.combatSystem.update(dt) };
+      const postFxUpdatable = { priority: 90, update: (dt) => this.postProcessingManager?.update(dt) };
+      this.pipeline.add(inputUpdatable);
+      this.pipeline.add(characterUpdatable);
+      this.pipeline.add(combatUpdatable);
+      this.pipeline.add(postFxUpdatable);
     }
     async initialize() {
       if (this.isInitialized) return;
@@ -2190,10 +2286,7 @@ var SF3App = (() => {
         this.isInitialized = true;
         this.app.start();
         this.updateHandler = (dt) => {
-          this.inputManager.update();
-          this.characterManager.update(dt);
-          this.combatSystem.update(dt);
-          this.postProcessingManager?.update(dt);
+          this.pipeline.update(dt);
         };
         this.app.on("update", this.updateHandler);
         Logger.info("Game engine fully initialized");
