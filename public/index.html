@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Fighter III: 3rd Strike - PlayCanvas Edition</title>
+    <meta name="description" content="Classic arcade fighting game reimagined with modern web technologies">
+    <script src="https://code.playcanvas.com/playcanvas-stable.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:Arial, sans-serif;background:#000;color:#fff;overflow:hidden}
+        #application-canvas{width:100vw;height:100vh;display:block;background:#000}
+        #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;z-index:10}
+        #loading.hidden{display:none}
+    </style>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const el = document.getElementById('loading-text');
+        if (el && (!window.SF3App || !window.SF3App.defaultStart)) el.textContent = 'Loading bundle...';
+      });
+    </script>
+</head>
+<body>
+  <div id="loading"><div id="loading-text">Loading...</div></div>
+  <canvas id="application-canvas"></canvas>
+  <script src="/bundle.js"></script>
+  <script>
+    (function(){
+      const canvas = document.getElementById('application-canvas');
+      if (window.SF3App && typeof window.SF3App.defaultStart === 'function') {
+        window.SF3App.defaultStart(canvas).then(()=>{
+          const loading = document.getElementById('loading');
+          if (loading) loading.classList.add('hidden');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
