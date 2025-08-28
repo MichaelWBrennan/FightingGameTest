@@ -25,6 +25,10 @@ import { MonetizationService } from './monetization/MonetizationService';
 import { EntitlementBridge } from '../scripts/EntitlementBridge';
 import { SecurityService } from './security/SecurityService';
 import { AntiCheat } from './security/AntiCheat';
+import { OfflineService } from './utils/OfflineService';
+import { SyncService } from './utils/SyncService';
+import { RemoteConfigService } from './utils/RemoteConfigService';
+import { LiveOpsService } from './liveops/LiveOpsService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -48,6 +52,10 @@ export class GameEngine {
   private entitlement: EntitlementBridge;
   private security: SecurityService;
   private antiCheat: AntiCheat;
+  private offline: OfflineService;
+  private sync: SyncService;
+  private remoteConfig: RemoteConfigService;
+  private liveOps: LiveOpsService;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -82,6 +90,10 @@ export class GameEngine {
     this.entitlement = new EntitlementBridge();
     this.security = new SecurityService();
     this.antiCheat = new AntiCheat();
+    this.offline = new OfflineService();
+    this.sync = new SyncService(this.offline);
+    this.remoteConfig = new RemoteConfigService();
+    this.liveOps = new LiveOpsService();
     this.services.register('preloader', this.preloader);
     this.services.register('ai', this.aiManager);
     this.services.register('stageGen', this.stageGen);
@@ -90,6 +102,10 @@ export class GameEngine {
     this.services.register('entitlement', this.entitlement);
     this.services.register('security', this.security);
     this.services.register('anticheat', this.antiCheat);
+    this.services.register('offline', this.offline);
+    this.services.register('sync', this.sync);
+    this.services.register('configRemote', this.remoteConfig);
+    this.services.register('liveops', this.liveOps);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
