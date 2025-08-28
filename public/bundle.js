@@ -2768,10 +2768,11 @@ var SF3App = (() => {
       const res = await fetch(path, { cache: "no-store" });
       if (!res.ok) throw new Error(`JSON load failed: ${path}`);
       const text = await res.text();
+      const decrypted = await this.tryDecrypt(text);
       try {
         const entry = this.manifest.assets.find((a) => a.path === path);
         if (entry?.sha256 && "crypto" in window && window.crypto.subtle) {
-          const buf = new TextEncoder().encode(text);
+          const buf = new TextEncoder().encode(decrypted ?? text);
           const hashBuf = await window.crypto.subtle.digest("SHA-256", buf);
           const hashArray = Array.from(new Uint8Array(hashBuf));
           const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -2779,9 +2780,31 @@ var SF3App = (() => {
         }
       } catch {
       }
-      return JSON.parse(text);
+      return JSON.parse(decrypted ?? text);
+    }
+    async tryDecrypt(text) {
+      if (!text.startsWith("ENC1|")) return null;
+      try {
+        const parts = text.split("|");
+        const iv = Uint8Array.from(atob(parts[1]), (c) => c.charCodeAt(0));
+        const tag = Uint8Array.from(atob(parts[2]), (c) => c.charCodeAt(0));
+        const enc = Uint8Array.from(atob(parts[3]), (c) => c.charCodeAt(0));
+        const keyStr = window.__ASSET_KEY__ || "dev-asset-key-change-me";
+        const keyBuf = new TextEncoder().encode(keyStr);
+        const key = await window.crypto.subtle.importKey("raw", await window.crypto.subtle.digest("SHA-256", keyBuf), { name: "AES-GCM" }, false, ["decrypt"]);
+        const plain = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv, additionalData: void 0, tagLength: 128 }, key, concat(enc, tag));
+        return new TextDecoder().decode(new Uint8Array(plain));
+      } catch {
+        return null;
+      }
     }
   };
+  function concat(a, b) {
+    const out = new Uint8Array(a.length + b.length);
+    out.set(a, 0);
+    out.set(b, a.length);
+    return out;
+  }
 
   // src/core/ai/AIManager.ts
   var AIManager = class {
@@ -3410,7 +3433,6 @@ var SF3App = (() => {
         this.processCatalogData(catalogData);
         this.emit("catalog_loaded", { itemCount: this.catalog.size, bundleCount: this.bundles.size });
       } catch (error) {
-        this.log("Failed to load catalog:", error);
         this.emit("catalog_error", error);
         throw error;
       }
@@ -3563,7 +3585,6 @@ var SF3App = (() => {
           return { success: false, error: result.error || "Purchase failed" };
         }
       } catch (error) {
-        this.log("Purchase error:", error);
         const errorResult = { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         this.emit("purchase_failed", errorResult);
         return errorResult;
@@ -4180,15 +4201,14 @@ var SF3App = (() => {
       this.freezeCriticalObjects();
     }
     detectDevTools() {
-      const threshold = 200;
+      const threshold = 250;
+      let last = performance.now();
       const check = () => {
-        const start = performance.now();
-        debugger;
-        const elapsed = performance.now() - start;
-        if (elapsed > threshold) {
+        const now = performance.now();
+        if (now - last > threshold) {
           this.devtoolsDetected = true;
-          console.warn("SecurityService: DevTools detected");
         }
+        last = now;
         requestAnimationFrame(check);
       };
       requestAnimationFrame(check);
