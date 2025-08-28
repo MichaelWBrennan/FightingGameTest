@@ -6,7 +6,7 @@
   "scripts": {
     "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020",
     "build": "npm run build:client",
-    "postbuild": "mkdir -p public/data && cp -r data/* public/data/ || true",
+    "postbuild": "mkdir -p public/data public/assets && cp -r data/* public/data/ || true && node -e \"require('ts-node/register');require('./tools/generate_manifest.ts')\"",
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
     "preview": "ts-node tools/dev_server.ts",

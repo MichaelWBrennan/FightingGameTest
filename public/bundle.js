@@ -159,9 +159,17 @@ var SF3App = (() => {
       this.characters = /* @__PURE__ */ new Map();
       this.characterConfigs = /* @__PURE__ */ new Map();
       this.activeCharacters = [];
+      this.preloader = null;
       this.app = app;
     }
     async initialize() {
+      try {
+        const services = this.app._services;
+        if (services && services.resolve) {
+          this.preloader = services.resolve("preloader");
+        }
+      } catch {
+      }
       await this.loadCharacterConfigs();
       Logger.info("Character manager initialized");
     }
@@ -2577,6 +2585,26 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/utils/PreloadManager.ts
+  var PreloadManager = class {
+    constructor() {
+      this.manifest = { assets: [] };
+    }
+    async loadManifest(url = "/assets/manifest.json") {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Manifest load failed: ${res.status}`);
+      this.manifest = await res.json();
+    }
+    getAssetsByType(type) {
+      return this.manifest.assets.filter((a) => a.type === type).map((a) => a.path);
+    }
+    async getJson(path) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(`JSON load failed: ${path}`);
+      return res.json();
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2603,8 +2631,10 @@ var SF3App = (() => {
       this.services.register("config", new (init_ConfigService(), __toCommonJS(ConfigService_exports)).ConfigService());
       this.spriteGenerator = new ProceduralSpriteGenerator(this.app);
       this.spriteRegistry = new SpriteRegistry(this.app);
+      this.preloader = new PreloadManager();
       this.services.register("spriteGen", this.spriteGenerator);
       this.services.register("sprites", this.spriteRegistry);
+      this.services.register("preloader", this.preloader);
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {
         switch (state) {
@@ -2650,6 +2680,7 @@ var SF3App = (() => {
         if (this.postProcessingManager) {
           await this.postProcessingManager.initialize();
         }
+        await this.preloader.loadManifest("/assets/manifest.json");
         const checker = this.spriteGenerator.createTexture({ width: 256, height: 256, type: "checker", tile: 16, colorA: [200, 200, 200, 255], colorB: [80, 80, 80, 255] });
         this.spriteRegistry.register("checkerboard", checker);
         this.combatSystem.initialize(this.characterManager, this.inputManager);

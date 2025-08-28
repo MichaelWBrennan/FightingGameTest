@@ -2,18 +2,29 @@
 import * as pc from 'playcanvas';
 import { Character, CharacterConfig } from '../../../types/character';
 import { Logger } from '../utils/Logger';
+import { PreloadManager } from '../utils/PreloadManager';
 
 export class CharacterManager {
   private app: pc.Application;
   private characters = new Map<string, Character>();
   private characterConfigs = new Map<string, CharacterConfig>();
   private activeCharacters: Character[] = [];
+  private preloader: PreloadManager | null = null;
 
   constructor(app: pc.Application) {
     this.app = app;
   }
 
   public async initialize(): Promise<void> {
+    try {
+      // Attempt to resolve preloader from global services if present
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const services = (this.app as any)._services as any;
+      if (services && services.resolve) {
+        this.preloader = services.resolve('preloader') as PreloadManager;
+      }
+    } catch {}
     await this.loadCharacterConfigs();
     Logger.info('Character manager initialized');
   }

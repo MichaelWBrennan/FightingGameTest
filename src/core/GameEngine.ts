@@ -19,6 +19,7 @@ import { MenuState } from './state/MenuState';
 import { MatchState } from './state/MatchState';
 import { ProceduralSpriteGenerator } from './graphics/ProceduralSpriteGenerator';
 import { SpriteRegistry } from './graphics/SpriteRegistry';
+import { PreloadManager } from './utils/PreloadManager';
 
 export class GameEngine {
   private app: pc.Application;
@@ -36,6 +37,7 @@ export class GameEngine {
   private stateStack: GameStateStack;
   private spriteGenerator: ProceduralSpriteGenerator;
   private spriteRegistry: SpriteRegistry;
+  private preloader: PreloadManager;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -64,8 +66,10 @@ export class GameEngine {
     this.services.register('config', new (require('./utils/ConfigService').ConfigService)());
     this.spriteGenerator = new ProceduralSpriteGenerator(this.app);
     this.spriteRegistry = new SpriteRegistry(this.app);
+    this.preloader = new PreloadManager();
     this.services.register('spriteGen', this.spriteGenerator);
     this.services.register('sprites', this.spriteRegistry);
+    this.services.register('preloader', this.preloader);
 
     // State stack
     this.stateStack = new GameStateStack();
@@ -129,6 +133,9 @@ export class GameEngine {
       if (this.postProcessingManager) {
         await this.postProcessingManager.initialize();
       }
+
+      // Load manifest first
+      await this.preloader.loadManifest('/assets/manifest.json');
 
       // Generate basic procedural sprites for placeholders
       const checker = this.spriteGenerator.createTexture({ width: 256, height: 256, type: 'checker', tile: 16, colorA: [200,200,200,255], colorB: [80,80,80,255] });

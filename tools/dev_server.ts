@@ -8,6 +8,7 @@ const publicDir = path.join(process.cwd(), 'public');
 app.use('/bundle.js', express.static(path.join(publicDir, 'bundle.js')));
 app.use('/bundle.js.map', express.static(path.join(publicDir, 'bundle.js.map')));
 app.use('/data', express.static(path.join(publicDir, 'data')));
+app.use('/assets', express.static(path.join(publicDir, 'assets')));
 
 app.get('/', (_req, res) => {
   res.set('Content-Type', 'text/html; charset=utf-8');
