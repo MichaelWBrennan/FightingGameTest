@@ -5,6 +5,9 @@ var SF3App = (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __esm = (fn, res) => function __init() {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  };
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
@@ -38,6 +41,77 @@ var SF3App = (() => {
     }
   });
 
+  // src/core/utils/ConfigService.ts
+  var ConfigService_exports = {};
+  __export(ConfigService_exports, {
+    ConfigService: () => ConfigService
+  });
+  var ConfigService;
+  var init_ConfigService = __esm({
+    "src/core/utils/ConfigService.ts"() {
+      ConfigService = class {
+        constructor() {
+          this.cache = /* @__PURE__ */ new Map();
+        }
+        async loadJson(path, bust = false) {
+          if (!bust && this.cache.has(path)) return this.cache.get(path);
+          const res = await fetch(path);
+          if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
+          const data = await res.json();
+          this.cache.set(path, data);
+          return data;
+        }
+      };
+    }
+  });
+
+  // src/core/debug/DebugOverlay.ts
+  var DebugOverlay_exports = {};
+  __export(DebugOverlay_exports, {
+    DebugOverlay: () => DebugOverlay
+  });
+  var DebugOverlay;
+  var init_DebugOverlay = __esm({
+    "src/core/debug/DebugOverlay.ts"() {
+      DebugOverlay = class {
+        constructor() {
+          this.lastTime = performance.now();
+          this.frames = 0;
+          this.fps = 0;
+          this.container = document.createElement("div");
+          this.container.style.position = "fixed";
+          this.container.style.top = "8px";
+          this.container.style.left = "8px";
+          this.container.style.background = "rgba(0,0,0,0.5)";
+          this.container.style.color = "#0f0";
+          this.container.style.font = "12px monospace";
+          this.container.style.padding = "6px 8px";
+          this.container.style.borderRadius = "4px";
+          this.container.style.zIndex = "9999";
+          this.fpsLabel = document.createElement("div");
+          this.timingsLabel = document.createElement("div");
+          this.container.appendChild(this.fpsLabel);
+          this.container.appendChild(this.timingsLabel);
+          document.body.appendChild(this.container);
+        }
+        update() {
+          this.frames++;
+          const now = performance.now();
+          if (now - this.lastTime >= 1e3) {
+            this.fps = Math.round(this.frames * 1e3 / (now - this.lastTime));
+            this.frames = 0;
+            this.lastTime = now;
+            this.fpsLabel.textContent = `FPS: ${this.fps}`;
+          }
+        }
+        setTimings(samples) {
+          const text = samples.map((s) => `${s.name}:${s.ms.toFixed(2)}ms`).join("  ");
+          this.timingsLabel.textContent = text;
+        }
+      };
+    }
+  });
+
   // src/index.ts
   var src_exports = {};
   __export(src_exports, {
@@ -45,7 +119,7 @@ var SF3App = (() => {
   });
 
   // src/core/GameEngine.ts
-  var pc6 = __toESM(require_playcanvas_shim());
+  var pc7 = __toESM(require_playcanvas_shim());
 
   // src/core/characters/CharacterManager.ts
   var pc = __toESM(require_playcanvas_shim());
@@ -505,19 +579,77 @@ var SF3App = (() => {
   };
 
   // src/core/ui/UIManager.ts
+  var pc4 = __toESM(require_playcanvas_shim());
   var UIManager = class {
     constructor(app) {
+      this.root = null;
+      this.menu = null;
+      this.hud = null;
       this.app = app;
     }
     async initialize() {
+      this.root = new pc4.Entity("UIRoot");
+      this.root.addComponent("screen", {
+        referenceResolution: new pc4.Vec2(1920, 1080),
+        scaleMode: pc4.SCALEMODE_BLEND,
+        scaleBlend: 0.5,
+        screenSpace: true
+      });
+      this.app.root.addChild(this.root);
+    }
+    showMenu() {
+      this.hideHUD();
+      if (this.menu) {
+        this.menu.enabled = true;
+        return;
+      }
+      this.menu = new pc4.Entity("MenuUI");
+      this.menu.addComponent("element", { type: pc4.ELEMENTTYPE_GROUP, anchor: new pc4.Vec4(0, 0, 1, 1) });
+      const label = new pc4.Entity("MenuLabel");
+      label.addComponent("element", { type: pc4.ELEMENTTYPE_TEXT, text: "Press Enter to Start", fontSize: 48, pivot: new pc4.Vec2(0.5, 0.5), anchor: new pc4.Vec4(0.5, 0.5, 0.5, 0.5) });
+      this.menu.addChild(label);
+      this.root?.addChild(this.menu);
+    }
+    hideMenu() {
+      if (this.menu) this.menu.enabled = false;
+    }
+    showHUD() {
+      this.hideMenu();
+      if (this.hud) {
+        this.hud.enabled = true;
+        return;
+      }
+      this.hud = new pc4.Entity("MatchHUD");
+      this.hud.addComponent("element", { type: pc4.ELEMENTTYPE_GROUP, anchor: new pc4.Vec4(0, 0, 1, 1) });
+      const p1 = new pc4.Entity("P1");
+      p1.addComponent("element", { type: pc4.ELEMENTTYPE_TEXT, text: "P1: 1000", fontSize: 32, anchor: new pc4.Vec4(0, 1, 0, 1), pivot: new pc4.Vec2(0, 1) });
+      const p2 = new pc4.Entity("P2");
+      p2.addComponent("element", { type: pc4.ELEMENTTYPE_TEXT, text: "P2: 1000", fontSize: 32, anchor: new pc4.Vec4(1, 1, 1, 1), pivot: new pc4.Vec2(1, 1) });
+      this.hud.addChild(p1);
+      this.hud.addChild(p2);
+      this.root?.addChild(this.hud);
+    }
+    hideHUD() {
+      if (this.hud) this.hud.enabled = false;
+    }
+    updateHUD(p1Health, p2Health) {
+      if (!this.hud) return;
+      const p1 = this.hud.findByName("P1");
+      const p2 = this.hud.findByName("P2");
+      if (p1 && p1.element) {
+        p1.element.text = `P1: ${Math.max(0, Math.floor(p1Health))}`;
+      }
+      if (p2 && p2.element) {
+        p2.element.text = `P2: ${Math.max(0, Math.floor(p2Health))}`;
+      }
     }
   };
 
   // src/scripts/graphics/PostProcessingManager.ts
-  var pc5 = __toESM(require_playcanvas_shim());
+  var pc6 = __toESM(require_playcanvas_shim());
 
   // src/core/graphics/ShaderUtils.ts
-  var pc4 = __toESM(require_playcanvas_shim());
+  var pc5 = __toESM(require_playcanvas_shim());
 
   // src/typescript/shaders/CharacterHighlightShader.ts
   var CharacterHighlightShader = class {
@@ -1486,17 +1618,17 @@ var SF3App = (() => {
   // src/core/graphics/ShaderUtils.ts
   var ShaderUtils = class {
     static createMaterialFromShaders(app, vertexShader, fragmentShader) {
-      const shader = new pc4.Shader(app.graphicsDevice, {
+      const shader = new pc5.Shader(app.graphicsDevice, {
         attributes: {
-          vertex_position: pc4.SEMANTIC_POSITION,
-          vertex_texCoord0: pc4.SEMANTIC_TEXCOORD0,
-          vertex_normal: pc4.SEMANTIC_NORMAL,
-          vertex_tangent: pc4.SEMANTIC_TANGENT
+          vertex_position: pc5.SEMANTIC_POSITION,
+          vertex_texCoord0: pc5.SEMANTIC_TEXCOORD0,
+          vertex_normal: pc5.SEMANTIC_NORMAL,
+          vertex_tangent: pc5.SEMANTIC_TANGENT
         },
         vshader: vertexShader,
         fshader: fragmentShader
       });
-      const material = new pc4.Material();
+      const material = new pc5.Material();
       material.shader = shader;
       return material;
     }
@@ -1637,7 +1769,7 @@ var SF3App = (() => {
           enabled: true,
           hitPause: false,
           screenShake: { intensity: 0, duration: 0, decay: 0, frequency: 0, active: false },
-          flashEffect: { color: new pc5.Color(1, 1, 1), intensity: 0, duration: 0, active: false },
+          flashEffect: { color: new pc6.Color(1, 1, 1), intensity: 0, duration: 0, active: false },
           slowMotion: { factor: 1, duration: 0, active: false },
           dramaTicLighting: false
         }
@@ -1695,71 +1827,71 @@ var SF3App = (() => {
       const device = this.app.graphicsDevice;
       const width = Math.floor(device.width * this.resolution.scale);
       const height = Math.floor(device.height * this.resolution.scale);
-      this.renderTargets.sceneColor = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.sceneColor = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width,
           height,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: true,
         samples: this.quality === "ultra" ? 4 : 1
       });
-      this.renderTargets.sceneDepth = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.sceneDepth = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width,
           height,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
       const blurWidth = Math.floor(width * 0.5);
       const blurHeight = Math.floor(height * 0.5);
-      this.renderTargets.blurHorizontal = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.blurHorizontal = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width: blurWidth,
           height: blurHeight,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
-      this.renderTargets.blurVertical = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.blurVertical = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width: blurWidth,
           height: blurHeight,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
-      this.renderTargets.bloom = new pc5.RenderTarget({
-        colorBuffer: new pc5.Texture(device, {
+      this.renderTargets.bloom = new pc6.RenderTarget({
+        colorBuffer: new pc6.Texture(device, {
           width: blurWidth,
           height: blurHeight,
-          format: pc5.PIXELFORMAT_R8_G8_B8_A8,
+          format: pc6.PIXELFORMAT_R8_G8_B8_A8,
           mipmaps: false,
-          addressU: pc5.ADDRESS_CLAMP_TO_EDGE,
-          addressV: pc5.ADDRESS_CLAMP_TO_EDGE,
-          magFilter: pc5.FILTER_LINEAR,
-          minFilter: pc5.FILTER_LINEAR
+          addressU: pc6.ADDRESS_CLAMP_TO_EDGE,
+          addressV: pc6.ADDRESS_CLAMP_TO_EDGE,
+          magFilter: pc6.FILTER_LINEAR,
+          minFilter: pc6.FILTER_LINEAR
         }),
         depthBuffer: false
       });
@@ -1767,28 +1899,28 @@ var SF3App = (() => {
     }
     async createPostProcessingMaterials() {
       const depthMat = ShaderUtils.createDepthPostProcessMaterial(this.app);
-      depthMat.blendType = pc5.BLEND_NONE;
+      depthMat.blendType = pc6.BLEND_NONE;
       depthMat.depthTest = false;
       depthMat.depthWrite = false;
       this.materials.depthOfField = depthMat;
-      this.materials.bloom = new pc5.StandardMaterial();
+      this.materials.bloom = new pc6.StandardMaterial();
       this.materials.bloom.chunks.PS_LIGHTING = this.getBloomFragmentShader();
-      this.materials.bloom.blendType = pc5.BLEND_ADDITIVE;
+      this.materials.bloom.blendType = pc6.BLEND_ADDITIVE;
       this.materials.bloom.depthTest = false;
       this.materials.bloom.depthWrite = false;
-      this.materials.blur = new pc5.StandardMaterial();
+      this.materials.blur = new pc6.StandardMaterial();
       this.materials.blur.chunks.PS_LIGHTING = this.getBlurFragmentShader();
-      this.materials.blur.blendType = pc5.BLEND_NONE;
+      this.materials.blur.blendType = pc6.BLEND_NONE;
       this.materials.blur.depthTest = false;
       this.materials.blur.depthWrite = false;
-      this.materials.colorGrading = new pc5.StandardMaterial();
+      this.materials.colorGrading = new pc6.StandardMaterial();
       this.materials.colorGrading.chunks.PS_LIGHTING = this.getColorGradingFragmentShader();
-      this.materials.colorGrading.blendType = pc5.BLEND_NONE;
+      this.materials.colorGrading.blendType = pc6.BLEND_NONE;
       this.materials.colorGrading.depthTest = false;
       this.materials.colorGrading.depthWrite = false;
-      this.materials.combine = new pc5.StandardMaterial();
+      this.materials.combine = new pc6.StandardMaterial();
       this.materials.combine.chunks.PS_LIGHTING = this.getCombineFragmentShader();
-      this.materials.combine.blendType = pc5.BLEND_NONE;
+      this.materials.combine.blendType = pc6.BLEND_NONE;
       this.materials.combine.depthTest = false;
       this.materials.combine.depthWrite = false;
       console.log("Post-processing materials created");
@@ -1954,10 +2086,10 @@ var SF3App = (() => {
         }`;
     }
     setupPostProcessingCameras() {
-      this.cameras.postProcess = new pc5.Entity("PostProcessCamera");
+      this.cameras.postProcess = new pc6.Entity("PostProcessCamera");
       this.cameras.postProcess.addComponent("camera", {
-        clearColor: new pc5.Color(0, 0, 0, 0),
-        projection: pc5.PROJECTION_ORTHOGRAPHIC,
+        clearColor: new pc6.Color(0, 0, 0, 0),
+        projection: pc6.PROJECTION_ORTHOGRAPHIC,
         orthoHeight: 1,
         nearClip: 0,
         farClip: 1,
@@ -1967,7 +2099,7 @@ var SF3App = (() => {
       this.app.root.addChild(this.cameras.postProcess);
     }
     createEffectEntities() {
-      this.fullScreenQuad = new pc5.Entity("FullScreenQuad");
+      this.fullScreenQuad = new pc6.Entity("FullScreenQuad");
       this.fullScreenQuad.addComponent("render", {
         type: "plane"
       });
@@ -2001,7 +2133,7 @@ var SF3App = (() => {
     }
     // Fighting game specific effects
     triggerHitFlash(color = [1, 1, 1], intensity = 0.8, duration = 100) {
-      this.effects.fightingGameEffects.flashEffect.color = new pc5.Color(color[0], color[1], color[2]);
+      this.effects.fightingGameEffects.flashEffect.color = new pc6.Color(color[0], color[1], color[2]);
       this.effects.fightingGameEffects.flashEffect.intensity = intensity;
       this.effects.fightingGameEffects.flashEffect.duration = duration;
       this.effects.fightingGameEffects.flashEffect.active = true;
@@ -2146,25 +2278,234 @@ var SF3App = (() => {
   };
   var PostProcessingManager_default = PostProcessingManager;
 
+  // src/core/utils/EventBus.ts
+  var EventBus = class {
+    constructor() {
+      this.handlers = /* @__PURE__ */ new Map();
+    }
+    on(event, handler) {
+      if (!this.handlers.has(event)) this.handlers.set(event, /* @__PURE__ */ new Set());
+      this.handlers.get(event).add(handler);
+    }
+    off(event, handler) {
+      this.handlers.get(event)?.delete(handler);
+    }
+    emit(event, payload) {
+      this.handlers.get(event)?.forEach((h) => h(payload));
+    }
+    clear() {
+      this.handlers.clear();
+    }
+  };
+
+  // src/core/utils/ServiceContainer.ts
+  var ServiceContainer = class {
+    constructor() {
+      this.services = /* @__PURE__ */ new Map();
+    }
+    register(key, instance) {
+      this.services.set(key, instance);
+    }
+    resolve(key) {
+      if (!this.services.has(key)) {
+        throw new Error(`Service not registered: ${key}`);
+      }
+      return this.services.get(key);
+    }
+    has(key) {
+      return this.services.has(key);
+    }
+    clear() {
+      this.services.clear();
+    }
+  };
+
+  // src/core/utils/FeatureFlags.ts
+  var FeatureFlags = class {
+    constructor() {
+      this.flags = /* @__PURE__ */ new Map();
+    }
+    enable(key) {
+      this.flags.set(key, true);
+    }
+    disable(key) {
+      this.flags.set(key, false);
+    }
+    set(key, value) {
+      this.flags.set(key, value);
+    }
+    isEnabled(key, defaultValue = false) {
+      return this.flags.has(key) ? !!this.flags.get(key) : defaultValue;
+    }
+  };
+
+  // src/core/UpdatePipeline.ts
+  var UpdatePipeline = class {
+    constructor() {
+      this.systems = [];
+      this.samples = [];
+    }
+    add(system) {
+      this.systems.push(system);
+      this.systems.sort((a, b) => a.priority - b.priority);
+    }
+    remove(system) {
+      this.systems = this.systems.filter((s) => s !== system);
+    }
+    update(deltaTime) {
+      this.samples.length = 0;
+      for (const sys of this.systems) {
+        const start = performance.now();
+        sys.update(deltaTime);
+        const end = performance.now();
+        this.samples.push({ name: sys.name || "system", ms: end - start });
+      }
+    }
+    getTimings() {
+      return this.samples.slice();
+    }
+    clear() {
+      this.systems.length = 0;
+    }
+  };
+
+  // src/core/state/GameStateStack.ts
+  var GameStateStack = class {
+    constructor() {
+      this.stack = [];
+    }
+    get current() {
+      return this.stack[this.stack.length - 1];
+    }
+    async push(state) {
+      const prev = this.current;
+      this.stack.push(state);
+      await state.enter(prev);
+    }
+    async pop() {
+      const state = this.stack.pop();
+      if (state) await state.exit(this.current);
+    }
+    async replace(state) {
+      const prev = this.stack.pop();
+      if (prev) await prev.exit(state);
+      this.stack.push(state);
+      await state.enter(prev);
+    }
+    update(dt) {
+      this.current?.update(dt);
+    }
+  };
+
+  // src/core/state/BootState.ts
+  var BootState = class {
+    constructor(app, services, events) {
+      this.name = "boot";
+      this.app = app;
+      this.services = services;
+      this.events = events;
+    }
+    async enter() {
+      try {
+        const config = this.services.resolve("config");
+        await Promise.all([
+          config.loadJson("/data/balance/live_balance.json").catch(() => ({}))
+        ]);
+        this.events.emit("state:goto", { state: "menu" });
+      } catch (e) {
+        console.error("BootState failed:", e);
+        this.events.emit("state:goto", { state: "menu" });
+      }
+    }
+    exit() {
+    }
+    update(dt) {
+    }
+  };
+
+  // src/core/state/MenuState.ts
+  var MenuState = class {
+    constructor(app, events) {
+      this.name = "menu";
+      this.menuEntity = null;
+      this.onKey = (e) => {
+        if (e.key === "Enter") {
+          this.events.emit("state:goto", { state: "match" });
+        }
+      };
+      this.app = app;
+      this.events = events;
+    }
+    enter() {
+      const ui = this.app._ui;
+      ui?.showMenu();
+      window.addEventListener("keydown", this.onKey);
+    }
+    exit() {
+      window.removeEventListener("keydown", this.onKey);
+      const ui = this.app._ui;
+      ui?.hideMenu();
+    }
+    update(dt) {
+    }
+  };
+
+  // src/core/state/MatchState.ts
+  var MatchState = class {
+    constructor(app, events) {
+      this.name = "match";
+      this.app = app;
+      this.events = events;
+    }
+    enter() {
+      const ui = this.app._ui;
+      ui?.showHUD();
+    }
+    exit() {
+    }
+    update(dt) {
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
       this.postProcessingManager = null;
+      this.debugOverlay = null;
       // private assetManager: any;
       this.isInitialized = false;
       this.updateHandler = null;
-      this.app = new pc6.Application(canvas, {
-        mouse: new pc6.Mouse(canvas),
-        touch: new pc6.TouchDevice(canvas),
-        keyboard: new pc6.Keyboard(window),
-        gamepads: new pc6.GamePads()
+      this.app = new pc7.Application(canvas, {
+        mouse: new pc7.Mouse(canvas),
+        touch: new pc7.TouchDevice(canvas),
+        keyboard: new pc7.Keyboard(window),
+        gamepads: new pc7.GamePads()
       });
       this.setupApplication();
       this.initializeManagers();
+      this.eventBus = new EventBus();
+      this.services = new ServiceContainer();
+      this.featureFlags = new FeatureFlags();
+      this.pipeline = new UpdatePipeline();
+      this.services.register("app", this.app);
+      this.services.register("events", this.eventBus);
+      this.services.register("flags", this.featureFlags);
+      this.services.register("config", new (init_ConfigService(), __toCommonJS(ConfigService_exports)).ConfigService());
+      this.stateStack = new GameStateStack();
+      this.eventBus.on("state:goto", async ({ state }) => {
+        switch (state) {
+          case "menu":
+            await this.stateStack.replace(new MenuState(this.app, this.eventBus));
+            break;
+          case "match":
+            await this.stateStack.replace(new MatchState(this.app, this.eventBus));
+            break;
+        }
+      });
     }
     setupApplication() {
-      this.app.setCanvasFillMode(pc6.FILLMODE_FILL_WINDOW);
-      this.app.setCanvasResolution(pc6.RESOLUTION_AUTO);
+      this.app.setCanvasFillMode(pc7.FILLMODE_FILL_WINDOW);
+      this.app.setCanvasResolution(pc7.RESOLUTION_AUTO);
       window.addEventListener("resize", () => this.app.resizeCanvas());
       Logger.info("PlayCanvas application initialized");
     }
@@ -2174,7 +2515,16 @@ var SF3App = (() => {
       this.combatSystem = new CombatSystem(this.app);
       this.stageManager = new StageManager(this.app);
       this.uiManager = new UIManager(this.app);
+      this.app._ui = this.uiManager;
       this.postProcessingManager = new PostProcessingManager_default(this.app);
+      const inputUpdatable = { name: "input", priority: 10, update: (dt) => this.inputManager.update() };
+      const characterUpdatable = { name: "characters", priority: 20, update: (dt) => this.characterManager.update(dt) };
+      const combatUpdatable = { name: "combat", priority: 30, update: (dt) => this.combatSystem.update(dt) };
+      const postFxUpdatable = { name: "postfx", priority: 90, update: (dt) => this.postProcessingManager?.update(dt) };
+      this.pipeline.add(inputUpdatable);
+      this.pipeline.add(characterUpdatable);
+      this.pipeline.add(combatUpdatable);
+      this.pipeline.add(postFxUpdatable);
     }
     async initialize() {
       if (this.isInitialized) return;
@@ -2189,11 +2539,19 @@ var SF3App = (() => {
         this.combatSystem.initialize(this.characterManager, this.inputManager);
         this.isInitialized = true;
         this.app.start();
+        await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
         this.updateHandler = (dt) => {
-          this.inputManager.update();
-          this.characterManager.update(dt);
-          this.combatSystem.update(dt);
-          this.postProcessingManager?.update(dt);
+          this.pipeline.update(dt);
+          this.stateStack.update(dt);
+          if (!this.debugOverlay && typeof window !== "undefined") {
+            try {
+              const { DebugOverlay: DebugOverlay2 } = (init_DebugOverlay(), __toCommonJS(DebugOverlay_exports));
+              this.debugOverlay = new DebugOverlay2();
+            } catch {
+            }
+          }
+          this.debugOverlay?.update();
+          this.debugOverlay?.setTimings(this.pipeline.getTimings());
         };
         this.app.on("update", this.updateHandler);
         Logger.info("Game engine fully initialized");
@@ -2222,15 +2580,15 @@ var SF3App = (() => {
   };
 
   // src/index.ts
-  var pc7 = __toESM(require_playcanvas_shim());
+  var pc8 = __toESM(require_playcanvas_shim());
   async function defaultStart(canvas) {
     const targetCanvas = canvas || document.getElementById("application-canvas");
     const engine = new GameEngine(targetCanvas);
     Logger.info("Starting Street Fighter III: 3rd Strike - PlayCanvas Edition");
     await engine.initialize();
     const characterManager = engine.getCharacterManager();
-    const ryu = characterManager.createCharacter("ryu", new pc7.Vec3(-2, 0, 0));
-    const ken = characterManager.createCharacter("ken", new pc7.Vec3(2, 0, 0));
+    const ryu = characterManager.createCharacter("ryu", new pc8.Vec3(-2, 0, 0));
+    const ken = characterManager.createCharacter("ken", new pc8.Vec3(2, 0, 0));
     if (ryu && ken) {
       characterManager.setActiveCharacters("ryu", "ken");
     }

@@ -23,6 +23,8 @@ asm
 libs
 bin
 build
+dist
+public/bundle.*
 ctx.c
 .splache
 temp
