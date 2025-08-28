@@ -153,15 +153,54 @@ var SF3App = (() => {
   Logger.logLevel = 1 /* INFO */;
   Logger.prefix = "[SF3]";
 
+  // src/core/procgen/ProceduralFrameGenerator.ts
+  var ProceduralFrameGenerator = class {
+    generateForCharacter(config) {
+      const updated = { ...config };
+      const animations = updated.animations || {};
+      const moveGroups = [updated.moves, updated.normals, updated.specials, updated.supers];
+      for (const group of moveGroups) {
+        if (!group) continue;
+        for (const [name, move] of Object.entries(group)) {
+          const key = `move_${name}`;
+          if (!animations[key]) {
+            const total = (move.startupFrames || move.startup || 0) + (move.activeFrames || move.active || 0) + (move.recoveryFrames || move.recovery || 0);
+            animations[key] = {
+              frameCount: Math.max(1, total || 5),
+              duration: Math.max(83, (total || 5) * 16.6),
+              loop: false
+            };
+          }
+        }
+      }
+      updated.animations = animations;
+      return updated;
+    }
+  };
+
   // src/core/characters/CharacterManager.ts
   var CharacterManager = class {
     constructor(app) {
       this.characters = /* @__PURE__ */ new Map();
       this.characterConfigs = /* @__PURE__ */ new Map();
       this.activeCharacters = [];
+      this.preloader = null;
+      this.frameGen = new ProceduralFrameGenerator();
+      this.decomp = null;
       this.app = app;
     }
     async initialize() {
+      try {
+        const services = this.app._services;
+        if (services && services.resolve) {
+          this.preloader = services.resolve("preloader");
+          try {
+            this.decomp = services.resolve("decomp");
+          } catch {
+          }
+        }
+      } catch {
+      }
       await this.loadCharacterConfigs();
       Logger.info("Character manager initialized");
     }
@@ -172,8 +211,9 @@ var SF3App = (() => {
           const db = await dbResponse.json();
           const keys = Object.keys(db);
           for (const key of keys) {
-            const normalized = this.normalizeCharacterConfig(db[key]);
-            this.characterConfigs.set(key, normalized);
+            let cfg = this.normalizeCharacterConfig(db[key]);
+            cfg = this.frameGen.generateForCharacter(cfg);
+            this.characterConfigs.set(key, cfg);
           }
           Logger.info(`Loaded ${keys.length} characters from consolidated database`);
           return;
@@ -186,12 +226,29 @@ var SF3App = (() => {
         try {
           const response = await fetch(`/data/characters/${name}.json`);
           const rawConfig = await response.json();
-          const config = this.normalizeCharacterConfig(rawConfig);
+          let config = this.normalizeCharacterConfig(rawConfig);
+          config = this.frameGen.generateForCharacter(config);
           this.characterConfigs.set(name, config);
           Logger.info(`Loaded character config: ${name}`);
         } catch (error) {
           Logger.error(`Failed to load character ${name}:`, error);
         }
+      }
+      try {
+        let cfg = null;
+        try {
+          const gt = await fetch("/data/characters_decomp/sf3_ground_truth_seed.json");
+          if (gt.ok) cfg = await gt.json();
+        } catch {
+        }
+        if (!cfg && this.decomp) cfg = await this.decomp.deriveFromDecompIfAvailable();
+        if (cfg) {
+          const norm = this.normalizeCharacterConfig(cfg);
+          const finalCfg = this.frameGen.generateForCharacter(norm);
+          this.characterConfigs.set(cfg.characterId || "sf3_ground_truth_seed", finalCfg);
+          Logger.info("Loaded ground-truth character seed");
+        }
+      } catch {
       }
     }
     normalizeCharacterConfig(config) {
@@ -1615,6 +1672,37 @@ var SF3App = (() => {
     }
   `;
 
+  // src/typescript/shaders/StageStormySkyShader.ts
+  var StageStormySkyShader = class {
+  };
+  StageStormySkyShader.vertexShader = `
+		attribute vec3 vertex_position;
+		attribute vec2 vertex_texCoord0;
+		uniform mat4 matrix_model;
+		uniform mat4 matrix_view;
+		uniform mat4 matrix_projection;
+		varying vec2 vUv0;
+		void main(){
+			vUv0 = vertex_texCoord0;
+			gl_Position = matrix_projection * matrix_view * matrix_model * vec4(vertex_position,1.0);
+		}
+	`;
+  StageStormySkyShader.fragmentShader = `
+		#ifdef GL_ES
+		precision mediump float;
+		#endif
+		varying vec2 vUv0;
+		uniform sampler2D texture_diffuseMap;
+		uniform vec2 uScrollSpeed;
+		uniform float uTime;
+		uniform vec4 uTint;
+		void main(){
+			vec2 uv = vUv0 + uScrollSpeed * uTime * 0.001;
+			vec4 col = texture2D(texture_diffuseMap, uv);
+			gl_FragColor = vec4(col.rgb * uTint.rgb, col.a * uTint.a);
+		}
+	`;
+
   // src/core/graphics/ShaderUtils.ts
   var ShaderUtils = class {
     static createMaterialFromShaders(app, vertexShader, fragmentShader) {
@@ -1722,6 +1810,13 @@ var SF3App = (() => {
       mat.setParameter("uScreenShakeOffset", new Float32Array([0, 0]));
       mat.setParameter("uTimeScale", 1);
       mat.setParameter("uTime", 0);
+      return mat;
+    }
+    static createStageStormySkyMaterial(app) {
+      const mat = this.createMaterialFromShaders(app, StageStormySkyShader.vertexShader, StageStormySkyShader.fragmentShader);
+      mat.setParameter("uScrollSpeed", new Float32Array([0.01, 2e-3]));
+      mat.setParameter("uTime", 0);
+      mat.setParameter("uTint", new Float32Array([0.6, 0.7, 0.8, 1]));
       return mat;
     }
   };
@@ -2467,6 +2562,234 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/utils/PreloadManager.ts
+  var PreloadManager = class {
+    constructor() {
+      this.manifest = { assets: [] };
+    }
+    async loadManifest(url = "/assets/manifest.json") {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Manifest load failed: ${res.status}`);
+      this.manifest = await res.json();
+    }
+    getAssetsByType(type) {
+      return this.manifest.assets.filter((a) => a.type === type).map((a) => a.path);
+    }
+    async getJson(path) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(`JSON load failed: ${path}`);
+      return res.json();
+    }
+  };
+
+  // src/core/ai/AIManager.ts
+  var AIManager = class {
+    constructor(app) {
+      this.policies = /* @__PURE__ */ new Map();
+      this.active = null;
+      this.dda = { difficulty: 1 };
+      this.app = app;
+    }
+    registerPolicy(name, policy) {
+      this.policies.set(name, policy);
+    }
+    activate(name) {
+      if (this.policies.has(name)) this.active = name;
+    }
+    setDifficulty(x) {
+      this.dda.difficulty = Math.max(0.1, Math.min(3, x));
+    }
+    update(dt) {
+      if (!this.active) return;
+      const policy = this.policies.get(this.active);
+      policy?.({ dt, app: this.app, state: { difficulty: this.dda.difficulty } });
+    }
+  };
+
+  // src/core/procgen/ProceduralStageGenerator.ts
+  var ProceduralStageGenerator = class {
+    constructor(seed = Date.now()) {
+      this.rng = mulberry32(seed >>> 0);
+    }
+    generate(opts = {}) {
+      const theme = opts.theme || "training";
+      switch (theme) {
+        case "urban":
+          return this.urban();
+        case "gothic":
+          return this.gothic();
+        default:
+          return this.training();
+      }
+    }
+    training() {
+      return {
+        name: "Training (Procedural)",
+        layers: {
+          skybox: { type: "gradient", elements: [] },
+          farBackground: { type: "mountains", elements: this.mountains(3) },
+          midBackground: { type: "buildings", elements: this.buildings(4) },
+          nearBackground: { type: "trees", elements: this.trees(3) },
+          playground: { type: "stage_floor", elements: [{ type: "platform", x: 0, y: -5, width: 40, height: 2 }] }
+        }
+      };
+    }
+    gothic() {
+      return {
+        name: "Gothic (Procedural)",
+        layers: {
+          skybox: { type: "stormy_sky", elements: [{ type: "plane", name: "stormy_sky" }] },
+          farBackground: { type: "mountains", elements: this.mountains(2) },
+          midBackground: { type: "castle", elements: this.buildings(3) },
+          nearBackground: { type: "gargoyles", elements: this.trees(2) },
+          playground: { type: "cobblestone", elements: [{ type: "platform", x: 0, y: -5, width: 40, height: 2 }] }
+        }
+      };
+    }
+    urban() {
+      return {
+        name: "Urban (Procedural)",
+        layers: {
+          skybox: { type: "cityscape", elements: [] },
+          farBackground: { type: "cityscape", elements: this.buildings(5) },
+          midBackground: { type: "street", elements: this.buildings(3) },
+          nearBackground: { type: "crowd", elements: this.buildings(2) },
+          playground: { type: "street_stage", elements: [{ type: "asphalt", x: 0, y: -5, width: 50, height: 3 }] }
+        }
+      };
+    }
+    mountains(n) {
+      const arr = [];
+      for (let i = 0; i < n; i++) arr.push({ type: "mountain", x: (i - n / 2) * 100, y: -20 + this.rand(-5, 5), width: this.rand(30, 50), height: this.rand(20, 30), color: "#4A5568" });
+      return arr;
+    }
+    buildings(n) {
+      const arr = [];
+      for (let i = 0; i < n; i++) arr.push({ type: "building", x: (i - n / 2) * 80, y: -10, width: this.rand(20, 60), height: this.rand(40, 120), color: "#6B7280" });
+      return arr;
+    }
+    trees(n) {
+      const arr = [];
+      for (let i = 0; i < n; i++) arr.push({ type: "tree", x: (i - n / 2) * 60, y: -6, scale: this.rand(1, 2), sway: true });
+      return arr;
+    }
+    rand(min, max) {
+      return min + (max - min) * this.rng();
+    }
+  };
+  function mulberry32(a) {
+    return function() {
+      a |= 0;
+      a = a + 1831565813 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // src/core/utils/DecompDataService.ts
+  var DecompDataService = class {
+    async loadGroundTruthCharacter() {
+      try {
+        const res = await fetch("/data/characters_decomp/sf3_ground_truth_seed.json");
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data;
+      } catch {
+        return null;
+      }
+    }
+    // Browser-side fallback: if json not present, attempt to fetch raw decomp table and heuristically parse
+    async deriveFromDecompIfAvailable() {
+      try {
+        const urlCandidates = [
+          "/sfiii-decomp/src/anniversary/bin2obj/char_table.c",
+          "https://raw.githubusercontent.com/apstygo/sfiii-decomp/main/src/anniversary/bin2obj/char_table.c"
+        ];
+        let text = null;
+        for (const u of urlCandidates) {
+          try {
+            const r = await fetch(u, { cache: "no-store" });
+            if (r.ok) {
+              text = await r.text();
+              break;
+            }
+          } catch {
+          }
+        }
+        if (!text) return null;
+        const triplets = this.parseHeuristicMoveTriplets(text);
+        const moves = this.assignToMockMoveNames(triplets);
+        const characterId = "sf3_ground_truth_seed";
+        const animations = {};
+        for (const k of Object.keys(moves)) {
+          const total = Math.max(1, moves[k].startup + moves[k].active + moves[k].recovery);
+          animations[`move_${k}`] = { frameCount: total, duration: Math.max(83, total * 16.6), loop: false };
+        }
+        const json = {
+          characterId,
+          name: characterId,
+          displayName: characterId,
+          archetype: "technical",
+          spritePath: `/assets/sprites/${characterId}.png`,
+          health: 1e3,
+          walkSpeed: 150,
+          dashSpeed: 300,
+          jumpHeight: 380,
+          complexity: "medium",
+          strengths: [],
+          weaknesses: [],
+          uniqueMechanics: [],
+          moves,
+          animations
+        };
+        return json;
+      } catch {
+        return null;
+      }
+    }
+    parseHeuristicMoveTriplets(source) {
+      const hexOrDec = /0x[0-9A-Fa-f]+|\d+/g;
+      const numbers = [];
+      for (const m of source.matchAll(hexOrDec)) {
+        const t = m[0];
+        const v = t.startsWith("0x") ? parseInt(t, 16) : parseInt(t, 10);
+        if (!Number.isFinite(v)) continue;
+        numbers.push(v >>> 0);
+      }
+      const smalls = numbers.filter((n) => n > 0 && n <= 120);
+      const triplets = [];
+      for (let i = 0; i + 2 < smalls.length; i += 3) {
+        const a = smalls[i + 0];
+        const b = smalls[i + 1];
+        const c = smalls[i + 2];
+        if (a + b + c <= 0) continue;
+        if (a > 60 || b > 60 || c > 90) continue;
+        triplets.push({ startup: a, active: b, recovery: c });
+      }
+      return triplets;
+    }
+    assignToMockMoveNames(triplets) {
+      const names = [
+        "light_punch",
+        "medium_punch",
+        "heavy_punch",
+        "light_kick",
+        "medium_kick",
+        "heavy_kick",
+        "special_1",
+        "special_2",
+        "special_3",
+        "super_1"
+      ];
+      const out = {};
+      for (let i = 0; i < names.length && i < triplets.length; i++) {
+        out[names[i]] = triplets[i];
+      }
+      return out;
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2491,6 +2814,15 @@ var SF3App = (() => {
       this.services.register("events", this.eventBus);
       this.services.register("flags", this.featureFlags);
       this.services.register("config", new (init_ConfigService(), __toCommonJS(ConfigService_exports)).ConfigService());
+      this.preloader = new PreloadManager();
+      this.aiManager = new AIManager(this.app);
+      this.stageGen = new ProceduralStageGenerator();
+      this.decompService = new DecompDataService();
+      this.services.register("preloader", this.preloader);
+      this.services.register("ai", this.aiManager);
+      this.services.register("stageGen", this.stageGen);
+      this.services.register("decomp", this.decompService);
+      this.app._services = this.services;
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {
         switch (state) {
@@ -2521,8 +2853,10 @@ var SF3App = (() => {
       const characterUpdatable = { name: "characters", priority: 20, update: (dt) => this.characterManager.update(dt) };
       const combatUpdatable = { name: "combat", priority: 30, update: (dt) => this.combatSystem.update(dt) };
       const postFxUpdatable = { name: "postfx", priority: 90, update: (dt) => this.postProcessingManager?.update(dt) };
+      const aiUpdatable = { name: "ai", priority: 25, update: (dt) => this.aiManager.update(dt) };
       this.pipeline.add(inputUpdatable);
       this.pipeline.add(characterUpdatable);
+      this.pipeline.add(aiUpdatable);
       this.pipeline.add(combatUpdatable);
       this.pipeline.add(postFxUpdatable);
     }
@@ -2536,6 +2870,7 @@ var SF3App = (() => {
         if (this.postProcessingManager) {
           await this.postProcessingManager.initialize();
         }
+        await this.preloader.loadManifest("/assets/manifest.json");
         this.combatSystem.initialize(this.characterManager, this.inputManager);
         this.isInitialized = true;
         this.app.start();

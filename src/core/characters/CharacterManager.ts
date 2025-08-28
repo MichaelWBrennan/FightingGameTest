@@ -2,18 +2,34 @@
 import * as pc from 'playcanvas';
 import { Character, CharacterConfig } from '../../../types/character';
 import { Logger } from '../utils/Logger';
+import { PreloadManager } from '../utils/PreloadManager';
+import { DecompDataService } from '../utils/DecompDataService';
+import { ProceduralFrameGenerator } from '../procgen/ProceduralFrameGenerator';
 
 export class CharacterManager {
   private app: pc.Application;
   private characters = new Map<string, Character>();
   private characterConfigs = new Map<string, CharacterConfig>();
   private activeCharacters: Character[] = [];
+  private preloader: PreloadManager | null = null;
+  private frameGen: ProceduralFrameGenerator = new ProceduralFrameGenerator();
+  private decomp: DecompDataService | null = null;
 
   constructor(app: pc.Application) {
     this.app = app;
   }
 
   public async initialize(): Promise<void> {
+    try {
+      // Attempt to resolve preloader from global services if present
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const services = (this.app as any)._services as any;
+      if (services && services.resolve) {
+        this.preloader = services.resolve('preloader') as PreloadManager;
+        try { this.decomp = services.resolve('decomp') as DecompDataService; } catch {}
+      }
+    } catch {}
     await this.loadCharacterConfigs();
     Logger.info('Character manager initialized');
   }
@@ -26,8 +42,9 @@ export class CharacterManager {
         const db = await dbResponse.json();
         const keys = Object.keys(db);
         for (const key of keys) {
-          const normalized = this.normalizeCharacterConfig(db[key] as CharacterConfig);
-          this.characterConfigs.set(key, normalized);
+          let cfg = this.normalizeCharacterConfig(db[key] as CharacterConfig);
+          cfg = this.frameGen.generateForCharacter(cfg);
+          this.characterConfigs.set(key, cfg);
         }
         Logger.info(`Loaded ${keys.length} characters from consolidated database`);
         return;
@@ -42,13 +59,30 @@ export class CharacterManager {
       try {
         const response = await fetch(`/data/characters/${name}.json`);
         const rawConfig: CharacterConfig = await response.json();
-        const config = this.normalizeCharacterConfig(rawConfig);
+        let config = this.normalizeCharacterConfig(rawConfig);
+        config = this.frameGen.generateForCharacter(config);
         this.characterConfigs.set(name, config);
         Logger.info(`Loaded character config: ${name}`);
       } catch (error) {
         Logger.error(`Failed to load character ${name}:`, error);
       }
     }
+
+    // Optionally load a ground-truth seed from decomp import if present, or derive at runtime
+    try {
+      let cfg: CharacterConfig | null = null;
+      try {
+        const gt = await fetch('/data/characters_decomp/sf3_ground_truth_seed.json');
+        if (gt.ok) cfg = (await gt.json()) as CharacterConfig;
+      } catch {}
+      if (!cfg && this.decomp) cfg = (await this.decomp.deriveFromDecompIfAvailable()) as CharacterConfig | null;
+      if (cfg) {
+        const norm = this.normalizeCharacterConfig(cfg);
+        const finalCfg = this.frameGen.generateForCharacter(norm);
+        this.characterConfigs.set(cfg.characterId || 'sf3_ground_truth_seed', finalCfg);
+        Logger.info('Loaded ground-truth character seed');
+      }
+    } catch {}
   }
 
   private normalizeCharacterConfig(config: CharacterConfig): CharacterConfig {

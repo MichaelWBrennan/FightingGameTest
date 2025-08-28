@@ -17,6 +17,10 @@ import { GameStateStack } from './state/GameStateStack';
 import { BootState } from './state/BootState';
 import { MenuState } from './state/MenuState';
 import { MatchState } from './state/MatchState';
+import { PreloadManager } from './utils/PreloadManager';
+import { AIManager } from './ai/AIManager';
+import { ProceduralStageGenerator } from './procgen/ProceduralStageGenerator';
+import { DecompDataService } from './utils/DecompDataService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -32,6 +36,10 @@ export class GameEngine {
   private pipeline: UpdatePipeline;
   private debugOverlay: any | null = null;
   private stateStack: GameStateStack;
+  private preloader: PreloadManager;
+  private aiManager: AIManager;
+  private stageGen: ProceduralStageGenerator;
+  private decompService: DecompDataService;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -58,6 +66,16 @@ export class GameEngine {
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
     this.services.register('config', new (require('./utils/ConfigService').ConfigService)());
+    this.preloader = new PreloadManager();
+    this.aiManager = new AIManager(this.app);
+    this.stageGen = new ProceduralStageGenerator();
+    this.decompService = new DecompDataService();
+    this.services.register('preloader', this.preloader);
+    this.services.register('ai', this.aiManager);
+    this.services.register('stageGen', this.stageGen);
+    this.services.register('decomp', this.decompService);
+    // expose services for legacy components that pull from app
+    (this.app as any)._services = this.services;
 
     // State stack
     this.stateStack = new GameStateStack();
@@ -101,8 +119,10 @@ export class GameEngine {
     const characterUpdatable: UpdatableSystem = { name: 'characters', priority: 20, update: dt => this.characterManager.update(dt) };
     const combatUpdatable: UpdatableSystem = { name: 'combat', priority: 30, update: dt => this.combatSystem.update(dt) };
     const postFxUpdatable: UpdatableSystem = { name: 'postfx', priority: 90, update: dt => this.postProcessingManager?.update(dt) };
+    const aiUpdatable: UpdatableSystem = { name: 'ai', priority: 25, update: dt => this.aiManager.update(dt) };
     this.pipeline.add(inputUpdatable);
     this.pipeline.add(characterUpdatable);
+    this.pipeline.add(aiUpdatable);
     this.pipeline.add(combatUpdatable);
     this.pipeline.add(postFxUpdatable);
   }
@@ -121,6 +141,10 @@ export class GameEngine {
       if (this.postProcessingManager) {
         await this.postProcessingManager.initialize();
       }
+
+      // Load manifest first
+      await this.preloader.loadManifest('/assets/manifest.json');
+
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
       
