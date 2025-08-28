@@ -35,11 +35,19 @@ export class CharacterManager {
   }
 
   private async loadCharacterConfigs(): Promise<void> {
+    const fetchJson = async (path: string) => {
+      try {
+        if (this.preloader) return await this.preloader.getJson<any>(path);
+        const r = await fetch(path, { cache: 'no-store' });
+        return await r.json();
+      } catch (e) {
+        throw e;
+      }
+    };
     // Prefer a consolidated database file if available
     try {
-      const dbResponse = await fetch('/data/characters_db.json');
-      if (dbResponse.ok) {
-        const db = await dbResponse.json();
+      const db = await fetchJson('/data/characters_db.json');
+      if (db) {
         const keys = Object.keys(db);
         for (const key of keys) {
           let cfg = this.normalizeCharacterConfig(db[key] as CharacterConfig);
@@ -57,8 +65,7 @@ export class CharacterManager {
     const characterNames = ['ryu', 'ken', 'chun_li', 'sagat', 'zangief'];
     for (const name of characterNames) {
       try {
-        const response = await fetch(`/data/characters/${name}.json`);
-        const rawConfig: CharacterConfig = await response.json();
+        const rawConfig: CharacterConfig = await fetchJson(`/data/characters/${name}.json`);
         let config = this.normalizeCharacterConfig(rawConfig);
         config = this.frameGen.generateForCharacter(config);
         this.characterConfigs.set(name, config);
@@ -72,8 +79,7 @@ export class CharacterManager {
     try {
       let cfg: CharacterConfig | null = null;
       try {
-        const gt = await fetch('/data/characters_decomp/sf3_ground_truth_seed.json');
-        if (gt.ok) cfg = (await gt.json()) as CharacterConfig;
+        cfg = (await fetchJson('/data/characters_decomp/sf3_ground_truth_seed.json')) as CharacterConfig;
       } catch {}
       if (!cfg && this.decomp) cfg = (await this.decomp.deriveFromDecompIfAvailable()) as CharacterConfig | null;
       if (cfg) {
