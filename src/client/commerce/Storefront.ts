@@ -168,7 +168,8 @@ export class Storefront extends EventEmitter {
    */
   public async loadCatalog(): Promise<void> {
     try {
-      const response = await fetch(`${this.config.apiEndpoint}/store/catalog`, {
+      const apiUrl = this.config.apiEndpoint.startsWith('/data') ? '/api/store/catalog' : `${this.config.apiEndpoint}/store/catalog`;
+      const response = await fetch(apiUrl, {
         headers: {
           'Accept': 'application/json',
           'X-Region': this.config.region,

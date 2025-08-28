@@ -22,12 +22,18 @@ export class BootState implements GameState {
             const monetization = this.services.resolve<MonetizationService>('monetization');
             const entitlement = this.services.resolve<any>('entitlement');
             const security = this.services.resolve<any>('security');
+            const sync = this.services.resolve<any>('sync');
+            const remote = this.services.resolve<any>('configRemote');
+            const liveops = this.services.resolve<any>('liveops');
 			await Promise.all([
 				config.loadJson('/data/balance/live_balance.json').catch(() => ({})),
                 monetization.initialize().catch(() => undefined),
-                entitlement.initialize?.().catch(() => undefined)
+                entitlement.initialize?.().catch(() => undefined),
+                remote.load().catch(() => undefined),
+                liveops.load().catch(() => undefined)
 			]);
             security.start?.();
+            sync.start?.();
 			this.events.emit('state:goto', { state: 'menu' });
 		} catch (e) {
 			console.error('BootState failed:', e);
