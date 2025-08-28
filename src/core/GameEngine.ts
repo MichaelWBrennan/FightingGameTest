@@ -17,6 +17,7 @@ import { GameStateStack } from './state/GameStateStack';
 import { BootState } from './state/BootState';
 import { MenuState } from './state/MenuState';
 import { MatchState } from './state/MatchState';
+import { PreloadManager } from './utils/PreloadManager';
 
 export class GameEngine {
   private app: pc.Application;
@@ -32,6 +33,7 @@ export class GameEngine {
   private pipeline: UpdatePipeline;
   private debugOverlay: any | null = null;
   private stateStack: GameStateStack;
+  private preloader: PreloadManager;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -58,6 +60,10 @@ export class GameEngine {
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
     this.services.register('config', new (require('./utils/ConfigService').ConfigService)());
+    this.preloader = new PreloadManager();
+    this.services.register('preloader', this.preloader);
+    // expose services for legacy components that pull from app
+    (this.app as any)._services = this.services;
 
     // State stack
     this.stateStack = new GameStateStack();
@@ -121,6 +127,10 @@ export class GameEngine {
       if (this.postProcessingManager) {
         await this.postProcessingManager.initialize();
       }
+
+      // Load manifest first
+      await this.preloader.loadManifest('/assets/manifest.json');
+
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
       
