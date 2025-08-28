@@ -153,6 +153,31 @@ var SF3App = (() => {
   Logger.logLevel = 1 /* INFO */;
   Logger.prefix = "[SF3]";
 
+  // src/core/procgen/ProceduralFrameGenerator.ts
+  var ProceduralFrameGenerator = class {
+    generateForCharacter(config) {
+      const updated = { ...config };
+      const animations = updated.animations || {};
+      const moveGroups = [updated.moves, updated.normals, updated.specials, updated.supers];
+      for (const group of moveGroups) {
+        if (!group) continue;
+        for (const [name, move] of Object.entries(group)) {
+          const key = `move_${name}`;
+          if (!animations[key]) {
+            const total = (move.startupFrames || move.startup || 0) + (move.activeFrames || move.active || 0) + (move.recoveryFrames || move.recovery || 0);
+            animations[key] = {
+              frameCount: Math.max(1, total || 5),
+              duration: Math.max(83, (total || 5) * 16.6),
+              loop: false
+            };
+          }
+        }
+      }
+      updated.animations = animations;
+      return updated;
+    }
+  };
+
   // src/core/characters/CharacterManager.ts
   var CharacterManager = class {
     constructor(app) {
@@ -160,6 +185,7 @@ var SF3App = (() => {
       this.characterConfigs = /* @__PURE__ */ new Map();
       this.activeCharacters = [];
       this.preloader = null;
+      this.frameGen = new ProceduralFrameGenerator();
       this.app = app;
     }
     async initialize() {
@@ -180,8 +206,9 @@ var SF3App = (() => {
           const db = await dbResponse.json();
           const keys = Object.keys(db);
           for (const key of keys) {
-            const normalized = this.normalizeCharacterConfig(db[key]);
-            this.characterConfigs.set(key, normalized);
+            let cfg = this.normalizeCharacterConfig(db[key]);
+            cfg = this.frameGen.generateForCharacter(cfg);
+            this.characterConfigs.set(key, cfg);
           }
           Logger.info(`Loaded ${keys.length} characters from consolidated database`);
           return;
@@ -194,7 +221,8 @@ var SF3App = (() => {
         try {
           const response = await fetch(`/data/characters/${name}.json`);
           const rawConfig = await response.json();
-          const config = this.normalizeCharacterConfig(rawConfig);
+          let config = this.normalizeCharacterConfig(rawConfig);
+          config = this.frameGen.generateForCharacter(config);
           this.characterConfigs.set(name, config);
           Logger.info(`Loaded character config: ${name}`);
         } catch (error) {

@@ -3,6 +3,7 @@ import * as pc from 'playcanvas';
 import { Character, CharacterConfig } from '../../../types/character';
 import { Logger } from '../utils/Logger';
 import { PreloadManager } from '../utils/PreloadManager';
+import { ProceduralFrameGenerator } from '../procgen/ProceduralFrameGenerator';
 
 export class CharacterManager {
   private app: pc.Application;
@@ -10,6 +11,7 @@ export class CharacterManager {
   private characterConfigs = new Map<string, CharacterConfig>();
   private activeCharacters: Character[] = [];
   private preloader: PreloadManager | null = null;
+  private frameGen: ProceduralFrameGenerator = new ProceduralFrameGenerator();
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -37,8 +39,9 @@ export class CharacterManager {
         const db = await dbResponse.json();
         const keys = Object.keys(db);
         for (const key of keys) {
-          const normalized = this.normalizeCharacterConfig(db[key] as CharacterConfig);
-          this.characterConfigs.set(key, normalized);
+          let cfg = this.normalizeCharacterConfig(db[key] as CharacterConfig);
+          cfg = this.frameGen.generateForCharacter(cfg);
+          this.characterConfigs.set(key, cfg);
         }
         Logger.info(`Loaded ${keys.length} characters from consolidated database`);
         return;
@@ -53,7 +56,8 @@ export class CharacterManager {
       try {
         const response = await fetch(`/data/characters/${name}.json`);
         const rawConfig: CharacterConfig = await response.json();
-        const config = this.normalizeCharacterConfig(rawConfig);
+        let config = this.normalizeCharacterConfig(rawConfig);
+        config = this.frameGen.generateForCharacter(config);
         this.characterConfigs.set(name, config);
         Logger.info(`Loaded character config: ${name}`);
       } catch (error) {
