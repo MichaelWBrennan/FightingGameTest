@@ -1,12 +1,12 @@
-#!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+#!/usr/bin/env ts-node
+import * as fs from 'fs';
+import * as path from 'path';
+import { createHash, randomBytes, createCipheriv } from 'crypto';
 
-function ensureDir(dir) { fs.mkdirSync(dir, { recursive: true }); }
-function listFiles(dir) {
-  const out = [];
-  (function walk(d) {
+function ensureDir(dir: string) { fs.mkdirSync(dir, { recursive: true }); }
+function listFiles(dir: string): string[] {
+  const out: string[] = [];
+  (function walk(d: string) {
     for (const e of fs.readdirSync(d)) {
       const p = path.join(d, e);
       const st = fs.statSync(p);
@@ -16,14 +16,14 @@ function listFiles(dir) {
   return out;
 }
 
-function deriveKey() {
+function deriveKey(): Buffer {
   const k = process.env.ASSET_KEY || 'dev-asset-key-change-me';
-  return crypto.createHash('sha256').update(k).digest();
+  return createHash('sha256').update(k).digest();
 }
 
-function encryptAesGcm(key, data) {
-  const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+function encryptAesGcm(key: Buffer, data: Buffer): { iv: Buffer; enc: Buffer; tag: Buffer } {
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
   const enc = Buffer.concat([cipher.update(data), cipher.final()]);
   const tag = cipher.getAuthTag();
   return { iv, enc, tag };

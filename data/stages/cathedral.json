@@ -40,7 +40,7 @@
       "position": [0, -300],
       "scale": [2.0, 2.0],
       "tint": [0.8, 0.9, 1.0, 1.0],
-      "shader": "res://assets/shaders/stages/GothicSky.gdshader"
+      "shader": ""
     },
     {
       "name": "distant_spires",
