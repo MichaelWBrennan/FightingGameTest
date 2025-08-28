@@ -8,7 +8,8 @@ export default function handler(req: any, res: any) {
     res.status(200).json({
       matchmaking_enabled: false,
       storefront_endpoint: '/api/store/catalog',
-      analytics_enabled: true
+      analytics_enabled: true,
+      netcode: { enabled: true, mode: 'local', delay: 2, maxRollback: 12 }
     });
   } catch (e: any) {
     res.status(500).json({ error: 'config error', message: e?.message || String(e) });

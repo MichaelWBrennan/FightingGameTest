@@ -25,6 +25,7 @@ export class BootState implements GameState {
             const sync = this.services.resolve<any>('sync');
             const remote = this.services.resolve<any>('configRemote');
             const liveops = this.services.resolve<any>('liveops');
+            const netcode = this.services.resolve<any>('netcode');
 			await Promise.all([
 				config.loadJson('/data/balance/live_balance.json').catch(() => ({})),
                 monetization.initialize().catch(() => undefined),
@@ -34,6 +35,10 @@ export class BootState implements GameState {
 			]);
             security.start?.();
             sync.start?.();
+			const cfg = remote.get('netcode', { enabled: false });
+			if (cfg?.enabled && cfg.mode === 'local') {
+				netcode.enableLocalP2();
+			}
 			this.events.emit('state:goto', { state: 'menu' });
 		} catch (e) {
 			console.error('BootState failed:', e);

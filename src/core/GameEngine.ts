@@ -29,6 +29,7 @@ import { OfflineService } from './utils/OfflineService';
 import { SyncService } from './utils/SyncService';
 import { RemoteConfigService } from './utils/RemoteConfigService';
 import { LiveOpsService } from './liveops/LiveOpsService';
+import { NetcodeService } from './netcode/NetcodeService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -56,6 +57,7 @@ export class GameEngine {
   private sync: SyncService;
   private remoteConfig: RemoteConfigService;
   private liveOps: LiveOpsService;
+  private netcode?: NetcodeService;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -94,6 +96,7 @@ export class GameEngine {
     this.sync = new SyncService(this.offline);
     this.remoteConfig = new RemoteConfigService();
     this.liveOps = new LiveOpsService();
+    this.netcode = new NetcodeService(this.combatSystem, this.characterManager, this.inputManager);
     this.services.register('preloader', this.preloader);
     this.services.register('ai', this.aiManager);
     this.services.register('stageGen', this.stageGen);
@@ -106,6 +109,7 @@ export class GameEngine {
     this.services.register('sync', this.sync);
     this.services.register('configRemote', this.remoteConfig);
     this.services.register('liveops', this.liveOps);
+    this.services.register('netcode', this.netcode);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
@@ -150,11 +154,13 @@ export class GameEngine {
     const inputUpdatable: UpdatableSystem = { name: 'input', priority: 10, update: dt => this.inputManager.update() };
     const characterUpdatable: UpdatableSystem = { name: 'characters', priority: 20, update: dt => this.characterManager.update(dt) };
     const combatUpdatable: UpdatableSystem = { name: 'combat', priority: 30, update: dt => this.combatSystem.update(dt) };
+    const netcodeUpdatable: UpdatableSystem = { name: 'netcode', priority: 28, update: dt => this.netcode?.step() };
     const postFxUpdatable: UpdatableSystem = { name: 'postfx', priority: 90, update: dt => this.postProcessingManager?.update(dt) };
     const aiUpdatable: UpdatableSystem = { name: 'ai', priority: 25, update: dt => this.aiManager.update(dt) };
     this.pipeline.add(inputUpdatable);
     this.pipeline.add(characterUpdatable);
     this.pipeline.add(aiUpdatable);
+    this.pipeline.add(netcodeUpdatable);
     this.pipeline.add(combatUpdatable);
     this.pipeline.add(postFxUpdatable);
   }
