@@ -2,7 +2,7 @@
 import * as pc from 'playcanvas';
 import { Character } from '../../../types/character';
 import { CharacterManager } from '../characters/CharacterManager';
-import { InputManager } from '../input/InputManager';
+import { InputManager, PlayerInputs } from '../input/InputManager';
 import { Logger } from '../utils/Logger';
 
 interface HitResult {
@@ -38,6 +38,20 @@ export class CombatSystem {
 
     this.frameCounter++;
     this.processInputs();
+    this.updateHitboxes();
+    this.checkCollisions();
+  }
+
+  // Deterministic step for rollback, driven by netcode
+  public stepWithInputs(p0: PlayerInputs, p1: PlayerInputs): void {
+    if (this.hitstop > 0) {
+      this.hitstop--;
+      return;
+    }
+    this.frameCounter++;
+    const activeCharacters = this.characterManager.getActiveCharacters();
+    if (activeCharacters[0]) this.processCharacterInputs(activeCharacters[0], p0);
+    if (activeCharacters[1]) this.processCharacterInputs(activeCharacters[1], p1);
     this.updateHitboxes();
     this.checkCollisions();
   }
