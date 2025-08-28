@@ -118,6 +118,16 @@ export class CharacterManager {
   }
 
   public createCharacter(characterId: string, position: pc.Vec3): Character | null {
+    // Entitlement gating (player-respecting monetization)
+    try {
+      const services = (this.app as any)._services as any;
+      const entitlement = services?.resolve?.('entitlement');
+      if (entitlement && !entitlement.hasCharacterAccess?.(characterId, 'casual')) {
+        Logger.warn(`Access denied by entitlements for character: ${characterId}`);
+        return null;
+      }
+    } catch {}
+
     const config = this.characterConfigs.get(characterId);
     if (!config) {
       Logger.error(`Character config not found: ${characterId}`);

@@ -32,6 +32,11 @@ function main() {
 	const outFile = path.join(publicAssetsDir, 'manifest.json');
 	const entries: ManifestEntry[] = [];
 	if (fs.existsSync(dataDir)) walk(dataDir, dataDir, entries);
+	// Ensure store catalog listed if present
+	const catalogPath = path.join(dataDir, 'store', 'catalog.json');
+	if (fs.existsSync(catalogPath) && !entries.find(e => e.path.endsWith('/store/catalog.json'))) {
+		entries.push({ path: '/data/store/catalog.json', type: 'json' });
+	}
 	fs.mkdirSync(publicAssetsDir, { recursive: true });
 	fs.writeFileSync(outFile, JSON.stringify({ assets: entries }, null, 2));
 	console.log(`Wrote manifest: ${outFile} with ${entries.length} assets`);

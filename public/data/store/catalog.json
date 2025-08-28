@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "id": "skin_legendary_fire",
+      "name": "Legendary Fire Skin",
+      "description": "Flaming effects and gold accents.",
+      "type": "skin",
+      "rarity": "legendary",
+      "price": 9.99,
+      "currency": "USD",
+      "taxInclusive": true,
+      "previewAssets": { "thumbnail": "/assets/sprites/ryu.png" },
+      "availability": { "permanent": true, "returnWindowDays": 30 },
+      "owned": false,
+      "purchasable": true
+    }
+  ],
+  "bundles": [
+    {
+      "id": "starter_bundle",
+      "name": "Starter Bundle",
+      "description": "A curated set to get started",
+      "items": ["skin_legendary_fire"],
+      "pricing": { "bundlePrice": 8.99, "individualTotal": 9.99, "savingsAmount": 1.0, "savingsPercent": 10 },
+      "currency": "USD",
+      "taxInclusive": true,
+      "availability": { "startTime": 0, "endTime": 4102444800 },
+      "previewAssets": { "thumbnail": "/assets/sprites/ryu.png" },
+      "purchasable": true
+    }
+  ],
+  "sections": [
+    { "id": "featured", "name": "Featured", "items": ["starter_bundle", "skin_legendary_fire"], "rotationDays": 7, "lastRotation": 0 }
+  ]
+}
+

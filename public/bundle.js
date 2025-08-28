@@ -41,6 +41,168 @@ var SF3App = (() => {
     }
   });
 
+  // node_modules/eventemitter3/index.js
+  var require_eventemitter3 = __commonJS({
+    "node_modules/eventemitter3/index.js"(exports, module) {
+      "use strict";
+      var has = Object.prototype.hasOwnProperty;
+      var prefix = "~";
+      function Events() {
+      }
+      if (Object.create) {
+        Events.prototype = /* @__PURE__ */ Object.create(null);
+        if (!new Events().__proto__) prefix = false;
+      }
+      function EE(fn, context, once) {
+        this.fn = fn;
+        this.context = context;
+        this.once = once || false;
+      }
+      function addListener(emitter, event, fn, context, once) {
+        if (typeof fn !== "function") {
+          throw new TypeError("The listener must be a function");
+        }
+        var listener = new EE(fn, context || emitter, once), evt = prefix ? prefix + event : event;
+        if (!emitter._events[evt]) emitter._events[evt] = listener, emitter._eventsCount++;
+        else if (!emitter._events[evt].fn) emitter._events[evt].push(listener);
+        else emitter._events[evt] = [emitter._events[evt], listener];
+        return emitter;
+      }
+      function clearEvent(emitter, evt) {
+        if (--emitter._eventsCount === 0) emitter._events = new Events();
+        else delete emitter._events[evt];
+      }
+      function EventEmitter3() {
+        this._events = new Events();
+        this._eventsCount = 0;
+      }
+      EventEmitter3.prototype.eventNames = function eventNames() {
+        var names = [], events, name;
+        if (this._eventsCount === 0) return names;
+        for (name in events = this._events) {
+          if (has.call(events, name)) names.push(prefix ? name.slice(1) : name);
+        }
+        if (Object.getOwnPropertySymbols) {
+          return names.concat(Object.getOwnPropertySymbols(events));
+        }
+        return names;
+      };
+      EventEmitter3.prototype.listeners = function listeners(event) {
+        var evt = prefix ? prefix + event : event, handlers = this._events[evt];
+        if (!handlers) return [];
+        if (handlers.fn) return [handlers.fn];
+        for (var i = 0, l = handlers.length, ee = new Array(l); i < l; i++) {
+          ee[i] = handlers[i].fn;
+        }
+        return ee;
+      };
+      EventEmitter3.prototype.listenerCount = function listenerCount(event) {
+        var evt = prefix ? prefix + event : event, listeners = this._events[evt];
+        if (!listeners) return 0;
+        if (listeners.fn) return 1;
+        return listeners.length;
+      };
+      EventEmitter3.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
+        var evt = prefix ? prefix + event : event;
+        if (!this._events[evt]) return false;
+        var listeners = this._events[evt], len = arguments.length, args, i;
+        if (listeners.fn) {
+          if (listeners.once) this.removeListener(event, listeners.fn, void 0, true);
+          switch (len) {
+            case 1:
+              return listeners.fn.call(listeners.context), true;
+            case 2:
+              return listeners.fn.call(listeners.context, a1), true;
+            case 3:
+              return listeners.fn.call(listeners.context, a1, a2), true;
+            case 4:
+              return listeners.fn.call(listeners.context, a1, a2, a3), true;
+            case 5:
+              return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+            case 6:
+              return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
+          }
+          for (i = 1, args = new Array(len - 1); i < len; i++) {
+            args[i - 1] = arguments[i];
+          }
+          listeners.fn.apply(listeners.context, args);
+        } else {
+          var length = listeners.length, j;
+          for (i = 0; i < length; i++) {
+            if (listeners[i].once) this.removeListener(event, listeners[i].fn, void 0, true);
+            switch (len) {
+              case 1:
+                listeners[i].fn.call(listeners[i].context);
+                break;
+              case 2:
+                listeners[i].fn.call(listeners[i].context, a1);
+                break;
+              case 3:
+                listeners[i].fn.call(listeners[i].context, a1, a2);
+                break;
+              case 4:
+                listeners[i].fn.call(listeners[i].context, a1, a2, a3);
+                break;
+              default:
+                if (!args) for (j = 1, args = new Array(len - 1); j < len; j++) {
+                  args[j - 1] = arguments[j];
+                }
+                listeners[i].fn.apply(listeners[i].context, args);
+            }
+          }
+        }
+        return true;
+      };
+      EventEmitter3.prototype.on = function on(event, fn, context) {
+        return addListener(this, event, fn, context, false);
+      };
+      EventEmitter3.prototype.once = function once(event, fn, context) {
+        return addListener(this, event, fn, context, true);
+      };
+      EventEmitter3.prototype.removeListener = function removeListener(event, fn, context, once) {
+        var evt = prefix ? prefix + event : event;
+        if (!this._events[evt]) return this;
+        if (!fn) {
+          clearEvent(this, evt);
+          return this;
+        }
+        var listeners = this._events[evt];
+        if (listeners.fn) {
+          if (listeners.fn === fn && (!once || listeners.once) && (!context || listeners.context === context)) {
+            clearEvent(this, evt);
+          }
+        } else {
+          for (var i = 0, events = [], length = listeners.length; i < length; i++) {
+            if (listeners[i].fn !== fn || once && !listeners[i].once || context && listeners[i].context !== context) {
+              events.push(listeners[i]);
+            }
+          }
+          if (events.length) this._events[evt] = events.length === 1 ? events[0] : events;
+          else clearEvent(this, evt);
+        }
+        return this;
+      };
+      EventEmitter3.prototype.removeAllListeners = function removeAllListeners(event) {
+        var evt;
+        if (event) {
+          evt = prefix ? prefix + event : event;
+          if (this._events[evt]) clearEvent(this, evt);
+        } else {
+          this._events = new Events();
+          this._eventsCount = 0;
+        }
+        return this;
+      };
+      EventEmitter3.prototype.off = EventEmitter3.prototype.removeListener;
+      EventEmitter3.prototype.addListener = EventEmitter3.prototype.on;
+      EventEmitter3.prefixed = prefix;
+      EventEmitter3.EventEmitter = EventEmitter3;
+      if ("undefined" !== typeof module) {
+        module.exports = EventEmitter3;
+      }
+    }
+  });
+
   // src/core/utils/ConfigService.ts
   var ConfigService_exports = {};
   __export(ConfigService_exports, {
@@ -119,7 +281,7 @@ var SF3App = (() => {
   });
 
   // src/core/GameEngine.ts
-  var pc7 = __toESM(require_playcanvas_shim());
+  var pc8 = __toESM(require_playcanvas_shim());
 
   // src/core/characters/CharacterManager.ts
   var pc = __toESM(require_playcanvas_shim());
@@ -277,6 +439,15 @@ var SF3App = (() => {
       return normalized;
     }
     createCharacter(characterId, position) {
+      try {
+        const services = this.app._services;
+        const entitlement = services?.resolve?.("entitlement");
+        if (entitlement && !entitlement.hasCharacterAccess?.(characterId, "casual")) {
+          Logger.warn(`Access denied by entitlements for character: ${characterId}`);
+          return null;
+        }
+      } catch {
+      }
       const config = this.characterConfigs.get(characterId);
       if (!config) {
         Logger.error(`Character config not found: ${characterId}`);
@@ -2503,8 +2674,12 @@ var SF3App = (() => {
     async enter() {
       try {
         const config = this.services.resolve("config");
+        const monetization = this.services.resolve("monetization");
+        const entitlement = this.services.resolve("entitlement");
         await Promise.all([
-          config.loadJson("/data/balance/live_balance.json").catch(() => ({}))
+          config.loadJson("/data/balance/live_balance.json").catch(() => ({})),
+          monetization.initialize().catch(() => void 0),
+          entitlement.initialize?.().catch(() => void 0)
         ]);
         this.events.emit("state:goto", { state: "menu" });
       } catch (e) {
@@ -2534,12 +2709,24 @@ var SF3App = (() => {
     enter() {
       const ui = this.app._ui;
       ui?.showMenu();
+      try {
+        const services = this.app._services;
+        const monetization = services?.resolve?.("monetization");
+        monetization?.storefront?.startStoreImpression?.("featured");
+      } catch {
+      }
       window.addEventListener("keydown", this.onKey);
     }
     exit() {
       window.removeEventListener("keydown", this.onKey);
       const ui = this.app._ui;
       ui?.hideMenu();
+      try {
+        const services = this.app._services;
+        const monetization = services?.resolve?.("monetization");
+        monetization?.storefront?.endStoreImpression?.();
+      } catch {
+      }
     }
     update(dt) {
     }
@@ -2703,8 +2890,7 @@ var SF3App = (() => {
     async deriveFromDecompIfAvailable() {
       try {
         const urlCandidates = [
-          "/sfiii-decomp/src/anniversary/bin2obj/char_table.c",
-          "https://raw.githubusercontent.com/apstygo/sfiii-decomp/main/src/anniversary/bin2obj/char_table.c"
+          "/sfiii-decomp/src/anniversary/bin2obj/char_table.c"
         ];
         let text = null;
         for (const u of urlCandidates) {
@@ -2790,6 +2976,1184 @@ var SF3App = (() => {
     }
   };
 
+  // src/client/retention/RetentionClient.ts
+  var import_eventemitter3 = __toESM(require_eventemitter3());
+
+  // node_modules/uuid/dist/esm-browser/stringify.js
+  var byteToHex = [];
+  for (let i = 0; i < 256; ++i) {
+    byteToHex.push((i + 256).toString(16).slice(1));
+  }
+  function unsafeStringify(arr, offset = 0) {
+    return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+  }
+
+  // node_modules/uuid/dist/esm-browser/rng.js
+  var getRandomValues;
+  var rnds8 = new Uint8Array(16);
+  function rng() {
+    if (!getRandomValues) {
+      if (typeof crypto === "undefined" || !crypto.getRandomValues) {
+        throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
+      }
+      getRandomValues = crypto.getRandomValues.bind(crypto);
+    }
+    return getRandomValues(rnds8);
+  }
+
+  // node_modules/uuid/dist/esm-browser/native.js
+  var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+  var native_default = { randomUUID };
+
+  // node_modules/uuid/dist/esm-browser/v4.js
+  function v4(options, buf, offset) {
+    if (native_default.randomUUID && !buf && !options) {
+      return native_default.randomUUID();
+    }
+    options = options || {};
+    const rnds = options.random ?? options.rng?.() ?? rng();
+    if (rnds.length < 16) {
+      throw new Error("Random bytes length must be >= 16");
+    }
+    rnds[6] = rnds[6] & 15 | 64;
+    rnds[8] = rnds[8] & 63 | 128;
+    if (buf) {
+      offset = offset || 0;
+      if (offset < 0 || offset + 16 > buf.length) {
+        throw new RangeError(`UUID byte range ${offset}:${offset + 15} is out of buffer bounds`);
+      }
+      for (let i = 0; i < 16; ++i) {
+        buf[offset + i] = rnds[i];
+      }
+      return buf;
+    }
+    return unsafeStringify(rnds);
+  }
+  var v4_default = v4;
+
+  // src/client/retention/RetentionClient.ts
+  var OfflineEventQueue = class {
+    constructor(storageKey) {
+      this.maxSize = 1e3;
+      this.storageKey = storageKey;
+    }
+    enqueue(event) {
+      try {
+        const queue = this.getQueue();
+        queue.push(event);
+        if (queue.length > this.maxSize) {
+          queue.splice(0, queue.length - this.maxSize);
+        }
+        localStorage.setItem(this.storageKey, JSON.stringify(queue));
+      } catch (error) {
+        console.warn("RetentionClient: Unable to store offline event", error);
+      }
+    }
+    dequeueAll() {
+      try {
+        const queue = this.getQueue();
+        localStorage.setItem(this.storageKey, JSON.stringify([]));
+        return queue;
+      } catch (error) {
+        console.warn("RetentionClient: Unable to retrieve offline events", error);
+        return [];
+      }
+    }
+    getQueue() {
+      try {
+        const stored = localStorage.getItem(this.storageKey);
+        return stored ? JSON.parse(stored) : [];
+      } catch (error) {
+        return [];
+      }
+    }
+  };
+  var RetentionClient = class extends import_eventemitter3.EventEmitter {
+    constructor(config) {
+      super();
+      this.eventQueue = [];
+      this.eventEndpoints = {
+        session_start: "/analytics/events",
+        match_result: "/analytics/events",
+        progression_grant: "/progression/events",
+        store_impression: "/commerce/events",
+        purchase_completed: "/commerce/events",
+        club_event: "/social/events"
+      };
+      this.flushTimer = null;
+      this.isOnline = true;
+      this.config = {
+        batchSize: 10,
+        flushIntervalMs: 3e4,
+        // 30 seconds
+        maxRetries: 3,
+        offlineStorageKey: "retention_events",
+        enableDebugLogging: false,
+        ...config
+      };
+      this.sessionHash = `s_${v4_default().replace(/-/g, "")}`;
+      this.offlineQueue = new OfflineEventQueue(this.config.offlineStorageKey);
+      this.setupNetworkMonitoring();
+      this.setupFlushTimer();
+      this.processOfflineEvents();
+    }
+    /**
+     * Start a new session and track session_start event
+     */
+    startSession(additionalData) {
+      const event = {
+        event: "session_start",
+        v: "1.0",
+        ts: Math.floor(Date.now() / 1e3),
+        userId: this.config.userId,
+        sessionHash: this.sessionHash,
+        platform: this.detectPlatform(),
+        clientVersion: this.getClientVersion(),
+        returningPlayer: this.isReturningPlayer(),
+        daysSinceLastSession: this.getDaysSinceLastSession(),
+        ...additionalData
+      };
+      this.trackEvent(event);
+      this.updateLastSessionTime();
+    }
+    /**
+     * Track a match result
+     */
+    trackMatchResult(matchData) {
+      const event = {
+        event: "match_result",
+        v: "1.0",
+        ts: Math.floor(Date.now() / 1e3),
+        userId: this.config.userId,
+        sessionHash: this.sessionHash,
+        ...matchData
+      };
+      this.trackEvent(event);
+    }
+    /**
+     * Track club-related events
+     */
+    trackClubEvent(action, clubId) {
+      const event = {
+        event: "club_event",
+        v: "1.0",
+        ts: Math.floor(Date.now() / 1e3),
+        userId: this.config.userId,
+        sessionHash: this.sessionHash,
+        clubId: clubId || "unknown",
+        action
+      };
+      this.trackEvent(event);
+    }
+    /**
+     * Track progression grants (XP, unlocks, etc.)
+     */
+    trackProgression(grantType, amount, reason, additionalData) {
+      const event = {
+        event: "progression_grant",
+        v: "1.0",
+        ts: Math.floor(Date.now() / 1e3),
+        userId: this.config.userId,
+        sessionHash: this.sessionHash,
+        grantType,
+        amount,
+        reason,
+        ...additionalData
+      };
+      this.trackEvent(event);
+    }
+    /**
+     * Track store impressions
+     */
+    trackStoreImpression(section, additionalData) {
+      const event = {
+        event: "store_impression",
+        v: "1.0",
+        ts: Math.floor(Date.now() / 1e3),
+        userId: this.config.userId,
+        sessionHash: this.sessionHash,
+        storeSection: section,
+        ...additionalData
+      };
+      this.trackEvent(event);
+    }
+    /**
+     * Track completed purchases
+     */
+    trackPurchase(transactionId, totalAmount, currency, items, additionalData) {
+      const event = {
+        event: "purchase_completed",
+        v: "1.0",
+        ts: Math.floor(Date.now() / 1e3),
+        userId: this.config.userId,
+        sessionHash: this.sessionHash,
+        transactionId,
+        totalAmount,
+        currency,
+        items,
+        ...additionalData
+      };
+      this.trackEvent(event);
+    }
+    /**
+     * Manually flush all queued events
+     */
+    flush() {
+      return this.flushEvents();
+    }
+    /**
+     * End session and flush all remaining events
+     */
+    endSession() {
+      if (this.flushTimer) {
+        clearInterval(this.flushTimer);
+        this.flushTimer = null;
+      }
+      return this.flushEvents();
+    }
+    trackEvent(event) {
+      if (!this.validateEvent(event)) {
+        this.log("Invalid event data:", event);
+        return;
+      }
+      this.eventQueue.push(event);
+      this.emit("event_tracked", event);
+      if (this.eventQueue.length >= this.config.batchSize) {
+        this.flushEvents();
+      }
+    }
+    async flushEvents() {
+      if (this.eventQueue.length === 0) {
+        return;
+      }
+      const eventsToSend = [...this.eventQueue];
+      this.eventQueue = [];
+      const eventsByEndpoint = {};
+      for (const event of eventsToSend) {
+        const endpoint = this.eventEndpoints[event.event];
+        if (endpoint) {
+          if (!eventsByEndpoint[endpoint]) {
+            eventsByEndpoint[endpoint] = [];
+          }
+          eventsByEndpoint[endpoint].push(event);
+        }
+      }
+      for (const endpoint in eventsByEndpoint) {
+        try {
+          if (this.isOnline) {
+            await this.sendEvents(endpoint, eventsByEndpoint[endpoint]);
+            this.log(`Successfully sent ${eventsByEndpoint[endpoint].length} events to ${endpoint}`);
+            this.emit("events_sent", { endpoint, events: eventsByEndpoint[endpoint] });
+          } else {
+            eventsByEndpoint[endpoint].forEach((event) => this.offlineQueue.enqueue(event));
+            this.log(`Stored ${eventsByEndpoint[endpoint].length} events offline for ${endpoint}`);
+          }
+        } catch (error) {
+          this.log(`Failed to send events to ${endpoint}, storing offline:`, error);
+          eventsByEndpoint[endpoint].forEach((event) => this.offlineQueue.enqueue(event));
+          this.emit("events_failed", { endpoint, events: eventsByEndpoint[endpoint], error });
+        }
+      }
+    }
+    async _sendWithRetry(endpoint, payload, retryCount = 0) {
+      try {
+        const response = await fetch(`${this.config.apiEndpoint}${endpoint}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.config.apiKey}`,
+            "X-Client-Version": this.getClientVersion()
+          },
+          body: JSON.stringify({ events: payload })
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+      } catch (error) {
+        if (retryCount < this.config.maxRetries) {
+          const delay = Math.pow(2, retryCount) * 1e3;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return this._sendWithRetry(endpoint, payload, retryCount + 1);
+        }
+        throw error;
+      }
+    }
+    async sendEvents(endpointOrEvents, events) {
+      let endpoint;
+      let payload;
+      if (typeof endpointOrEvents === "string") {
+        endpoint = endpointOrEvents;
+        payload = events ?? [];
+      } else {
+        endpoint = "/analytics/events";
+        payload = endpointOrEvents;
+      }
+      return this._sendWithRetry(endpoint, payload);
+    }
+    validateEvent(event) {
+      return !!(event.event && event.v && event.ts && event.userId && event.sessionHash);
+    }
+    setupNetworkMonitoring() {
+      if (typeof window !== "undefined") {
+        window.addEventListener("online", () => {
+          this.isOnline = true;
+          this.processOfflineEvents();
+        });
+        window.addEventListener("offline", () => {
+          this.isOnline = false;
+        });
+        this.isOnline = navigator.onLine;
+      }
+    }
+    setupFlushTimer() {
+      this.flushTimer = setInterval(() => {
+        this.flushEvents();
+      }, this.config.flushIntervalMs);
+    }
+    async processOfflineEvents() {
+      if (!this.isOnline) return;
+      const offlineEvents = this.offlineQueue.dequeueAll();
+      if (offlineEvents.length > 0) {
+        try {
+          await this.sendEvents("/analytics/events", offlineEvents);
+          this.log(`Successfully sent ${offlineEvents.length} offline events`);
+        } catch (error) {
+          this.log("Failed to send offline events:", error);
+          offlineEvents.forEach((event) => this.offlineQueue.enqueue(event));
+        }
+      }
+    }
+    detectPlatform() {
+      if (typeof window === "undefined") return "desktop";
+      const userAgent = navigator.userAgent.toLowerCase();
+      if (/mobile|android|iphone|ipad/.test(userAgent)) {
+        return "mobile";
+      }
+      return "web";
+    }
+    getClientVersion() {
+      return "1.0.0";
+    }
+    isReturningPlayer() {
+      try {
+        return localStorage.getItem("retention_last_session") !== null;
+      } catch {
+        return false;
+      }
+    }
+    getDaysSinceLastSession() {
+      try {
+        const lastSession = localStorage.getItem("retention_last_session");
+        if (!lastSession) return 0;
+        const lastTime = parseInt(lastSession);
+        const daysDiff = Math.floor((Date.now() - lastTime) / (1e3 * 60 * 60 * 24));
+        return Math.max(0, daysDiff);
+      } catch {
+        return 0;
+      }
+    }
+    updateLastSessionTime() {
+      try {
+        localStorage.setItem("retention_last_session", Date.now().toString());
+      } catch {
+      }
+    }
+    log(message, ...args) {
+      if (this.config.enableDebugLogging) {
+        console.log(`[RetentionClient] ${message}`, ...args);
+      }
+    }
+  };
+
+  // src/client/commerce/Storefront.ts
+  var import_eventemitter32 = __toESM(require_eventemitter3());
+  var Storefront = class extends import_eventemitter32.EventEmitter {
+    constructor(config) {
+      super();
+      this.catalog = /* @__PURE__ */ new Map();
+      this.bundles = /* @__PURE__ */ new Map();
+      this.sections = /* @__PURE__ */ new Map();
+      this.currentImpression = null;
+      this.config = config;
+      this.setupEventListeners();
+    }
+    /**
+     * Load store catalog from server
+     */
+    async loadCatalog() {
+      try {
+        const response = await fetch(`${this.config.apiEndpoint}/store/catalog`, {
+          headers: {
+            "Accept": "application/json",
+            "X-Region": this.config.region,
+            "X-Currency": this.config.currency
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to load catalog: ${response.statusText}`);
+        }
+        const catalogData = await response.json();
+        this.processCatalogData(catalogData);
+        this.emit("catalog_loaded", { itemCount: this.catalog.size, bundleCount: this.bundles.size });
+      } catch (error) {
+        this.log("Failed to load catalog:", error);
+        this.emit("catalog_error", error);
+        throw error;
+      }
+    }
+    /**
+     * Get items for a specific store section
+     */
+    getSection(sectionId) {
+      return this.sections.get(sectionId) || null;
+    }
+    /**
+     * Get all available store sections
+     */
+    getSections() {
+      return Array.from(this.sections.values());
+    }
+    /**
+     * Get specific item details
+     */
+    getItem(itemId) {
+      return this.catalog.get(itemId) || null;
+    }
+    /**
+     * Get specific bundle details
+     */
+    getBundle(bundleId) {
+      return this.bundles.get(bundleId) || null;
+    }
+    /**
+     * Filter items based on criteria
+     */
+    filterItems(filter) {
+      let items = Array.from(this.catalog.values());
+      if (filter.type) {
+        items = items.filter((item) => item.type === filter.type);
+      }
+      if (filter.rarity) {
+        items = items.filter((item) => item.rarity === filter.rarity);
+      }
+      if (filter.character) {
+        items = items.filter((item) => item.characterId === filter.character);
+      }
+      if (filter.owned !== void 0) {
+        items = items.filter((item) => item.owned === filter.owned);
+      }
+      if (filter.priceRange) {
+        items = items.filter(
+          (item) => item.price >= filter.priceRange.min && item.price <= filter.priceRange.max
+        );
+      }
+      if (filter.searchQuery) {
+        const query = filter.searchQuery.toLowerCase();
+        items = items.filter(
+          (item) => item.name.toLowerCase().includes(query) || item.description.toLowerCase().includes(query)
+        );
+      }
+      return items;
+    }
+    /**
+     * Start tracking store impression for analytics
+     */
+    startStoreImpression(sectionId) {
+      this.endStoreImpression();
+      this.currentImpression = {
+        section: sectionId,
+        startTime: Date.now(),
+        viewedItems: [],
+        clickedItems: []
+      };
+      const section = this.getSection(sectionId);
+      if (section) {
+        section.items.forEach((item) => {
+          this.currentImpression.viewedItems.push(item.id);
+        });
+      }
+    }
+    /**
+     * Track item click for analytics
+     */
+    trackItemClick(itemId) {
+      if (this.currentImpression && !this.currentImpression.clickedItems.includes(itemId)) {
+        this.currentImpression.clickedItems.push(itemId);
+      }
+    }
+    /**
+     * End store impression and send analytics
+     */
+    endStoreImpression() {
+      if (!this.currentImpression) return;
+      const duration = Date.now() - this.currentImpression.startTime;
+      const section = this.getSection(this.currentImpression.section);
+      if (section) {
+        const viewedItems = this.currentImpression.viewedItems.map((itemId) => {
+          const item = this.getItem(itemId) || this.getBundle(itemId);
+          if (!item) return null;
+          return {
+            itemId,
+            price: "pricing" in item ? item.pricing.bundlePrice : item.price,
+            currency: item.currency,
+            onSale: this.isItemOnSale(item),
+            returnWindowDays: this.getReturnWindowDays(item)
+          };
+        }).filter(Boolean);
+        this.config.retentionClient.trackStoreImpression({
+          storeSection: this.currentImpression.section,
+          itemsViewed: viewedItems,
+          viewDurationMs: duration,
+          clickedItems: this.currentImpression.clickedItems
+        });
+      }
+      this.currentImpression = null;
+    }
+    /**
+     * Purchase an item or bundle
+     */
+    async purchaseItem(itemId, paymentDetails) {
+      try {
+        const item = this.getItem(itemId) || this.getBundle(itemId);
+        if (!item) {
+          throw new Error("Item not found");
+        }
+        if (!item.purchasable) {
+          throw new Error("Item is not purchasable");
+        }
+        this.validatePaymentMethod(paymentDetails.paymentMethod);
+        const purchasePayload = {
+          itemId,
+          paymentMethod: paymentDetails.paymentMethod,
+          currency: this.config.currency,
+          region: this.config.region,
+          billingDetails: paymentDetails.billingDetails
+        };
+        const response = await fetch(`${this.config.apiEndpoint}/store/purchase`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Region": this.config.region,
+            "X-Currency": this.config.currency
+          },
+          body: JSON.stringify(purchasePayload)
+        });
+        const result = await response.json();
+        if (response.ok && result.success) {
+          this.trackPurchaseSuccess(result);
+          this.updateItemOwnership(itemId);
+          this.emit("purchase_completed", result);
+          return result;
+        } else {
+          this.emit("purchase_failed", result);
+          return { success: false, error: result.error || "Purchase failed" };
+        }
+      } catch (error) {
+        this.log("Purchase error:", error);
+        const errorResult = { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+        this.emit("purchase_failed", errorResult);
+        return errorResult;
+      }
+    }
+    /**
+     * Get transparent pricing breakdown for a bundle
+     */
+    getBundlePricing(bundleId) {
+      const bundle = this.getBundle(bundleId);
+      if (!bundle) return null;
+      const individualPrices = bundle.items.map((itemId) => {
+        const item = this.getItem(itemId);
+        return item ? {
+          itemId,
+          name: item.name,
+          price: item.price
+        } : null;
+      }).filter(Boolean);
+      return {
+        bundlePrice: bundle.pricing.bundlePrice,
+        individualPrices,
+        totalIndividual: bundle.pricing.individualTotal,
+        savings: bundle.pricing.savingsAmount,
+        savingsPercent: bundle.pricing.savingsPercent
+      };
+    }
+    /**
+     * Get return window information for an item
+     */
+    getReturnInfo(itemId) {
+      const item = this.getItem(itemId);
+      if (!item) return null;
+      const { availability } = item;
+      let description;
+      if (availability.permanent) {
+        description = "This item is permanently available in the store.";
+      } else if (availability.returnDate) {
+        const returnDate = new Date(availability.returnDate * 1e3);
+        description = `This item will return to the store on ${returnDate.toLocaleDateString()}.`;
+      } else {
+        description = `This item will return in ${availability.returnWindowDays} days.`;
+      }
+      return {
+        permanent: availability.permanent,
+        returnWindowDays: availability.returnWindowDays,
+        returnDate: availability.returnDate ? new Date(availability.returnDate * 1e3) : void 0,
+        description
+      };
+    }
+    /**
+     * Check if user meets unlock conditions for an item
+     */
+    checkUnlockConditions(itemId, userProfile) {
+      const item = this.getItem(itemId);
+      if (!item || !item.availability.unlockConditions) {
+        return { unlocked: true, missingConditions: [] };
+      }
+      const missingConditions = [];
+      item.availability.unlockConditions.forEach((condition) => {
+        let conditionMet = false;
+        switch (condition.type) {
+          case "account_level":
+            conditionMet = userProfile.accountLevel >= parseInt(condition.value);
+            if (!conditionMet) {
+              missingConditions.push(`Reach account level ${condition.value}`);
+            }
+            break;
+          case "character_mastery":
+            const [charId, level] = condition.value.split(":");
+            const charLevel = userProfile.characters?.[charId]?.level || 0;
+            conditionMet = charLevel >= parseInt(level);
+            if (!conditionMet) {
+              missingConditions.push(`Reach level ${level} with ${charId}`);
+            }
+            break;
+          case "achievement":
+            conditionMet = userProfile.achievements?.includes(condition.value);
+            if (!conditionMet) {
+              missingConditions.push(`Complete achievement: ${condition.value}`);
+            }
+            break;
+          case "event_participation":
+            conditionMet = userProfile.eventParticipation?.includes(condition.value);
+            if (!conditionMet) {
+              missingConditions.push(`Participate in event: ${condition.value}`);
+            }
+            break;
+        }
+      });
+      return {
+        unlocked: missingConditions.length === 0,
+        missingConditions
+      };
+    }
+    processCatalogData(catalogData) {
+      if (catalogData.items) {
+        catalogData.items.forEach((itemData) => {
+          const item = {
+            ...itemData,
+            owned: false,
+            // Will be updated based on user's owned items
+            purchasable: this.isItemPurchasable(itemData)
+          };
+          this.catalog.set(item.id, item);
+        });
+      }
+      if (catalogData.bundles) {
+        catalogData.bundles.forEach((bundleData) => {
+          const bundle = {
+            ...bundleData,
+            purchasable: this.isBundlePurchasable(bundleData)
+          };
+          this.bundles.set(bundle.id, bundle);
+        });
+      }
+      if (catalogData.sections) {
+        catalogData.sections.forEach((sectionData) => {
+          const section = {
+            ...sectionData,
+            items: sectionData.items.map(
+              (itemId) => this.catalog.get(itemId) || this.bundles.get(itemId)
+            ).filter(Boolean)
+          };
+          this.sections.set(section.id, section);
+        });
+      }
+    }
+    isItemPurchasable(item) {
+      const now = Date.now() / 1e3;
+      if (!item.availability.permanent) {
+        if (item.availability.endTime && now > item.availability.endTime) {
+          return false;
+        }
+      }
+      return true;
+    }
+    isBundlePurchasable(bundle) {
+      const now = Date.now() / 1e3;
+      return now >= bundle.availability.startTime && now <= bundle.availability.endTime;
+    }
+    isItemOnSale(item) {
+      return "pricing" in item && item.pricing.savingsPercent > 0;
+    }
+    getReturnWindowDays(item) {
+      if ("availability" in item && "returnWindowDays" in item.availability) {
+        return item.availability.returnWindowDays;
+      }
+      if ("availability" in item && "returnDate" in item.availability && item.availability.returnDate) {
+        const daysUntilReturn = Math.ceil((item.availability.returnDate * 1e3 - Date.now()) / (1e3 * 60 * 60 * 24));
+        return Math.max(0, daysUntilReturn);
+      }
+      return 0;
+    }
+    validatePaymentMethod(method) {
+      const availableMethods = this.getAvailablePaymentMethods();
+      if (!availableMethods.includes(method)) {
+        throw new Error(`Payment method ${method} not available in ${this.config.region}`);
+      }
+    }
+    getAvailablePaymentMethods() {
+      const allMethods = ["card", "paypal", "apple_pay", "google_pay"];
+      return allMethods;
+    }
+    trackPurchaseSuccess(result) {
+      if (!result.receipt) return;
+      const isFirstPurchase = this.isFirstPurchase();
+      this.config.retentionClient.trackPurchase({
+        transactionId: result.transactionId,
+        totalAmount: result.receipt.totalAmount,
+        currency: result.receipt.currency,
+        items: result.receipt.items.map((item) => ({
+          itemId: item.itemId,
+          itemType: this.getItemType(item.itemId),
+          price: item.price,
+          quantity: 1
+        })),
+        taxAmount: result.receipt.taxAmount,
+        firstPurchase: isFirstPurchase
+      });
+    }
+    updateItemOwnership(itemId) {
+      const item = this.catalog.get(itemId);
+      if (item) {
+        item.owned = true;
+        item.purchasable = false;
+        this.catalog.set(itemId, item);
+      }
+      const bundle = this.bundles.get(itemId);
+      if (bundle) {
+        bundle.items.forEach((bundledItemId) => {
+          const bundledItem = this.catalog.get(bundledItemId);
+          if (bundledItem) {
+            bundledItem.owned = true;
+            bundledItem.purchasable = false;
+            this.catalog.set(bundledItemId, bundledItem);
+          }
+        });
+      }
+    }
+    isFirstPurchase() {
+      return Array.from(this.catalog.values()).every((item) => !item.owned);
+    }
+    getItemType(itemId) {
+      const item = this.catalog.get(itemId);
+      if (item) return item.type;
+      const bundle = this.bundles.get(itemId);
+      if (bundle) return "bundle";
+      return "skin";
+    }
+    setupEventListeners() {
+      if (typeof document !== "undefined") {
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            this.endStoreImpression();
+          }
+        });
+      }
+      if (typeof window !== "undefined") {
+        window.addEventListener("beforeunload", () => {
+          this.endStoreImpression();
+        });
+      }
+    }
+    log(message, ...args) {
+      if (this.config.debugMode) {
+        console.log(`[Storefront] ${message}`, ...args);
+      }
+    }
+  };
+
+  // src/core/monetization/MonetizationService.ts
+  var MonetizationService = class {
+    constructor(opts) {
+      this.retention = new RetentionClient({
+        apiEndpoint: opts?.retention?.apiEndpoint || "/api",
+        userId: opts?.retention?.userId || "guest",
+        apiKey: opts?.retention?.apiKey || "public",
+        enableDebugLogging: false,
+        batchSize: 5,
+        flushIntervalMs: 15e3
+      });
+      this.storefront = new Storefront({
+        retentionClient: this.retention,
+        apiEndpoint: opts?.storefront?.apiEndpoint || "/data",
+        currency: opts?.storefront?.currency || "USD",
+        region: opts?.storefront?.region || "US",
+        accessibilityMode: true,
+        debugMode: false
+      });
+    }
+    async initialize() {
+      try {
+        this.retention.startSession();
+        await this.storefront.loadCatalog().catch(() => void 0);
+      } catch {
+      }
+    }
+  };
+
+  // src/scripts/EntitlementBridge.ts
+  var pc7 = __toESM(require_playcanvas_shim());
+  var EntitlementBridge = class {
+    constructor() {
+      this.platformProviders = /* @__PURE__ */ new Map();
+      this.updateInterval = null;
+      this.isInitialized = false;
+      this.entitlements = {
+        ownedCharacters: [],
+        platformSKUs: [],
+        devUnlocks: [],
+        qaFlags: {
+          unlockAll: false,
+          temporaryUnlocks: []
+        },
+        subscription: {
+          active: false,
+          tier: "free",
+          benefits: []
+        }
+      };
+      this.eventEmitter = new pc7.EventHandler();
+    }
+    /**
+     * Initialize the entitlement system
+     */
+    async initialize() {
+      console.log("EntitlementBridge: Initializing...");
+      try {
+        this.registerPlatformProviders();
+        await this.loadLocalEntitlements();
+        await this.queryPlatformEntitlements();
+        this.setupPeriodicRefresh();
+        this.isInitialized = true;
+        console.log("EntitlementBridge: Initialized successfully");
+        this.emitEntitlementsChanged();
+      } catch (error) {
+        console.error("EntitlementBridge: Failed to initialize:", error);
+        throw error;
+      }
+    }
+    /**
+     * Register available platform providers
+     */
+    registerPlatformProviders() {
+      this.platformProviders.set("steam", {
+        name: "Steam",
+        isAvailable: () => typeof window !== "undefined" && "steamworks" in window,
+        getOwnedContent: async () => {
+          return [];
+        },
+        hasSubscription: async () => false,
+        validatePurchase: async (itemId) => false
+      });
+      this.platformProviders.set("playstation", {
+        name: "PlayStation",
+        isAvailable: () => typeof window !== "undefined" && "PlayStation" in window,
+        getOwnedContent: async () => {
+          return [];
+        },
+        hasSubscription: async () => false,
+        validatePurchase: async (itemId) => false
+      });
+      this.platformProviders.set("xbox", {
+        name: "Xbox",
+        isAvailable: () => typeof window !== "undefined" && "Xbox" in window,
+        getOwnedContent: async () => {
+          return [];
+        },
+        hasSubscription: async () => false,
+        validatePurchase: async (itemId) => false
+      });
+      this.platformProviders.set("web", {
+        name: "Web",
+        isAvailable: () => true,
+        getOwnedContent: async () => {
+          const stored = localStorage.getItem("owned_characters");
+          return stored ? JSON.parse(stored) : [];
+        },
+        hasSubscription: async () => {
+          const subscription = localStorage.getItem("subscription_active");
+          return subscription === "true";
+        },
+        validatePurchase: async (itemId) => {
+          return false;
+        }
+      });
+      console.log(`EntitlementBridge: Registered ${this.platformProviders.size} platform providers`);
+    }
+    /**
+     * Load local entitlements (dev/QA overrides)
+     */
+    async loadLocalEntitlements() {
+      try {
+        const isDev = true;
+        if (isDev) {
+          const devUnlocks = localStorage.getItem("dev_unlocks");
+          if (devUnlocks) {
+            this.entitlements.devUnlocks = JSON.parse(devUnlocks);
+            console.log("EntitlementBridge: Loaded dev unlocks:", this.entitlements.devUnlocks);
+          }
+        }
+        const qaFlags = localStorage.getItem("qa_flags");
+        if (qaFlags) {
+          const flags = JSON.parse(qaFlags);
+          this.entitlements.qaFlags = { ...this.entitlements.qaFlags, ...flags };
+          console.log("EntitlementBridge: Loaded QA flags:", this.entitlements.qaFlags);
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("unlock_all") === "true") {
+          this.entitlements.qaFlags.unlockAll = true;
+          console.log("EntitlementBridge: URL override - unlock all characters");
+        }
+        if (urlParams.get("dev_mode") === "true") {
+          this.entitlements.devUnlocks.push("all");
+          console.log("EntitlementBridge: URL override - dev mode enabled");
+        }
+      } catch (error) {
+        console.warn("EntitlementBridge: Failed to load local entitlements:", error);
+      }
+    }
+    /**
+     * Query platform entitlements from all available providers
+     */
+    async queryPlatformEntitlements() {
+      const ownedContent = [];
+      const platformSKUs = [];
+      for (const [platformName, provider] of this.platformProviders) {
+        try {
+          if (provider.isAvailable()) {
+            console.log(`EntitlementBridge: Querying ${platformName} entitlements...`);
+            const content = await provider.getOwnedContent();
+            ownedContent.push(...content);
+            const hasSubscription = await provider.hasSubscription();
+            if (hasSubscription) {
+              this.entitlements.subscription = {
+                active: true,
+                tier: "premium",
+                benefits: ["all_characters", "early_access", "exclusive_skins"]
+              };
+            }
+            platformSKUs.push(platformName);
+            console.log(`EntitlementBridge: ${platformName} - ${content.length} items, subscription: ${hasSubscription}`);
+          }
+        } catch (error) {
+          console.warn(`EntitlementBridge: Failed to query ${platformName}:`, error);
+        }
+      }
+      this.entitlements.ownedCharacters = [...new Set(ownedContent)];
+      this.entitlements.platformSKUs = platformSKUs;
+      console.log(`EntitlementBridge: Total owned characters: ${this.entitlements.ownedCharacters.length}`);
+    }
+    /**
+     * Setup periodic refresh of entitlements
+     */
+    setupPeriodicRefresh() {
+      this.updateInterval = window.setInterval(async () => {
+        try {
+          const oldEntitlements = JSON.stringify(this.entitlements);
+          await this.queryPlatformEntitlements();
+          const newEntitlements = JSON.stringify(this.entitlements);
+          if (oldEntitlements !== newEntitlements) {
+            console.log("EntitlementBridge: Entitlements updated");
+            this.emitEntitlementsChanged();
+          }
+        } catch (error) {
+          console.warn("EntitlementBridge: Periodic refresh failed:", error);
+        }
+      }, 5 * 60 * 1e3);
+    }
+    /**
+     * Check if player has access to a specific character
+     */
+    hasCharacterAccess(characterId, mode = "casual") {
+      if (!this.isInitialized) {
+        console.warn("EntitlementBridge: Not initialized, denying access");
+        return false;
+      }
+      if (this.entitlements.qaFlags.unlockAll) {
+        return true;
+      }
+      if (this.entitlements.devUnlocks.includes("all") || this.entitlements.devUnlocks.includes(characterId)) {
+        return true;
+      }
+      if (this.entitlements.qaFlags.temporaryUnlocks.includes(characterId)) {
+        return true;
+      }
+      if (this.entitlements.subscription.active && this.entitlements.subscription.benefits.includes("all_characters")) {
+        return true;
+      }
+      if (this.entitlements.ownedCharacters.includes(characterId)) {
+        return true;
+      }
+      switch (mode) {
+        case "training":
+          return this.hasTrainingAccess(characterId);
+        case "story":
+          return this.hasStoryAccess(characterId);
+        case "tournament":
+          return this.entitlements.ownedCharacters.includes(characterId);
+        default:
+          return false;
+      }
+    }
+    /**
+     * Check training mode access (often more permissive)
+     */
+    hasTrainingAccess(characterId) {
+      return true;
+    }
+    /**
+     * Check story mode access (progression-based)
+     */
+    hasStoryAccess(characterId) {
+      const storyProgress = localStorage.getItem("story_progress");
+      if (storyProgress) {
+        const progress = JSON.parse(storyProgress);
+        return progress.unlockedCharacters?.includes(characterId) || false;
+      }
+      return characterId === "vanguard";
+    }
+    /**
+     * Get all owned characters
+     */
+    getOwnedCharacters() {
+      const owned = [
+        ...this.entitlements.ownedCharacters,
+        ...this.entitlements.devUnlocks.filter((unlock) => unlock !== "all"),
+        ...this.entitlements.qaFlags.temporaryUnlocks
+      ];
+      if (this.entitlements.subscription.active && this.entitlements.subscription.benefits.includes("all_characters")) {
+        owned.push("all_subscription_characters");
+      }
+      return [...new Set(owned)];
+    }
+    /**
+     * Purchase a character (initiates platform purchase flow)
+     */
+    async purchaseCharacter(characterId, platform = "web") {
+      const provider = this.platformProviders.get(platform);
+      if (!provider) {
+        throw new Error(`Platform '${platform}' not available`);
+      }
+      try {
+        console.log(`EntitlementBridge: Initiating purchase of '${characterId}' on ${platform}`);
+        const success = await provider.validatePurchase(characterId);
+        if (success) {
+          if (!this.entitlements.ownedCharacters.includes(characterId)) {
+            this.entitlements.ownedCharacters.push(characterId);
+            if (platform === "web") {
+              localStorage.setItem("owned_characters", JSON.stringify(this.entitlements.ownedCharacters));
+            }
+            console.log(`EntitlementBridge: Successfully purchased '${characterId}'`);
+            this.emitEntitlementsChanged();
+          }
+        }
+        return success;
+      } catch (error) {
+        console.error(`EntitlementBridge: Purchase failed for '${characterId}':`, error);
+        return false;
+      }
+    }
+    /**
+     * Grant temporary access (for events, trials, etc.)
+     */
+    grantTemporaryAccess(characterId, durationMs = 24 * 60 * 60 * 1e3) {
+      if (!this.entitlements.qaFlags.temporaryUnlocks.includes(characterId)) {
+        this.entitlements.qaFlags.temporaryUnlocks.push(characterId);
+        setTimeout(() => {
+          const index = this.entitlements.qaFlags.temporaryUnlocks.indexOf(characterId);
+          if (index > -1) {
+            this.entitlements.qaFlags.temporaryUnlocks.splice(index, 1);
+            console.log(`EntitlementBridge: Temporary access expired for '${characterId}'`);
+            this.emitEntitlementsChanged();
+          }
+        }, durationMs);
+        console.log(`EntitlementBridge: Granted temporary access to '${characterId}' for ${durationMs}ms`);
+        this.emitEntitlementsChanged();
+      }
+    }
+    /**
+     * Get subscription status
+     */
+    getSubscriptionStatus() {
+      return { ...this.entitlements.subscription };
+    }
+    /**
+     * Get entitlement summary for debugging
+     */
+    getEntitlementSummary() {
+      return {
+        ownedCharacters: this.entitlements.ownedCharacters.length,
+        platformSKUs: this.entitlements.platformSKUs,
+        devUnlocks: this.entitlements.devUnlocks,
+        qaFlags: this.entitlements.qaFlags,
+        subscription: this.entitlements.subscription,
+        availablePlatforms: Array.from(this.platformProviders.keys()).filter(
+          (name) => this.platformProviders.get(name).isAvailable()
+        )
+      };
+    }
+    /**
+     * Force refresh entitlements
+     */
+    async refresh() {
+      console.log("EntitlementBridge: Force refreshing entitlements...");
+      await this.queryPlatformEntitlements();
+      this.emitEntitlementsChanged();
+    }
+    /**
+     * Subscribe to entitlement change events
+     */
+    on(event, callback) {
+      this.eventEmitter.on(event, callback);
+    }
+    /**
+     * Unsubscribe from entitlement change events
+     */
+    off(event, callback) {
+      this.eventEmitter.off(event, callback);
+    }
+    /**
+     * Emit entitlements changed event
+     */
+    emitEntitlementsChanged() {
+      this.eventEmitter.fire("entitlements:changed", {
+        ownedCharacters: this.getOwnedCharacters(),
+        subscription: this.entitlements.subscription
+      });
+    }
+    /**
+     * Cleanup resources
+     */
+    destroy() {
+      if (this.updateInterval) {
+        clearInterval(this.updateInterval);
+        this.updateInterval = null;
+      }
+      this.eventEmitter.destroy();
+      this.isInitialized = false;
+      console.log("EntitlementBridge: Destroyed");
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2798,11 +4162,11 @@ var SF3App = (() => {
       // private assetManager: any;
       this.isInitialized = false;
       this.updateHandler = null;
-      this.app = new pc7.Application(canvas, {
-        mouse: new pc7.Mouse(canvas),
-        touch: new pc7.TouchDevice(canvas),
-        keyboard: new pc7.Keyboard(window),
-        gamepads: new pc7.GamePads()
+      this.app = new pc8.Application(canvas, {
+        mouse: new pc8.Mouse(canvas),
+        touch: new pc8.TouchDevice(canvas),
+        keyboard: new pc8.Keyboard(window),
+        gamepads: new pc8.GamePads()
       });
       this.setupApplication();
       this.initializeManagers();
@@ -2818,10 +4182,14 @@ var SF3App = (() => {
       this.aiManager = new AIManager(this.app);
       this.stageGen = new ProceduralStageGenerator();
       this.decompService = new DecompDataService();
+      this.monetization = new MonetizationService();
+      this.entitlement = new EntitlementBridge();
       this.services.register("preloader", this.preloader);
       this.services.register("ai", this.aiManager);
       this.services.register("stageGen", this.stageGen);
       this.services.register("decomp", this.decompService);
+      this.services.register("monetization", this.monetization);
+      this.services.register("entitlement", this.entitlement);
       this.app._services = this.services;
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {
@@ -2836,8 +4204,8 @@ var SF3App = (() => {
       });
     }
     setupApplication() {
-      this.app.setCanvasFillMode(pc7.FILLMODE_FILL_WINDOW);
-      this.app.setCanvasResolution(pc7.RESOLUTION_AUTO);
+      this.app.setCanvasFillMode(pc8.FILLMODE_FILL_WINDOW);
+      this.app.setCanvasResolution(pc8.RESOLUTION_AUTO);
       window.addEventListener("resize", () => this.app.resizeCanvas());
       Logger.info("PlayCanvas application initialized");
     }
@@ -2915,15 +4283,15 @@ var SF3App = (() => {
   };
 
   // src/index.ts
-  var pc8 = __toESM(require_playcanvas_shim());
+  var pc9 = __toESM(require_playcanvas_shim());
   async function defaultStart(canvas) {
     const targetCanvas = canvas || createCanvas();
     const engine = new GameEngine(targetCanvas);
     Logger.info("Starting Street Fighter III: 3rd Strike - PlayCanvas Edition");
     await engine.initialize();
     const characterManager = engine.getCharacterManager();
-    const ryu = characterManager.createCharacter("ryu", new pc8.Vec3(-2, 0, 0));
-    const ken = characterManager.createCharacter("ken", new pc8.Vec3(2, 0, 0));
+    const ryu = characterManager.createCharacter("ryu", new pc9.Vec3(-2, 0, 0));
+    const ken = characterManager.createCharacter("ken", new pc9.Vec3(2, 0, 0));
     if (ryu && ken) {
       characterManager.setActiveCharacters("ryu", "ken");
     }
