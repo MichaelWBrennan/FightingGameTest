@@ -49,6 +49,13 @@ Open the printed URL (defaults to http://localhost:5173). The game creates its o
 - A manifest is generated: `public/assets/manifest.json`
 - `PreloadManager` loads the manifest and exposes helpers
 
+### Ground-truth character data (optional)
+- To seed frames from the decomp repo, clone it at `/workspace/sfiii-decomp` and run:
+```bash
+npm run import:sf3
+```
+- This writes JSON into `data/characters_decomp/` and the runtime will be able to fetch it via `DecompDataService` if referenced.
+
 ## 📚 Docs
 - See in-code comments and `types/` for engine/runtime types
 
