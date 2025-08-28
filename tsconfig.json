@@ -27,8 +27,7 @@
       "@data/*": ["data/*"],
       "@engine/*": ["src/core/*"],
       "@graphics/*": ["src/scripts/graphics/*"],
-      "@shaders/*": ["src/typescript/shaders/*"],
-      "playcanvas": ["types/playcanvas-shim.ts"]
+      "@shaders/*": ["src/typescript/shaders/*"]
     },
     "types": ["node"]
   },
