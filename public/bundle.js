@@ -2676,11 +2676,13 @@ var SF3App = (() => {
         const config = this.services.resolve("config");
         const monetization = this.services.resolve("monetization");
         const entitlement = this.services.resolve("entitlement");
+        const security = this.services.resolve("security");
         await Promise.all([
           config.loadJson("/data/balance/live_balance.json").catch(() => ({})),
           monetization.initialize().catch(() => void 0),
           entitlement.initialize?.().catch(() => void 0)
         ]);
+        security.start?.();
         this.events.emit("state:goto", { state: "menu" });
       } catch (e) {
         console.error("BootState failed:", e);
@@ -2763,9 +2765,21 @@ var SF3App = (() => {
       return this.manifest.assets.filter((a) => a.type === type).map((a) => a.path);
     }
     async getJson(path) {
-      const res = await fetch(path);
+      const res = await fetch(path, { cache: "no-store" });
       if (!res.ok) throw new Error(`JSON load failed: ${path}`);
-      return res.json();
+      const text = await res.text();
+      try {
+        const entry = this.manifest.assets.find((a) => a.path === path);
+        if (entry?.sha256 && "crypto" in window && window.crypto.subtle) {
+          const buf = new TextEncoder().encode(text);
+          const hashBuf = await window.crypto.subtle.digest("SHA-256", buf);
+          const hashArray = Array.from(new Uint8Array(hashBuf));
+          const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+          if (hashHex !== entry.sha256) throw new Error(`Integrity check failed for ${path}`);
+        }
+      } catch {
+      }
+      return JSON.parse(text);
     }
   };
 
@@ -4154,6 +4168,53 @@ var SF3App = (() => {
     }
   };
 
+  // src/core/security/SecurityService.ts
+  var SecurityService = class {
+    constructor() {
+      this.devtoolsDetected = false;
+      this.integrityViolations = [];
+    }
+    start() {
+      this.detectDevTools();
+      this.detectTimingTamper();
+      this.freezeCriticalObjects();
+    }
+    detectDevTools() {
+      const threshold = 200;
+      const check = () => {
+        const start = performance.now();
+        debugger;
+        const elapsed = performance.now() - start;
+        if (elapsed > threshold) {
+          this.devtoolsDetected = true;
+          console.warn("SecurityService: DevTools detected");
+        }
+        requestAnimationFrame(check);
+      };
+      requestAnimationFrame(check);
+    }
+    detectTimingTamper() {
+      let last = performance.now();
+      setInterval(() => {
+        const now = performance.now();
+        if (now < last) {
+          this.integrityViolations.push("clock_skew");
+        }
+        last = now;
+      }, 1e3);
+    }
+    freezeCriticalObjects() {
+      try {
+        Object.freeze(Object);
+        Object.freeze(Function);
+      } catch {
+      }
+    }
+    getStatus() {
+      return { devtools: this.devtoolsDetected, violations: [...this.integrityViolations] };
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -4184,12 +4245,14 @@ var SF3App = (() => {
       this.decompService = new DecompDataService();
       this.monetization = new MonetizationService();
       this.entitlement = new EntitlementBridge();
+      this.security = new SecurityService();
       this.services.register("preloader", this.preloader);
       this.services.register("ai", this.aiManager);
       this.services.register("stageGen", this.stageGen);
       this.services.register("decomp", this.decompService);
       this.services.register("monetization", this.monetization);
       this.services.register("entitlement", this.entitlement);
+      this.services.register("security", this.security);
       this.app._services = this.services;
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {

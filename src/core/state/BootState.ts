@@ -21,11 +21,13 @@ export class BootState implements GameState {
 			const config = this.services.resolve<ConfigService>('config');
             const monetization = this.services.resolve<MonetizationService>('monetization');
             const entitlement = this.services.resolve<any>('entitlement');
+            const security = this.services.resolve<any>('security');
 			await Promise.all([
 				config.loadJson('/data/balance/live_balance.json').catch(() => ({})),
                 monetization.initialize().catch(() => undefined),
                 entitlement.initialize?.().catch(() => undefined)
 			]);
+            security.start?.();
 			this.events.emit('state:goto', { state: 'menu' });
 		} catch (e) {
 			console.error('BootState failed:', e);
