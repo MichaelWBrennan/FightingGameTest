@@ -229,6 +229,17 @@ var SF3App = (() => {
           Logger.error(`Failed to load character ${name}:`, error);
         }
       }
+      try {
+        const gt = await fetch("/data/characters_decomp/sf3_ground_truth_seed.json");
+        if (gt.ok) {
+          const cfg = await gt.json();
+          const norm = this.normalizeCharacterConfig(cfg);
+          const finalCfg = this.frameGen.generateForCharacter(norm);
+          this.characterConfigs.set(cfg.characterId || "sf3_ground_truth_seed", finalCfg);
+          Logger.info("Loaded ground-truth character seed from decomp import");
+        }
+      } catch {
+      }
     }
     normalizeCharacterConfig(config) {
       const normalizedStats = {
@@ -2666,6 +2677,20 @@ var SF3App = (() => {
     };
   }
 
+  // src/core/utils/DecompDataService.ts
+  var DecompDataService = class {
+    async loadGroundTruthCharacter() {
+      try {
+        const res = await fetch("/data/characters_decomp/sf3_ground_truth_seed.json");
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data;
+      } catch {
+        return null;
+      }
+    }
+  };
+
   // src/core/GameEngine.ts
   var GameEngine = class {
     constructor(canvas) {
@@ -2693,9 +2718,11 @@ var SF3App = (() => {
       this.preloader = new PreloadManager();
       this.aiManager = new AIManager(this.app);
       this.stageGen = new ProceduralStageGenerator();
+      this.decompService = new DecompDataService();
       this.services.register("preloader", this.preloader);
       this.services.register("ai", this.aiManager);
       this.services.register("stageGen", this.stageGen);
+      this.services.register("decomp", this.decompService);
       this.app._services = this.services;
       this.stateStack = new GameStateStack();
       this.eventBus.on("state:goto", async ({ state }) => {

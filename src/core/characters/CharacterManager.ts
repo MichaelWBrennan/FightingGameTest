@@ -64,6 +64,18 @@ export class CharacterManager {
         Logger.error(`Failed to load character ${name}:`, error);
       }
     }
+
+    // Optionally load a ground-truth seed from decomp import if present
+    try {
+      const gt = await fetch('/data/characters_decomp/sf3_ground_truth_seed.json');
+      if (gt.ok) {
+        const cfg = (await gt.json()) as CharacterConfig;
+        const norm = this.normalizeCharacterConfig(cfg);
+        const finalCfg = this.frameGen.generateForCharacter(norm);
+        this.characterConfigs.set(cfg.characterId || 'sf3_ground_truth_seed', finalCfg);
+        Logger.info('Loaded ground-truth character seed from decomp import');
+      }
+    } catch {}
   }
 
   private normalizeCharacterConfig(config: CharacterConfig): CharacterConfig {

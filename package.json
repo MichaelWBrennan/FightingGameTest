@@ -10,6 +10,7 @@
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
     "preview": "ts-node tools/dev_server.ts",
+    "import:sf3": "node ./tools/import_sf3_char_data.js && npm run build",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "fix": "npx ts-node tools/fix_compilation_errors.ts",

@@ -20,6 +20,7 @@ import { MatchState } from './state/MatchState';
 import { PreloadManager } from './utils/PreloadManager';
 import { AIManager } from './ai/AIManager';
 import { ProceduralStageGenerator } from './procgen/ProceduralStageGenerator';
+import { DecompDataService } from './utils/DecompDataService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -38,6 +39,7 @@ export class GameEngine {
   private preloader: PreloadManager;
   private aiManager: AIManager;
   private stageGen: ProceduralStageGenerator;
+  private decompService: DecompDataService;
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
@@ -67,9 +69,11 @@ export class GameEngine {
     this.preloader = new PreloadManager();
     this.aiManager = new AIManager(this.app);
     this.stageGen = new ProceduralStageGenerator();
+    this.decompService = new DecompDataService();
     this.services.register('preloader', this.preloader);
     this.services.register('ai', this.aiManager);
     this.services.register('stageGen', this.stageGen);
+    this.services.register('decomp', this.decompService);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
