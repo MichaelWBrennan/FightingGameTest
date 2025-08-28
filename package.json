@@ -38,7 +38,7 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
-    "esbuild": "^0.21.5",
+    "esbuild": "^0.25.0",
     "@types/node": "^20.8.0",
     "@types/ws": "^8.5.8",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
