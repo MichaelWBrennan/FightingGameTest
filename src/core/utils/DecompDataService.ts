@@ -16,8 +16,7 @@ export class DecompDataService {
   public async deriveFromDecompIfAvailable(): Promise<CharacterData | null> {
     try {
       const urlCandidates = [
-        '/sfiii-decomp/src/anniversary/bin2obj/char_table.c',
-        'https://raw.githubusercontent.com/apstygo/sfiii-decomp/main/src/anniversary/bin2obj/char_table.c'
+        '/sfiii-decomp/src/anniversary/bin2obj/char_table.c'
       ];
       let text: string | null = null;
       for (const u of urlCandidates) {

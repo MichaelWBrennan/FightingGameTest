@@ -27,7 +27,8 @@
       "@data/*": ["data/*"],
       "@engine/*": ["src/core/*"],
       "@graphics/*": ["src/scripts/graphics/*"],
-      "@shaders/*": ["src/typescript/shaders/*"]
+      "@shaders/*": ["src/typescript/shaders/*"],
+      "playcanvas": ["src/vendor/pc.ts"]
     },
     "types": ["node"]
   },
