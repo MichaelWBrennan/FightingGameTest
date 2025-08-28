@@ -89,8 +89,8 @@ function main() {
   const repoRoot = process.cwd();
   const srcPath = path.join(repoRoot, 'sfiii-decomp', 'src', 'anniversary', 'bin2obj', 'char_table.c');
   if (!fs.existsSync(srcPath)) {
-    console.error(`Missing source: ${srcPath}. Clone sfiii-decomp into workspace root.`);
-    process.exit(1);
+    console.log('[import_sf3_char_data] sfiii-decomp not found; skipping import.');
+    return;
   }
   const outDir = path.join(repoRoot, 'data', 'characters_decomp');
   ensureDir(outDir);
