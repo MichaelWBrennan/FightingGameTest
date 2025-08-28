@@ -2582,7 +2582,7 @@ var SF3App = (() => {
   // src/index.ts
   var pc8 = __toESM(require_playcanvas_shim());
   async function defaultStart(canvas) {
-    const targetCanvas = canvas || document.getElementById("application-canvas");
+    const targetCanvas = canvas || createCanvas();
     const engine = new GameEngine(targetCanvas);
     Logger.info("Starting Street Fighter III: 3rd Strike - PlayCanvas Edition");
     await engine.initialize();
@@ -2592,6 +2592,20 @@ var SF3App = (() => {
     if (ryu && ken) {
       characterManager.setActiveCharacters("ryu", "ken");
     }
+  }
+  function createCanvas() {
+    const canvas = document.createElement("canvas");
+    canvas.id = "application-canvas";
+    Object.assign(canvas.style, {
+      width: "100vw",
+      height: "100vh",
+      display: "block",
+      background: "#000",
+      position: "fixed",
+      inset: "0"
+    });
+    document.body.appendChild(canvas);
+    return canvas;
   }
   return __toCommonJS(src_exports);
 })();
