@@ -71,13 +71,14 @@ export class GameEngine {
     });
 
     this.setupApplication();
-    this.initializeManagers();
 
-    // Core infrastructure
+    // Core infrastructure must be ready before managers register to the pipeline
     this.eventBus = new EventBus();
     this.services = new ServiceContainer();
     this.featureFlags = new FeatureFlags();
     this.pipeline = new UpdatePipeline();
+
+    this.initializeManagers();
 
     // Register services
     this.services.register('app', this.app);
