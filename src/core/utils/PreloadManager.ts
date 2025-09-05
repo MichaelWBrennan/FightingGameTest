@@ -2,9 +2,18 @@ export class PreloadManager {
 	private manifest: { assets: { path: string; type: string; sha256?: string }[] } = { assets: [] };
 
 	async loadManifest(url: string = '/assets/manifest.json'): Promise<void> {
-		const res = await fetch(url);
-		if (!res.ok) throw new Error(`Manifest load failed: ${res.status}`);
-		this.manifest = await res.json();
+		try {
+			const res = await fetch(url, { cache: 'no-store' });
+			if (!res.ok) {
+				console.warn(`[PreloadManager] Manifest not found (${res.status}) at ${url}. Continuing without it.`);
+				this.manifest = { assets: [] };
+				return;
+			}
+			this.manifest = await res.json();
+		} catch (err) {
+			console.warn(`[PreloadManager] Manifest load error at ${url}. Using empty manifest.`, err);
+			this.manifest = { assets: [] };
+		}
 	}
 
 	getAssetsByType(type: string): string[] {
