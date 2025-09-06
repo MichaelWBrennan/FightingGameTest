@@ -39,10 +39,10 @@ export class BootState implements GameState {
 			if (cfg?.enabled && cfg.mode === 'local') {
 				netcode.enableLocalP2();
 			}
-			this.events.emit('state:goto', { state: 'menu' });
+			this.events.emit('state:goto', { state: 'login' });
 		} catch (e) {
 			console.error('BootState failed:', e);
-			this.events.emit('state:goto', { state: 'menu' });
+			this.events.emit('state:goto', { state: 'login' });
 		}
 	}
 

@@ -40,7 +40,7 @@ export class MenuState implements GameState {
 
 	private onKey = (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			this.events.emit('state:goto', { state: 'match' });
+			this.events.emit('state:goto', { state: 'login' });
 		}
 	}
 }
