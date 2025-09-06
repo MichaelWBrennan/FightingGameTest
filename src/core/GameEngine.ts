@@ -118,15 +118,19 @@ export class GameEngine {
     this.stateStack = new GameStateStack();
 
     // State transitions via EventBus
-    this.eventBus.on('state:goto', async ({ state }: any) => {
-      switch (state) {
-        case 'menu':
-          await this.stateStack.replace(new MenuState(this.app, this.eventBus));
-          break;
-        case 'match':
-          await this.stateStack.replace(new MatchState(this.app, this.eventBus));
-          break;
-      }
+    this.eventBus.on('state:goto', ({ state }: any) => {
+      (async () => {
+        switch (state) {
+          case 'menu':
+            await this.stateStack.replace(new MenuState(this.app, this.eventBus));
+            break;
+          case 'match':
+            await this.stateStack.replace(new MatchState(this.app, this.eventBus));
+            break;
+        }
+      })().catch((err: unknown) => {
+        try { Logger.error('state:goto failed', err as any); } catch {}
+      });
     });
   }
 
