@@ -17,6 +17,8 @@ import { GameStateStack } from './state/GameStateStack';
 import { BootState } from './state/BootState';
 import { MenuState } from './state/MenuState';
 import { MatchState } from './state/MatchState';
+import { LoginState } from './state/LoginState';
+import { CharacterSelectState } from './state/CharacterSelectState';
 import { PreloadManager } from './utils/PreloadManager';
 import { AIManager } from './ai/AIManager';
 import { ProceduralStageGenerator } from './procgen/ProceduralStageGenerator';
@@ -84,7 +86,7 @@ export class GameEngine {
     this.services.register('app', this.app);
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
-    this.services.register('config', new (require('./utils/ConfigService').ConfigService)());
+    // Config service will be registered during initialize()
     this.preloader = new PreloadManager();
     this.aiManager = new AIManager(this.app);
     this.stageGen = new ProceduralStageGenerator();
@@ -111,6 +113,7 @@ export class GameEngine {
     this.services.register('configRemote', this.remoteConfig);
     this.services.register('liveops', this.liveOps);
     this.services.register('netcode', this.netcode);
+    this.services.register('characters', this.characterManager);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
@@ -123,6 +126,12 @@ export class GameEngine {
         switch (state) {
           case 'menu':
             await this.stateStack.replace(new MenuState(this.app, this.eventBus));
+            break;
+          case 'login':
+            await this.stateStack.replace(new LoginState(this.app, this.eventBus));
+            break;
+          case 'characterselect':
+            await this.stateStack.replace(new CharacterSelectState(this.app, this.eventBus));
             break;
           case 'match':
             await this.stateStack.replace(new MatchState(this.app, this.eventBus));
@@ -175,6 +184,11 @@ export class GameEngine {
 
     try {
       Logger.info('Initializing game systems...');
+      // Register config service now that we can await dynamic import
+      try {
+        const { ConfigService } = await import('./utils/ConfigService');
+        this.services.register('config', new ConfigService());
+      } catch {}
       
       // Preload assets if needed using AssetLoader script
       await this.characterManager.initialize();
@@ -202,7 +216,9 @@ export class GameEngine {
         this.pipeline.update(dt);
         this.stateStack.update(dt);
         if (!this.debugOverlay && typeof window !== 'undefined') {
-          try { const { DebugOverlay } = require('./debug/DebugOverlay'); this.debugOverlay = new DebugOverlay(); } catch {}
+          import('./debug/DebugOverlay').then(({ DebugOverlay }) => {
+            if (!this.debugOverlay) this.debugOverlay = new DebugOverlay();
+          }).catch(() => {});
         }
         this.debugOverlay?.update();
         this.debugOverlay?.setTimings(this.pipeline.getTimings());
