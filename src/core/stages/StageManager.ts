@@ -36,6 +36,21 @@ export class StageManager {
     box.addComponent('render', { type: 'box' });
     box.setPosition(0, 0.5, 0);
     this.app.root.addChild(box);
+
+    // Spot light pointed directly at the cube
+    const spot = new pc.Entity('SpotLight');
+    spot.addComponent('light', {
+      type: pc.LIGHTTYPE_SPOT,
+      color: new pc.Color(1, 1, 1),
+      intensity: 1.5,
+      range: 30,
+      innerConeAngle: 20,
+      outerConeAngle: 35,
+      castShadows: false
+    });
+    spot.setPosition(0, 4, 8);
+    spot.lookAt(box.getPosition());
+    this.app.root.addChild(spot);
   }
 }
 
