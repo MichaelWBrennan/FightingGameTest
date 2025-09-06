@@ -1,7 +1,10 @@
 import * as pc from 'playcanvas';
+import ParallaxManager from '../../scripts/graphics/ParallaxManager';
+import { ProceduralStageGenerator } from '../procgen/ProceduralStageGenerator';
 
 export class StageManager {
   private app: pc.Application;
+  private parallax?: ParallaxManager;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -31,26 +34,40 @@ export class StageManager {
     light.setEulerAngles(45, 30, 0);
     this.app.root.addChild(light);
 
-    // Test cube
-    const box = new pc.Entity('TestBox');
-    box.addComponent('render', { type: 'box' });
-    box.setPosition(0, 0.5, 0);
-    this.app.root.addChild(box);
+    // Parallax background system
+    this.parallax = new ParallaxManager(this.app);
+    await this.parallax.initialize();
 
-    // Spot light pointed directly at the cube
-    const spot = new pc.Entity('SpotLight');
-    spot.addComponent('light', {
-      type: pc.LIGHTTYPE_SPOT,
-      color: new pc.Color(1, 1, 1),
-      intensity: 1.5,
-      range: 30,
-      innerConeAngle: 20,
-      outerConeAngle: 35,
-      castShadows: false
-    });
-    spot.setPosition(0, 4, 8);
-    spot.lookAt(box.getPosition());
-    this.app.root.addChild(spot);
+    // Procedural stage generation with URL-configurable seed/theme
+    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const seedParam = params.get('seed');
+    const themeParam = params.get('theme') as 'training' | 'gothic' | 'urban' | null;
+    const seed = seedParam ? parseInt(seedParam, 10) : Date.now();
+    const theme = themeParam || 'training';
+
+    const gen = new ProceduralStageGenerator(seed);
+    const stageData = gen.generate({ theme });
+    await this.parallax.loadStageData(stageData);
+
+    // Hot-regenerate with keyboard: R to reseed, T to cycle theme
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (!this.parallax) return;
+        if (e.key === 'r' || e.key === 'R') {
+          const newSeed = Date.now();
+          const g = new ProceduralStageGenerator(newSeed);
+          const d = g.generate({ theme });
+          this.parallax!.loadStageData(d);
+        } else if (e.key === 't' || e.key === 'T') {
+          const themes: ('training' | 'gothic' | 'urban')[] = ['training', 'gothic', 'urban'];
+          const idx = Math.max(0, themes.indexOf(theme));
+          const next = themes[(idx + 1) % themes.length];
+          const g = new ProceduralStageGenerator(seed);
+          const d = g.generate({ theme: next });
+          this.parallax!.loadStageData(d);
+        }
+      });
+    }
   }
 }
 
