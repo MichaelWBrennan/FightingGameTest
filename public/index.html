@@ -26,10 +26,14 @@
         window.addEventListener('unhandledrejection', function(e){
           try{
             const msg = (e && e.reason && (e.reason.stack||e.reason.message)) ? (e.reason.stack||e.reason.message) : 'Unhandled promise rejection';
-            const el = document.createElement('div');
-            el.style.cssText = 'position:fixed;left:0;right:0;top:32px;background:#220;color:#faa;padding:8px;white-space:pre-wrap;font:12px monospace;z-index:99998;';
+            var el = document.getElementById('__unhandled_banner__');
+            if (!el) {
+              el = document.createElement('div');
+              el.id = '__unhandled_banner__';
+              el.style.cssText = 'position:fixed;left:0;right:0;top:32px;background:#220;color:#faa;padding:8px;white-space:pre-wrap;font:12px monospace;z-index:99998;';
+              document.body.appendChild(el);
+            }
             el.textContent = 'Unhandled Rejection: ' + msg;
-            document.body.appendChild(el);
           } catch {}
         });
         if (window.SF3App && typeof window.SF3App.defaultStart === 'function') {
