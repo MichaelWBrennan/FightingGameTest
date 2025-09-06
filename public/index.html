@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>SF3 3rd Strike</title>
-    <script src="https://code.playcanvas.com/playcanvas-1.65.3.min.js" crossorigin="anonymous"></script>
     <style>
       html,body{margin:0;height:100%;background:#000}
     </style>
@@ -14,13 +13,21 @@
     <script src="/bundle.js"></script>
     <script>
       (function(){
+        var __runtimeBanner__ = null;
+        var __errorCounts__ = Object.create(null);
         window.addEventListener('error', function(e){
           try{
-            const msg = (e && e.error && e.error.stack) ? e.error.stack : (e && e.message) || 'Unknown error';
-            const el = document.createElement('div');
-            el.style.cssText = 'position:fixed;left:0;right:0;top:0;background:#200;color:#f88;padding:8px;white-space:pre-wrap;font:12px monospace;z-index:99999;';
-            el.textContent = 'Runtime Error: ' + msg;
-            document.body.appendChild(el);
+            var key = ((e && e.message) || 'Unknown error') + '|' + (e && e.filename || '') + ':' + (e && e.lineno || 0) + ':' + (e && e.colno || 0);
+            __errorCounts__[key] = (__errorCounts__[key] || 0) + 1;
+            var msg = (e && e.error && e.error.stack) ? e.error.stack : (e && e.message) || 'Unknown error';
+            var meta = (e && e.filename) ? (' @ ' + e.filename + ':' + e.lineno + ':' + e.colno) : '';
+            if (!__runtimeBanner__) {
+              __runtimeBanner__ = document.createElement('div');
+              __runtimeBanner__.id = '__runtime_banner__';
+              __runtimeBanner__.style.cssText = 'position:fixed;left:0;right:0;top:0;background:#200;color:#f88;padding:8px;white-space:pre-wrap;font:12px monospace;z-index:99999;';
+              document.body.appendChild(__runtimeBanner__);
+            }
+            __runtimeBanner__.textContent = 'Runtime Error: ' + msg + meta + '  (' + __errorCounts__[key] + 'x)';
           } catch {}
         });
         window.addEventListener('unhandledrejection', function(e){
