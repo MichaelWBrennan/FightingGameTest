@@ -193,8 +193,8 @@ export class VariationOverlay {
    * Check if a field is protected from modification/removal
    */
   private isProtectedField(path: string): boolean {
-    return this.PROTECTED_FIELDS.some(protected => 
-      path === protected || path.startsWith(protected + '.')
+    return this.PROTECTED_FIELDS.some(protectedPath => 
+      path === protectedPath || path.startsWith(protectedPath + '.')
     );
   }
 

@@ -12,7 +12,6 @@ import * as pc from 'playcanvas';
  */
 
 import { VariationOverlay } from './VariationOverlay';
-import crypto from 'crypto';
 
 interface CharacterBase {
   schemaVersion: string;
@@ -163,7 +162,7 @@ export class CharacterLoader {
       const compiled = await this.compileCharacter(baseCharacter, variation);
       
       // Generate deterministic hash for netcode
-      const hash = this.generateCharacterHash(compiled, variation);
+      const hash = await this.generateCharacterHash(compiled, variation);
       
       // Create loaded character object
       const loadedCharacter: LoadedCharacter = {
@@ -299,7 +298,7 @@ export class CharacterLoader {
   /**
    * Generate deterministic hash for replay/netcode integrity
    */
-  private generateCharacterHash(character: CharacterBase, variation: Variation | null): string {
+  private async generateCharacterHash(character: CharacterBase, variation: Variation | null): Promise<string> {
     // Create deterministic object for hashing
     const hashObject = {
       character: {
@@ -324,8 +323,51 @@ export class CharacterLoader {
     const sortedData = this.sortObjectKeys(hashObject);
     const dataString = JSON.stringify(sortedData);
     
-    // Generate SHA-256 hash
-    return crypto.createHash('sha256').update(dataString).digest('hex').substring(0, 16);
+    // Prefer Web Crypto API when available; fallback to FNV-1a 64-bit
+    if (this.supportsWebCrypto()) {
+      const hex = await this.sha256HexBrowser(dataString);
+      return hex.substring(0, 16);
+    }
+
+    // Fallback hash (deterministic, not cryptographic)
+    return this.fnv1a64Hex(dataString).substring(0, 16);
+  }
+
+  /**
+   * Check if Web Crypto Subtle API is available
+   */
+  private supportsWebCrypto(): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const g: any = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : {});
+    return !!(g.crypto && g.crypto.subtle && typeof g.crypto.subtle.digest === 'function');
+  }
+
+  /**
+   * Compute SHA-256 hex string using the Web Crypto API
+   */
+  private async sha256HexBrowser(input: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const g: any = (typeof globalThis !== 'undefined') ? globalThis : (typeof window !== 'undefined' ? window : {});
+    const hashBuffer = await g.crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  /**
+   * FNV-1a 64-bit hash (returns 16-char hex)
+   * Deterministic fallback when Web Crypto is unavailable.
+   */
+  private fnv1a64Hex(str: string): string {
+    let hash = 0xcbf29ce484222325n; // FNV offset basis
+    const fnvPrime = 0x100000001b3n; // FNV prime
+    for (let i = 0; i < str.length; i++) {
+      hash ^= BigInt(str.charCodeAt(i));
+      hash = (hash * fnvPrime) & 0xffffffffffffffffn; // stay within 64 bits
+    }
+    const hex = hash.toString(16);
+    return hex.padStart(16, '0');
   }
 
   /**
