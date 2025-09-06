@@ -522,7 +522,7 @@ class PostProcessingManager implements ISystem {
             nearClip: 0,
             farClip: 1,
             priority: 100,
-            enabled: false
+            enabled: true
         });
         
         this.app.root.addChild(this.cameras.postProcess);
@@ -535,7 +535,10 @@ class PostProcessingManager implements ISystem {
             type: 'plane'
         });
         this.fullScreenQuad.setLocalScale(2, 2, 1);
-        this.fullScreenQuad.setPosition(0, 0, 0.5);
+        // Place slightly in front of the post-process camera (which looks down -Z)
+        this.fullScreenQuad.setPosition(0, 0, -0.5);
+        // Ensure the quad faces the camera
+        this.fullScreenQuad.setEulerAngles(0, 180, 0);
         
         this.app.root.addChild(this.fullScreenQuad);
     }
