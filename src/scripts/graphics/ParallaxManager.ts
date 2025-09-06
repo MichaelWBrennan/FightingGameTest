@@ -127,6 +127,8 @@ class ParallaxManager implements ISystem {
     // Stage-specific data
     private currentStage: string | null = null;
     private stageData: Map<string, StageData> = new Map();
+    private shaderDrivenEntities: { entity: pc.Entity; material: pc.Material; name: string }[] = [];
+    private timeMs: number = 0;
     
     // Performance settings
     private performance: PerformanceSettings = {
@@ -360,6 +362,30 @@ class ParallaxManager implements ISystem {
         console.log(`Stage loaded: ${stage.name}`);
     }
 
+    public async loadStageData(stage: StageData): Promise<void> {
+        // Clear tracked shader-driven entities
+        this.shaderDrivenEntities = [];
+
+        // Clear existing elements
+        this.clearAllLayers();
+
+        // Load stage layers from provided data
+        Object.entries(stage.layers).forEach(([layerName, layerData]) => {
+            this.loadStageLayer(layerName, layerData);
+        });
+
+        // Apply optional lighting and atmosphere
+        if (stage.lighting) {
+            this.applyStageLighting(stage.lighting);
+        }
+        if (stage.atmosphere) {
+            this.applyStageAtmosphere(stage.atmosphere);
+        }
+
+        this.currentStage = stage.name || null;
+        console.log(`Stage loaded (data): ${stage.name}`);
+    }
+
     private loadStageLayer(layerName: string, layerData: any): void {
         const layer = this.parallaxLayers.get(layerName);
         if (!layer) return;
@@ -388,7 +414,7 @@ class ParallaxManager implements ISystem {
         });
     }
 
-    private createElement(layerName: string, elementData: any, index: number): pc.Entity | null {
+    private createElement(layerName: string, elementData: any, index: number | string): pc.Entity | null {
         const element = new pc.Entity(`${layerName}_element_${index}`);
         
         // Position element
@@ -567,11 +593,13 @@ class ParallaxManager implements ISystem {
     private applyStageShader(entity: pc.Entity, shaderName: string): void {
         switch (shaderName) {
             case 'stormy_sky': {
-                const mat = ShaderUtils.createStageStormySkyMaterial(this.app) as unknown as pc.StandardMaterial;
-                if (entity.render?.material && (entity.render.material as any).diffuseMap) {
-                    mat.setParameter('texture_diffuseMap', (entity.render.material as any).diffuseMap);
+                const mat = ShaderUtils.createStageStormySkyMaterial(this.app);
+                const existing: any = entity.render?.material;
+                if (existing && existing.diffuseMap) {
+                    (mat as any).setParameter?.('texture_diffuseMap', existing.diffuseMap);
                 }
-                entity.render!.material = mat;
+                entity.render!.material = mat as unknown as pc.Material;
+                this.shaderDrivenEntities.push({ entity, material: mat, name: shaderName });
                 break;
             }
         }
@@ -614,7 +642,7 @@ class ParallaxManager implements ISystem {
 
     private setupUpdateLoop(): void {
         // Hook into app update loop
-        this.app.on('update', this.updateParallax.bind(this));
+        this.app.on('update', this.update.bind(this));
     }
 
     public update(dt: number): void {
@@ -628,6 +656,12 @@ class ParallaxManager implements ISystem {
         
         // Update animated elements
         this.updateAnimatedElements(dt);
+
+        // Update shader time uniforms for animated stage materials
+        this.timeMs += dt * 1000;
+        for (const entry of this.shaderDrivenEntities) {
+            (entry.material as any).setParameter?.('uTime', this.timeMs);
+        }
     }
 
     private updateCameraTracking(dt: number): void {
