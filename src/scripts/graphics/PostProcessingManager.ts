@@ -188,6 +188,14 @@ class PostProcessingManager implements ISystem {
         console.log('Initializing Post-Processing Manager...');
         
         try {
+            // Only enable advanced post-processing when WebGL2 is available
+            const deviceAny = this.app.graphicsDevice as any;
+            const hasWebGL2 = !!(deviceAny && deviceAny.webgl2);
+            if (!hasWebGL2) {
+                console.warn('[PostProcessingManager] WebGL2 not available; disabling post-processing');
+                this.initialized = false;
+                return;
+            }
             // Create render targets
             this.createRenderTargets();
             
@@ -208,7 +216,9 @@ class PostProcessingManager implements ISystem {
             
         } catch (error) {
             console.error('Failed to initialize Post-Processing Manager:', error);
-            throw error;
+            // Avoid failing engine initialization if post-processing init fails
+            this.initialized = false;
+            return;
         }
     }
 
