@@ -41,6 +41,19 @@ export class LoadingOverlay {
 			document.body.appendChild(this.container);
 		}
 
+		// Optional boot-like headline
+		let head = document.getElementById('pc-loading-head');
+		if (!head) {
+			head = document.createElement('div');
+			head.id = 'pc-loading-head';
+			(head.style as any).font = '12px/1.2 monospace';
+			head.style.color = '#0f0';
+			head.style.opacity = '.85';
+			head.style.marginBottom = '8px';
+			head.textContent = '== Boot sequence ==';
+			this.container.appendChild(head);
+		}
+
 		this.fill = document.getElementById('pc-loading-fill');
 		let bar = document.getElementById('pc-loading-bar');
 		if (!bar) {
@@ -60,7 +73,7 @@ export class LoadingOverlay {
 			this.fill.id = 'pc-loading-fill';
 			this.fill.style.width = '0%';
 			this.fill.style.height = '100%';
-			this.fill.style.background = '#09f';
+			this.fill.style.background = '#0f0';
 			(this.fill.style as any).transition = 'width 0.2s';
 			bar.appendChild(this.fill);
 		}
@@ -73,6 +86,7 @@ export class LoadingOverlay {
 			this.label.style.marginTop = '12px';
 			(this.label.style as any).font = '14px/1.2 monospace';
 			(this.label.style as any).opacity = '.9';
+			this.label.style.color = '#0f0';
 			this.container.appendChild(this.label);
 		}
 
@@ -85,7 +99,8 @@ export class LoadingOverlay {
 			this.tasksEl.style.width = '60%';
 			(this.tasksEl.style as any).maxWidth = '480px';
 			(this.tasksEl.style as any).font = '12px/1.35 monospace';
-			(this.tasksEl.style as any).opacity = '.9';
+			(this.tasksEl.style as any).opacity = '.85';
+			(this.tasksEl.style as any).color = '#0f0';
 			this.container.appendChild(this.tasksEl);
 		}
 

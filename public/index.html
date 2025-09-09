@@ -12,10 +12,12 @@
   </head>
   <body>
     <div id="pc-loading-overlay" style="position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;z-index:100000;">
+      <div id="pc-loading-head" style="font:12px/1.2 monospace;color:#0f0;opacity:.85;margin-bottom:8px">== Boot sequence ==</div>
       <div id="pc-loading-bar" style="width:60%;max-width:480px;height:8px;background:#333;border-radius:4px;overflow:hidden;">
-        <div id="pc-loading-fill" style="width:0%;height:100%;background:#09f;transition:width 0.2s"></div>
+        <div id="pc-loading-fill" style="width:0%;height:100%;background:#0f0;transition:width 0.2s"></div>
       </div>
-      <div id="pc-loading-text" style="margin-top:12px;font:14px/1.2 monospace;opacity:.9">Loading…</div>
+      <div id="pc-loading-text" style="margin-top:12px;font:14px/1.2 monospace;opacity:.9;color:#0f0">Loading…</div>
+      <div id="pc-loading-tasks" style="margin-top:8px;width:60%;max-width:480px;font:12px/1.35 monospace;opacity:.85;color:#0f0"></div>
     </div>
     <script src="https://code.playcanvas.com/1.65.3/playcanvas.min.js"></script>
     <script>window.__ASSET_KEY__='dev-asset-key-change-me';</script>

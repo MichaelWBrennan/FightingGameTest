@@ -210,8 +210,38 @@ export class GameEngine {
         LoadingOverlay.endTask('postfx', true);
       }
 
-      // Load manifest first
-      await this.preloader.loadManifest('/assets/manifest.json');
+      // Load manifest and then preload assets with detailed progress grouped by type
+      LoadingOverlay.beginTask('manifest', 'Loading manifest', 1);
+      await this.preloader.loadManifest('/assets/manifest.json', (p, label) => {
+        LoadingOverlay.updateTask('manifest', Math.max(0, Math.min(1, p ?? 0)), label || 'Loading manifest');
+      });
+      LoadingOverlay.endTask('manifest', true);
+      LoadingOverlay.beginTask('preload', 'Preloading assets', 5);
+      await this.preloader.preloadAllAssets({
+        groupOrder: ['json','image','audio','other'],
+        onEvent: (evt) => {
+          switch (evt.kind) {
+            case 'groupStart':
+              LoadingOverlay.beginTask(`preload:${evt.group}`, `Loading ${evt.group.toUpperCase()}…`, 1);
+              break;
+            case 'groupProgress':
+              LoadingOverlay.updateTask(`preload:${evt.group}`, evt.progress);
+              break;
+            case 'groupEnd':
+              LoadingOverlay.endTask(`preload:${evt.group}`, true);
+              break;
+            case 'assetStart':
+              // individual assets are handled inside PreloadManager with their own tasks
+              break;
+            case 'assetProgress':
+              // assets update internally
+              break;
+            case 'assetEnd':
+              break;
+          }
+        }
+      });
+      LoadingOverlay.endTask('preload', true);
 
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
