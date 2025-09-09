@@ -1,5 +1,6 @@
 export default function handler(_req: any, res: any) {
 	try {
+		const assetKey = process.env.ASSET_KEY || 'dev-asset-key-change-me';
 		res.setHeader('Content-Type', 'text/html; charset=utf-8');
 		res.status(200).send(`<!DOCTYPE html>
 		<html lang="en">
@@ -10,7 +11,7 @@ export default function handler(_req: any, res: any) {
 		    <style>html,body{margin:0;height:100%;background:#000}</style>
 		  </head>
 		  <body>
-		    <script>window.__ASSET_KEY__=window.__ASSET_KEY__||'dev-asset-key-change-me';</script>
+		    <script>window.__ASSET_KEY__='${'${assetKey}'.replace(/'/g, "\\'")}';</script>
 		    <script src="/bundle.js"></script>
 		    <script>(function(){
 		      var __runtimeBanner__=null;var __errorCounts__=Object.create(null);
