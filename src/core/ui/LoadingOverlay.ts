@@ -7,6 +7,16 @@ export class LoadingOverlay {
     private static origFetch: typeof fetch | null = null;
     private static reqStarted = 0;
     private static reqCompleted = 0;
+    private static tasksEl: HTMLElement | null = null;
+    private static tasks: Map<string, {
+        id: string;
+        label: string;
+        weight: number;
+        progress: number; // 0..1
+        status: 'running' | 'done' | 'failed';
+        el: HTMLElement | null;
+    }> = new Map();
+    private static completeRequested = false;
 
 	/**
 	 * Initializes a fullscreen loading overlay or reuses pre-rendered markup.
@@ -66,6 +76,19 @@ export class LoadingOverlay {
 			this.container.appendChild(this.label);
 		}
 
+		// Task list container
+		this.tasksEl = document.getElementById('pc-loading-tasks');
+		if (!this.tasksEl) {
+			this.tasksEl = document.createElement('div');
+			this.tasksEl.id = 'pc-loading-tasks';
+			this.tasksEl.style.marginTop = '8px';
+			this.tasksEl.style.width = '60%';
+			(this.tasksEl.style as any).maxWidth = '480px';
+			(this.tasksEl.style as any).font = '12px/1.35 monospace';
+			(this.tasksEl.style as any).opacity = '.9';
+			this.container.appendChild(this.tasksEl);
+		}
+
 		this.initialized = true;
 	}
 
@@ -75,12 +98,10 @@ export class LoadingOverlay {
 	public static updateProgress(progress: number, message?: string): void {
 		if (!this.initialized) return;
 		let clamped = Math.max(0, Math.min(1, progress));
-		if (this.trackNetwork && this.reqStarted > 0) {
-			const netPortion = Math.max(0, Math.min(1, this.reqCompleted / this.reqStarted));
-			// Reserve last 15% for in-flight network requests
-			clamped = Math.max(clamped, 0.85 + 0.15 * netPortion);
-		}
-		if (this.fill) this.fill.style.width = String(Math.round(clamped * 100)) + '%';
+		// If we have task-based progress, prefer that over manual progress for the bar
+		const taskProgress = this.computeAggregateTaskProgress();
+		const finalProgress = isNaN(taskProgress) ? clamped : taskProgress;
+		if (this.fill) this.fill.style.width = String(Math.round(finalProgress * 100)) + '%';
 		if (message && this.label) this.label.textContent = message;
 	}
 
@@ -89,6 +110,12 @@ export class LoadingOverlay {
 	 */
 	public static complete(): void {
 		if (!this.initialized || !this.container) return;
+		// If there are running tasks, defer completion until they finish
+		const anyRunning = Array.from(this.tasks.values()).some(t => t.status === 'running');
+		if (anyRunning) {
+			this.completeRequested = true;
+			return;
+		}
 		(this.container.style as any).transition = 'opacity 180ms ease';
 		this.container.style.opacity = '0';
 		setTimeout(() => {
@@ -98,6 +125,8 @@ export class LoadingOverlay {
 			this.container = null;
 			this.fill = null;
 			this.label = null;
+			this.tasksEl = null;
+			this.tasks.clear();
 			this.initialized = false;
 			this.disableNetworkTracking();
 		}, 200);
@@ -112,18 +141,19 @@ export class LoadingOverlay {
 		this.reqStarted = 0;
 		this.reqCompleted = 0;
 		this.origFetch = window.fetch.bind(window);
+		// Register a task for network activity
+		try { this.beginTask('network', 'Network activity', 1); } catch {}
 		window.fetch = ((...args: Parameters<typeof fetch>) => {
 			this.reqStarted++;
 			try {
 				const p = (this.origFetch as any)(...args);
 				return p.finally(() => {
 					this.reqCompleted++;
-					// Nudge progress when requests complete during boot
-					this.updateProgress(0.9);
+					this.updateNetworkTask();
 				});
 			} catch (e) {
 				this.reqCompleted++;
-				this.updateProgress(0.9);
+				this.updateNetworkTask();
 				throw e;
 			}
 		}) as any;
@@ -138,6 +168,127 @@ export class LoadingOverlay {
 		this.origFetch = null;
 		this.reqStarted = 0;
 		this.reqCompleted = 0;
+		try { this.endTask('network', true); } catch {}
+	}
+
+	// --- Multi-task API ---
+
+	public static beginTask(id: string, label: string, weight: number = 1): void {
+		if (!this.initialized) return;
+		const safeId = this.sanitizeId(id);
+		if (this.tasks.has(safeId)) {
+			// Update label/weight if task already exists
+			const existing = this.tasks.get(safeId)!;
+			existing.label = label;
+			existing.weight = Math.max(0, weight);
+			existing.status = 'running';
+			this.renderTask(existing);
+			this.renderAll();
+			return;
+		}
+		const taskEl = document.createElement('div');
+		taskEl.id = 'pc-task-' + safeId;
+		taskEl.style.display = 'flex';
+		taskEl.style.justifyContent = 'space-between';
+		taskEl.style.alignItems = 'center';
+		taskEl.style.marginTop = '6px';
+		const labelEl = document.createElement('span');
+		labelEl.textContent = label;
+		const pctEl = document.createElement('span');
+		pctEl.textContent = '0%';
+		taskEl.appendChild(labelEl);
+		taskEl.appendChild(pctEl);
+		this.tasksEl?.appendChild(taskEl);
+		this.tasks.set(safeId, { id: safeId, label, weight: Math.max(0, weight), progress: 0, status: 'running', el: taskEl });
+		this.renderAll();
+	}
+
+	public static updateTask(id: string, progress?: number, label?: string): void {
+		if (!this.initialized) return;
+		const safeId = this.sanitizeId(id);
+		const task = this.tasks.get(safeId);
+		if (!task) return;
+		if (typeof progress === 'number' && isFinite(progress)) {
+			task.progress = Math.max(0, Math.min(1, progress));
+		}
+		if (label) task.label = label;
+		this.renderTask(task);
+		this.renderAll();
+	}
+
+	public static endTask(id: string, success: boolean = true): void {
+		if (!this.initialized) return;
+		const safeId = this.sanitizeId(id);
+		const task = this.tasks.get(safeId);
+		if (!task) return;
+		task.progress = 1;
+		task.status = success ? 'done' : 'failed';
+		this.renderTask(task);
+		this.renderAll();
+		// If completion was requested earlier, hide when no running tasks remain
+		if (this.completeRequested) {
+			const anyRunning = Array.from(this.tasks.values()).some(t => t.status === 'running');
+			if (!anyRunning) {
+				this.completeRequested = false;
+				this.complete();
+			}
+		}
+	}
+
+	public static async trackAsync<T>(id: string, label: string, weight: number, fnOrPromise: Promise<T> | (() => Promise<T>)): Promise<T> {
+		this.beginTask(id, label, weight);
+		try {
+			const result = typeof fnOrPromise === 'function' ? await (fnOrPromise as any)() : await fnOrPromise;
+			this.endTask(id, true);
+			return result;
+		} catch (e) {
+			this.endTask(id, false);
+			throw e;
+		}
+	}
+
+	private static updateNetworkTask(): void {
+		if (!this.initialized) return;
+		const total = Math.max(1, this.reqStarted);
+		const progress = Math.max(0, Math.min(1, this.reqCompleted / total));
+		const label = `Network activity (${this.reqCompleted}/${this.reqStarted}${this.reqStarted > this.reqCompleted ? ' in-flight' : ''})`;
+		this.updateTask('network', progress, label);
+	}
+
+	private static computeAggregateTaskProgress(): number {
+		if (this.tasks.size === 0) {
+			// When no tasks, fall back to manual progress
+			return NaN as unknown as number;
+		}
+		let totalWeight = 0;
+		let completed = 0;
+		this.tasks.forEach(t => {
+			const w = Math.max(0, t.weight);
+			totalWeight += w;
+			completed += w * Math.max(0, Math.min(1, t.progress));
+		});
+		if (totalWeight <= 0) return 0;
+		return completed / totalWeight;
+	}
+
+	private static renderTask(task: { id: string; label: string; weight: number; progress: number; status: 'running' | 'done' | 'failed'; el: HTMLElement | null; }): void {
+		if (!task.el) return;
+		const children = task.el.children;
+		if (children.length >= 2) {
+			(children[0] as HTMLElement).textContent = task.label + (task.status === 'done' ? ' ✓' : task.status === 'failed' ? ' ✗' : '');
+			(children[1] as HTMLElement).textContent = String(Math.round(task.progress * 100)) + '%';
+			(task.el.style as any).color = task.status === 'failed' ? '#faa' : '#fff';
+		}
+	}
+
+	private static renderAll(): void {
+		const agg = this.computeAggregateTaskProgress();
+		if (isNaN(agg)) return;
+		if (this.fill) this.fill.style.width = String(Math.round(agg * 100)) + '%';
+	}
+
+	private static sanitizeId(id: string): string {
+		return (id || 'task').toString().replace(/[^A-Za-z0-9_\-:.]/g, '_');
 	}
 }
 
