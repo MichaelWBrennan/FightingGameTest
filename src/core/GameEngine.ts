@@ -33,6 +33,7 @@ import { RemoteConfigService } from './utils/RemoteConfigService';
 import { LiveOpsService } from './liveops/LiveOpsService';
 import { NetcodeService } from './netcode/NetcodeService';
 import { ConfigService } from './utils/ConfigService';
+import { LoadingOverlay } from './ui/LoadingOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -185,29 +186,38 @@ export class GameEngine {
 
     try {
       Logger.info('Initializing game systems...');
+      LoadingOverlay.updateProgress(0.15, 'Initializing systems');
       // Register config service (static import for IIFE compatibility)
       this.services.register('config', new ConfigService());
+      LoadingOverlay.updateProgress(0.2, 'Config ready');
       
       // Preload assets if needed using AssetLoader script
       await this.characterManager.initialize();
+      LoadingOverlay.updateProgress(0.4, 'Characters ready');
       // StageManager/UIManager initialize through their own methods if needed
       await this.stageManager.initialize();
+      LoadingOverlay.updateProgress(0.6, 'Stages ready');
       await this.uiManager.initialize();
+      LoadingOverlay.updateProgress(0.7, 'UI ready');
       if (this.postProcessingManager) {
         await this.postProcessingManager.initialize();
+        LoadingOverlay.updateProgress(0.8, 'Post FX ready');
       }
 
       // Load manifest first
       await this.preloader.loadManifest('/assets/manifest.json');
+      LoadingOverlay.updateProgress(0.9, 'Content manifest loaded');
 
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
       
       this.isInitialized = true;
       this.app.start();
+      LoadingOverlay.updateProgress(0.95, 'Starting');
 
       // Push boot state
       await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
+      LoadingOverlay.updateProgress(0.98, 'Finalizing');
 
       // Wire main update loop
       this.updateHandler = (dt: number) => {

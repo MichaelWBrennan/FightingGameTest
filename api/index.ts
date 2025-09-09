@@ -9,8 +9,16 @@ export default function handler(_req: any, res: any) {
 		    <meta name="viewport" content="width=device-width,initial-scale=1" />
 		    <title>SF3 3rd Strike</title>
 		    <style>html,body{margin:0;height:100%;background:#000}</style>
+		    <script defer src="/_vercel/insights/script.js"></script>
+		    <script defer src="/_vercel/speed-insights/script.js"></script>
 		  </head>
 		  <body>
+		    <div id="pc-loading-overlay" style="position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;z-index:100000;">
+		      <div id="pc-loading-bar" style="width:60%;max-width:480px;height:8px;background:#333;border-radius:4px;overflow:hidden;">
+		        <div id="pc-loading-fill" style="width:0%;height:100%;background:#09f;transition:width 0.2s"></div>
+		      </div>
+		      <div id="pc-loading-text" style="margin-top:12px;font:14px/1.2 monospace;opacity:.9">Loading…</div>
+		    </div>
 		    <script src="https://code.playcanvas.com/1.65.3/playcanvas.min.js"></script>
 		    <script>window.__ASSET_KEY__=${JSON.stringify(assetKey)};</script>
 		    <script src="/bundle.js"></script>

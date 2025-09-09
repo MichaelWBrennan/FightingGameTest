@@ -29,7 +29,7 @@
       "@graphics/*": ["src/scripts/graphics/*"],
       "@shaders/*": ["src/typescript/shaders/*"]
     },
-    "types": ["node"]
+    "types": ["node", "./types/playcanvas-ambient"]
   },
   "include": [
     "src/**/*",

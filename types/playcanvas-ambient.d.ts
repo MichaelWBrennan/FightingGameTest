@@ -17,3 +17,8 @@ declare namespace pc {
   const FOG_LINEAR: number;
 }
 
+declare module 'playcanvas' {
+  const pcNamespace: any;
+  export = pcNamespace;
+}
+
