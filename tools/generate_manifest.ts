@@ -42,6 +42,20 @@ function main() {
 	const outFile = path.join(publicAssetsDir, 'manifest.json');
 	const entries: ManifestEntry[] = [];
 	if (fs.existsSync(dataDir)) walk(dataDir, dataDir, entries);
+
+	// Also include assets/data files that are shipped but referenced at runtime
+	const assetsDataDir = path.join(process.cwd(), 'assets', 'data');
+	if (fs.existsSync(assetsDataDir)) {
+		// Copy rotation.config.json into public/data and list it
+		const rotationCfg = path.join(assetsDataDir, 'rotation.config.json');
+		if (fs.existsSync(rotationCfg)) {
+			const publicDataDir = path.join(process.cwd(), 'public', 'data');
+			fs.mkdirSync(publicDataDir, { recursive: true });
+			const dest = path.join(publicDataDir, 'rotation.config.json');
+			fs.copyFileSync(rotationCfg, dest);
+			entries.push({ path: '/data/rotation.config.json', type: 'json', sha256: hashFile(dest) });
+		}
+	}
 	// Ensure store catalog listed if present
 	const catalogPath = path.join(dataDir, 'store', 'catalog.json');
 	if (fs.existsSync(catalogPath) && !entries.find(e => e.path.endsWith('/store/catalog.json'))) {

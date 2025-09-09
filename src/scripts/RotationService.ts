@@ -100,7 +100,7 @@ export class RotationService {
   private entitlementBridge: EntitlementBridge;
   private config: RotationConfig | null = null;
   private state: RotationState | null = null;
-  private configUrl: string = 'assets/data/rotation.config.json';
+  private configUrl: string = '/data/rotation.config.json';
   private region: string = 'default';
   private updateTimer: number | null = null;
   private eventEmitter: pc.EventHandler;
