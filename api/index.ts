@@ -11,6 +11,7 @@ export default function handler(_req: any, res: any) {
 		    <style>html,body{margin:0;height:100%;background:#000}</style>
 		  </head>
 		  <body>
+		    <script src="https://code.playcanvas.com/1.65.3/playcanvas.min.js"></script>
 		    <script>window.__ASSET_KEY__='${'${assetKey}'.replace(/'/g, "\\'")}';</script>
 		    <script src="/bundle.js"></script>
 		    <script>(function(){
