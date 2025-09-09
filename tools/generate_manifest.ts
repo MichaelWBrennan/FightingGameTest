@@ -46,7 +46,7 @@ function main() {
 	// Also include assets/data files that are shipped but referenced at runtime
 	const assetsDataDir = path.join(process.cwd(), 'assets', 'data');
 	if (fs.existsSync(assetsDataDir)) {
-		// Copy rotation.config.json into public/data and list it
+		// Copy rotation.config.json into public/data and list it (service expects /data path)
 		const rotationCfg = path.join(assetsDataDir, 'rotation.config.json');
 		if (fs.existsSync(rotationCfg)) {
 			const publicDataDir = path.join(process.cwd(), 'public', 'data');
@@ -54,6 +54,27 @@ function main() {
 			const dest = path.join(publicDataDir, 'rotation.config.json');
 			fs.copyFileSync(rotationCfg, dest);
 			entries.push({ path: '/data/rotation.config.json', type: 'json', sha256: hashFile(dest) });
+		}
+
+		// Recursively copy all of assets/data into public/assets/data and include in manifest under /assets/data
+		const publicAssetsDataDir = path.join(process.cwd(), 'public', 'assets', 'data');
+		fs.mkdirSync(publicAssetsDataDir, { recursive: true });
+		const stack: string[] = [assetsDataDir];
+		while (stack.length) {
+			const dir = stack.pop()!;
+			for (const entry of fs.readdirSync(dir)) {
+				const p = path.join(dir, entry);
+				const st = fs.statSync(p);
+				if (st.isDirectory()) {
+					stack.push(p);
+				} else {
+					const rel = path.relative(assetsDataDir, p).replace(/\\/g, '/');
+					const dest = path.join(publicAssetsDataDir, rel);
+					fs.mkdirSync(path.dirname(dest), { recursive: true });
+					fs.copyFileSync(p, dest);
+					entries.push({ path: `/assets/data/${rel}`, type: guessType(rel), sha256: hashFile(dest) });
+				}
+			}
 		}
 	}
 	// Ensure store catalog listed if present

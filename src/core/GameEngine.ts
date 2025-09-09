@@ -32,6 +32,7 @@ import { SyncService } from './utils/SyncService';
 import { RemoteConfigService } from './utils/RemoteConfigService';
 import { LiveOpsService } from './liveops/LiveOpsService';
 import { NetcodeService } from './netcode/NetcodeService';
+import { ConfigService } from './utils/ConfigService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -184,11 +185,8 @@ export class GameEngine {
 
     try {
       Logger.info('Initializing game systems...');
-      // Register config service now that we can await dynamic import
-      try {
-        const { ConfigService } = await import('./utils/ConfigService');
-        this.services.register('config', new ConfigService());
-      } catch {}
+      // Register config service (static import for IIFE compatibility)
+      this.services.register('config', new ConfigService());
       
       // Preload assets if needed using AssetLoader script
       await this.characterManager.initialize();

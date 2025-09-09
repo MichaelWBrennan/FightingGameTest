@@ -54,34 +54,34 @@ export class InputManager {
   }
 
   private setupKeyboardBindings(): void {
-    // Player 1 controls (WASD + keys)
-    this.keyboard.on('keydown', (e) => {
-      switch (e.key.toLowerCase()) {
-        case 'w': this.player1Inputs.up = true; break;
-        case 's': this.player1Inputs.down = true; break;
-        case 'a': this.player1Inputs.left = true; break;
-        case 'd': this.player1Inputs.right = true; break;
-        case 'u': this.player1Inputs.lightPunch = true; break;
-        case 'i': this.player1Inputs.mediumPunch = true; break;
-        case 'o': this.player1Inputs.heavyPunch = true; break;
-        case 'j': this.player1Inputs.lightKick = true; break;
-        case 'k': this.player1Inputs.mediumKick = true; break;
-        case 'l': this.player1Inputs.heavyKick = true; break;
+    // Player 1 controls using PlayCanvas keycodes to ensure compatibility
+    this.keyboard.on(pc.EVENT_KEYDOWN as any, (e: any) => {
+      switch (e.key) {
+        case pc.KEY_W: this.player1Inputs.up = true; break;
+        case pc.KEY_S: this.player1Inputs.down = true; break;
+        case pc.KEY_A: this.player1Inputs.left = true; break;
+        case pc.KEY_D: this.player1Inputs.right = true; break;
+        case pc.KEY_U: this.player1Inputs.lightPunch = true; break;
+        case pc.KEY_I: this.player1Inputs.mediumPunch = true; break;
+        case pc.KEY_O: this.player1Inputs.heavyPunch = true; break;
+        case pc.KEY_J: this.player1Inputs.lightKick = true; break;
+        case pc.KEY_K: this.player1Inputs.mediumKick = true; break;
+        case pc.KEY_L: this.player1Inputs.heavyKick = true; break;
       }
     });
 
-    this.keyboard.on('keyup', (e) => {
-      switch (e.key.toLowerCase()) {
-        case 'w': this.player1Inputs.up = false; break;
-        case 's': this.player1Inputs.down = false; break;
-        case 'a': this.player1Inputs.left = false; break;
-        case 'd': this.player1Inputs.right = false; break;
-        case 'u': this.player1Inputs.lightPunch = false; break;
-        case 'i': this.player1Inputs.mediumPunch = false; break;
-        case 'o': this.player1Inputs.heavyPunch = false; break;
-        case 'j': this.player1Inputs.lightKick = false; break;
-        case 'k': this.player1Inputs.mediumKick = false; break;
-        case 'l': this.player1Inputs.heavyKick = false; break;
+    this.keyboard.on(pc.EVENT_KEYUP as any, (e: any) => {
+      switch (e.key) {
+        case pc.KEY_W: this.player1Inputs.up = false; break;
+        case pc.KEY_S: this.player1Inputs.down = false; break;
+        case pc.KEY_A: this.player1Inputs.left = false; break;
+        case pc.KEY_D: this.player1Inputs.right = false; break;
+        case pc.KEY_U: this.player1Inputs.lightPunch = false; break;
+        case pc.KEY_I: this.player1Inputs.mediumPunch = false; break;
+        case pc.KEY_O: this.player1Inputs.heavyPunch = false; break;
+        case pc.KEY_J: this.player1Inputs.lightKick = false; break;
+        case pc.KEY_K: this.player1Inputs.mediumKick = false; break;
+        case pc.KEY_L: this.player1Inputs.heavyKick = false; break;
       }
     });
   }
