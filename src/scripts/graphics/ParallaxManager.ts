@@ -155,21 +155,27 @@ class ParallaxManager implements ISystem {
         this.setupDefaultStages();
     }
 
-    public async initialize(): Promise<void> {
+    public async initialize(onProgress?: (progress: number, label?: string) => void): Promise<void> {
         console.log('Initializing Parallax Manager...');
         
         try {
+            const report = (p: number, label?: string) => {
+                if (onProgress) onProgress(Math.max(0, Math.min(1, p)), label);
+            };
             // Create parallax layer containers
             this.createParallaxLayers();
+            report(0.2, 'Creating parallax layers');
             
             // Setup camera tracking
             this.setupCameraTracking();
+            report(0.3, 'Configuring camera tracking');
             
             // Initialize default stage
-            await this.loadStage('training_stage');
+            await this.loadStage('training_stage', (p, lbl) => report(0.3 + 0.6 * p, lbl || 'Loading default stage'));
             
             // Setup dynamic updates
             this.setupUpdateLoop();
+            report(1.0, 'Parallax ready');
             
             this.initialized = true;
             console.log('Parallax Manager initialized successfully');
@@ -331,7 +337,7 @@ class ParallaxManager implements ISystem {
         console.log('Camera tracking setup complete');
     }
 
-    public async loadStage(stageId: string): Promise<void> {
+    public async loadStage(stageId: string, onProgress?: (progress: number, label?: string) => void): Promise<void> {
         const stage = this.stageData.get(stageId);
         if (!stage) {
             console.error(`Stage not found: ${stageId}`);
@@ -344,8 +350,14 @@ class ParallaxManager implements ISystem {
         this.clearAllLayers();
         
         // Load stage layers
+        const totalElements = this.countTotalElements(stage);
+        let processed = 0;
+        const countAndReport = () => {
+            processed++;
+            if (onProgress) onProgress(processed / Math.max(1, totalElements), `Loading ${stage.name} (${processed}/${Math.max(1, totalElements)})`);
+        };
         Object.entries(stage.layers).forEach(([layerName, layerData]) => {
-            this.loadStageLayer(layerName, layerData);
+            this.loadStageLayer(layerName, layerData, countAndReport);
         });
         
         // Set stage lighting
@@ -362,7 +374,7 @@ class ParallaxManager implements ISystem {
         console.log(`Stage loaded: ${stage.name}`);
     }
 
-    public async loadStageData(stage: StageData): Promise<void> {
+    public async loadStageData(stage: StageData, onProgress?: (progress: number, label?: string) => void): Promise<void> {
         // Clear tracked shader-driven entities
         this.shaderDrivenEntities = [];
 
@@ -370,8 +382,14 @@ class ParallaxManager implements ISystem {
         this.clearAllLayers();
 
         // Load stage layers from provided data
+        const totalElements = this.countTotalElements(stage);
+        let processed = 0;
+        const countAndReport = () => {
+            processed++;
+            if (onProgress) onProgress(processed / Math.max(1, totalElements), `Loading ${stage.name} (${processed}/${Math.max(1, totalElements)})`);
+        };
         Object.entries(stage.layers).forEach(([layerName, layerData]) => {
-            this.loadStageLayer(layerName, layerData);
+            this.loadStageLayer(layerName, layerData, countAndReport);
         });
 
         // Apply optional lighting and atmosphere
@@ -386,7 +404,7 @@ class ParallaxManager implements ISystem {
         console.log(`Stage loaded (data): ${stage.name}`);
     }
 
-    private loadStageLayer(layerName: string, layerData: any): void {
+    private loadStageLayer(layerName: string, layerData: any, onOne?: () => void): void {
         const layer = this.parallaxLayers.get(layerName);
         if (!layer) return;
         
@@ -396,6 +414,7 @@ class ParallaxManager implements ISystem {
             if (element) {
                 layer.entity.addChild(element);
                 layer.elements.push(element);
+                if (onOne) onOne();
                 // Apply shader mappings when element name hints match
                 if (elementData.name === 'stormy_sky' || layerName === 'skybox') {
                     this.applyStageShader(element, 'stormy_sky');
@@ -412,6 +431,16 @@ class ParallaxManager implements ISystem {
                 }
             }
         });
+    }
+
+    private countTotalElements(stage: StageData): number {
+        try {
+            const counts = Object.values(stage.layers).map((ld: any) => Array.isArray(ld?.elements) ? ld.elements.length : 0);
+            const total = counts.reduce((a, b) => a + b, 0);
+            return Math.max(1, total);
+        } catch {
+            return 1;
+        }
     }
 
     private createElement(layerName: string, elementData: any, index: number | string): pc.Entity | null {

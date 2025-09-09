@@ -27,12 +27,18 @@ export class BootState implements GameState {
             const remote = this.services.resolve('configRemote') as any;
             const liveops = this.services.resolve('liveops') as any;
             const netcode = this.services.resolve('netcode') as any;
+			let __bootDone = 0;
+			const __bootTotal = 5;
+			const __bootReport = async (label: string) => {
+				__bootDone = Math.min(__bootTotal, __bootDone + 1);
+				try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('boot_config', __bootDone / __bootTotal, `Loading live config and services (${__bootDone}/${__bootTotal}) - ${label}`); } catch {}
+			};
 			await Promise.all([
-				config.loadJson('/data/balance/live_balance.json').catch(() => ({})),
-                monetization.initialize().catch(() => undefined),
-                entitlement.initialize?.().catch(() => undefined),
-                remote.load().catch(() => undefined),
-                liveops.load().catch(() => undefined)
+				config.loadJson('/data/balance/live_balance.json').then(() => __bootReport('balance')).catch(() => __bootReport('balance')),
+				monetization.initialize().then(() => __bootReport('monetization')).catch(() => __bootReport('monetization')),
+				Promise.resolve(entitlement.initialize?.()).then(() => __bootReport('entitlement')).catch(() => __bootReport('entitlement')),
+				remote.load().then(() => __bootReport('remote config')).catch(() => __bootReport('remote config')),
+				liveops.load().then(() => __bootReport('liveops')).catch(() => __bootReport('liveops'))
 			]);
 			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('boot_config', true); } catch {}
             security.start?.();

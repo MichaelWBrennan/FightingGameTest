@@ -4,6 +4,7 @@ export class PreloadManager {
 	async loadManifest(url: string = '/assets/manifest.json'): Promise<void> {
 		try {
 			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('manifest', 'Loading content manifest', 1); } catch {}
+			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('manifest', 0.2, 'Fetching manifest'); } catch {}
 			const res = await fetch(url, { cache: 'no-store' });
 			if (!res.ok) {
 				console.warn(`[PreloadManager] Manifest not found (${res.status}) at ${url}. Continuing without it.`);
@@ -11,7 +12,9 @@ export class PreloadManager {
 				try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('manifest', true); } catch {}
 				return;
 			}
+			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('manifest', 0.6, 'Parsing manifest'); } catch {}
 			this.manifest = await res.json();
+			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('manifest', 1.0, 'Manifest ready'); } catch {}
 			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('manifest', true); } catch {}
 		} catch (err) {
 			console.warn(`[PreloadManager] Manifest load error at ${url}. Using empty manifest.`, err);

@@ -11,6 +11,7 @@ export class UIManager {
 	}
 
 	public async initialize(): Promise<void> {
+		try { (await import('./LoadingOverlay')).LoadingOverlay.beginTask('ui_init', 'Setting up UI', 1); } catch {}
 		this.root = new pc.Entity('UIRoot');
 		this.root.addComponent('screen', {
 			referenceResolution: new pc.Vec2(1920, 1080),
@@ -19,6 +20,7 @@ export class UIManager {
 			screenSpace: true
 		});
 		this.app.root.addChild(this.root);
+		try { (await import('./LoadingOverlay')).LoadingOverlay.endTask('ui_init', true); } catch {}
 	}
 
 	public showMenu(): void {
