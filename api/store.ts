@@ -1,7 +1,9 @@
 export default function handler(req: any, res: any) {
   try {
     if (req.url?.includes('/catalog')) {
-      return res.status(200).json(require('../data/store/catalog.json'));
+      // Serve from static file deployed in public/data
+      res.setHeader('Cache-Control', 'public, max-age=60');
+      return res.redirect(307, '/data/store/catalog.json');
     }
     res.status(404).json({ error: 'not found' });
   } catch (e: any) {
