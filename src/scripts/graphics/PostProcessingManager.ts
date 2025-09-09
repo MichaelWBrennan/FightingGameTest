@@ -64,12 +64,12 @@ interface PostProcessingEffects {
 }
 
 interface RenderTargets {
-    sceneColor: pc.RenderTarget | null;
-    sceneDepth: pc.RenderTarget | null;
-    blurHorizontal: pc.RenderTarget | null;
-    blurVertical: pc.RenderTarget | null;
-    bloom: pc.RenderTarget | null;
-    final: pc.RenderTarget | null;
+    sceneColor: any | null;
+    sceneDepth: any | null;
+    blurHorizontal: any | null;
+    blurVertical: any | null;
+    bloom: any | null;
+    final: any | null;
 }
 
 interface PostProcessingMaterials {
@@ -184,7 +184,7 @@ class PostProcessingManager implements ISystem {
         this.app = app;
     }
 
-    public async initialize(): Promise<void> {
+    public async initialize(onProgress?: (progress: number, label?: string) => void): Promise<void> {
         console.log('Initializing Post-Processing Manager...');
         
         try {
@@ -198,18 +198,23 @@ class PostProcessingManager implements ISystem {
             }
             // Create render targets
             this.createRenderTargets();
+            if (onProgress) onProgress(0.25, 'PostFX: Render targets');
             
             // Create post-processing materials
             await this.createPostProcessingMaterials();
+            if (onProgress) onProgress(0.55, 'PostFX: Materials');
             
             // Setup post-processing cameras
             this.setupPostProcessingCameras();
+            if (onProgress) onProgress(0.75, 'PostFX: Cameras');
             
             // Create effect entities
             this.createEffectEntities();
+            if (onProgress) onProgress(0.9, 'PostFX: Entities');
             
             // Setup render pipeline
             this.setupRenderPipeline();
+            if (onProgress) onProgress(1.0, 'PostFX: Pipeline');
             
             this.initialized = true;
             console.log('Post-Processing Manager initialized successfully');

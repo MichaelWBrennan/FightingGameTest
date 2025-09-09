@@ -204,7 +204,9 @@ export class GameEngine {
       LoadingOverlay.endTask('ui', true);
       if (this.postProcessingManager) {
         LoadingOverlay.beginTask('postfx', 'Initializing post-processing', 1);
-        await this.postProcessingManager.initialize();
+        await this.postProcessingManager.initialize((p, label) => {
+          LoadingOverlay.updateTask('postfx', Math.max(0, Math.min(1, p ?? 0)), label || 'Initializing post-processing');
+        });
         LoadingOverlay.endTask('postfx', true);
       }
 
