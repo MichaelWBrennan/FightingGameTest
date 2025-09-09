@@ -12,7 +12,7 @@ export default function handler(_req: any, res: any) {
 		  </head>
 		  <body>
 		    <script src="https://code.playcanvas.com/1.65.3/playcanvas.min.js"></script>
-		    <script>window.__ASSET_KEY__='${'${assetKey}'.replace(/'/g, "\\'")}';</script>
+		    <script>window.__ASSET_KEY__=${JSON.stringify(assetKey)};</script>
 		    <script src="/bundle.js"></script>
 		    <script>(function(){
 		      var __runtimeBanner__=null;var __errorCounts__=Object.create(null);
