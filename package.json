@@ -15,7 +15,7 @@
     "lint": "eslint src/**/*.ts",
     "fix": "npx ts-node tools/fix_compilation_errors.ts",
     "convert": "npx ts-node tools/complete_typescript_conversion.ts",
-    "serve": "http-server . -p 5000 -c-1"
+    "serve": "http-server public -p 5000 -c-1"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
