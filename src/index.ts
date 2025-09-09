@@ -7,10 +7,12 @@ import * as pc from 'playcanvas';
 async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
   LoadingOverlay.initialize();
   LoadingOverlay.enableNetworkTracking();
-  LoadingOverlay.updateProgress(0.05, 'Preparing renderer');
+  LoadingOverlay.beginTask('prepare', 'Preparing renderer', 1);
   const targetCanvas = canvas || createCanvas();
-  LoadingOverlay.updateProgress(0.1, 'Creating engine');
+  LoadingOverlay.endTask('prepare', true);
+  LoadingOverlay.beginTask('engine_create', 'Creating engine', 1);
   const engine = new GameEngine(targetCanvas);
+  LoadingOverlay.endTask('engine_create', true);
   Logger.info('Starting Street Fighter III: 3rd Strike - PlayCanvas Edition');
   await engine.initialize();
   LoadingOverlay.complete();

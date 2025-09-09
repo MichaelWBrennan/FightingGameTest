@@ -46,23 +46,31 @@ export class CharacterManager {
     };
     // Prefer a consolidated database file if available
     try {
+      try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('characters_db', 'Loading characters db', 3); } catch {}
       const db = await fetchJson('/data/characters_db.json');
       if (db) {
         const keys = Object.keys(db);
+        let processed = 0;
         for (const key of keys) {
           let cfg = this.normalizeCharacterConfig(db[key] as CharacterConfig);
           cfg = this.frameGen.generateForCharacter(cfg);
           this.characterConfigs.set(key, cfg);
+          processed++;
+          try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('characters_db', processed / Math.max(1, keys.length), `Loading characters db (${processed}/${keys.length})`); } catch {}
         }
         Logger.info(`Loaded ${keys.length} characters from consolidated database`);
+        try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('characters_db', true); } catch {}
         return;
       }
     } catch (e) {
       Logger.warn('Consolidated character database not found; falling back to individual files');
+      try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('characters_db', false); } catch {}
     }
 
     // Fallback to individual files
     const characterNames = ['ryu', 'ken', 'chun_li', 'sagat', 'zangief'];
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('characters_files', 'Loading character files', characterNames.length || 1); } catch {}
+    let processed = 0;
     for (const name of characterNames) {
       try {
         const rawConfig: CharacterConfig = await fetchJson(`/data/characters/${name}.json`);
@@ -73,7 +81,10 @@ export class CharacterManager {
       } catch (error) {
         Logger.error(`Failed to load character ${name}:`, error);
       }
+      processed++;
+      try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('characters_files', processed / Math.max(1, characterNames.length), `Loading character files (${processed}/${characterNames.length})`); } catch {}
     }
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('characters_files', true); } catch {}
 
     // Optionally load a ground-truth seed from decomp import if present, or derive at runtime
     try {

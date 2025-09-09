@@ -17,15 +17,16 @@ export class BootState implements GameState {
 
 	async enter(): Promise<void> {
 		try {
+			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('boot_config', 'Loading live config and services', 3); } catch {}
 			// Load initial configs; extend as needed
-			const config = this.services.resolve<ConfigService>('config');
-            const monetization = this.services.resolve<MonetizationService>('monetization');
-            const entitlement = this.services.resolve<any>('entitlement');
-            const security = this.services.resolve<any>('security');
-            const sync = this.services.resolve<any>('sync');
-            const remote = this.services.resolve<any>('configRemote');
-            const liveops = this.services.resolve<any>('liveops');
-            const netcode = this.services.resolve<any>('netcode');
+			const config = this.services.resolve('config') as ConfigService;
+            const monetization = this.services.resolve('monetization') as MonetizationService;
+            const entitlement = this.services.resolve('entitlement') as any;
+            const security = this.services.resolve('security') as any;
+            const sync = this.services.resolve('sync') as any;
+            const remote = this.services.resolve('configRemote') as any;
+            const liveops = this.services.resolve('liveops') as any;
+            const netcode = this.services.resolve('netcode') as any;
 			await Promise.all([
 				config.loadJson('/data/balance/live_balance.json').catch(() => ({})),
                 monetization.initialize().catch(() => undefined),
@@ -33,6 +34,7 @@ export class BootState implements GameState {
                 remote.load().catch(() => undefined),
                 liveops.load().catch(() => undefined)
 			]);
+			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('boot_config', true); } catch {}
             security.start?.();
             sync.start?.();
 			const cfg = remote.get('netcode', { enabled: false });
@@ -42,6 +44,7 @@ export class BootState implements GameState {
 			this.events.emit('state:goto', { state: 'login' });
 		} catch (e) {
 			console.error('BootState failed:', e);
+			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('boot_config', false); } catch {}
 			this.events.emit('state:goto', { state: 'login' });
 		}
 	}

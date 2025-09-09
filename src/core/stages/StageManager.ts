@@ -11,6 +11,7 @@ export class StageManager {
   }
 
   public async initialize(): Promise<void> {
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_camera', 'Creating camera and light', 1); } catch {}
     // Camera
     const camera = new pc.Entity('MainCamera');
     camera.addComponent('camera', {
@@ -33,10 +34,13 @@ export class StageManager {
     });
     light.setEulerAngles(45, 30, 0);
     this.app.root.addChild(light);
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('stage_camera', true); } catch {}
 
     // Parallax background system
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('parallax_init', 'Initializing parallax', 1); } catch {}
     this.parallax = new ParallaxManager(this.app);
     await this.parallax.initialize();
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('parallax_init', true); } catch {}
 
     // Procedural stage generation with URL-configurable seed/theme
     const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
@@ -47,7 +51,9 @@ export class StageManager {
 
     const gen = new ProceduralStageGenerator(seed);
     const stageData = gen.generate({ theme });
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_load', `Generating ${theme} stage`, 1); } catch {}
     await this.parallax.loadStageData(stageData);
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('stage_load', true); } catch {}
 
     // Hot-regenerate with keyboard: R to reseed, T to cycle theme
     if (typeof window !== 'undefined') {

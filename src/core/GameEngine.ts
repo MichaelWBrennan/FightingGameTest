@@ -186,38 +186,44 @@ export class GameEngine {
 
     try {
       Logger.info('Initializing game systems...');
-      LoadingOverlay.updateProgress(0.15, 'Initializing systems');
+      LoadingOverlay.beginTask('systems', 'Initializing systems', 1);
       // Register config service (static import for IIFE compatibility)
       this.services.register('config', new ConfigService());
-      LoadingOverlay.updateProgress(0.2, 'Config ready');
+      LoadingOverlay.endTask('systems', true);
+      LoadingOverlay.beginTask('characters', 'Loading character configs', 3);
       
       // Preload assets if needed using AssetLoader script
       await this.characterManager.initialize();
-      LoadingOverlay.updateProgress(0.4, 'Characters ready');
+      LoadingOverlay.endTask('characters', true);
       // StageManager/UIManager initialize through their own methods if needed
+      LoadingOverlay.beginTask('stages', 'Preparing stages', 2);
       await this.stageManager.initialize();
-      LoadingOverlay.updateProgress(0.6, 'Stages ready');
+      LoadingOverlay.endTask('stages', true);
+      LoadingOverlay.beginTask('ui', 'Bringing up UI', 1);
       await this.uiManager.initialize();
-      LoadingOverlay.updateProgress(0.7, 'UI ready');
+      LoadingOverlay.endTask('ui', true);
       if (this.postProcessingManager) {
+        LoadingOverlay.beginTask('postfx', 'Initializing post-processing', 1);
         await this.postProcessingManager.initialize();
-        LoadingOverlay.updateProgress(0.8, 'Post FX ready');
+        LoadingOverlay.endTask('postfx', true);
       }
 
       // Load manifest first
       await this.preloader.loadManifest('/assets/manifest.json');
-      LoadingOverlay.updateProgress(0.9, 'Content manifest loaded');
 
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
       
       this.isInitialized = true;
+      LoadingOverlay.beginTask('app_start', 'Starting engine', 1);
       this.app.start();
-      LoadingOverlay.updateProgress(0.95, 'Starting');
+      LoadingOverlay.endTask('app_start', true);
 
       // Push boot state
+      LoadingOverlay.beginTask('boot_state', 'Booting', 1);
       await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
-      LoadingOverlay.updateProgress(0.98, 'Finalizing');
+      LoadingOverlay.endTask('boot_state', true);
+      LoadingOverlay.beginTask('finalize', 'Finalizing', 1);
 
       // Wire main update loop
       this.updateHandler = (dt: number) => {
@@ -232,6 +238,7 @@ export class GameEngine {
         this.debugOverlay?.setTimings(this.pipeline.getTimings());
       };
       this.app.on('update', this.updateHandler);
+      LoadingOverlay.endTask('finalize', true);
       
       Logger.info('Game engine fully initialized');
     } catch (error) {
