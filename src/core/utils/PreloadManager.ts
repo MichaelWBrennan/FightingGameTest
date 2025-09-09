@@ -1,25 +1,24 @@
 export class PreloadManager {
 	private manifest: { assets: { path: string; type: string; sha256?: string }[] } = { assets: [] };
 
-	async loadManifest(url: string = '/assets/manifest.json'): Promise<void> {
+
+	async loadManifest(url: string = '/assets/manifest.json', onProgress?: (progress: number, label?: string) => void): Promise<void> {
 		try {
-			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('manifest', 'Loading content manifest', 1); } catch {}
-			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('manifest', 0.2, 'Fetching manifest'); } catch {}
+			onProgress?.(0.2, 'Fetching manifest');
 			const res = await fetch(url, { cache: 'no-store' });
 			if (!res.ok) {
 				console.warn(`[PreloadManager] Manifest not found (${res.status}) at ${url}. Continuing without it.`);
 				this.manifest = { assets: [] };
-				try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('manifest', true); } catch {}
+				onProgress?.(1.0, 'Manifest not found, continuing');
 				return;
 			}
-			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('manifest', 0.6, 'Parsing manifest'); } catch {}
+			onProgress?.(0.6, 'Parsing manifest');
 			this.manifest = await res.json();
-			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('manifest', 1.0, 'Manifest ready'); } catch {}
-			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('manifest', true); } catch {}
+			onProgress?.(1.0, 'Manifest ready');
 		} catch (err) {
 			console.warn(`[PreloadManager] Manifest load error at ${url}. Using empty manifest.`, err);
 			this.manifest = { assets: [] };
-			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('manifest', false); } catch {}
+			onProgress?.(1.0, 'Manifest error, continuing');
 		}
 	}
 
