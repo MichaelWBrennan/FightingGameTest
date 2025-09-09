@@ -110,6 +110,11 @@ export class LoadingOverlay {
 	 */
 	public static complete(): void {
 		if (!this.initialized || !this.container) return;
+		// If network tracking is enabled and all tracked requests have completed,
+		// end the network task now so completion is not blocked.
+		if (this.trackNetwork && this.reqStarted <= this.reqCompleted) {
+			this.disableNetworkTracking();
+		}
 		// If there are running tasks, defer completion until they finish
 		const anyRunning = Array.from(this.tasks.values()).some(t => t.status === 'running');
 		if (anyRunning) {
@@ -128,6 +133,7 @@ export class LoadingOverlay {
 			this.tasksEl = null;
 			this.tasks.clear();
 			this.initialized = false;
+			// Ensure network tracking is disabled (safe if already disabled)
 			this.disableNetworkTracking();
 		}, 200);
 	}
@@ -253,6 +259,11 @@ export class LoadingOverlay {
 		const progress = Math.max(0, Math.min(1, this.reqCompleted / total));
 		const label = `Network activity (${this.reqCompleted}/${this.reqStarted}${this.reqStarted > this.reqCompleted ? ' in-flight' : ''})`;
 		this.updateTask('network', progress, label);
+		// If completion was previously requested and network work is done,
+		// mark the network task complete to allow the overlay to finish.
+		if (this.completeRequested && this.reqCompleted >= this.reqStarted) {
+			this.endTask('network', true);
+		}
 	}
 
 	private static computeAggregateTaskProgress(): number {
