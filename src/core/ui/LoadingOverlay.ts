@@ -121,10 +121,29 @@ export class LoadingOverlay {
 	}
 
 	/**
-	 * Hides the overlay with a short fade once loading completes.
+	 * Hides the overlay. By default, waits for tasks to finish and fades out.
+	 * When force=true, hides immediately without waiting.
 	 */
-	public static complete(): void {
+	public static complete(force: boolean = false): void {
 		if (!this.initialized || !this.container) return;
+		if (force) {
+			// Immediately hide and cleanup without waiting for tasks
+			try { this.disableNetworkTracking(); } catch {}
+			(this.container.style as any).transition = 'opacity 0ms linear';
+			this.container.style.opacity = '0';
+			setTimeout(() => {
+				try {
+					this.container && this.container.parentElement && this.container.parentElement.removeChild(this.container);
+				} catch {}
+				this.container = null;
+				this.fill = null;
+				this.label = null;
+				this.tasksEl = null;
+				this.tasks.clear();
+				this.initialized = false;
+			}, 0);
+			return;
+		}
 		// If network tracking is enabled and all tracked requests have completed,
 		// end the network task now so completion is not blocked.
 		if (this.trackNetwork && this.reqStarted <= this.reqCompleted) {

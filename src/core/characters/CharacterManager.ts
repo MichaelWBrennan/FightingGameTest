@@ -34,6 +34,35 @@ export class CharacterManager {
     Logger.info('Character manager initialized');
   }
 
+  /**
+   * Ultra-fast initialization that avoids network fetches and seeds minimal
+   * built-in configurations for a small default roster so gameplay can start
+   * immediately. Heavier configs can load later and replace these.
+   */
+  public async initializeLite(defaultRoster: string[] = ['ryu', 'ken']): Promise<void> {
+    try {
+      const services = (this.app as any)._services as any;
+      if (services && services.resolve) {
+        try { this.decomp = services.resolve('decomp') as DecompDataService; } catch {}
+      }
+    } catch {}
+    this.seedMinimalCharacters(defaultRoster);
+    Logger.info(`Character manager initialized (lite) with ${defaultRoster.join(', ')}`);
+  }
+
+  /**
+   * Inserts minimal character configs for the provided ids, if not already loaded.
+   */
+  public seedMinimalCharacters(ids: string[]): void {
+    for (const id of ids) {
+      if (!this.characterConfigs.has(id)) {
+        const cfg = this.generateMinimalConfig(id);
+        const finalCfg = this.frameGen.generateForCharacter(cfg);
+        this.characterConfigs.set(id, finalCfg);
+      }
+    }
+  }
+
   private async loadCharacterConfigs(): Promise<void> {
     const fetchJson = async (path: string) => {
       try {
@@ -104,6 +133,37 @@ export class CharacterManager {
     } catch {}
   }
 
+  private generateMinimalConfig(characterId: string): CharacterConfig {
+    // Create a tiny, self-contained config sufficient for spawning and moving
+    const baseStats = {
+      health: 1000,
+      walkSpeed: 150
+    } as any;
+    const basicMoves: Record<string, any> = {
+      light_punch: { damage: 30, startup: 4, active: 2, recovery: 8, blockAdvantage: -1, hitAdvantage: 1 },
+      heavy_punch: { damage: 90, startup: 10, active: 3, recovery: 16, blockAdvantage: -4, hitAdvantage: 2 },
+      light_kick: { damage: 25, startup: 3, active: 2, recovery: 7, blockAdvantage: 0, hitAdvantage: 1 }
+    };
+    const cfg = {
+      characterId,
+      name: characterId.toUpperCase(),
+      displayName: characterId.replace(/_/g, ' '),
+      archetype: 'shoto',
+      spritePath: '',
+      health: baseStats.health,
+      walkSpeed: baseStats.walkSpeed,
+      dashSpeed: 300,
+      jumpHeight: 380,
+      stats: baseStats,
+      complexity: 'easy',
+      strengths: ['fundamentals'],
+      weaknesses: ['specialization'],
+      uniqueMechanics: ['hadoken'],
+      moves: basicMoves
+    } as unknown as CharacterConfig;
+    return cfg;
+  }
+
   private normalizeCharacterConfig(config: CharacterConfig): CharacterConfig {
     // Ensure stats exist with required fields using top-level fallbacks
     const normalizedStats = {
@@ -147,10 +207,14 @@ export class CharacterManager {
       }
     } catch {}
 
-    const config = this.characterConfigs.get(characterId);
+    let config = this.characterConfigs.get(characterId);
     if (!config) {
-      Logger.error(`Character config not found: ${characterId}`);
-      return null;
+      // Fallback to a minimal built-in config for instant play
+      config = this.generateMinimalConfig(characterId);
+      const finalCfg = this.frameGen.generateForCharacter(config);
+      this.characterConfigs.set(characterId, finalCfg);
+      config = finalCfg;
+      Logger.warn(`Character config not found on disk; using minimal fallback for: ${characterId}`);
     }
 
     const characterEntity = new pc.Entity(characterId);
@@ -161,6 +225,7 @@ export class CharacterManager {
       entity: characterEntity,
       config: config,
       health: config.stats.health,
+      maxHealth: config.stats.health,
       meter: 0,
       state: 'idle',
       currentMove: null,
@@ -195,6 +260,20 @@ export class CharacterManager {
 
   public getActiveCharacters(): Character[] {
     return this.activeCharacters;
+  }
+
+  public removeCharacter(characterId: string): void {
+    const character = this.characters.get(characterId);
+    if (!character) return;
+    try {
+      if (character.entity && character.entity.parent) {
+        character.entity.parent.removeChild(character.entity);
+      }
+    } catch {}
+    try { character.entity.destroy(); } catch {}
+    this.characters.delete(characterId);
+    this.activeCharacters = this.activeCharacters.filter(c => c.id !== characterId);
+    Logger.info(`Removed character: ${characterId}`);
   }
 
   public update(deltaTime: number): void {

@@ -27,6 +27,11 @@ export class BootState implements GameState {
             const remote = this.services.resolve('configRemote') as any;
             const liveops = this.services.resolve('liveops') as any;
             const netcode = this.services.resolve('netcode') as any;
+			// Seed minimal playable roster immediately for instant gameplay
+			try {
+				const chars = this.services.resolve('characters') as any;
+				await (chars.initializeLite?.(['ryu','ken']) || Promise.resolve());
+			} catch {}
 			let __bootDone = 0;
 			const __bootTotal = 5;
 			const __bootReport = async (label: string) => {
@@ -47,11 +52,13 @@ export class BootState implements GameState {
 			if (cfg?.enabled && cfg.mode === 'local') {
 				netcode.enableLocalP2();
 			}
-			this.events.emit('state:goto', { state: 'login' });
+			// If quickplay is requested, jump straight into a match
+			const qp = (() => { try { const p = new URLSearchParams(window.location.search); return ['1','true','yes','on'].includes((p.get('quickplay')||'').toLowerCase()); } catch { return false; } })();
+			this.events.emit('state:goto', { state: qp ? 'match' : 'login' });
 		} catch (e) {
 			console.error('BootState failed:', e);
 			try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('boot_config', false); } catch {}
-			this.events.emit('state:goto', { state: 'login' });
+			this.events.emit('state:goto', { state: 'match' });
 		}
 	}
 

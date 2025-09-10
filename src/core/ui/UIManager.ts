@@ -44,9 +44,9 @@ export class UIManager {
 		this.hud = new pc.Entity('MatchHUD');
 		this.hud.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0,0,1,1) });
 		const p1 = new pc.Entity('P1');
-		p1.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: 'P1: 1000', fontSize: 32, anchor: new pc.Vec4(0,1,0,1), pivot: new pc.Vec2(0,1) });
+		p1.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: 'P1: 1000 | 0%', fontSize: 32, anchor: new pc.Vec4(0,1,0,1), pivot: new pc.Vec2(0,1) });
 		const p2 = new pc.Entity('P2');
-		p2.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: 'P2: 1000', fontSize: 32, anchor: new pc.Vec4(1,1,1,1), pivot: new pc.Vec2(1,1) });
+		p2.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: 'P2: 1000 | 0%', fontSize: 32, anchor: new pc.Vec4(1,1,1,1), pivot: new pc.Vec2(1,1) });
 		this.hud.addChild(p1);
 		this.hud.addChild(p2);
 		this.root?.addChild(this.hud);
@@ -56,16 +56,16 @@ export class UIManager {
 		if (this.hud) this.hud.enabled = false;
 	}
 
-	public updateHUD(p1Health: number, p2Health: number): void {
+	public updateHUD(p1Health: number, p2Health: number, p1Meter?: number, p2Meter?: number, p1Max?: number, p2Max?: number): void {
 		if (!this.hud) return;
 		const p1 = this.hud.findByName('P1');
 		const p2 = this.hud.findByName('P2');
-		if (p1 && p1.element) {
-			p1.element.text = `P1: ${Math.max(0, Math.floor(p1Health))}`;
-		}
-		if (p2 && p2.element) {
-			p2.element.text = `P2: ${Math.max(0, Math.floor(p2Health))}`;
-		}
+		const h1 = Math.max(0, Math.floor(p1Health));
+		const h2 = Math.max(0, Math.floor(p2Health));
+		const m1 = Math.max(0, Math.min(100, Math.floor((p1Meter ?? 0))));
+		const m2 = Math.max(0, Math.min(100, Math.floor((p2Meter ?? 0))));
+		if (p1 && p1.element) p1.element.text = `P1: ${h1}${p1Max ? '/' + Math.floor(p1Max) : ''} | ${m1}%`;
+		if (p2 && p2.element) p2.element.text = `P2: ${h2}${p2Max ? '/' + Math.floor(p2Max) : ''} | ${m2}%`;
 	}
 }
 
