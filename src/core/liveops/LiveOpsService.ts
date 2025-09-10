@@ -3,7 +3,8 @@ export class LiveOpsService {
 
   async load(): Promise<void> {
     try {
-      const r = await fetch('/api/config?resource=events', { cache: 'no-store' });
+      const ver = (typeof window !== 'undefined' && (window as any).__BUILD_VERSION__) ? (window as any).__BUILD_VERSION__ : 'dev';
+      const r = await fetch(`/api/config?resource=events&v=${encodeURIComponent(String(ver))}`);
       const j = await r.json();
       this.events = j?.events || [];
     } catch { this.events = []; }

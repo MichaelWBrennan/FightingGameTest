@@ -202,12 +202,18 @@ export class GameEngine {
       LoadingOverlay.beginTask('ui', 'Bringing up UI', 1);
       await this.uiManager.initialize();
       LoadingOverlay.endTask('ui', true);
+      // Defer post-processing init until after first frame for faster boot
       if (this.postProcessingManager) {
-        LoadingOverlay.beginTask('postfx', 'Initializing post-processing', 1);
-        await this.postProcessingManager.initialize((p, label) => {
-          LoadingOverlay.updateTask('postfx', Math.max(0, Math.min(1, p ?? 0)), label || 'Initializing post-processing');
-        });
+        LoadingOverlay.beginTask('postfx', 'Scheduling post-processing', 1);
         LoadingOverlay.endTask('postfx', true);
+        setTimeout(() => {
+          this.postProcessingManager?.initialize((p, label) => {
+            try { LoadingOverlay.updateTask('postfx_bg', Math.max(0, Math.min(1, p ?? 0)), label || 'Post-processing'); } catch {}
+          }).catch(() => {}).finally(() => {
+            try { LoadingOverlay.endTask('postfx_bg', true); } catch {}
+          });
+          try { LoadingOverlay.beginTask('postfx_bg', 'Post-processing', 1); } catch {}
+        }, 0);
       }
 
       // Load manifest and then preload assets with detailed progress grouped by type
@@ -216,9 +222,10 @@ export class GameEngine {
         LoadingOverlay.updateTask('manifest', Math.max(0, Math.min(1, p ?? 0)), label || 'Loading manifest');
       });
       LoadingOverlay.endTask('manifest', true);
-      LoadingOverlay.beginTask('preload', 'Preloading assets', 5);
+      // Restrict initial preload to JSON; images/audio can stream lazily on demand
+      LoadingOverlay.beginTask('preload', 'Preloading core data', 5);
       await this.preloader.preloadAllAssets({
-        groupOrder: ['json','image','audio','other'],
+        groupOrder: ['json'],
         onEvent: (evt) => {
           switch (evt.kind) {
             case 'groupStart':

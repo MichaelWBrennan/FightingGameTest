@@ -4,12 +4,23 @@ export class PreloadManager {
 	private imageCache: Map<string, HTMLImageElement> = new Map();
 	private audioCache: Map<string, HTMLAudioElement> = new Map();
 	private blobCache: Map<string, Blob> = new Map();
+	private readonly version: string = (typeof window !== 'undefined' && (window as any).__BUILD_VERSION__) ? (window as any).__BUILD_VERSION__ : 'dev';
+
+	private buildVersionedUrl(path: string): string {
+		try {
+			const hasQuery = path.includes('?');
+			const sep = hasQuery ? '&' : '?';
+			return `${path}${sep}v=${encodeURIComponent(String(this.version))}`;
+		} catch {
+			return path;
+		}
+	}
 
 
 	async loadManifest(url: string = '/assets/manifest.json', onProgress?: (progress: number, label?: string) => void): Promise<void> {
 		try {
 			onProgress?.(0.2, 'Fetching manifest');
-			const res = await fetch(url, { cache: 'no-store' });
+			const res = await fetch(this.buildVersionedUrl(url));
 			if (!res.ok) {
 				console.warn(`[PreloadManager] Manifest not found (${res.status}) at ${url}. Continuing without it.`);
 				this.manifest = { assets: [] };
@@ -31,7 +42,7 @@ export class PreloadManager {
 	}
 
 	async getJson<T = unknown>(path: string): Promise<T> {
-		const res = await fetch(path, { cache: 'no-store' });
+		const res = await fetch(this.buildVersionedUrl(path));
 		if (!res.ok) throw new Error(`JSON load failed: ${path}`);
 		const text = await res.text();
 		const decrypted = await this.tryDecrypt(text);
@@ -76,9 +87,22 @@ export class PreloadManager {
 		const assetsByType: Record<AssetType, { path: string; size?: number; sha256?: string }[]> = {
 			json: [], image: [], audio: [], other: []
 		};
+		// Filter out oversized or explicitly excluded assets (e.g., encrypted blobs)
+		const MAX_PRELOAD_BYTES = 5 * 1024 * 1024; // 5MB cap for initial/background preloads
 		for (const a of this.manifest.assets) {
+			if (!a || !a.path) continue;
+			const normalizedPath = String(a.path);
+			// Skip any explicitly large/opaque binaries
+			if (normalizedPath.endsWith('encrypted.bin') || /\.bin$/i.test(normalizedPath)) {
+				continue;
+			}
 			const t = (['json','image','audio'].includes(a.type) ? a.type : 'other') as AssetType;
-			assetsByType[t].push({ path: a.path, size: (a as any).size, sha256: a.sha256 });
+			const size = (a as any).size as number | undefined;
+			if (typeof size === 'number' && size > MAX_PRELOAD_BYTES) {
+				// Do not schedule very large assets via generic preloader
+				continue;
+			}
+			assetsByType[t].push({ path: normalizedPath, size: size, sha256: a.sha256 });
 		}
 
 		// Sequentially process groups
@@ -138,7 +162,7 @@ export class PreloadManager {
 
 	private async loadJsonWithProgress(path: string, size?: number, sha256?: string, onStream?: (bytesLoaded: number, bytesTotal?: number) => void): Promise<unknown> {
 		if (this.jsonCache.has(path)) return this.jsonCache.get(path) as unknown;
-		const res = await fetch(path, { cache: 'no-store' });
+		const res = await fetch(this.buildVersionedUrl(path));
 		if (!res.ok) throw new PreloadError(`JSON fetch failed: ${path}`, path);
 		const contentLength = Number(res.headers.get('content-length') || size || 0) || undefined;
 		const body = res.body;
@@ -162,7 +186,7 @@ export class PreloadManager {
 
 	private async loadBlobWithProgress(path: string, size?: number, sha256?: string, onStream?: (bytesLoaded: number, bytesTotal?: number) => void): Promise<Blob> {
 		if (this.blobCache.has(path)) return this.blobCache.get(path) as Blob;
-		const res = await fetch(path, { cache: 'no-store' });
+		const res = await fetch(this.buildVersionedUrl(path));
 		if (!res.ok) throw new PreloadError(`Blob fetch failed: ${path}`, path);
 		const contentLength = Number(res.headers.get('content-length') || size || 0) || undefined;
 		const body = res.body;

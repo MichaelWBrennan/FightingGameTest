@@ -3,7 +3,8 @@ import { CharacterData } from '../../../types/character';
 export class DecompDataService {
   public async loadGroundTruthCharacter(): Promise<CharacterData | null> {
     try {
-      const res = await fetch('/data/characters_decomp/sf3_ground_truth_seed.json');
+      const ver = (typeof window !== 'undefined' && (window as any).__BUILD_VERSION__) ? (window as any).__BUILD_VERSION__ : 'dev';
+      const res = await fetch(`/data/characters_decomp/sf3_ground_truth_seed.json?v=${encodeURIComponent(String(ver))}`);
       if (!res.ok) return null;
       const data = await res.json();
       return data as CharacterData;
@@ -19,9 +20,11 @@ export class DecompDataService {
         '/sfiii-decomp/src/anniversary/bin2obj/char_table.c'
       ];
       let text: string | null = null;
-      for (const u of urlCandidates) {
+      const ver = (typeof window !== 'undefined' && (window as any).__BUILD_VERSION__) ? (window as any).__BUILD_VERSION__ : 'dev';
+      for (let u of urlCandidates) {
+        try { u = `${u}${u.includes('?') ? '&' : '?'}v=${encodeURIComponent(String(ver))}`; } catch {}
         try {
-          const r = await fetch(u, { cache: 'no-store' });
+          const r = await fetch(u);
           if (r.ok) { text = await r.text(); break; }
         } catch {}
       }
