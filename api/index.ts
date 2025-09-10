@@ -1,6 +1,7 @@
 export default function handler(_req: any, res: any) {
 	try {
 		const assetKey = process.env.ASSET_KEY || 'dev-asset-key-change-me';
+		const buildVersion = process.env.VERCEL_GIT_COMMIT_SHA || process.env.BUILD_VERSION || 'dev';
 		res.setHeader('Content-Type', 'text/html; charset=utf-8');
 		res.status(200).send(`<!DOCTYPE html>
 		<html lang="en">
@@ -20,7 +21,7 @@ export default function handler(_req: any, res: any) {
 		      <div id="pc-loading-text" style="margin-top:12px;font:14px/1.2 monospace;opacity:.9">Loading…</div>
 		    </div>
 		    <script src="https://code.playcanvas.com/1.65.3/playcanvas.min.js"></script>
-		    <script>window.__ASSET_KEY__=${JSON.stringify(assetKey)};</script>
+		    <script>window.__ASSET_KEY__=${JSON.stringify(assetKey)};window.__BUILD_VERSION__=${JSON.stringify(buildVersion)};</script>
 		    <script src="/bundle.js"></script>
 		    <script>(function(){
 		      var __runtimeBanner__=null;var __errorCounts__=Object.create(null);

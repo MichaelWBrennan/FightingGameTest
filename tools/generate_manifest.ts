@@ -32,6 +32,10 @@ function walk(dir: string, baseOut: string, out: ManifestEntry[]): void {
 		if (stat.isDirectory()) walk(p, baseOut, out);
 		else {
 			const rel = path.relative(baseOut, p).replace(/\\/g, '/');
+			// Exclude extremely large or opaque binaries from the manifest (loaded on-demand only)
+			if (/encrypted\.bin$/i.test(rel) || /\.bin$/i.test(rel)) {
+				continue;
+			}
 			out.push({ path: `/data/${rel}`, type: guessType(rel), sha256: hashFile(p), size: stat.size });
 		}
 	}

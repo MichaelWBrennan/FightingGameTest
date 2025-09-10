@@ -38,7 +38,9 @@ export class CharacterManager {
     const fetchJson = async (path: string) => {
       try {
         if (this.preloader) return await this.preloader.getJson<any>(path);
-        const r = await fetch(path, { cache: 'no-store' });
+        const ver = (typeof window !== 'undefined' && (window as any).__BUILD_VERSION__) ? (window as any).__BUILD_VERSION__ : 'dev';
+        const sep = path.includes('?') ? '&' : '?';
+        const r = await fetch(`${path}${sep}v=${encodeURIComponent(String(ver))}`);
         return await r.json();
       } catch (e) {
         throw e;

@@ -48,6 +48,8 @@ Open the printed URL (defaults to http://localhost:5173). The game creates its o
 - Build step copies `data/` → `public/data/`
 - A manifest is generated: `public/assets/manifest.json`
 - `PreloadManager` loads the manifest and exposes helpers
+  - The manifest excludes large opaque binaries like `encrypted.bin`; such files are not preloaded and should be fetched on-demand by the features that require them.
+  - Static assets are requested with a `?v=BUILD_VERSION` query so browsers can cache between deploys.
 
 ### Ground-truth character data (optional)
 - To seed frames from the decomp repo, clone it at `/workspace/sfiii-decomp` and run:

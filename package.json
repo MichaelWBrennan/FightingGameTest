@@ -5,7 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas=types/playcanvas-shim.ts",
+    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --target=es2020 --alias:playcanvas=types/playcanvas-shim.ts",
     "build": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client",
+    "build:prod": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client:prod",
     "postbuild": "mkdir -p public/data public/assets && node -e \"require('ts-node/register');require('./tools/encrypt_assets.ts')\" && node -e \"require('ts-node/register');require('./tools/generate_manifest.ts')\"",
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
@@ -15,7 +17,7 @@
     "lint": "eslint src/**/*.ts",
     "fix": "npx ts-node tools/fix_compilation_errors.ts",
     "convert": "npx ts-node tools/complete_typescript_conversion.ts",
-    "serve": "http-server public -p 5000 -c-1"
+    "serve": "http-server public -p 5000 -c 604800 --cors --gzip --brotli"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",

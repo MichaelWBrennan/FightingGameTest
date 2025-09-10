@@ -196,6 +196,8 @@ class PostProcessingManager implements ISystem {
                 this.initialized = false;
                 return;
             }
+            // Start at a conservative quality preset on first init for faster first frame
+            this.setQuality('medium');
             // Create render targets
             this.createRenderTargets();
             if (onProgress) onProgress(0.25, 'PostFX: Render targets');
