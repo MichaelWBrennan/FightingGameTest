@@ -225,6 +225,7 @@ export class CharacterManager {
       entity: characterEntity,
       config: config,
       health: config.stats.health,
+      maxHealth: config.stats.health,
       meter: 0,
       state: 'idle',
       currentMove: null,
