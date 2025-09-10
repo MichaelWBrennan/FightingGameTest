@@ -191,9 +191,8 @@ export class GameEngine {
       this.services.register('config', new ConfigService());
       LoadingOverlay.endTask('systems', true);
       LoadingOverlay.beginTask('characters', 'Loading character configs', 3);
-      
-      // Preload assets if needed using AssetLoader script
-      await this.characterManager.initialize();
+      // Fast path: minimal playable roster immediately, full configs in background
+      await this.characterManager.initializeLite(['ryu','ken']);
       LoadingOverlay.endTask('characters', true);
       // StageManager/UIManager initialize through their own methods if needed
       LoadingOverlay.beginTask('stages', 'Preparing stages', 2);
@@ -217,38 +216,39 @@ export class GameEngine {
       }
 
       // Load manifest and then preload assets with detailed progress grouped by type
-      LoadingOverlay.beginTask('manifest', 'Loading manifest', 1);
-      await this.preloader.loadManifest('/assets/manifest.json', (p, label) => {
-        LoadingOverlay.updateTask('manifest', Math.max(0, Math.min(1, p ?? 0)), label || 'Loading manifest');
-      });
-      LoadingOverlay.endTask('manifest', true);
-      // Restrict initial preload to JSON; images/audio can stream lazily on demand
-      LoadingOverlay.beginTask('preload', 'Preloading core data', 5);
-      await this.preloader.preloadAllAssets({
-        groupOrder: ['json'],
-        onEvent: (evt) => {
-          switch (evt.kind) {
-            case 'groupStart':
-              LoadingOverlay.beginTask(`preload:${evt.group}`, `Loading ${evt.group.toUpperCase()}…`, 1);
-              break;
-            case 'groupProgress':
-              LoadingOverlay.updateTask(`preload:${evt.group}`, evt.progress);
-              break;
-            case 'groupEnd':
-              LoadingOverlay.endTask(`preload:${evt.group}`, true);
-              break;
-            case 'assetStart':
-              // individual assets are handled inside PreloadManager with their own tasks
-              break;
-            case 'assetProgress':
-              // assets update internally
-              break;
-            case 'assetEnd':
-              break;
-          }
-        }
-      });
-      LoadingOverlay.endTask('preload', true);
+      // Background preload (non-blocking) to enhance assets progressively
+      setTimeout(() => {
+        try {
+          LoadingOverlay.beginTask('manifest_bg', 'Loading manifest', 1);
+        } catch {}
+        this.preloader.loadManifest('/assets/manifest.json', (p, label) => {
+          try { LoadingOverlay.updateTask('manifest_bg', Math.max(0, Math.min(1, p ?? 0)), label || 'Loading manifest'); } catch {}
+        }).then(() => {
+          try { LoadingOverlay.endTask('manifest_bg', true); } catch {}
+          try { LoadingOverlay.beginTask('preload_bg', 'Preloading core data', 5); } catch {}
+          return this.preloader.preloadAllAssets({
+            groupOrder: ['json'],
+            onEvent: (evt) => {
+              switch (evt.kind) {
+                case 'groupStart':
+                  try { LoadingOverlay.beginTask(`preload_bg:${evt.group}`, `Loading ${evt.group.toUpperCase()}…`, 1); } catch {}
+                  break;
+                case 'groupProgress':
+                  try { LoadingOverlay.updateTask(`preload_bg:${evt.group}`, evt.progress); } catch {}
+                  break;
+                case 'groupEnd':
+                  try { LoadingOverlay.endTask(`preload_bg:${evt.group}`, true); } catch {}
+                  break;
+              }
+            }
+          });
+        }).then(() => {
+          try { LoadingOverlay.endTask('preload_bg', true); } catch {}
+        }).catch(() => {
+          try { LoadingOverlay.endTask('manifest_bg', false); } catch {}
+          try { LoadingOverlay.endTask('preload_bg', false); } catch {}
+        });
+      }, 0);
 
       
       this.combatSystem.initialize(this.characterManager, this.inputManager);
@@ -258,7 +258,7 @@ export class GameEngine {
       this.app.start();
       LoadingOverlay.endTask('app_start', true);
 
-      // Push boot state
+      // Push boot state (will route to match immediately if quickplay param is set)
       LoadingOverlay.beginTask('boot_state', 'Booting', 1);
       await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
       LoadingOverlay.endTask('boot_state', true);

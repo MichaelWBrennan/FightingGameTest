@@ -39,6 +39,7 @@ export class StageManager {
     // Parallax background system
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('parallax_init', 'Initializing parallax', 1); } catch {}
     this.parallax = new ParallaxManager(this.app);
+    // Initialize parallax quickly with default stage, but do not block match start
     await this.parallax.initialize((p: number, label?: string) => {
       (async () => {
         try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('parallax_init', Math.max(0, Math.min(1, p)), label || 'Initializing parallax'); } catch {}
@@ -56,6 +57,7 @@ export class StageManager {
     const gen = new ProceduralStageGenerator(seed);
     const stageData = gen.generate({ theme });
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_load', `Generating ${theme} stage`, 1); } catch {}
+    // Load stage layout synchronously (procedural, no network) to be playable instantly
     await this.parallax.loadStageData(stageData, (p: number, label?: string) => {
       (async () => {
         try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('stage_load', Math.max(0, Math.min(1, p)), label || `Generating ${theme} stage`); } catch {}
