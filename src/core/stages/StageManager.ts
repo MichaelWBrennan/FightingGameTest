@@ -85,5 +85,12 @@ export class StageManager {
       });
     }
   }
+
+  public async loadTheme(theme: 'training' | 'gothic' | 'urban'): Promise<void> {
+    const seed = Date.now();
+    const gen = new ProceduralStageGenerator(seed);
+    const stageData = gen.generate({ theme });
+    await this.parallax?.loadStageData(stageData);
+  }
 }
 

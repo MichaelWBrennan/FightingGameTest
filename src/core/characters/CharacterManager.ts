@@ -261,6 +261,20 @@ export class CharacterManager {
     return this.activeCharacters;
   }
 
+  public removeCharacter(characterId: string): void {
+    const character = this.characters.get(characterId);
+    if (!character) return;
+    try {
+      if (character.entity && character.entity.parent) {
+        character.entity.parent.removeChild(character.entity);
+      }
+    } catch {}
+    try { character.entity.destroy(); } catch {}
+    this.characters.delete(characterId);
+    this.activeCharacters = this.activeCharacters.filter(c => c.id !== characterId);
+    Logger.info(`Removed character: ${characterId}`);
+  }
+
   public update(deltaTime: number): void {
     for (const character of this.activeCharacters) {
       this.updateCharacterState(character, deltaTime);
