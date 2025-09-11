@@ -337,3 +337,43 @@ export class LoadingOverlay {
 	}
 }
 
+// Extend with lightweight debug snapshot for diagnostics
+export interface LoadingOverlayDebugState {
+	initialized: boolean;
+	visible: boolean;
+	labelText: string | null;
+	trackNetwork: boolean;
+	network: { started: number; completed: number; inFlight: number; };
+	tasks: Array<{ id: string; label: string; weight: number; progress: number; status: 'running' | 'done' | 'failed'; }>;
+	aggregateProgress: number | null;
+}
+
+export namespace LoadingOverlay {
+	export function getDebugState(): LoadingOverlayDebugState | { error: string } {
+		try {
+			const aggregate = (LoadingOverlay as any).computeAggregateTaskProgress.call(LoadingOverlay);
+			return {
+				initialized: (LoadingOverlay as any).initialized,
+				visible: !!(LoadingOverlay as any).container,
+				labelText: (LoadingOverlay as any).label ? (LoadingOverlay as any).label.textContent : null,
+				trackNetwork: (LoadingOverlay as any).trackNetwork,
+				network: {
+					started: (LoadingOverlay as any).reqStarted,
+					completed: (LoadingOverlay as any).reqCompleted,
+					inFlight: Math.max(0, (LoadingOverlay as any).reqStarted - (LoadingOverlay as any).reqCompleted)
+				},
+				tasks: Array.from((LoadingOverlay as any).tasks.values()).map((t: any) => ({
+					id: t.id,
+					label: t.label,
+					weight: t.weight,
+					progress: t.progress,
+					status: t.status
+				})),
+				aggregateProgress: isNaN(aggregate) ? null : aggregate
+			};
+		} catch (err) {
+			return { error: 'snapshot_failed' };
+		}
+	}
+}
+

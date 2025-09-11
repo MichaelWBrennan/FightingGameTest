@@ -29,7 +29,12 @@ async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
     LoadingOverlay.endTask('pc_lib', true);
   } catch (e) {
     try { LoadingOverlay.endTask('pc_lib', false); } catch {}
-    Logger.error('PlayCanvas engine failed to load', e as any);
+    try {
+      const diag = (LoadingOverlay as any).getDebugState?.() ?? {};
+      Logger.error('PlayCanvas engine failed to load', { error: e as any, overlay: diag });
+    } catch {
+      Logger.error('PlayCanvas engine failed to load', e as any);
+    }
     throw e;
   }
   LoadingOverlay.beginTask('engine_create', 'Creating engine', 1);
@@ -39,7 +44,26 @@ async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
     LoadingOverlay.endTask('engine_create', true);
   } catch (e) {
     try { LoadingOverlay.endTask('engine_create', false); } catch {}
-    Logger.error('Engine creation failed', e as any);
+    try {
+      const diag = (LoadingOverlay as any).getDebugState?.() ?? {};
+      const env = {
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'n/a',
+        url: typeof location !== 'undefined' ? location.href : 'n/a',
+        canvas: {
+          width: (targetCanvas as any)?.width,
+          height: (targetCanvas as any)?.height,
+          id: (targetCanvas as any)?.id
+        },
+        playcanvas: {
+          available: !!((globalThis as any).pc),
+          version: (globalThis as any).pc?.revision || (pc as any)?.revision || 'unknown'
+        },
+        instantMode: isInstantMode()
+      };
+      Logger.error('Engine creation failed', { error: e as any, overlay: diag, env });
+    } catch {
+      Logger.error('Engine creation failed', e as any);
+    }
     throw e;
   }
   Logger.info('Starting Street Fighter III: 3rd Strike - PlayCanvas Edition');
