@@ -18,6 +18,7 @@ function isInstantMode(): boolean {
 
 async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
   LoadingOverlay.initialize();
+  try { LoadingOverlay.enableNetworkTracking(); } catch {}
   LoadingOverlay.beginTask('prepare', 'Preparing renderer', 1);
   const targetCanvas = canvas || createCanvas();
   LoadingOverlay.endTask('prepare', true);

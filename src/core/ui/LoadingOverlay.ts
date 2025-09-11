@@ -8,6 +8,7 @@ export class LoadingOverlay {
     private static reqStarted = 0;
     private static reqCompleted = 0;
     private static tasksEl: HTMLElement | null = null;
+    private static logEl: HTMLElement | null = null;
     private static tasks: Map<string, {
         id: string;
         label: string;
@@ -17,6 +18,8 @@ export class LoadingOverlay {
         el: HTMLElement | null;
     }> = new Map();
     private static completeRequested = false;
+    private static logBuffer: { ts: number; level: 'debug' | 'info' | 'warn' | 'error'; message: string; }[] = [];
+    private static logMax = 1000;
 
 	/**
 	 * Initializes a fullscreen loading overlay or reuses pre-rendered markup.
@@ -104,6 +107,26 @@ export class LoadingOverlay {
 			this.container.appendChild(this.tasksEl);
 		}
 
+		// Log output container (scrollable)
+		let logEl = document.getElementById('pc-loading-log');
+		if (!logEl) {
+			logEl = document.createElement('div');
+			logEl.id = 'pc-loading-log';
+			logEl.style.marginTop = '10px';
+			logEl.style.width = '60%';
+			(logEl.style as any).maxWidth = '480px';
+			(logEl.style as any).maxHeight = '40vh';
+			logEl.style.overflowY = 'auto';
+			(logEl.style as any).font = '11px/1.4 monospace';
+			(logEl.style as any).color = '#0f0';
+			(logEl.style as any).background = '#010';
+			(logEl.style as any).border = '1px solid rgba(0,255,0,0.15)';
+			this.container.appendChild(logEl);
+		}
+		this.logEl = logEl;
+		// Render any buffered logs captured before initialization
+		try { this.renderBufferedLogs(); } catch {}
+
 		this.initialized = true;
 	}
 
@@ -185,15 +208,27 @@ export class LoadingOverlay {
 		try { this.beginTask('network', 'Network activity', 1); } catch {}
 		window.fetch = ((...args: Parameters<typeof fetch>) => {
 			this.reqStarted++;
+			const url = this.extractRequestUrl(args[0]);
 			try {
-				const p = (this.origFetch as any)(...args);
-				return p.finally(() => {
-					this.reqCompleted++;
-					this.updateNetworkTask();
-				});
+				const p = (this.origFetch as any)(...args)
+					.then((res: Response) => {
+						try { this.log(`fetch done ${res.status}: ${url}`, res.ok ? 'debug' : 'warn'); } catch {}
+						return res;
+					})
+					.catch((err: any) => {
+						try { this.log(`fetch error: ${url} - ${err?.message || String(err)}`, 'error'); } catch {}
+						throw err;
+					})
+					.finally(() => {
+						this.reqCompleted++;
+						this.updateNetworkTask();
+					});
+				try { this.log(`fetch start: ${url}`, 'debug'); } catch {}
+				return p as any;
 			} catch (e) {
 				this.reqCompleted++;
 				this.updateNetworkTask();
+				try { this.log(`fetch error: ${url} - ${(e as any)?.message || String(e)}`, 'error'); } catch {}
 				throw e;
 			}
 		}) as any;
@@ -335,6 +370,54 @@ export class LoadingOverlay {
 	private static sanitizeId(id: string): string {
 		return (id || 'task').toString().replace(/[^A-Za-z0-9_\-:.]/g, '_');
 	}
+
+	public static log(message: string, level: 'debug' | 'info' | 'warn' | 'error' = 'info'): void {
+		const entry = { ts: Date.now(), level, message: String(message || '') };
+		this.logBuffer.push(entry);
+		if (this.logBuffer.length > this.logMax) this.logBuffer.splice(0, this.logBuffer.length - this.logMax);
+		if (this.initialized && this.logEl) {
+			this.appendLogLine(entry);
+		}
+	}
+
+	private static renderBufferedLogs(): void {
+		if (!this.logEl) return;
+		try { (this.logEl as HTMLElement).innerHTML = ''; } catch {}
+		for (const entry of this.logBuffer) {
+			this.appendLogLine(entry);
+		}
+	}
+
+	private static appendLogLine(entry: { ts: number; level: 'debug' | 'info' | 'warn' | 'error'; message: string; }): void {
+		if (!this.logEl) return;
+		const line = document.createElement('div');
+		const ts = this.formatTimestamp(entry.ts);
+		line.textContent = `[${ts}] ${entry.message}`;
+		switch (entry.level) {
+			case 'error': (line.style as any).color = '#faa'; break;
+			case 'warn': (line.style as any).color = '#ff7'; break;
+			case 'debug': (line.style as any).color = '#8f8'; break;
+			default: (line.style as any).color = '#0f0'; break;
+		}
+		this.logEl.appendChild(line);
+		try { this.logEl.scrollTop = this.logEl.scrollHeight; } catch {}
+	}
+
+	private static formatTimestamp(ts: number): string {
+		const d = new Date(ts);
+		const pad = (n: number, w: number = 2) => String(n).padStart(w, '0');
+		return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
+	}
+
+	private static extractRequestUrl(arg: any): string {
+		try {
+			if (!arg) return 'unknown';
+			if (typeof arg === 'string') return arg;
+			if (typeof Request !== 'undefined' && arg instanceof Request) return arg.url || 'unknown';
+			if (arg && typeof arg.url === 'string') return arg.url;
+			return String(arg);
+		} catch { return 'unknown'; }
+	}
 }
 
 // Extend with lightweight debug snapshot for diagnostics
@@ -346,6 +429,7 @@ export interface LoadingOverlayDebugState {
 	network: { started: number; completed: number; inFlight: number; };
 	tasks: Array<{ id: string; label: string; weight: number; progress: number; status: 'running' | 'done' | 'failed'; }>;
 	aggregateProgress: number | null;
+	logs: Array<{ ts: number; level: 'debug' | 'info' | 'warn' | 'error'; message: string; }>;
 }
 
 export namespace LoadingOverlay {
@@ -369,7 +453,8 @@ export namespace LoadingOverlay {
 					progress: t.progress,
 					status: t.status
 				})),
-				aggregateProgress: isNaN(aggregate) ? null : aggregate
+				aggregateProgress: isNaN(aggregate) ? null : aggregate,
+				logs: ((LoadingOverlay as any).logBuffer || []).slice(-200)
 			};
 		} catch (err) {
 			return { error: 'snapshot_failed' };

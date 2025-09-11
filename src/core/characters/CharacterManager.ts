@@ -78,11 +78,13 @@ export class CharacterManager {
     // Prefer a consolidated database file if available
     try {
       try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('characters_db', 'Loading characters db', 3); } catch {}
+      try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log('[characters] fetching /data/characters_db.json', 'info'); } catch {}
       const db = await fetchJson('/data/characters_db.json');
       if (db) {
         const keys = Object.keys(db);
         let processed = 0;
         for (const key of keys) {
+          try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] db entry ${key}`, 'debug'); } catch {}
           let cfg = this.normalizeCharacterConfig(db[key] as CharacterConfig);
           cfg = this.frameGen.generateForCharacter(cfg);
           this.characterConfigs.set(key, cfg);
@@ -90,11 +92,13 @@ export class CharacterManager {
           try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('characters_db', processed / Math.max(1, keys.length), `Loading characters db (${processed}/${keys.length})`); } catch {}
         }
         Logger.info(`Loaded ${keys.length} characters from consolidated database`);
+        try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] loaded db (${keys.length} entries)`, 'info'); } catch {}
         try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('characters_db', true); } catch {}
         return;
       }
     } catch (e) {
       Logger.warn('Consolidated character database not found; falling back to individual files');
+      try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log('[characters] db not found, falling back to individual files', 'warn'); } catch {}
       try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('characters_db', false); } catch {}
     }
 
@@ -104,13 +108,16 @@ export class CharacterManager {
     let processed = 0;
     for (const name of characterNames) {
       try {
+        try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] fetching /data/characters/${name}.json`, 'info'); } catch {}
         const rawConfig: CharacterConfig = await fetchJson(`/data/characters/${name}.json`);
         let config = this.normalizeCharacterConfig(rawConfig);
         config = this.frameGen.generateForCharacter(config);
         this.characterConfigs.set(name, config);
         Logger.info(`Loaded character config: ${name}`);
+        try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] ok ${name}`, 'info'); } catch {}
       } catch (error) {
         Logger.error(`Failed to load character ${name}:`, error);
+        try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] failed ${name}: ${(error as any)?.message || String(error)}`, 'error'); } catch {}
       }
       processed++;
       try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('characters_files', processed / Math.max(1, characterNames.length), `Loading character files (${processed}/${characterNames.length})`); } catch {}

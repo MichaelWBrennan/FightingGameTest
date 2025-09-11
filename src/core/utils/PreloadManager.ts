@@ -19,21 +19,25 @@ export class PreloadManager {
 
 	async loadManifest(url: string = '/assets/manifest.json', onProgress?: (progress: number, label?: string) => void): Promise<void> {
 		try {
+			try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] fetching ${url}`, 'info'); } catch {}
 			onProgress?.(0.2, 'Fetching manifest');
 			const res = await fetch(this.buildVersionedUrl(url));
 			if (!res.ok) {
 				console.warn(`[PreloadManager] Manifest not found (${res.status}) at ${url}. Continuing without it.`);
 				this.manifest = { assets: [] };
 				onProgress?.(1.0, 'Manifest not found, continuing');
+				try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] not found (${res.status}) at ${url}`, 'warn'); } catch {}
 				return;
 			}
 			onProgress?.(0.6, 'Parsing manifest');
 			this.manifest = await res.json();
 			onProgress?.(1.0, 'Manifest ready');
+			try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] loaded (${this.manifest.assets?.length || 0} assets)`, 'info'); } catch {}
 		} catch (err) {
 			console.warn(`[PreloadManager] Manifest load error at ${url}. Using empty manifest.`, err);
 			this.manifest = { assets: [] };
 			onProgress?.(1.0, 'Manifest error, continuing');
+			try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] error at ${url}: ${(err as any)?.message || String(err)}`, 'error'); } catch {}
 		}
 	}
 
@@ -110,6 +114,7 @@ export class PreloadManager {
 			const groupAssets = assetsByType[group];
 			if (!groupAssets || groupAssets.length === 0) continue;
 			onEvent({ kind: 'groupStart', group });
+			try { (await overlayP)?.LoadingOverlay.log(`[preload] group start ${group} (${groupAssets.length} assets)`, 'info'); } catch {}
 
 			const overlay = await overlayP;
 			try { overlay?.LoadingOverlay.beginTask(`group:${group}`, `${group.toUpperCase()} assets`, 0); } catch {}
@@ -123,6 +128,7 @@ export class PreloadManager {
 				const weight = Math.max(1, asset.size || 1);
 				try { overlay?.LoadingOverlay.beginTask(`asset:${asset.path}`, label, weight); } catch {}
 				onEvent({ kind: 'assetStart', group, assetPath: asset.path, progress: 0, bytesTotal: asset.size });
+				try { (await overlayP)?.LoadingOverlay.log(`[preload] asset start ${group} ${asset.path}${asset.size ? ` (${asset.size} bytes)` : ''}`, 'info'); } catch {}
 				try {
 					const loaded = await this.loadSingleAsset(group, asset.path, asset.size, asset.sha256, (bytesLoaded, bytesTotal) => {
 						try { overlay?.LoadingOverlay.updateTask(`asset:${asset.path}`, Math.max(0, Math.min(1, (bytesTotal ? (bytesLoaded / bytesTotal) : 0)))); } catch {}
@@ -131,9 +137,11 @@ export class PreloadManager {
 					results.push({ type: group, path: asset.path, data: loaded });
 					try { overlay?.LoadingOverlay.endTask(`asset:${asset.path}`, true); } catch {}
 					onEvent({ kind: 'assetEnd', group, assetPath: asset.path, success: true, progress: 1 });
+					try { (await overlayP)?.LoadingOverlay.log(`[preload] asset ok ${group} ${asset.path}`, 'info'); } catch {}
 				} catch (e) {
 					try { overlay?.LoadingOverlay.endTask(`asset:${asset.path}`, false); } catch {}
 					onEvent({ kind: 'assetEnd', group, assetPath: asset.path, success: false, progress: 1 });
+					try { (await overlayP)?.LoadingOverlay.log(`[preload] asset failed ${group} ${asset.path}: ${(e as any)?.message || String(e)}`, 'error'); } catch {}
 					// Continue even if an asset fails
 				}
 				groupLoaded += Math.max(1, asset.size || 1);
@@ -142,6 +150,7 @@ export class PreloadManager {
 
 			try { overlay?.LoadingOverlay.endTask(`group:${group}`, true); } catch {}
 			onEvent({ kind: 'groupEnd', group, progress: 1 });
+			try { (await overlayP)?.LoadingOverlay.log(`[preload] group end ${group}`, 'info'); } catch {}
 		}
 
 		return { assets: results };
