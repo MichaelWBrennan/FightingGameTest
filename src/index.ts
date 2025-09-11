@@ -1,8 +1,56 @@
 
 import { GameEngine } from './core/GameEngine';
 import { LoadingOverlay } from './core/ui/LoadingOverlay';
-import { Logger } from './core/utils/Logger';
+import { Logger, LogLevel, LogSink } from './core/utils/Logger';
 import * as pc from 'playcanvas';
+
+// Wire LoadingOverlay as a sink for real-time, user-facing logs
+const overlaySink: LogSink = {
+  log(event) {
+    try {
+      const level = event.level === LogLevel.ERROR ? 'error'
+        : event.level === LogLevel.WARN ? 'warn'
+        : event.level === LogLevel.DEBUG ? 'debug'
+        : 'info';
+      const parts: string[] = [];
+      parts.push(String(event.message ?? ''));
+      for (const arg of event.args || []) {
+        try {
+          if (arg == null) { parts.push(String(arg)); continue; }
+          if (typeof arg === 'string') { parts.push(arg); continue; }
+          if (arg instanceof Error) { parts.push(arg.stack || arg.message); continue; }
+          const isDom = typeof Node !== 'undefined' && arg instanceof Node;
+          parts.push(isDom ? '[DOM Node]' : JSON.stringify(arg, (_k, v) => typeof v === 'bigint' ? String(v) : v));
+        } catch {
+          try { parts.push(String(arg)); } catch {}
+        }
+      }
+      const msg = parts.filter(Boolean).join(' ');
+      LoadingOverlay.log(msg, level as any);
+    } catch {}
+  }
+};
+try { Logger.registerSink(overlaySink); } catch {}
+
+// Forward global runtime errors to the overlay log
+if (typeof window !== 'undefined') {
+  try {
+    window.addEventListener('error', (e) => {
+      try {
+        const meta = e && (e.filename ? ` @ ${e.filename}:${e.lineno}:${e.colno}` : '');
+        const msg = (e as any)?.error?.stack || e?.message || 'Unknown error';
+        LoadingOverlay.log(`Runtime error: ${msg}${meta || ''}`, 'error');
+      } catch {}
+    });
+    window.addEventListener('unhandledrejection', (e) => {
+      try {
+        const r: any = (e as any)?.reason;
+        const msg = (r && (r.stack || r.message)) ? (r.stack || r.message) : String(r);
+        LoadingOverlay.log(`Unhandled rejection: ${msg}`, 'error');
+      } catch {}
+    });
+  } catch {}
+}
 
 function isInstantMode(): boolean {
   try {
