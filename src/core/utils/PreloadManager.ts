@@ -18,26 +18,43 @@ export class PreloadManager {
 
 
 	async loadManifest(url: string = '/assets/manifest.json', onProgress?: (progress: number, label?: string) => void): Promise<void> {
+		const overlayP = import('../../core/ui/LoadingOverlay').catch(() => null);
+		const fetchWithTimeout = async (u: string, ms: number): Promise<Response> => {
+			const ctrl = new AbortController();
+			const id = setTimeout(() => ctrl.abort(), ms);
+			try { return await fetch(this.buildVersionedUrl(u), { signal: ctrl.signal }); }
+			finally { clearTimeout(id); }
+		};
 		try {
-			try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] fetching ${url}`, 'info'); } catch {}
+			try { (await overlayP)?.LoadingOverlay.log(`[manifest] fetching ${url}`, 'info'); } catch {}
 			onProgress?.(0.2, 'Fetching manifest');
-			const res = await fetch(this.buildVersionedUrl(url));
-			if (!res.ok) {
-				console.warn(`[PreloadManager] Manifest not found (${res.status}) at ${url}. Continuing without it.`);
+			let res: Response | null = null;
+			try {
+				res = await fetchWithTimeout(url, 2500);
+			} catch {}
+			if (!res || !res.ok) {
+				try { (await overlayP)?.LoadingOverlay.log(`[manifest] primary fetch failed${res ? ` (${res.status})` : ''}, trying API fallback`, 'warn'); } catch {}
+				onProgress?.(0.3, 'Fetching manifest (fallback)');
+				try {
+					res = await fetchWithTimeout('/api/manifest', 4000);
+				} catch {}
+			}
+			if (!res || !res.ok) {
+				console.warn(`[PreloadManager] Manifest not available. Continuing without it.`);
 				this.manifest = { assets: [] };
 				onProgress?.(1.0, 'Manifest not found, continuing');
-				try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] not found (${res.status}) at ${url}`, 'warn'); } catch {}
+				try { (await overlayP)?.LoadingOverlay.log(`[manifest] not found at ${url} and /api/manifest`, 'warn'); } catch {}
 				return;
 			}
 			onProgress?.(0.6, 'Parsing manifest');
 			this.manifest = await res.json();
 			onProgress?.(1.0, 'Manifest ready');
-			try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] loaded (${this.manifest.assets?.length || 0} assets)`, 'info'); } catch {}
+			try { (await overlayP)?.LoadingOverlay.log(`[manifest] loaded (${this.manifest.assets?.length || 0} assets)`, 'info'); } catch {}
 		} catch (err) {
 			console.warn(`[PreloadManager] Manifest load error at ${url}. Using empty manifest.`, err);
 			this.manifest = { assets: [] };
 			onProgress?.(1.0, 'Manifest error, continuing');
-			try { (await import('../../core/ui/LoadingOverlay')).LoadingOverlay.log(`[manifest] error at ${url}: ${(err as any)?.message || String(err)}`, 'error'); } catch {}
+			try { (await overlayP)?.LoadingOverlay.log(`[manifest] error at ${url}: ${(err as any)?.message || String(err)}`, 'error'); } catch {}
 		}
 	}
 
