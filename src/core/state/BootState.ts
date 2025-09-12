@@ -19,7 +19,7 @@ export class BootState implements GameState {
 		try {
 			// Route immediately; don't block on network or service init
 			const qp = (() => { try { const p = new URLSearchParams(window.location.search); return ['1','true','yes','on'].includes((p.get('quickplay')||'').toLowerCase()); } catch { return false; } })();
-			this.events.emit('state:goto', { state: qp ? 'match' : 'login' });
+			this.events.emit('state:goto', { state: qp ? 'match' : 'characterselect' });
 			// Perform service/network initialization in the background (not reflected in loading overlay)
 			void (async () => {
 				try {

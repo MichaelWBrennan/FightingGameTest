@@ -227,6 +227,21 @@ export class CharacterManager {
     const characterEntity = new pc.Entity(characterId);
     characterEntity.setPosition(position);
     
+    // Ensure the character is visible even before sprite systems attach
+    // Add a simple billboarded plane with a rim-lit material as a placeholder
+    try {
+      const placeholder = new pc.Entity(`${characterId}_placeholder`);
+      // Lazy-create material without blocking function execution
+      import('../graphics/ShaderUtils').then(({ ShaderUtils }) => {
+        try {
+          const rimMat = ShaderUtils.createRimLightingMaterial(this.app);
+          placeholder.addComponent('render', { type: 'plane', material: rimMat as unknown as pc.Material });
+          placeholder.setLocalScale(2, 3, 1);
+        } catch {}
+      }).catch(() => {});
+      characterEntity.addChild(placeholder);
+    } catch {}
+    
     const character: Character = {
       id: characterId,
       entity: characterEntity,
