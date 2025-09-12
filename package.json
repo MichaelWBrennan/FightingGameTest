@@ -4,8 +4,8 @@
   "description": "Street Fighter III: 3rd Strike - PlayCanvas Edition",
   "main": "src/index.ts",
   "scripts": {
-    "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas=types/playcanvas-shim.ts",
-    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --target=es2020 --alias:playcanvas=types/playcanvas-shim.ts",
+    "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas=src/vendor/pc.cts",
+    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --target=es2020 --alias:playcanvas=src/vendor/pc.cts",
     "build": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client",
     "build:prod": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client:prod",
     "postbuild": "mkdir -p public/data public/assets && node -e \"require('ts-node/register');require('./tools/encrypt_assets.ts')\" && node -e \"require('ts-node/register');require('./tools/generate_manifest.ts')\"",
