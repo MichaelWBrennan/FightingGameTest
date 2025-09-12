@@ -20,6 +20,8 @@ export class LoadingOverlay {
     private static completeRequested = false;
     private static logBuffer: { ts: number; level: 'debug' | 'info' | 'warn' | 'error'; message: string; }[] = [];
     private static logMax = 1000;
+    public static consolePatched = false;
+    public static origConsole: { log?: any; info?: any; warn?: any; error?: any; debug?: any } | null = null;
 
 	/**
 	 * Initializes a fullscreen loading overlay or reuses pre-rendered markup.
@@ -152,6 +154,7 @@ export class LoadingOverlay {
 		if (force) {
 			// Immediately hide and cleanup without waiting for tasks
 			try { this.disableNetworkTracking(); } catch {}
+			try { this.disableConsoleCapture(); } catch {}
 			(this.container.style as any).transition = 'opacity 0ms linear';
 			this.container.style.opacity = '0';
 			setTimeout(() => {
@@ -192,6 +195,8 @@ export class LoadingOverlay {
 			this.initialized = false;
 			// Ensure network tracking is disabled (safe if already disabled)
 			this.disableNetworkTracking();
+			// Restore console if we captured it
+			this.disableConsoleCapture();
 		}, 200);
 	}
 
@@ -459,6 +464,54 @@ export namespace LoadingOverlay {
 		} catch (err) {
 			return { error: 'snapshot_failed' };
 		}
+	}
+}
+
+// Console capture to include all logs in overlay for diagnostics
+export namespace LoadingOverlay {
+	export function enableConsoleCapture(): void {
+		try {
+			if (LoadingOverlay.consolePatched) return;
+			LoadingOverlay.consolePatched = true;
+			LoadingOverlay.origConsole = LoadingOverlay.origConsole || {
+				log: console.log,
+				info: console.info,
+				warn: console.warn,
+				error: console.error,
+				debug: (console as any).debug || console.log
+			};
+			const forward = (level: 'debug' | 'info' | 'warn' | 'error', fn: any) => {
+				return function(this: any, ...args: any[]) {
+					try { fn.apply(this, args); } catch {}
+					try {
+						const msg = args.map(a => {
+							if (a instanceof Error) return a.stack || a.message;
+							try { return typeof a === 'string' ? a : JSON.stringify(a, (_k, v) => typeof v === 'bigint' ? String(v) : v); } catch { return String(a); }
+						}).join(' ');
+						LoadingOverlay.log(msg, level);
+					} catch {}
+				};
+			};
+			console.log = forward('info', LoadingOverlay.origConsole.log);
+			console.info = forward('info', LoadingOverlay.origConsole.info);
+			console.warn = forward('warn', LoadingOverlay.origConsole.warn);
+			console.error = forward('error', LoadingOverlay.origConsole.error);
+			;(console as any).debug = forward('debug', (LoadingOverlay.origConsole as any).debug || LoadingOverlay.origConsole.log);
+		} catch {}
+	}
+
+	export function disableConsoleCapture(): void {
+		try {
+			if (!LoadingOverlay.consolePatched) return;
+			LoadingOverlay.consolePatched = false;
+			if (LoadingOverlay.origConsole) {
+				if (LoadingOverlay.origConsole.log) console.log = LoadingOverlay.origConsole.log;
+				if (LoadingOverlay.origConsole.info) console.info = LoadingOverlay.origConsole.info;
+				if (LoadingOverlay.origConsole.warn) console.warn = LoadingOverlay.origConsole.warn;
+				if (LoadingOverlay.origConsole.error) console.error = LoadingOverlay.origConsole.error;
+				if ((LoadingOverlay.origConsole as any).debug) (console as any).debug = (LoadingOverlay.origConsole as any).debug;
+			}
+		} catch {}
 	}
 }
 

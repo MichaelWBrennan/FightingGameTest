@@ -67,10 +67,23 @@ function isInstantMode(): boolean {
 
 async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
   LoadingOverlay.initialize();
+  try { (LoadingOverlay as any).enableConsoleCapture?.(); } catch {}
   try { LoadingOverlay.enableNetworkTracking(); } catch {}
   try { scheduleAutoDebugReportDownload(250); } catch {}
   LoadingOverlay.beginTask('prepare', 'Preparing renderer', 1);
   const targetCanvas = canvas || createCanvas();
+  try {
+    // Attach WebGL context lost/restored logs for diagnostics
+    targetCanvas.addEventListener('webglcontextlost' as any, (ev: any) => {
+      try { ev?.preventDefault?.(); } catch {}
+      try { Logger.error('WebGL context lost'); } catch {}
+      try { LoadingOverlay.log('WebGL context lost', 'error'); } catch {}
+    }, false);
+    targetCanvas.addEventListener('webglcontextrestored' as any, () => {
+      try { Logger.warn('WebGL context restored'); } catch {}
+      try { LoadingOverlay.log('WebGL context restored', 'warn'); } catch {}
+    }, false);
+  } catch {}
   LoadingOverlay.endTask('prepare', true);
   // Ensure PlayCanvas engine library is available before creating the app
   try {
