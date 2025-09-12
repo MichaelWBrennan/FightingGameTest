@@ -170,11 +170,14 @@ export class LoadingOverlay {
 			}, 0);
 			return;
 		}
-		// If network tracking is enabled and all tracked requests have completed,
-		// end the network task now so completion is not blocked.
-		if (this.trackNetwork && this.reqStarted <= this.reqCompleted) {
-			this.disableNetworkTracking();
-		}
+		// Do not let network tracking block overlay completion. Stop tracking now.
+		try { this.disableNetworkTracking(); } catch {}
+		// Proactively end any background-only tasks that shouldn't block UX
+		try { this.endTask('manifest_bg', true); } catch {}
+		try {
+			// End any preload background groups if present
+			['json','image','audio','other'].forEach(g => { try { (this as any).endTask?.(`preload_bg:${g}`, true); } catch {} });
+		} catch {}
 		// If there are running tasks, defer completion until they finish
 		const anyRunning = Array.from(this.tasks.values()).some(t => t.status === 'running');
 		if (anyRunning) {
