@@ -19,9 +19,15 @@ Legacy conversion sources have been removed from runtime to keep the codebase fo
 
 ## 📊 Characters & Combat
 
-JSON-driven character configurations (`data/characters/`): Ryu, Ken, Chun-Li, Sagat, Zangief
+JSON-driven character configurations (`data/characters/`): Ryu, Ken, Chun-Li, Sagat, Zangief, Lei Wulong
 
-## 🔧 Development Setup
+## ▶️ Play now in your browser
+
+- Hosted on Vercel: open your deployment URL (for example, `https://your-app.vercel.app`).
+- No downloads, installs, or commands required.
+- The game auto-starts when the page loads.
+
+## 🔧 Build from source (contributors)
 
 ### Installation
 ```bash
@@ -36,6 +42,10 @@ Open the printed URL (defaults to http://localhost:5173). The game creates its o
 - `public/` contains the built `bundle.js` and `data/`
 - `api/index.ts` is a serverless entry that injects PlayCanvas + bundle and calls the game start
 - `vercel.json` rewrites `/` → `/api/index`
+
+Players: once deployed, just open your site URL in a browser — no downloads or npm required.
+
+
 
 ## 📈 Notes
 
@@ -52,9 +62,10 @@ Open the printed URL (defaults to http://localhost:5173). The game creates its o
   - Static assets are requested with a `?v=BUILD_VERSION` query so browsers can cache between deploys.
 
 ### Ground-truth character data (optional)
-- To seed frames from the decomp repo, clone it at `/workspace/sfiii-decomp` and run:
+- To seed frames from the decomp repo, clone it at `/workspace/sfiii-decomp`.
+- Import runs automatically during `npm run build` if the repo is present, or run it manually:
 ```bash
-npm run import:sf3
+npx ts-node tools/import_sf3_char_data.ts
 ```
 - This writes JSON into `data/characters_decomp/` and the runtime will be able to fetch it via `DecompDataService` if referenced.
 
