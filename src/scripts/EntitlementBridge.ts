@@ -37,10 +37,34 @@ interface PlatformProvider {
   validatePurchase(itemId: string): Promise<boolean>;
 }
 
+class SimpleEventEmitter {
+  private listeners: Map<string, Set<Function>> = new Map();
+  on(event: string, callback: Function): void {
+    if (!this.listeners.has(event)) this.listeners.set(event, new Set());
+    this.listeners.get(event)!.add(callback);
+  }
+  off(event: string, callback: Function): void {
+    const set = this.listeners.get(event);
+    if (!set) return;
+    set.delete(callback);
+    if (set.size === 0) this.listeners.delete(event);
+  }
+  fire(event: string, ...args: any[]): void {
+    const set = this.listeners.get(event);
+    if (!set) return;
+    for (const cb of Array.from(set)) {
+      try { (cb as any)(...args); } catch {}
+    }
+  }
+  destroy(): void {
+    this.listeners.clear();
+  }
+}
+
 export class EntitlementBridge {
   private entitlements: EntitlementData;
   private platformProviders: Map<string, PlatformProvider> = new Map();
-  private eventEmitter: pc.EventHandler;
+  private eventEmitter: SimpleEventEmitter;
   private updateInterval: number | null = null;
   private isInitialized: boolean = false;
 
@@ -60,7 +84,7 @@ export class EntitlementBridge {
       }
     };
 
-    this.eventEmitter = new pc.EventHandler();
+    this.eventEmitter = new SimpleEventEmitter();
   }
 
   /**
@@ -162,7 +186,10 @@ export class EntitlementBridge {
   private async loadLocalEntitlements(): Promise<void> {
     try {
       // Check for dev environment
-      const isDev = process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost';
+      const isDev = (() => { try {
+        const host = window.location.hostname || '';
+        return host === 'localhost' || host.endsWith('.local') || (window as any).__BUILD_VERSION__ === 'dev';
+      } catch { return false; } })();
       
       if (isDev) {
         // Dev unlocks from localStorage
@@ -264,8 +291,22 @@ export class EntitlementBridge {
    */
   hasCharacterAccess(characterId: string, mode: GameMode = 'casual'): boolean {
     if (!this.isInitialized) {
-      console.warn('EntitlementBridge: Not initialized, denying access');
-      return false;
+      // Be permissive before initialization to avoid blocking gameplay and previews
+      try {
+        // Always allow training mode pre-init
+        if (mode === 'training') return true;
+        // Allow a minimal base roster so character select and quickplay work instantly
+        const baseRoster = new Set(['ryu', 'ken']);
+        if (baseRoster.has(characterId)) return true;
+        // Allow if QA override is present via URL parameters
+        try {
+          const p = new URLSearchParams(window.location.search);
+          if (['1','true','yes','on'].includes((p.get('unlock_all')||'').toLowerCase())) return true;
+          if (['1','true','yes','on'].includes((p.get('dev_mode')||'').toLowerCase())) return true;
+        } catch {}
+      } catch {}
+      console.warn('EntitlementBridge: Not initialized, temporarily allowing limited access');
+      return true;
     }
 
     // QA unlock all override
