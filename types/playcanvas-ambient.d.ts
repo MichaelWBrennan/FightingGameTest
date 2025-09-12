@@ -10,6 +10,7 @@ declare namespace pc {
     setCanvasFillMode(mode: number): void;
     setCanvasResolution(res: number): void;
     resizeCanvas(): void;
+    root: any;
   }
   type Entity = any;
   type Vec3 = any;
@@ -43,8 +44,7 @@ declare namespace pc {
 }
 
 declare module 'playcanvas' {
-  import type * as ambient from './playcanvas-ambient';
-  const pcNamespace: typeof ambient & any;
-  export default pcNamespace;
+  const pcNamespace: any;
+  export = pcNamespace;
 }
 
