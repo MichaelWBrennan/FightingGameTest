@@ -54,7 +54,6 @@ const pcProxy: any = new Proxy({}, {
   }
 });
 
-// CommonJS-style default export so that `import * as pc from 'playcanvas'`
-// receives the namespace object across our TypeScript sources.
-export = pcProxy;
+// Default export to be ESM-friendly while allowing `import * as pc` usage via esbuild
+export default pcProxy;
 

@@ -40,6 +40,8 @@
     "dist",
     "**/*.test.ts",
     "tools/**/*",
+    "src/vendor/pc.cts",
+    "src/vendor/pc.ts",
     "src/src/**/*",
     "src/backend/**/*",
     "attached_assets/**/*",

@@ -1,0 +1,24 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"paths": {
+			"playcanvas": ["types/playcanvas-shim"],
+			"playcanvas/*": ["types/playcanvas-shim"]
+		}
+	},
+	"include": [
+		"src/core/**/*",
+		"src/index.ts",
+		"types/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"src/scripts/**/*",
+		"src/client/**/*",
+		"src/typescript/**/*",
+		"tools/**/*",
+		"src/vendor/**/*"
+	]
+}
