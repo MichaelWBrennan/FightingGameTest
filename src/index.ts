@@ -150,26 +150,59 @@ async function ensurePlayCanvasLoaded(timeoutMs: number = 15000): Promise<void> 
     return !!(pcAny && typeof pcAny.Application === 'function');
   };
   if (isReady()) return;
-  // Inject CDN script if not present
-  try {
-    const hasScript = !!document.querySelector('script[src*="code.playcanvas.com"]');
-    if (!hasScript) {
+  const sources: string[] = [
+    'https://code.playcanvas.com/1.65.3/playcanvas.min.js',
+    'https://cdn.jsdelivr.net/npm/playcanvas@1.65.3/build/playcanvas.min.js',
+    'https://unpkg.com/playcanvas@1.65.3/build/playcanvas.min.js'
+  ];
+  let lastError: any = null;
+  const log = (msg: string, level: 'debug' | 'info' | 'warn' | 'error' = 'info') => {
+    try { LoadingOverlay.log(msg, level); } catch {}
+  };
+  const loadFrom = (src: string) => new Promise<void>((resolve, reject) => {
+    try {
       const script = document.createElement('script');
-      script.src = 'https://code.playcanvas.com/1.65.3/playcanvas.min.js';
-      // Ensure execution order
+      script.src = src;
+      (script as any).async = true;
       (script as any).defer = false;
-      (script as any).async = false;
+      (script as any).crossOrigin = 'anonymous';
+      script.addEventListener('load', () => resolve());
+      script.addEventListener('error', (e) => {
+        lastError = e || new Error('Script load error: ' + src);
+        log('PlayCanvas load error: ' + src, 'warn');
+        reject(lastError);
+      });
       document.head.appendChild(script);
+    } catch (e) {
+      lastError = e;
+      reject(e as any);
     }
-  } catch {}
-  await new Promise<void>((resolve, reject) => {
-    const start = Date.now();
-    (function tick() {
-      if (isReady()) { resolve(); return; }
-      if (Date.now() - start > timeoutMs) { reject(new Error('Timed out waiting for PlayCanvas')); return; }
-      setTimeout(tick, 50);
-    })();
   });
+  const existing = (document.querySelector('script[src*="code.playcanvas.com"]') as HTMLScriptElement | null)?.src;
+  const orderedSources = existing ? [existing, ...sources.filter(s => s !== existing)] : sources.slice();
+  const overallStart = Date.now();
+  for (const src of orderedSources) {
+    if (isReady()) break;
+    try {
+      log('Attempting to load PlayCanvas: ' + src, 'debug');
+      await loadFrom(src);
+    } catch {}
+    const attemptStart = Date.now();
+    while (!isReady() && Date.now() - attemptStart < 4000) {
+      await new Promise(r => setTimeout(r, 50));
+    }
+    if (isReady()) break;
+  }
+  if (!isReady()) {
+    const remaining = Math.max(0, timeoutMs - (Date.now() - overallStart));
+    const endStart = Date.now();
+    while (!isReady() && Date.now() - endStart < remaining) {
+      await new Promise(r => setTimeout(r, 50));
+    }
+  }
+  if (!isReady()) {
+    throw lastError || new Error('Timed out waiting for PlayCanvas');
+  }
 }
 
 export { defaultStart };
