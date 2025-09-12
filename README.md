@@ -23,9 +23,7 @@ JSON-driven character configurations (`data/characters/`): Ryu, Ken, Chun-Li, Sa
 
 ## ▶️ Play in your browser (no npm)
 
-- Hosted on Vercel: just open your deployment URL. No installs or npm required for players.
-
-If you are developing locally and `public/bundle.js` is missing, build from source (below).
+- Hosted on Vercel: just open your deployment URL. No installs or commands required for players.
 
 ## 🔧 Build from source (contributors)
 
