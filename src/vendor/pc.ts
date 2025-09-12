@@ -3,7 +3,8 @@
 // to globalThis.pc so the rest of the codebase (via the shim) can access it.
 // Import directly from node_modules to avoid being remapped by the alias
 // that points bare "playcanvas" imports to this vendor module.
-import * as pcModule from '../../node_modules/playcanvas/build/playcanvas.js';
+// Starting with PlayCanvas 1.65.x, the distributed builds are .mjs files.
+import * as pcModule from '../../node_modules/playcanvas/build/playcanvas.mjs';
 
 let pcGlobal: any = (globalThis as any).pc;
 try {
