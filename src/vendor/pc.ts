@@ -1,7 +1,9 @@
 // Bundle PlayCanvas engine locally and expose the global `pc` for our codebase.
 // Prefer the module export when bundled (CommonJS/ESM) and ensure it is assigned
 // to globalThis.pc so the rest of the codebase (via the shim) can access it.
-import * as pcModule from 'playcanvas/build/playcanvas.js';
+// Import directly from node_modules to avoid being remapped by the alias
+// that points bare "playcanvas" imports to this vendor module.
+import * as pcModule from '../../node_modules/playcanvas/build/playcanvas.js';
 
 let pcGlobal: any = (globalThis as any).pc;
 try {
