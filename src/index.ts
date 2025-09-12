@@ -2,6 +2,7 @@
 import { GameEngine } from './core/GameEngine';
 import { LoadingOverlay } from './core/ui/LoadingOverlay';
 import { Logger, LogLevel, LogSink } from './core/utils/Logger';
+import { downloadDebugReport, scheduleAutoDebugReportDownload } from './core/utils/DebugReport';
 import * as pc from 'playcanvas';
 
 // Wire LoadingOverlay as a sink for real-time, user-facing logs
@@ -67,6 +68,7 @@ function isInstantMode(): boolean {
 async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
   LoadingOverlay.initialize();
   try { LoadingOverlay.enableNetworkTracking(); } catch {}
+  try { scheduleAutoDebugReportDownload(250); } catch {}
   LoadingOverlay.beginTask('prepare', 'Preparing renderer', 1);
   const targetCanvas = canvas || createCanvas();
   LoadingOverlay.endTask('prepare', true);
@@ -163,3 +165,4 @@ async function ensurePlayCanvasLoaded(timeoutMs: number = 15000): Promise<void> 
 }
 
 export { defaultStart };
+export { downloadDebugReport };
