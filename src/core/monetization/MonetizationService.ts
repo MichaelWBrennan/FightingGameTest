@@ -1,32 +1,36 @@
-import { RetentionClient } from '../../client/retention/RetentionClient';
-import { Storefront, StorefrontConfig } from '../../client/commerce/Storefront';
-
 export class MonetizationService {
-  public retention: RetentionClient;
-  public storefront: Storefront;
+  public retention: any;
+  public storefront: any;
 
-  constructor(opts?: { retention?: Partial<ConstructorParameters<typeof RetentionClient>[0]>; storefront?: Partial<StorefrontConfig> }) {
-    this.retention = new RetentionClient({
-      apiEndpoint: opts?.retention?.apiEndpoint || '/api',
-      userId: opts?.retention?.userId || 'guest',
-      apiKey: opts?.retention?.apiKey || 'public',
-      enableDebugLogging: false,
-      batchSize: 5,
-      flushIntervalMs: 15000
-    });
-
-    this.storefront = new Storefront({
-      retentionClient: this.retention,
-      apiEndpoint: opts?.storefront?.apiEndpoint || '/data',
-      currency: opts?.storefront?.currency || 'USD',
-      region: opts?.storefront?.region || 'US',
-      accessibilityMode: true,
-      debugMode: false
-    } as any);
+  constructor(opts?: { retention?: any; storefront?: any }) {
+    // Lazy assignments; actual instances are created in initialize()
+    this.retention = null;
+    this.storefront = null;
   }
 
   public async initialize(): Promise<void> {
     try {
+      const { RetentionClient } = await import('../../client/retention/RetentionClient');
+      const { Storefront } = await import('../../client/commerce/Storefront');
+
+      this.retention = new RetentionClient({
+        apiEndpoint: '/api',
+        userId: 'guest',
+        apiKey: 'public',
+        enableDebugLogging: false,
+        batchSize: 5,
+        flushIntervalMs: 15000
+      } as any);
+
+      this.storefront = new Storefront({
+        retentionClient: this.retention,
+        apiEndpoint: '/data',
+        currency: 'USD',
+        region: 'US',
+        accessibilityMode: true,
+        debugMode: false
+      } as any);
+
       this.retention.startSession();
       await this.storefront.loadCatalog().catch(() => undefined);
     } catch {}

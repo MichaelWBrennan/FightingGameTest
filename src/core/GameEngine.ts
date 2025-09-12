@@ -8,7 +8,6 @@ import { InputManager } from './input/InputManager';
 import { UIManager } from './ui/UIManager';
 // (Optional) Asset loader integration available under scripts if needed
 import { Logger } from './utils/Logger';
-import PostProcessingManager from '../scripts/graphics/PostProcessingManager';
 import { EventBus } from './utils/EventBus';
 import { ServiceContainer } from './utils/ServiceContainer';
 import { FeatureFlags } from './utils/FeatureFlags';
@@ -24,7 +23,6 @@ import { AIManager } from './ai/AIManager';
 import { ProceduralStageGenerator } from './procgen/ProceduralStageGenerator';
 import { DecompDataService } from './utils/DecompDataService';
 import { MonetizationService } from './monetization/MonetizationService';
-import { EntitlementBridge } from '../scripts/EntitlementBridge';
 import { SecurityService } from './security/SecurityService';
 import { AntiCheat } from './security/AntiCheat';
 import { OfflineService } from './utils/OfflineService';
@@ -42,7 +40,7 @@ export class GameEngine {
   private stageManager: StageManager;
   private inputManager: InputManager;
   private uiManager: UIManager;
-  private postProcessingManager: PostProcessingManager | null = null;
+  private postProcessingManager: any | null = null;
   private eventBus: EventBus;
   private services: ServiceContainer;
   private featureFlags: FeatureFlags;
@@ -54,7 +52,7 @@ export class GameEngine {
   private stageGen: ProceduralStageGenerator;
   private decompService: DecompDataService;
   private monetization: MonetizationService;
-  private entitlement: EntitlementBridge;
+  private entitlement: any;
   private security: SecurityService;
   private antiCheat: AntiCheat;
   private offline: OfflineService;
@@ -94,7 +92,7 @@ export class GameEngine {
     this.stageGen = new ProceduralStageGenerator();
     this.decompService = new DecompDataService();
     this.monetization = new MonetizationService();
-    this.entitlement = new EntitlementBridge();
+    this.entitlement = null;
     this.security = new SecurityService();
     this.antiCheat = new AntiCheat();
     this.offline = new OfflineService();
@@ -165,27 +163,22 @@ export class GameEngine {
     this.uiManager = new UIManager(this.app);
     // expose for states
     (this.app as any)._ui = this.uiManager;
-    this.postProcessingManager = new PostProcessingManager(this.app);
-
-    // Register update order
-    const inputUpdatable: UpdatableSystem = { name: 'input', priority: 10, update: dt => this.inputManager.update() };
-    const characterUpdatable: UpdatableSystem = { name: 'characters', priority: 20, update: dt => this.characterManager.update(dt) };
-    const combatUpdatable: UpdatableSystem = { name: 'combat', priority: 30, update: dt => this.combatSystem.update(dt) };
-    const netcodeUpdatable: UpdatableSystem = { name: 'netcode', priority: 28, update: dt => this.netcode?.step() };
-    const postFxUpdatable: UpdatableSystem = { name: 'postfx', priority: 90, update: dt => this.postProcessingManager?.update(dt) };
-    const aiUpdatable: UpdatableSystem = { name: 'ai', priority: 25, update: dt => this.aiManager.update(dt) };
-    this.pipeline.add(inputUpdatable);
-    this.pipeline.add(characterUpdatable);
-    this.pipeline.add(aiUpdatable);
-    this.pipeline.add(netcodeUpdatable);
-    this.pipeline.add(combatUpdatable);
-    this.pipeline.add(postFxUpdatable);
   }
 
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     try {
+      // Lazy load heavy script modules only at runtime
+      const [{ default: PostProcessingManager }, { EntitlementBridge }] = await Promise.all([
+        import('../scripts/graphics/PostProcessingManager'),
+        import('../scripts/EntitlementBridge')
+      ]);
+
+      this.postProcessingManager = new PostProcessingManager(this.app);
+      this.entitlement = new EntitlementBridge();
+      this.services.register('entitlement', this.entitlement);
+
       Logger.info('Initializing game systems...');
       LoadingOverlay.beginTask('systems', 'Initializing systems', 1);
       // Register config service (static import for IIFE compatibility)

@@ -13,6 +13,7 @@
     "start": "npm run build && npm run serve",
     "preview": "ts-node tools/dev_server.ts",
     "import:sf3": "node ./tools/import_sf3_char_data.js && npm run build",
+    "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "fix": "npx ts-node tools/fix_compilation_errors.ts",
@@ -64,6 +65,8 @@
   "author": "SF3 Development Team",
   "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
-  }
+    "node": "20.x",
+    "npm": "10.x"
+  },
+  "packageManager": "npm@10.9.2"
 }

@@ -4,7 +4,8 @@
 // Import directly from node_modules to avoid being remapped by the alias
 // that points bare "playcanvas" imports to this vendor module.
 // Starting with PlayCanvas 1.65.x, the distributed builds are .mjs files.
-import * as pcModule from '../../node_modules/playcanvas/build/playcanvas.mjs';
+// Import explicit index.js to avoid directory resolution issues in some bundlers
+import * as pcModule from '../../node_modules/playcanvas/build/playcanvas.mjs/index.js';
 
 let pcGlobal: any = (globalThis as any).pc;
 try {
@@ -21,5 +22,5 @@ try {
   }
 } catch {}
 
-export = (globalThis as any).pc || pcGlobal || {};
+export default ((globalThis as any).pc || pcGlobal || {});
 

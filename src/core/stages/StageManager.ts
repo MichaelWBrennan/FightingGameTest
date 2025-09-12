@@ -1,10 +1,9 @@
 import * as pc from 'playcanvas';
-import ParallaxManager from '../../scripts/graphics/ParallaxManager';
 import { ProceduralStageGenerator } from '../procgen/ProceduralStageGenerator';
 
 export class StageManager {
   private app: pc.Application;
-  private parallax?: ParallaxManager;
+  private parallax?: any;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -38,6 +37,7 @@ export class StageManager {
 
     // Parallax background system
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('parallax_init', 'Initializing parallax', 1); } catch {}
+    const { default: ParallaxManager } = await import('../../scripts/graphics/ParallaxManager');
     this.parallax = new ParallaxManager(this.app);
     // Initialize parallax quickly with default stage, but do not block match start
     await this.parallax.initialize((p: number, label?: string) => {
