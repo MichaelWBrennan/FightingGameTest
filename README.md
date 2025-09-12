@@ -23,17 +23,9 @@ JSON-driven character configurations (`data/characters/`): Ryu, Ken, Chun-Li, Sa
 
 ## ▶️ Play in your browser (no npm)
 
-- Open a hosted copy of the `public/` folder in any modern browser. No Node or npm is required for players.
-- Local quick play (no npm): serve the `public/` folder over HTTP, then open the printed URL.
-  - Python 3: `python3 -m http.server --directory public 8080`
-  - BusyBox: `busybox httpd -f -p 8080 -h public`
-  - Note: Opening `public/index.html` directly from the filesystem may fail because paths like `/bundle.js` are absolute and expect an HTTP host root.
-- Required files in `public/` to play:
-  - `index.html`
-  - `bundle.js`
-  - `data/` (and optional `assets/`)
+- Hosted on Vercel: just open your deployment URL. No installs or npm required for players.
 
-If `public/bundle.js` is missing, use a prebuilt release or build from source (below).
+If you are developing locally and `public/bundle.js` is missing, build from source (below).
 
 ## 🔧 Build from source (contributors)
 
@@ -53,9 +45,7 @@ Open the printed URL (defaults to http://localhost:5173). The game creates its o
 
 Players: once deployed, just open your site URL in a browser — no downloads or npm required.
 
-### Static hosting (no serverless)
-- Serve the `public/` directory at your site root so `/bundle.js` resolves correctly.
-- Works on any static host or CDN. No backend required.
+
 
 ## 📈 Notes
 
