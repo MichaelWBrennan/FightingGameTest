@@ -21,9 +21,11 @@ Legacy conversion sources have been removed from runtime to keep the codebase fo
 
 JSON-driven character configurations (`data/characters/`): Ryu, Ken, Chun-Li, Sagat, Zangief, Lei Wulong
 
-## ▶️ Play in your browser (no npm)
+## ▶️ Play now in your browser
 
-- Hosted on Vercel: just open your deployment URL. No installs or commands required for players.
+- Hosted on Vercel: open your deployment URL (for example, `https://your-app.vercel.app`).
+- No downloads, installs, or commands required.
+- The game auto-starts when the page loads.
 
 ## 🔧 Build from source (contributors)
 
