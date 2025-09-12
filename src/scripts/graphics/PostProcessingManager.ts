@@ -246,7 +246,7 @@ class PostProcessingManager implements ISystem {
                 magFilter: pc.FILTER_LINEAR,
                 minFilter: pc.FILTER_LINEAR
             }),
-            depthBuffer: true,
+            depth: true,
             samples: this.quality === 'ultra' ? 4 : 1
         });
         
@@ -262,7 +262,7 @@ class PostProcessingManager implements ISystem {
                 magFilter: pc.FILTER_LINEAR,
                 minFilter: pc.FILTER_LINEAR
             }),
-            depthBuffer: false
+            depth: false
         });
         
         // Blur targets (half resolution for performance)
@@ -280,7 +280,7 @@ class PostProcessingManager implements ISystem {
                 magFilter: pc.FILTER_LINEAR,
                 minFilter: pc.FILTER_LINEAR
             }),
-            depthBuffer: false
+            depth: false
         });
         
         this.renderTargets.blurVertical = new pc.RenderTarget({
@@ -294,7 +294,7 @@ class PostProcessingManager implements ISystem {
                 magFilter: pc.FILTER_LINEAR,
                 minFilter: pc.FILTER_LINEAR
             }),
-            depthBuffer: false
+            depth: false
         });
         
         // Bloom target
@@ -309,7 +309,7 @@ class PostProcessingManager implements ISystem {
                 magFilter: pc.FILTER_LINEAR,
                 minFilter: pc.FILTER_LINEAR
             }),
-            depthBuffer: false
+            depth: false
         });
         
         console.log('Post-processing render targets created');
