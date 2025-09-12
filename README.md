@@ -19,9 +19,23 @@ Legacy conversion sources have been removed from runtime to keep the codebase fo
 
 ## 📊 Characters & Combat
 
-JSON-driven character configurations (`data/characters/`): Ryu, Ken, Chun-Li, Sagat, Zangief
+JSON-driven character configurations (`data/characters/`): Ryu, Ken, Chun-Li, Sagat, Zangief, Lei Wulong
 
-## 🔧 Development Setup
+## ▶️ Play in your browser (no npm)
+
+- Open a hosted copy of the `public/` folder in any modern browser. No Node or npm is required for players.
+- Local quick play (no npm): serve the `public/` folder over HTTP, then open the printed URL.
+  - Python 3: `python3 -m http.server --directory public 8080`
+  - BusyBox: `busybox httpd -f -p 8080 -h public`
+  - Note: Opening `public/index.html` directly from the filesystem may fail because paths like `/bundle.js` are absolute and expect an HTTP host root.
+- Required files in `public/` to play:
+  - `index.html`
+  - `bundle.js`
+  - `data/` (and optional `assets/`)
+
+If `public/bundle.js` is missing, use a prebuilt release or build from source (below).
+
+## 🔧 Build from source (contributors)
 
 ### Installation
 ```bash
@@ -36,6 +50,12 @@ Open the printed URL (defaults to http://localhost:5173). The game creates its o
 - `public/` contains the built `bundle.js` and `data/`
 - `api/index.ts` is a serverless entry that injects PlayCanvas + bundle and calls the game start
 - `vercel.json` rewrites `/` → `/api/index`
+
+Players: once deployed, just open your site URL in a browser — no downloads or npm required.
+
+### Static hosting (no serverless)
+- Serve the `public/` directory at your site root so `/bundle.js` resolves correctly.
+- Works on any static host or CDN. No backend required.
 
 ## 📈 Notes
 
@@ -52,9 +72,10 @@ Open the printed URL (defaults to http://localhost:5173). The game creates its o
   - Static assets are requested with a `?v=BUILD_VERSION` query so browsers can cache between deploys.
 
 ### Ground-truth character data (optional)
-- To seed frames from the decomp repo, clone it at `/workspace/sfiii-decomp` and run:
+- To seed frames from the decomp repo, clone it at `/workspace/sfiii-decomp`.
+- Import runs automatically during `npm run build` if the repo is present, or run it manually:
 ```bash
-npm run import:sf3
+npx ts-node tools/import_sf3_char_data.ts
 ```
 - This writes JSON into `data/characters_decomp/` and the runtime will be able to fetch it via `DecompDataService` if referenced.
 
