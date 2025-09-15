@@ -58,8 +58,10 @@ export class RimLightingShader {
 
   static readonly fragmentShader = `
     // ========== FRAGMENT SHADER ==========
-    #ifdef GL_ES
-    precision highp float;
+    precision mediump float;
+    precision mediump int;
+    #ifdef GL_OES_standard_derivatives
+    #extension GL_OES_standard_derivatives : enable
     #endif
 
     // Input from vertex shader
@@ -101,6 +103,7 @@ export class RimLightingShader {
     uniform float characterHighlight;
 
     // Utility functions
+    #ifdef NORMALMAP
     vec3 getNormalFromMap(vec2 uv, vec3 worldPos, vec3 worldNormal) {
         vec3 tangentNormal = texture2D(texture_normalMap, uv).xyz * 2.0 - 1.0;
         
@@ -116,6 +119,7 @@ export class RimLightingShader {
         
         return normalize(TBN * tangentNormal);
     }
+    #endif
 
     vec3 pixelateColor(vec3 color, float pixelSize) {
         if (pixelSize <= 0.0) return color;
