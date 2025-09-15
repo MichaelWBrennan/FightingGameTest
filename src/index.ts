@@ -137,9 +137,13 @@ async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
       try { Logger.error('Background initialization failed', err as any); } catch {}
     });
     LoadingOverlay.complete(true);
+    // Safety: ensure overlay is gone even if a late task starts (iOS Safari quirk)
+    try { setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 1200); } catch {}
   } else {
     await engine.initialize();
     LoadingOverlay.complete();
+    // Safety: in case a background task starts right after completion and blocks fade-out, force hide soon after
+    try { setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 1200); } catch {}
   }
 }
 
