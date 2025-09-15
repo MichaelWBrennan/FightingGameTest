@@ -174,13 +174,15 @@ export class LoadingOverlay {
 		try { this.disableNetworkTracking(); } catch {}
 		// Proactively end any background-only tasks that shouldn't block UX
 		try { this.endTask('manifest_bg', true); } catch {}
+		try { this.endTask('preload_bg', true); } catch {}
 		try {
 			// End any preload background groups if present
 			['json','image','audio','other'].forEach(g => { try { (this as any).endTask?.(`preload_bg:${g}`, true); } catch {} });
 		} catch {}
-		// If there are running tasks, defer completion until they finish
-		const anyRunning = Array.from(this.tasks.values()).some(t => t.status === 'running');
-		if (anyRunning) {
+		// If there are running tasks, ignore purely-background ones when deciding to hide
+		const isBackground = (id: string) => id.endsWith('_bg') || id.startsWith('preload_bg:') || id === 'manifest_bg' || id === 'network';
+		const anyBlockingRunning = Array.from(this.tasks.values()).some(t => t.status === 'running' && !isBackground(t.id));
+		if (anyBlockingRunning) {
 			this.completeRequested = true;
 			return;
 		}
@@ -340,6 +342,12 @@ export class LoadingOverlay {
 		// mark the network task complete to allow the overlay to finish.
 		if (this.completeRequested && this.reqCompleted >= this.reqStarted) {
 			this.endTask('network', true);
+			// Also re-check whether only background tasks remain; if so, complete now
+			try {
+				const isBackground = (id: string) => id.endsWith('_bg') || id.startsWith('preload_bg:') || id === 'manifest_bg' || id === 'network';
+				const anyBlockingRunning = Array.from(this.tasks.values()).some(t => t.status === 'running' && !isBackground(t.id));
+				if (!anyBlockingRunning) this.complete();
+			} catch {}
 		}
 	}
 
