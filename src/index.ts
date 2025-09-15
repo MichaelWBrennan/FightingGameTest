@@ -70,6 +70,16 @@ async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
   try { (LoadingOverlay as any).enableConsoleCapture?.(); } catch {}
   try { LoadingOverlay.enableNetworkTracking(); } catch {}
   try { scheduleAutoDebugReportDownload(250); } catch {}
+  // iOS Safari and users with reduced-motion often prefer immediate UI; force-hide overlay early
+  try {
+    const ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '';
+    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+    const prefersReducedMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isIOS || prefersReducedMotion) {
+      // So the boot still shows log if something goes wrong, delay a tick then force-hide soon
+      setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 500);
+    }
+  } catch {}
   LoadingOverlay.beginTask('prepare', 'Preparing renderer', 1);
   const targetCanvas = canvas || createCanvas();
   try {
