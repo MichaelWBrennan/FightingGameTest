@@ -58,7 +58,7 @@ export class RimLightingShader {
 
   static readonly fragmentShader = `
     // ========== FRAGMENT SHADER ==========
-    precision mediump float;
+    precision highp float;
     precision mediump int;
     #ifdef GL_OES_standard_derivatives
     #extension GL_OES_standard_derivatives : enable
