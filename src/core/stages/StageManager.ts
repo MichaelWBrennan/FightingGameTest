@@ -1,10 +1,12 @@
 import * as pc from 'playcanvas';
 import { ProceduralStageGenerator } from '../procgen/ProceduralStageGenerator';
 import { FighterCameraController } from '../camera/FighterCameraController';
+import { EnvironmentManager, EnvironmentTheme } from './EnvironmentManager';
 
 export class StageManager {
   private app: pc.Application;
   private parallax?: any;
+  private env?: EnvironmentManager;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -22,6 +24,8 @@ export class StageManager {
       farClip: 1000
     });
     this.app.root.addChild(camera);
+    // Ensure UI screens draw on top by setting camera priority low
+    try { (camera as any).camera.priority = 0; } catch {}
 
     // Attach fighter-style camera logic
     const fighterCam = new FighterCameraController(this.app, camera);
@@ -40,7 +44,13 @@ export class StageManager {
     this.app.root.addChild(light);
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('stage_camera', true); } catch {}
 
-    // Parallax background system
+    // 3D Environment system
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('env_init', 'Preparing 3D environment', 1); } catch {}
+    this.env = new EnvironmentManager(this.app);
+    await this.env.initialize();
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('env_init', true); } catch {}
+
+    // Parallax background system (kept for HD-2D layering in front of sky)
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('parallax_init', 'Initializing parallax', 1); } catch {}
     const { default: ParallaxManager } = await import('../../scripts/graphics/ParallaxManager');
     this.parallax = new ParallaxManager(this.app);
@@ -57,8 +67,10 @@ export class StageManager {
     const seedParam = params.get('seed');
     const themeParam = params.get('theme') as 'training' | 'gothic' | 'urban' | null;
     const seed = seedParam ? parseInt(seedParam, 10) : Date.now();
-    const theme = themeParam || 'training';
+    const theme = (themeParam || 'training') as EnvironmentTheme;
 
+    // Build 3D environment first to replace generic gray
+    this.env.buildEnvironment(theme);
     const gen = new ProceduralStageGenerator(seed);
     const stageData = gen.generate({ theme });
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_load', `Generating ${theme} stage`, 1); } catch {}
@@ -91,10 +103,11 @@ export class StageManager {
     }
   }
 
-  public async loadTheme(theme: 'training' | 'gothic' | 'urban'): Promise<void> {
+  public async loadTheme(theme: EnvironmentTheme): Promise<void> {
     const seed = Date.now();
     const gen = new ProceduralStageGenerator(seed);
     const stageData = gen.generate({ theme });
+    this.env?.buildEnvironment(theme);
     await this.parallax?.loadStageData(stageData);
   }
 }
