@@ -269,16 +269,31 @@ export class PreloadManager {
 		if (body && typeof (body as any).getReader === 'function') {
 			const bytes = await streamToUint8Array(body, (loaded) => { onStream?.(loaded, contentLength); });
 			text = new TextDecoder().decode(bytes);
-			if (sha256) {
-				const hash = await toSha256Hex(new TextEncoder().encode(text));
-				if (hash !== sha256) throw new PreloadError(`Integrity check failed for ${path}`, path);
+			// Decrypt before integrity check so hash matches manifest of plaintext
+			{
+				const maybeDecrypted = await this.tryDecrypt(text);
+				if (sha256) {
+					const buf = new TextEncoder().encode(maybeDecrypted ?? text);
+					const hash = await toSha256Hex(buf);
+					if (hash !== sha256) throw new PreloadError(`Integrity check failed for ${path}`, path);
+				}
+				text = maybeDecrypted ?? text;
 			}
 		} else {
 			text = await res.text();
 			onStream?.(contentLength || 1, contentLength);
+			// Decrypt before integrity check so hash matches manifest of plaintext
+			{
+				const maybeDecrypted = await this.tryDecrypt(text);
+				if (sha256) {
+					const buf = new TextEncoder().encode(maybeDecrypted ?? text);
+					const hash = await toSha256Hex(buf);
+					if (hash !== sha256) throw new PreloadError(`Integrity check failed for ${path}`, path);
+				}
+				text = maybeDecrypted ?? text;
+			}
 		}
-		const decrypted = await this.tryDecrypt(text) || text;
-		const obj = JSON.parse(decrypted);
+		const obj = JSON.parse(text);
 		this.jsonCache.set(path, obj);
 		return obj;
 	}
