@@ -72,6 +72,23 @@ export class GameEngine {
       gamepads: new pc.GamePads()
     });
 
+    // UA-aware device pixel ratio cap to balance clarity and performance
+    try {
+      const ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '';
+      const isIOS = /iPhone|iPad|iPod/.test(ua);
+      const isAndroid = /Android/.test(ua);
+      const isMobile = isIOS || isAndroid || /Mobile|IEMobile|Opera Mini/.test(ua);
+      const prefersReducedMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) ? window.devicePixelRatio : 1;
+      let maxDpr = 2;
+      if (isIOS) maxDpr = 2; // avoid >2 on iOS Safari due to fill-rate
+      if (isAndroid) maxDpr = 1.75;
+      if (isMobile && prefersReducedMotion) maxDpr = Math.min(maxDpr, 1.5);
+      const finalDpr = Math.min(dpr, maxDpr);
+      // PlayCanvas exposes setDevicePixelRatio on application since 1.63+
+      try { (this.app as any).setDevicePixelRatio?.(finalDpr); } catch {}
+    } catch {}
+
     this.setupApplication();
 
     // Core infrastructure must be ready before managers register to the pipeline
