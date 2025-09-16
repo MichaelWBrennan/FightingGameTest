@@ -1,5 +1,6 @@
 import * as pc from 'playcanvas';
 import { ProceduralStageGenerator } from '../procgen/ProceduralStageGenerator';
+import { FighterCameraController } from '../camera/FighterCameraController';
 
 export class StageManager {
   private app: pc.Application;
@@ -11,22 +12,21 @@ export class StageManager {
 
   public async initialize(): Promise<void> {
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_camera', 'Creating camera and light', 1); } catch {}
-    // Camera — set up an isometric-style 2.5D view of the horizontal stage
+    // Camera — orthographic, centered on fighters, auto-zoom to maintain framing
     const camera = new pc.Entity('MainCamera');
     camera.addComponent('camera', {
       clearColor: new pc.Color(0, 0, 0, 1),
-      fov: 55,
-      nearClip: 0.1,
+      projection: pc.PROJECTION_ORTHOGRAPHIC,
+      orthoHeight: 4.5,
+      nearClip: 0.01,
       farClip: 1000
     });
-    // Position diagonally above and behind the stage and tilt downward
-    // A common isometric-like angle uses ~35° tilt and 30° yaw
-    camera.setPosition(8, 8, 8);
-    camera.lookAt(0, 1, 0);
-    // Add a slight yaw so depth is visible along X and Z
-    const euler = camera.getEulerAngles();
-    camera.setEulerAngles(euler.x + 0, 35, euler.z);
     this.app.root.addChild(camera);
+
+    // Attach fighter-style camera logic
+    const fighterCam = new FighterCameraController(this.app, camera);
+    (camera as any)._fighterCam = fighterCam;
+    fighterCam.start();
 
     // Light
     const light = new pc.Entity('DirectionalLight');
