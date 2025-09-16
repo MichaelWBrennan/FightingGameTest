@@ -195,10 +195,27 @@ export class GameEngine {
       LoadingOverlay.beginTask('ui', 'Bringing up UI', 1);
       await this.uiManager.initialize();
       LoadingOverlay.endTask('ui', true);
+      // Decide whether to enable PostFX (iOS Safari and reduced-motion default to off)
+      let enablePostFX = true;
+      let postfxReason = 'enabled';
+      try {
+        const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+        const override = (params.get('postfx') || '').toLowerCase();
+        const ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '';
+        const isIOS = /iPhone|iPad|iPod/.test(ua);
+        const prefersReducedMotion = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (override) {
+          if (['0','false','off','no','n'].includes(override)) { enablePostFX = false; postfxReason = 'override:off'; }
+          if (['1','true','on','yes','y'].includes(override)) { enablePostFX = true; postfxReason = 'override:on'; }
+        } else {
+          if (isIOS || prefersReducedMotion) { enablePostFX = false; postfxReason = isIOS ? 'ios' : 'reduced-motion'; }
+        }
+      } catch {}
+
       // Defer post-processing init until after first frame for faster boot
-      if (this.postProcessingManager) {
-        LoadingOverlay.beginTask('postfx', 'Scheduling post-processing', 1);
-        LoadingOverlay.endTask('postfx', true);
+      if (enablePostFX && this.postProcessingManager) {
+        try { LoadingOverlay.beginTask('postfx', 'Scheduling post-processing', 1); } catch {}
+        try { LoadingOverlay.endTask('postfx', true); } catch {}
         setTimeout(() => {
           this.postProcessingManager?.initialize((p, label) => {
             try { LoadingOverlay.updateTask('postfx_bg', Math.max(0, Math.min(1, p ?? 0)), label || 'Post-processing'); } catch {}
@@ -207,6 +224,16 @@ export class GameEngine {
           });
           try { LoadingOverlay.beginTask('postfx_bg', 'Post-processing', 1); } catch {}
         }, 0);
+        try { LoadingOverlay.log(`[postfx] ${postfxReason}`, 'info'); } catch {}
+      } else {
+        // Ensure main camera renders directly to the backbuffer if PostFX is disabled
+        try {
+          const cam = this.app.root.findByName('MainCamera');
+          if (cam && (cam as any).camera) {
+            (cam as any).camera.renderTarget = null;
+          }
+        } catch {}
+        try { LoadingOverlay.log(`[postfx] disabled (${postfxReason})`, 'warn'); } catch {}
       }
 
       // Load manifest and then preload assets with detailed progress grouped by type
