@@ -19,7 +19,7 @@ export default function handler(_req: any, res: any) {
 		      <div id="pc-loading-bar" style="width:60%;max-width:480px;height:8px;background:#333;border-radius:4px;overflow:hidden;">
 		        <div id="pc-loading-fill" style="width:0%;height:100%;background:#09f;transition:width 0.2s"></div>
 		      </div>
-		      <div id="pc-loading-text" style="margin-top:12px;font:14px/1.2 monospace;opacity:.9">Loading…</div>
+		      <div id="pc-loading-text" style="margin-top:12px;font:14px/1.2 monospace;opacity:.9">Loading...</div>
 		    </div>
 		    
 		    <script>window.__ASSET_KEY__=${JSON.stringify(assetKey)};window.__BUILD_VERSION__=${JSON.stringify(buildVersion)};</script>

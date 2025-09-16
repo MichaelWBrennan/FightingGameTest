@@ -225,7 +225,7 @@ export class GameEngine {
             onEvent: (evt) => {
               switch (evt.kind) {
                 case 'groupStart':
-                  try { LoadingOverlay.beginTask(`preload_bg:${evt.group}`, `Loading ${evt.group.toUpperCase()}…`, 1); } catch {}
+                  try { LoadingOverlay.beginTask(`preload_bg:${evt.group}`, `Loading ${evt.group.toUpperCase()}...`, 1); } catch {}
                   break;
                 case 'groupProgress':
                   try { LoadingOverlay.updateTask(`preload_bg:${evt.group}`, evt.progress); } catch {}
@@ -274,6 +274,9 @@ export class GameEngine {
       LoadingOverlay.endTask('finalize', true);
       
       Logger.info('Game engine fully initialized');
+      // Safety: ensure loading overlay is hidden even if caller forgets
+      try { LoadingOverlay.complete(); } catch {}
+      try { setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 1000); } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
       throw error;
@@ -297,7 +300,14 @@ export class GameEngine {
       this.app.off('update', this.updateHandler);
       this.updateHandler = null;
     }
-    this.app.destroy();
+    try {
+      const appAny: any = this.app as any;
+      if (appAny && typeof appAny.destroy === 'function') {
+        appAny.destroy();
+      } else if (appAny && appAny.graphicsDevice && typeof appAny.graphicsDevice.destroy === 'function') {
+        appAny.graphicsDevice.destroy();
+      }
+    } catch {}
     Logger.info('Game engine destroyed');
   }
 }

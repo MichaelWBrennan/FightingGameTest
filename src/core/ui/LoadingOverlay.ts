@@ -87,7 +87,7 @@ export class LoadingOverlay {
 		if (!this.label) {
 			this.label = document.createElement('div');
 			this.label.id = 'pc-loading-text';
-			this.label.textContent = 'Loading…';
+			this.label.textContent = 'Loading...';
 			this.label.style.marginTop = '12px';
 			(this.label.style as any).font = '14px/1.2 monospace';
 			(this.label.style as any).opacity = '.9';
