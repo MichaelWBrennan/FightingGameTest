@@ -215,9 +215,13 @@ export class GameEngine {
         try {
           LoadingOverlay.beginTask('manifest_bg', 'Loading manifest', 1);
         } catch {}
+        const manifestTimeout = setTimeout(() => {
+          try { LoadingOverlay.endTask('manifest_bg', false); } catch {}
+        }, 7000);
         this.preloader.loadManifest('/assets/manifest.json', (p, label) => {
           try { LoadingOverlay.updateTask('manifest_bg', Math.max(0, Math.min(1, p ?? 0)), label || 'Loading manifest'); } catch {}
         }).then(() => {
+          try { clearTimeout(manifestTimeout); } catch {}
           try { LoadingOverlay.endTask('manifest_bg', true); } catch {}
           try { LoadingOverlay.beginTask('preload_bg', 'Preloading core data', 5); } catch {}
           return this.preloader.preloadAllAssets({
@@ -239,6 +243,7 @@ export class GameEngine {
         }).then(() => {
           try { LoadingOverlay.endTask('preload_bg', true); } catch {}
         }).catch(() => {
+          try { clearTimeout(manifestTimeout); } catch {}
           try { LoadingOverlay.endTask('manifest_bg', false); } catch {}
           try { LoadingOverlay.endTask('preload_bg', false); } catch {}
         });

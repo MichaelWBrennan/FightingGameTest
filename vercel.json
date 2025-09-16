@@ -1,5 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build && npm run postbuild",
   "outputDirectory": "public",
   "rewrites": [
     { "source": "/", "destination": "/api/index" },
