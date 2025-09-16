@@ -8,6 +8,8 @@ export class PreloadManager {
 
 	private buildVersionedUrl(path: string): string {
 		try {
+			// Do not version the manifest itself to avoid CDN/proxy caching quirks
+			if (path.toLowerCase().includes('/assets/manifest.json')) return path;
 			const hasQuery = path.includes('?');
 			const sep = hasQuery ? '&' : '?';
 			return `${path}${sep}v=${encodeURIComponent(String(this.version))}`;
@@ -19,10 +21,10 @@ export class PreloadManager {
 
 	async loadManifest(url: string = '/assets/manifest.json', onProgress?: (progress: number, label?: string) => void): Promise<void> {
 		const overlayP = import('../../core/ui/LoadingOverlay').catch(() => null);
-		const fetchWithTimeout = async (u: string, ms: number): Promise<Response> => {
+		const fetchWithTimeout = async (u: string, ms: number, init?: RequestInit): Promise<Response> => {
 			const ctrl = new AbortController();
 			const id = setTimeout(() => ctrl.abort(), ms);
-			try { return await fetch(this.buildVersionedUrl(u), { signal: ctrl.signal }); }
+			try { return await fetch(this.buildVersionedUrl(u), { ...(init || {}), signal: ctrl.signal, cache: (init && init.cache) || 'no-store' }); }
 			finally { clearTimeout(id); }
 		};
 		try {
@@ -30,14 +32,25 @@ export class PreloadManager {
 			onProgress?.(0.2, 'Fetching manifest');
 			let res: Response | null = null;
 			try {
-				res = await fetchWithTimeout(url, 2500);
+				res = await fetchWithTimeout(url, 2500, { cache: 'no-store' });
 			} catch {}
+			// Treat empty/invalid bodies as failure to trigger fallback
+			let text: string | null = null;
+			if (res && res.ok) {
+				try { text = await res.text(); } catch {}
+				if (!text || text.trim().length === 0) res = null;
+			}
 			if (!res || !res.ok) {
 				try { (await overlayP)?.LoadingOverlay.log(`[manifest] primary fetch failed${res ? ` (${res.status})` : ''}, trying API fallback`, 'warn'); } catch {}
 				onProgress?.(0.3, 'Fetching manifest (fallback)');
 				try {
-					res = await fetchWithTimeout('/api/manifest', 4000);
+					res = await fetchWithTimeout('/api/manifest', 4000, { cache: 'no-store' });
 				} catch {}
+				text = null;
+				if (res && res.ok) {
+					try { text = await res.text(); } catch {}
+					if (!text || text.trim().length === 0) res = null;
+				}
 			}
 			if (!res || !res.ok) {
 				console.warn(`[PreloadManager] Manifest not available. Continuing without it.`);
@@ -47,7 +60,15 @@ export class PreloadManager {
 				return;
 			}
 			onProgress?.(0.6, 'Parsing manifest');
-			this.manifest = await res.json();
+			try {
+				this.manifest = JSON.parse(text as string);
+			} catch {
+				// Final guard: if JSON parse fails, continue without manifest
+				this.manifest = { assets: [] };
+				onProgress?.(1.0, 'Manifest error, continuing');
+				try { (await overlayP)?.LoadingOverlay.log(`[manifest] invalid JSON from ${url}`, 'error'); } catch {}
+				return;
+			}
 			onProgress?.(1.0, 'Manifest ready');
 			try { (await overlayP)?.LoadingOverlay.log(`[manifest] loaded (${this.manifest.assets?.length || 0} assets)`, 'info'); } catch {}
 		} catch (err) {

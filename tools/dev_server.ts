@@ -20,6 +20,7 @@ app.get('/assets/manifest.json', (_req, res, next) => {
   const manifestPath = path.join(publicDir, 'assets', 'manifest.json');
   if (fs.existsSync(manifestPath)) {
     res.set('Content-Type', 'application/json; charset=utf-8');
+    res.set('Cache-Control', 'no-store');
     res.send(fs.readFileSync(manifestPath, 'utf-8'));
     return;
   }
@@ -54,6 +55,7 @@ app.get('/assets/manifest.json', (_req, res, next) => {
     walk(dataDir, dataDir, '/data');
     walk(assetsDataDir, assetsDataDir, '/assets/data');
     res.set('Content-Type', 'application/json; charset=utf-8');
+    res.set('Cache-Control', 'no-store');
     res.send(JSON.stringify({ assets: entries }, null, 2));
   } catch (e) {
     next(e);
