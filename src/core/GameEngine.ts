@@ -212,7 +212,7 @@ export class GameEngine {
       // Load manifest and then preload assets with detailed progress grouped by type
       // Background preload (non-blocking) to enhance assets progressively
       setTimeout(() => {
-        this.preloader.loadManifest('/assets/manifest.json').then(() => {
+        const loadP = this.preloader.loadManifest('/assets/manifest.json').then(() => {
           try { LoadingOverlay.beginTask('preload_bg', 'Preloading core data', 5); } catch {}
           return this.preloader.preloadAllAssets({
             groupOrder: ['json'],
@@ -230,7 +230,19 @@ export class GameEngine {
               }
             }
           });
-        }).then(() => {
+        });
+        // Hard timeout to avoid hangs blocking overlay/UI progression on Safari/iOS
+        const timeoutP = new Promise<void>((resolve) => {
+          setTimeout(() => {
+            try {
+              LoadingOverlay.log('[preload] timeout guard fired (continuing)', 'warn');
+              // Do not block boot on background preloading
+              LoadingOverlay.endTask('preload_bg', true);
+            } catch {}
+            resolve();
+          }, 8000);
+        });
+        Promise.race([loadP.catch(() => undefined), timeoutP]).then(() => {
           try { LoadingOverlay.endTask('preload_bg', true); } catch {}
         }).catch(() => {
           try { LoadingOverlay.endTask('preload_bg', false); } catch {}

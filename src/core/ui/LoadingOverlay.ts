@@ -3,6 +3,7 @@ export class LoadingOverlay {
 	private static container: HTMLElement | null = null;
 	private static fill: HTMLElement | null = null;
 	private static label: HTMLElement | null = null;
+    // Expose a guarded snapshot for diagnostics and iOS fail-safe toggles
     private static trackNetwork = false;
     private static origFetch: typeof fetch | null = null;
     private static reqStarted = 0;
@@ -130,6 +131,7 @@ export class LoadingOverlay {
 		try { this.renderBufferedLogs(); } catch {}
 
 		this.initialized = true;
+		try { (LoadingOverlay as any).log('[overlay] initialized', 'debug'); } catch {}
 	}
 
 	/**
@@ -204,6 +206,29 @@ export class LoadingOverlay {
 			this.disableConsoleCapture();
 		}, 200);
 	}
+
+    /**
+     * Emergency: ensure overlay is visible and marked complete to avoid black screens
+     * when a network request (e.g., manifest) silently hangs on Safari/iOS.
+     */
+    public static forceVisibleAndComplete(): void {
+        try {
+            if (!this.initialized) this.initialize();
+            if (!this.container) this.initialize();
+            if (this.container) {
+                this.container.style.opacity = '1';
+                this.container.style.display = 'flex';
+            }
+            // Simulate 100% progress so UI can advance
+            try { this.beginTask('safari_guard', 'iOS/Safari guard', 1); } catch {}
+            try { this.updateTask('safari_guard', 1.0, 'iOS/Safari guard'); } catch {}
+            try { this.endTask('safari_guard', true); } catch {}
+            // Do not auto-hide; caller decides when to hide later
+            this.completeRequested = false;
+            this.updateNetworkTask();
+            try { this.log('[overlay] forced init due to fetch hang', 'warn'); } catch {}
+        } catch {}
+    }
 
 	/**
 	 * Enables lightweight network tracking by wrapping window.fetch.

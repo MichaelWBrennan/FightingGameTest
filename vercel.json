@@ -32,7 +32,11 @@
     },
     {
       "source": "/assets/manifest.json",
-      "headers": [ { "key": "Cache-Control", "value": "no-store" } ]
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     },
     {
       "source": "/assets/(.*)",
