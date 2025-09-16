@@ -11,7 +11,7 @@ export class StageManager {
 
   public async initialize(): Promise<void> {
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_camera', 'Creating camera and light', 1); } catch {}
-    // Camera
+    // Camera — set up an isometric-style 2.5D view of the horizontal stage
     const camera = new pc.Entity('MainCamera');
     camera.addComponent('camera', {
       clearColor: new pc.Color(0, 0, 0, 1),
@@ -19,8 +19,13 @@ export class StageManager {
       nearClip: 0.1,
       farClip: 1000
     });
-    camera.setPosition(0, 2, 10);
+    // Position diagonally above and behind the stage and tilt downward
+    // A common isometric-like angle uses ~35° tilt and 30° yaw
+    camera.setPosition(8, 8, 8);
     camera.lookAt(0, 1, 0);
+    // Add a slight yaw so depth is visible along X and Z
+    const euler = camera.getEulerAngles();
+    camera.setEulerAngles(euler.x + 0, 35, euler.z);
     this.app.root.addChild(camera);
 
     // Light
