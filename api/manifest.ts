@@ -6,8 +6,13 @@ export default function handler(_req: any, res: any) {
 	try {
 		const entries: Array<{ path: string; type: string }> = [];
 		const cwd = process.cwd();
-		const dataDir = path.join(cwd, 'data');
-		const assetsDataDir = path.join(cwd, 'assets', 'data');
+		// Prefer deployed static directories under public/ when running on Vercel
+		const dataDir = fs.existsSync(path.join(cwd, 'public', 'data'))
+			? path.join(cwd, 'public', 'data')
+			: path.join(cwd, 'data');
+		const assetsDataDir = fs.existsSync(path.join(cwd, 'public', 'assets', 'data'))
+			? path.join(cwd, 'public', 'assets', 'data')
+			: path.join(cwd, 'assets', 'data');
 		const guessType = (p: string) => {
 			const ext = p.split('.').pop()?.toLowerCase();
 			if (ext === 'json') return 'json';
@@ -31,6 +36,18 @@ export default function handler(_req: any, res: any) {
 		};
 		walk(dataDir, dataDir, '/data');
 		walk(assetsDataDir, assetsDataDir, '/assets/data');
+
+		// If we still have nothing, try serving the prebuilt manifest.json if available
+		if (entries.length === 0) {
+			try {
+				const manifestPath = path.join(cwd, 'public', 'assets', 'manifest.json');
+				if (fs.existsSync(manifestPath)) {
+					const txt = fs.readFileSync(manifestPath, 'utf-8');
+					res.setHeader('Content-Type', 'application/json; charset=utf-8');
+					return res.status(200).send(txt);
+				}
+			} catch {}
+		}
 		res.setHeader('Content-Type', 'application/json; charset=utf-8');
 		res.status(200).send(JSON.stringify({ assets: entries }, null, 2));
 	} catch (e: any) {
