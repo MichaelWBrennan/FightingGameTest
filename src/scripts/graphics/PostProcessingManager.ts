@@ -220,6 +220,9 @@ class PostProcessingManager implements ISystem {
             
             this.initialized = true;
             console.log('Post-Processing Manager initialized successfully');
+            // Ensure post-processing runs every frame to blit the offscreen scene to the screen
+            // Without this, the main camera renders to an offscreen target and nothing reaches the backbuffer
+            this.app.on('update', this.update, this);
             
         } catch (error) {
             console.error('Failed to initialize Post-Processing Manager:', error);
@@ -669,6 +672,44 @@ class PostProcessingManager implements ISystem {
         
         this.updateEffectParameters(dt);
         this.renderPostProcessing(dt);
+        // Fallback blit: if no dedicated combine stage is active, copy the scene color to the default framebuffer
+        // This ensures something is visible even when effects are disabled or incomplete
+        try {
+            const device = this.app.graphicsDevice as any;
+            if (device && this.renderTargets.sceneColor) {
+                // Clear screen with main camera clear color
+                const mainCamera = this.app.root.findByName('MainCamera');
+                const clear = mainCamera && mainCamera.camera ? mainCamera.camera.clearColor : new pc.Color(0, 0, 0, 1);
+                device.setRenderTarget(null);
+                device.clear({ color: [clear.r, clear.g, clear.b, clear.a ?? 1], depth: 1, flags: 1 });
+                // Draw fullScreenQuad using a trivial blit material if DOF not configured
+                if (this.fullScreenQuad) {
+                    if (!this.materials.combine) {
+                        // Create a minimal passthrough material once
+                        const mat = new pc.StandardMaterial();
+                        const shader = new pc.Shader(device, {
+                            attributes: { vertex_position: pc.SEMANTIC_POSITION, vertex_texCoord0: pc.SEMANTIC_TEXCOORD0 },
+                            vshader: `
+                                attribute vec3 vertex_position; 
+                                attribute vec2 vertex_texCoord0; 
+                                varying vec2 vUv0; 
+                                void main(void){ vUv0 = vertex_texCoord0; gl_Position = vec4(vertex_position, 1.0); }
+                            `,
+                            fshader: `
+                                precision mediump float; 
+                                varying vec2 vUv0; 
+                                uniform sampler2D texture_sceneColor; 
+                                void main(void){ gl_FragColor = texture2D(texture_sceneColor, vUv0); }
+                            `
+                        });
+                        (mat as any).shader = shader;
+                        this.materials.combine = mat;
+                    }
+                    this.materials.combine.setParameter('texture_sceneColor', this.renderTargets.sceneColor.colorBuffer);
+                    this.fullScreenQuad.render.material = this.materials.combine;
+                }
+            }
+        } catch {}
     }
 
     private updateEffectParameters(dt: number): void {
