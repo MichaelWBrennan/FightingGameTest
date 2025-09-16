@@ -14,7 +14,7 @@ export class StageManager {
     // Camera
     const camera = new pc.Entity('MainCamera');
     camera.addComponent('camera', {
-      clearColor: new pc.Color(0, 0, 0),
+      clearColor: new pc.Color(0, 0, 0, 1),
       fov: 55,
       nearClip: 0.1,
       farClip: 1000
