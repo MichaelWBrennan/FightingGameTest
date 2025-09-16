@@ -18,8 +18,7 @@ export class BootState implements GameState {
 	async enter(): Promise<void> {
 		try {
 			// Route immediately; don't block on network or service init
-			const qp = (() => { try { const p = new URLSearchParams(window.location.search); return ['1','true','yes','on'].includes((p.get('quickplay')||'').toLowerCase()); } catch { return false; } })();
-			this.events.emit('state:goto', { state: qp ? 'match' : 'characterselect' });
+			this.events.emit('state:goto', { state: 'characterselect' });
 			// Perform service/network initialization in the background (not reflected in loading overlay)
 			void (async () => {
 				try {
@@ -50,7 +49,7 @@ export class BootState implements GameState {
 			})();
 		} catch (e) {
 			console.error('BootState failed:', e);
-			this.events.emit('state:goto', { state: 'match' });
+			this.events.emit('state:goto', { state: 'characterselect' });
 		}
 	}
 
