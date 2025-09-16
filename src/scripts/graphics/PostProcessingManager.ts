@@ -222,7 +222,7 @@ class PostProcessingManager implements ISystem {
             console.log('Post-Processing Manager initialized successfully');
             // Ensure post-processing runs every frame to blit the offscreen scene to the screen
             // Without this, the main camera renders to an offscreen target and nothing reaches the backbuffer
-            this.app.on('update', this.update, this);
+            this.app.on('update', (dt: number) => this.update(dt));
             
         } catch (error) {
             console.error('Failed to initialize Post-Processing Manager:', error);
@@ -324,6 +324,7 @@ class PostProcessingManager implements ISystem {
         depthMat.blendType = pc.BLEND_NONE;
         depthMat.depthTest = false;
         depthMat.depthWrite = false;
+        depthMat.cull = pc.CULLFACE_NONE;
         this.materials.depthOfField = depthMat;
         
         // Bloom material (placeholder simple additive pass)
@@ -353,6 +354,7 @@ class PostProcessingManager implements ISystem {
         this.materials.combine.blendType = pc.BLEND_NONE;
         this.materials.combine.depthTest = false;
         this.materials.combine.depthWrite = false;
+        this.materials.combine.cull = pc.CULLFACE_NONE;
         
         console.log('Post-processing materials created');
     }
@@ -547,8 +549,8 @@ class PostProcessingManager implements ISystem {
         this.fullScreenQuad.setLocalScale(2, 2, 1);
         // Place slightly in front of the post-process camera (which looks down -Z)
         this.fullScreenQuad.setPosition(0, 0, -0.5);
-        // Ensure the quad faces the camera
-        this.fullScreenQuad.setEulerAngles(0, 180, 0);
+        // Rotate +90 on X so plane faces camera (-Z)
+        this.fullScreenQuad.setEulerAngles(90, 0, 0);
         
         this.app.root.addChild(this.fullScreenQuad);
     }
@@ -747,22 +749,32 @@ class PostProcessingManager implements ISystem {
     }
 
     private renderPostProcessing(dt: number): void {
-        if (!this.fullScreenQuad || !this.materials.depthOfField || !this.renderTargets.sceneColor) return;
+        if (!this.fullScreenQuad || !this.renderTargets.sceneColor) return;
         const device = this.app.graphicsDevice;
 
         // Update dynamic uniforms
         const timeSec = Date.now() * 0.001;
-        (this.materials.depthOfField as pc.Material).setParameter('uTime', timeSec);
-        (this.materials.depthOfField as pc.Material).setParameter('uScreenSize', new Float32Array([device.width, device.height]));
-        (this.materials.depthOfField as pc.Material).setParameter('uInvScreenSize', new Float32Array([1 / Math.max(1, device.width), 1 / Math.max(1, device.height)]));
+        if (this.materials.depthOfField) {
+            (this.materials.depthOfField as pc.Material).setParameter('uTime', timeSec);
+            (this.materials.depthOfField as pc.Material).setParameter('uScreenSize', new Float32Array([device.width, device.height]));
+            (this.materials.depthOfField as pc.Material).setParameter('uInvScreenSize', new Float32Array([1 / Math.max(1, device.width), 1 / Math.max(1, device.height)]));
+        }
 
         // Bind input textures (scene color as both color and depth placeholder if no depth RT)
-        (this.materials.depthOfField as pc.Material).setParameter('texture_colorBuffer', this.renderTargets.sceneColor.colorBuffer);
-        const depthBufferTex = this.renderTargets.sceneDepth ? this.renderTargets.sceneDepth.colorBuffer : this.renderTargets.sceneColor.colorBuffer;
-        (this.materials.depthOfField as pc.Material).setParameter('texture_depthBuffer', depthBufferTex);
+        if (this.materials.depthOfField) {
+            (this.materials.depthOfField as pc.Material).setParameter('texture_colorBuffer', this.renderTargets.sceneColor.colorBuffer);
+            const depthBufferTex = this.renderTargets.sceneDepth ? this.renderTargets.sceneDepth.colorBuffer : this.renderTargets.sceneColor.colorBuffer;
+            (this.materials.depthOfField as pc.Material).setParameter('texture_depthBuffer', depthBufferTex);
+        }
 
         // Render fullscreen quad with DOF shader
-        this.fullScreenQuad.render.material = this.materials.depthOfField;
+        if (this.materials.depthOfField) {
+            this.fullScreenQuad.render.material = this.materials.depthOfField;
+        } else if (this.materials.combine) {
+            // If DOF is disabled, ensure we still blit the scene color to screen
+            (this.materials.combine as unknown as pc.Material).setParameter('texture_sceneColor', this.renderTargets.sceneColor.colorBuffer);
+            this.fullScreenQuad.render.material = this.materials.combine as unknown as pc.Material;
+        }
     }
 
     // Quality management
