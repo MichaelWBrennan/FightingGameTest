@@ -57,11 +57,18 @@ function isInstantMode(): boolean {
   try {
     const params = new URLSearchParams(window.location.search);
     const val = (params.get('instant') || '').toLowerCase();
-    if (val && ['1', 'true', 'on', 'yes', 'fast'].includes(val)) return true;
-    const ls = localStorage.getItem('sf3_instant') || '';
-    return ['1', 'true', 'on', 'yes', 'fast'].includes(ls.toLowerCase());
+    if (val) {
+      if (['0', 'false', 'off', 'no', 'slow'].includes(val)) return false;
+      if (['1', 'true', 'on', 'yes', 'fast'].includes(val)) return true;
+    }
+    const ls = (localStorage.getItem('sf3_instant') || '').toLowerCase();
+    if (ls) {
+      if (['0', 'false', 'off', 'no', 'slow'].includes(ls)) return false;
+      if (['1', 'true', 'on', 'yes', 'fast'].includes(ls)) return true;
+    }
+    return true; // default: instant everywhere
   } catch {
-    return false;
+    return true;
   }
 }
 
