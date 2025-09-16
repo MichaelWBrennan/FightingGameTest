@@ -226,20 +226,44 @@ export class CharacterManager {
 
     const characterEntity = new pc.Entity(characterId);
     characterEntity.setPosition(position);
-    
+
     // Ensure the character is visible even before sprite systems attach
     // Add a simple billboarded plane with a rim-lit material as a placeholder
     try {
       const placeholder = new pc.Entity(`${characterId}_placeholder`);
-      // Lazy-create material without blocking function execution
+      // Create a simple unlit material as a fallback immediately; upgrade to rim later
+      const basicMat = new pc.StandardMaterial();
+      basicMat.useLighting = false;
+      basicMat.diffuse = new pc.Color(0.9, 0.9, 0.9);
+      basicMat.update();
+      placeholder.addComponent('render', { type: 'plane', material: basicMat as unknown as pc.Material });
+      placeholder.setLocalScale(1.2, 1.8, 1);
+      // Upgrade to rim-lit when shaders util is loaded
       import('../graphics/ShaderUtils').then(({ ShaderUtils }) => {
         try {
           const rimMat = ShaderUtils.createRimLightingMaterial(this.app);
-          placeholder.addComponent('render', { type: 'plane', material: rimMat as unknown as pc.Material });
-          placeholder.setLocalScale(2, 3, 1);
+          placeholder.render!.material = rimMat as unknown as pc.Material;
         } catch {}
       }).catch(() => {});
       characterEntity.addChild(placeholder);
+
+      // Billboard toward the main camera every frame
+      const app = this.app;
+      const onUpdate = (dt: number) => {
+        try {
+          const camera = app.root.findByName('MainCamera');
+          if (camera && placeholder) {
+            placeholder.lookAt(camera.getPosition());
+          }
+        } catch {}
+      };
+      // Attach and remember handler so entity cleanup is safe
+      (placeholder as any)._billboardHandler = onUpdate;
+      this.app.on('update', onUpdate);
+      // Remove update handler when entity is destroyed
+      placeholder.on('destroy', () => {
+        try { this.app.off('update', (placeholder as any)._billboardHandler); } catch {}
+      });
     } catch {}
     
     const character: Character = {
