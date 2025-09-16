@@ -222,20 +222,57 @@ export class EnvironmentManager {
     }
 
     // Ceiling lights
-    for (let i = -3; i <= 3; i++) {
-      const lamp = new pc.Entity(`Lamp_${i}`);
-      lamp.addComponent('light', {
-        type: pc.LIGHTTYPE_SPOT,
-        color: new pc.Color(0.95, 0.98, 1.0),
-        intensity: 0.6,
-        range: 20,
-        innerConeAngle: 40,
-        outerConeAngle: 60,
-        castShadows: false
-      });
-      lamp.setLocalPosition(i * 6, 8, -10);
-      lamp.setEulerAngles(45, 0, 0);
-      this.root!.addChild(lamp);
+    // iOS Safari exhibits stability issues in PlayCanvas lighting array splitting under some conditions.
+    // Avoid adding multiple spotlights on iOS to prevent _splitLightsArray failures.
+    try {
+      const ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '';
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const allowSpotlights = !isIOS;
+      if (allowSpotlights) {
+        for (let i = -3; i <= 3; i++) {
+          const lamp = new pc.Entity(`Lamp_${i}`);
+          lamp.addComponent('light', {
+            type: pc.LIGHTTYPE_SPOT,
+            color: new pc.Color(0.95, 0.98, 1.0),
+            intensity: 0.6,
+            range: 20,
+            innerConeAngle: 40,
+            outerConeAngle: 60,
+            castShadows: false
+          });
+          lamp.setLocalPosition(i * 6, 8, -10);
+          lamp.setEulerAngles(45, 0, 0);
+          this.root!.addChild(lamp);
+        }
+      } else {
+        // Fallback: a single gentle directional to keep scene lit
+        const fill = new pc.Entity('IOS_FillLight');
+        fill.addComponent('light', {
+          type: pc.LIGHTTYPE_DIRECTIONAL,
+          color: new pc.Color(0.9, 0.95, 1.0),
+          intensity: 0.6,
+          castShadows: false
+        });
+        fill.setEulerAngles(60, 15, 0);
+        this.root!.addChild(fill);
+      }
+    } catch {
+      // If UA parsing fails, default to adding lights as usual
+      for (let i = -3; i <= 3; i++) {
+        const lamp = new pc.Entity(`Lamp_${i}`);
+        lamp.addComponent('light', {
+          type: pc.LIGHTTYPE_SPOT,
+          color: new pc.Color(0.95, 0.98, 1.0),
+          intensity: 0.6,
+          range: 20,
+          innerConeAngle: 40,
+          outerConeAngle: 60,
+          castShadows: false
+        });
+        lamp.setLocalPosition(i * 6, 8, -10);
+        lamp.setEulerAngles(45, 0, 0);
+        this.root!.addChild(lamp);
+      }
     }
   }
 
