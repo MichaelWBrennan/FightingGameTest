@@ -3,6 +3,8 @@
   "buildCommand": "npm run build && npm run postbuild",
   "outputDirectory": "public",
   "rewrites": [
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/data/(.*)", "destination": "/data/$1" },
     { "source": "/", "destination": "/api/index" },
     { "source": "/api/manifest", "destination": "/api/manifest" },
     { "source": "/api/session", "destination": "/api/session" },

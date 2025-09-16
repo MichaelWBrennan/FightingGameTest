@@ -21,6 +21,9 @@ export class PreloadManager {
 
 	async loadManifest(url: string = '/assets/manifest.json', onProgress?: (progress: number, label?: string) => void): Promise<void> {
 		const overlayP = import('../../core/ui/LoadingOverlay').catch(() => null);
+		let overlayTimeout: any = null;
+		try { (await overlayP)?.LoadingOverlay.beginTask('manifest_bg', 'Loading manifest', 1); } catch {}
+		try { overlayTimeout = setTimeout(async () => { try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {} }, 7000); } catch {}
 		const fetchWithTimeout = async (u: string, ms: number, init?: RequestInit): Promise<Response> => {
 			const ctrl = new AbortController();
 			const id = setTimeout(() => ctrl.abort(), ms);
@@ -30,6 +33,7 @@ export class PreloadManager {
 		try {
 			try { (await overlayP)?.LoadingOverlay.log(`[manifest] fetching ${url}`, 'info'); } catch {}
 			onProgress?.(0.2, 'Fetching manifest');
+			try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 0.2, 'Fetching manifest'); } catch {}
 			let res: Response | null = null;
 			try {
 				res = await fetchWithTimeout(url, 2500, { cache: 'no-store' });
@@ -43,6 +47,7 @@ export class PreloadManager {
 			if (!res || !res.ok) {
 				try { (await overlayP)?.LoadingOverlay.log(`[manifest] primary fetch failed${res ? ` (${res.status})` : ''}, trying API fallback`, 'warn'); } catch {}
 				onProgress?.(0.3, 'Fetching manifest (fallback)');
+				try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 0.3, 'Fetching manifest (fallback)'); } catch {}
 				try {
 					res = await fetchWithTimeout('/api/manifest', 4000, { cache: 'no-store' });
 				} catch {}
@@ -56,25 +61,38 @@ export class PreloadManager {
 				console.warn(`[PreloadManager] Manifest not available. Continuing without it.`);
 				this.manifest = { assets: [] };
 				onProgress?.(1.0, 'Manifest not found, continuing');
+				try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 1.0, 'Manifest not found, continuing'); } catch {}
+				try { clearTimeout(overlayTimeout); } catch {}
+				try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {}
 				try { (await overlayP)?.LoadingOverlay.log(`[manifest] not found at ${url} and /api/manifest`, 'warn'); } catch {}
 				return;
 			}
 			onProgress?.(0.6, 'Parsing manifest');
+			try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 0.6, 'Parsing manifest'); } catch {}
 			try {
 				this.manifest = JSON.parse(text as string);
 			} catch {
 				// Final guard: if JSON parse fails, continue without manifest
 				this.manifest = { assets: [] };
 				onProgress?.(1.0, 'Manifest error, continuing');
+				try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 1.0, 'Manifest error, continuing'); } catch {}
+				try { clearTimeout(overlayTimeout); } catch {}
+				try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {}
 				try { (await overlayP)?.LoadingOverlay.log(`[manifest] invalid JSON from ${url}`, 'error'); } catch {}
 				return;
 			}
 			onProgress?.(1.0, 'Manifest ready');
+			try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 1.0, 'Manifest ready'); } catch {}
 			try { (await overlayP)?.LoadingOverlay.log(`[manifest] loaded (${this.manifest.assets?.length || 0} assets)`, 'info'); } catch {}
+			try { clearTimeout(overlayTimeout); } catch {}
+			try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {}
 		} catch (err) {
 			console.warn(`[PreloadManager] Manifest load error at ${url}. Using empty manifest.`, err);
 			this.manifest = { assets: [] };
 			onProgress?.(1.0, 'Manifest error, continuing');
+			try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 1.0, 'Manifest error, continuing'); } catch {}
+			try { clearTimeout(overlayTimeout); } catch {}
+			try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {}
 			try { (await overlayP)?.LoadingOverlay.log(`[manifest] error at ${url}: ${(err as any)?.message || String(err)}`, 'error'); } catch {}
 		}
 	}

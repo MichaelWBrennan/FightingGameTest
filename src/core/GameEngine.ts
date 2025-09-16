@@ -212,17 +212,7 @@ export class GameEngine {
       // Load manifest and then preload assets with detailed progress grouped by type
       // Background preload (non-blocking) to enhance assets progressively
       setTimeout(() => {
-        try {
-          LoadingOverlay.beginTask('manifest_bg', 'Loading manifest', 1);
-        } catch {}
-        const manifestTimeout = setTimeout(() => {
-          try { LoadingOverlay.endTask('manifest_bg', false); } catch {}
-        }, 7000);
-        this.preloader.loadManifest('/assets/manifest.json', (p, label) => {
-          try { LoadingOverlay.updateTask('manifest_bg', Math.max(0, Math.min(1, p ?? 0)), label || 'Loading manifest'); } catch {}
-        }).then(() => {
-          try { clearTimeout(manifestTimeout); } catch {}
-          try { LoadingOverlay.endTask('manifest_bg', true); } catch {}
+        this.preloader.loadManifest('/assets/manifest.json').then(() => {
           try { LoadingOverlay.beginTask('preload_bg', 'Preloading core data', 5); } catch {}
           return this.preloader.preloadAllAssets({
             groupOrder: ['json'],
@@ -243,8 +233,6 @@ export class GameEngine {
         }).then(() => {
           try { LoadingOverlay.endTask('preload_bg', true); } catch {}
         }).catch(() => {
-          try { clearTimeout(manifestTimeout); } catch {}
-          try { LoadingOverlay.endTask('manifest_bg', false); } catch {}
           try { LoadingOverlay.endTask('preload_bg', false); } catch {}
         });
       }, 0);
