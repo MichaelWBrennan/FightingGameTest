@@ -2,16 +2,35 @@
 // This avoids linter errors where we reference pc.* types while using the shimmed runtime.
 
 declare namespace pc {
-  class Application {
-    constructor(canvas: any, opts?: any);
-    start(): void;
+  class EventHandler {
     on(evt: string, cb: Function): void;
     off(evt: string, cb?: Function): void;
+    fire(evt: string, ...args: any[]): void;
+  }
+  class Keyboard extends EventHandler {
+    constructor(element?: Element | Window, options?: { preventDefault?: boolean; stopPropagation?: boolean });
+  }
+  class Mouse extends EventHandler { constructor(element?: Element); }
+  class TouchDevice extends EventHandler { constructor(element: Element); }
+  class GamePads extends EventHandler { poll(): any[]; }
+
+  class Application extends EventHandler {
+    constructor(canvas: any, opts?: any);
+    start(): void;
     setCanvasFillMode(mode: number): void;
     setCanvasResolution(res: number): void;
     resizeCanvas(): void;
     root: any;
+    scene: any;
+    graphicsDevice: any;
+    keyboard: Keyboard;
+    mouse: Mouse;
+    touch: TouchDevice;
+    gamepads: GamePads;
+    timeScale: number;
   }
+  class RenderTarget { constructor(opts?: any); destroy(): void; colorBuffer: any; }
+  class CurveSet {}
   type Entity = any;
   type Vec3 = any;
   type Vec2 = any;
@@ -29,6 +48,7 @@ declare namespace pc {
   const FOG_LINEAR: number;
   const FILLMODE_FILL_WINDOW: number;
   const RESOLUTION_AUTO: number;
+  const PROJECTION_ORTHOGRAPHIC: number;
   const EVENT_KEYDOWN: string;
   const EVENT_KEYUP: string;
   const ELEMENTTYPE_TEXT: number;

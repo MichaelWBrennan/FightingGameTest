@@ -11,7 +11,7 @@
     "postbuild": "mkdir -p public/data public/assets && node -e \"require('ts-node/register');require('./tools/encrypt_assets.ts')\" && node -e \"require('ts-node/register');require('./tools/generate_manifest.ts')\"",
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
-    "preview": "ts-node tools/dev_server.ts",
+    "preview": "node -e \"require('ts-node/register');require('./tools/dev_server.ts')\"",
     "import:sf3": "node ./tools/import_sf3_char_data.js && npm run build",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "test": "jest",
@@ -52,6 +52,7 @@
     "esbuild": "^0.25.1",
     "eslint": "^8.51.0",
     "jest": "^29.7.0",
+    "puppeteer": "^24.21.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },

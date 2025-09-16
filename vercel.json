@@ -2,7 +2,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "public",
   "rewrites": [
-    { "source": "/", "destination": "/api/index" }
+    { "source": "/", "destination": "/api/index" },
+    { "source": "/api/manifest", "destination": "/api/manifest" },
+    { "source": "/api/session", "destination": "/api/session" },
+    { "source": "/api/analytics/(.*)", "destination": "/api/analytics" },
+    { "source": "/api/store/(.*)", "destination": "/api/store" }
   ],
   "headers": [
     {
