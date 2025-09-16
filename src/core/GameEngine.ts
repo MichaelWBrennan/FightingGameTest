@@ -245,6 +245,55 @@ export class GameEngine {
       this.app.start();
       LoadingOverlay.endTask('app_start', true);
 
+      // Optional runtime diagnostic: enable with ?diag=1 to inject a camera and a rotating cube
+      try {
+        const diag = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('diag') === '1';
+        if (diag) {
+          const app = this.app;
+          // Ensure a camera exists and is enabled
+          let camera = app.root.findByName('MainCamera');
+          if (!camera) {
+            camera = new pc.Entity('MainCamera');
+            camera.addComponent('camera', {
+              clearColor: new pc.Color(0.2, 0.2, 0.2, 1),
+              fov: 55,
+              nearClip: 0.1,
+              farClip: 1000
+            });
+            camera.setPosition(0, 2, 6);
+            camera.lookAt(0, 1, 0);
+            app.root.addChild(camera);
+          } else if (!camera.camera) {
+            camera.addComponent('camera', { clearColor: new pc.Color(0.2, 0.2, 0.2, 1) });
+          }
+          camera.enabled = true;
+          try { camera.camera.renderTarget = null; } catch {}
+
+          // Directional light
+          let light = app.root.findByName('DiagLight');
+          if (!light) {
+            light = new pc.Entity('DiagLight');
+            light.addComponent('light', { type: pc.LIGHTTYPE_DIRECTIONAL, color: new pc.Color(1,1,1), intensity: 1.0, castShadows: false });
+            light.setEulerAngles(45, 30, 0);
+            app.root.addChild(light);
+          }
+
+          // Rotating cube
+          let cube = app.root.findByName('DiagCube');
+          if (!cube) {
+            cube = new pc.Entity('DiagCube');
+            cube.addComponent('render', { type: 'box' });
+            cube.setLocalScale(1, 1, 1);
+            cube.setPosition(0, 1, 0);
+            app.root.addChild(cube);
+          }
+          app.on('update', (dt: number) => {
+            const e = app.root.findByName('DiagCube');
+            if (e) e.rotate(0, 60 * dt, 0);
+          });
+        }
+      } catch {}
+
       // Push boot state (will route to match immediately if quickplay param is set)
       LoadingOverlay.beginTask('boot_state', 'Booting', 1);
       await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
