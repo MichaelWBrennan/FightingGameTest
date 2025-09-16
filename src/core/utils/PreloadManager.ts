@@ -21,6 +21,7 @@ export class PreloadManager {
 
 	async loadManifest(url: string = '/assets/manifest.json', onProgress?: (progress: number, label?: string) => void): Promise<void> {
 		const overlayP = import('../../core/ui/LoadingOverlay').catch(() => null);
+		const defaultManifestP = import('./DefaultManifest').catch(() => null);
 		let overlayTimeout: any = null;
 		try { (await overlayP)?.LoadingOverlay.beginTask('manifest_bg', 'Loading manifest', 1); } catch {}
 		try { overlayTimeout = setTimeout(async () => { try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {} }, 7000); } catch {}
@@ -36,7 +37,7 @@ export class PreloadManager {
 			try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 0.2, 'Fetching manifest'); } catch {}
 			let res: Response | null = null;
 			try {
-				res = await fetchWithTimeout(url, 2500, { cache: 'no-store' });
+				res = await fetchWithTimeout(url, 3500, { cache: 'no-store' });
 			} catch {}
 			// Treat empty/invalid bodies as failure to trigger fallback
 			let text: string | null = null;
@@ -58,6 +59,19 @@ export class PreloadManager {
 				}
 			}
 			if (!res || !res.ok) {
+				// Use built-in minimal default manifest to ensure boot continues
+				try { (await overlayP)?.LoadingOverlay.log(`[manifest] using default manifest (static fetch failed)`, 'warn'); } catch {}
+				try {
+					const dm = await defaultManifestP;
+					if (dm && typeof dm.getDefaultManifest === 'function') {
+						this.manifest = dm.getDefaultManifest() as any;
+						onProgress?.(1.0, 'Default manifest ready');
+						try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 1.0, 'Default manifest ready'); } catch {}
+						try { clearTimeout(overlayTimeout); } catch {}
+						try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {}
+						return;
+					}
+				} catch {}
 				console.warn(`[PreloadManager] Manifest not available. Continuing without it.`);
 				this.manifest = { assets: [] };
 				onProgress?.(1.0, 'Manifest not found, continuing');
@@ -70,9 +84,29 @@ export class PreloadManager {
 			onProgress?.(0.6, 'Parsing manifest');
 			try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 0.6, 'Parsing manifest'); } catch {}
 			try {
+				// Validate content-type if available (iOS/Safari can serve HTML for JSON on misconfig)
+				try {
+					const ct = res?.headers?.get?.('content-type') || '';
+					if (ct && !/application\/json/i.test(ct)) {
+						throw new Error(`Unexpected Content-Type: ${ct}`);
+					}
+				} catch {}
 				this.manifest = JSON.parse(text as string);
 			} catch {
 				// Final guard: if JSON parse fails, continue without manifest
+				// Try default manifest as last resort
+				try {
+					const dm = await defaultManifestP;
+					if (dm && typeof dm.getDefaultManifest === 'function') {
+						this.manifest = dm.getDefaultManifest() as any;
+						onProgress?.(1.0, 'Default manifest ready');
+						try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 1.0, 'Default manifest ready'); } catch {}
+						try { clearTimeout(overlayTimeout); } catch {}
+						try { (await overlayP)?.LoadingOverlay.endTask('manifest_bg', true); } catch {}
+						try { (await overlayP)?.LoadingOverlay.log(`[manifest] invalid JSON; used default manifest`, 'warn'); } catch {}
+						return;
+					}
+				} catch {}
 				this.manifest = { assets: [] };
 				onProgress?.(1.0, 'Manifest error, continuing');
 				try { (await overlayP)?.LoadingOverlay.updateTask('manifest_bg', 1.0, 'Manifest error, continuing'); } catch {}
