@@ -37,7 +37,8 @@ export class LoadingOverlay {
 			this.container.id = 'pc-loading-overlay';
 			this.container.style.position = 'fixed';
 			this.container.style.inset = '0';
-			this.container.style.background = '#000';
+			// Use image-based background if available (falls back to solid color)
+			this.container.style.background = "url('/assets/fighting_ui/ui/health_bars/health_bars/gold_background.png') center/cover no-repeat, #000";
 			this.container.style.display = 'flex';
 			this.container.style.alignItems = 'center';
 			this.container.style.justifyContent = 'center';
@@ -59,6 +60,8 @@ export class LoadingOverlay {
 			head.textContent = '== Boot sequence ==';
 			this.container.appendChild(head);
 		}
+		// Hide text headline to favor image-based splash. It remains in DOM for fallback.
+		try { (head.style as any).display = 'none'; } catch {}
 
 		this.fill = document.getElementById('pc-loading-fill');
 		let bar = document.getElementById('pc-loading-bar');
@@ -67,8 +70,9 @@ export class LoadingOverlay {
 			bar.id = 'pc-loading-bar';
 			bar.style.width = '60%';
 			bar.style.maxWidth = '480px';
-			bar.style.height = '8px';
-			bar.style.background = '#333';
+			bar.style.height = '24px';
+			// Image-based progress bar background; fall back to color if unavailable
+			bar.style.background = "url('/assets/fighting_ui/ui/health_bars/health_bars/gray_bar.png') center/contain no-repeat, #333";
 			bar.style.borderRadius = '4px';
 			bar.style.overflow = 'hidden';
 			this.container.appendChild(bar);
@@ -79,7 +83,8 @@ export class LoadingOverlay {
 			this.fill.id = 'pc-loading-fill';
 			this.fill.style.width = '0%';
 			this.fill.style.height = '100%';
-			this.fill.style.background = '#0f0';
+			// Image-based progress bar fill; fall back to color if unavailable
+			(this.fill.style as any).background = "url('/assets/fighting_ui/ui/health_bars/health_bars/green_bar.png') left center / contain no-repeat, #0f0";
 			(this.fill.style as any).transition = 'width 0.2s';
 			bar.appendChild(this.fill);
 		}
@@ -90,9 +95,9 @@ export class LoadingOverlay {
 			this.label.id = 'pc-loading-text';
 			this.label.textContent = 'Loading...';
 			this.label.style.marginTop = '12px';
-			(this.label.style as any).font = '14px/1.2 monospace';
-			(this.label.style as any).opacity = '.9';
-			this.label.style.color = '#0f0';
+			(this.label.style as any).font = '14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, sans-serif';
+			(this.label.style as any).opacity = '.95';
+			this.label.style.color = '#fff';
 			this.container.appendChild(this.label);
 		}
 

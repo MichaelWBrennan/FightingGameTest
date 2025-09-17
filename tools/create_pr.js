@@ -7,32 +7,28 @@ async function main() {
     console.error('NO_PAT');
     process.exit(2);
   }
-  const repo = 'MichaelWBrennan/FightingGameTest';
-  const url = `https://api.github.com/repos/${repo}/pulls`;
-  const payload = {
-    title: 'Fix: render fallback blit + ?diag=1 camera/cube (black screen on iOS Safari)',
-    head: 'fix/render-fallback-blit',
-    base: 'main',
-    body: [
-      'Summary',
-      '- Add fallback blit in PostProcessingManager to copy main camera offscreen render target to the default framebuffer each frame.',
-      '- Wire PostFX manager to update every frame.',
-      '- Add optional runtime diagnostics (?diag=1) to inject a camera, light, and rotating cube, and force on-screen renderTarget=null.',
-      '',
-      'Impact',
-      '- Fixes black screen with FPS when main camera renders to offscreen target without a combine step (observed on iPhone Safari WebGL2).',
-      '- Keeps normal pipeline intact; blit acts as safety net.',
-      '',
-      'How to test',
-      '- Open deployed preview on iOS Safari and desktop.',
-      '- Verify scene renders (no black screen).',
-      '- Visit with ?diag=1 to confirm gray clear + rotating cube renders for quick sanity check.',
-      '',
-      'Notes',
-      '- Assets manifest continues loading in background; rendering no longer blocked if assets fail.'
-    ].join('\n')
-  };
 
+  const repo = process.env.REPO || 'MichaelWBrennan/FightingGameTest';
+  const base = process.env.BASE || 'main';
+  const headBranch = process.env.HEAD || process.env.HEAD_BRANCH || 'feat/image-startup-ui';
+  const title = process.env.PR_TITLE || 'feat(ui): image-based startup splash and menu';
+  const body = (process.env.PR_BODY && process.env.PR_BODY.trim()) || [
+    '### Summary',
+    '- Switch startup/loading overlay to image-based UI (background + progress bar).',
+    '- Update menu to image-based layout with background and button skin.',
+    '- Keep text fallback for robustness.',
+    '',
+    '### Files',
+    '- src/core/ui/LoadingOverlay.ts',
+    '- src/core/ui/UIManager.ts',
+    '- public/index.html',
+    '',
+    '### Test plan',
+    '- Build locally and open index; confirm image splash renders and menu shows a textured start button.',
+    '- Verify Enter key and button both advance.',
+  ].join('\n');
+
+  const url = `https://api.github.com/repos/${repo}/pulls`;
   const headers = {
     'Authorization': `token ${token}`,
     'Accept': 'application/vnd.github+json',
@@ -40,15 +36,30 @@ async function main() {
     'User-Agent': 'cursor-agent'
   };
 
-  const resp = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
-  const data = await resp.json();
-  if (resp.ok && data && data.html_url) {
-    console.log(data.html_url);
+  // Try with branch-only head (same-repo). If that fails, prefix owner.
+  const attempt = async (head) => {
+    const payload = { title, head, base, body };
+    const resp = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
+    const data = await resp.json();
+    return { ok: resp.ok, data };
+  };
+
+  let result = await attempt(headBranch);
+  if (!(result && result.ok && result.data && result.data.html_url)) {
+    // Prefix owner for head if needed
+    const owner = (repo.split('/')[0]);
+    result = await attempt(`${owner}:${headBranch}`);
+  }
+
+  if (result && result.ok && result.data && result.data.html_url) {
+    console.log(result.data.html_url);
     return;
   }
-  // If PR already exists or insufficient scope, attempt to list existing PR for this branch
+
+  // If PR already exists or insufficient scope, attempt to find existing PR for this branch
   try {
-    const listUrl = `https://api.github.com/repos/${repo}/pulls?state=open&head=MichaelWBrennan:fix/render-fallback-blit`;
+    const owner = (repo.split('/')[0]);
+    const listUrl = `https://api.github.com/repos/${repo}/pulls?state=open&head=${owner}:${headBranch}`;
     const listResp = await fetch(listUrl, { headers });
     const list = await listResp.json();
     if (Array.isArray(list) && list.length > 0 && list[0].html_url) {
@@ -56,8 +67,9 @@ async function main() {
       return;
     }
   } catch {}
-  // Print original error payload for diagnosis
-  console.error(JSON.stringify(data));
+
+  // Print last error payload for diagnosis
+  console.error(JSON.stringify(result && result.data ? result.data : { error: 'unknown' }));
   process.exit(1);
 }
 

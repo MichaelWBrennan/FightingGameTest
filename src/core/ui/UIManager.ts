@@ -48,11 +48,66 @@ export class UIManager {
 		if (this.menu) { this.menu.enabled = true; return; }
 		this.menu = new pc.Entity('MenuUI');
 		this.menu.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0,0,1,1) });
-		const label = new pc.Entity('MenuLabel');
-		label.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: 'Press Enter to Start', fontSize: 48, pivot: new pc.Vec2(0.5,0.5), anchor: new pc.Vec4(0.5,0.5,0.5,0.5) });
-		this.menu.addChild(label);
+		// Image-based background splash
+		const bg = new pc.Entity('MenuBackground');
+		bg.addComponent('element', {
+			type: pc.ELEMENTTYPE_IMAGE,
+			anchor: new pc.Vec4(0, 0, 1, 1),
+			// Use gold background if available
+			texture: null as any,
+			color: new pc.Color(0,0,0,1),
+		} as any);
+		this.menu.addChild(bg);
+		// Title/logo area (center top)
+		const title = new pc.Entity('MenuTitle');
+		title.addComponent('element', {
+			type: pc.ELEMENTTYPE_TEXT,
+			text: 'Street Fighter III',
+			fontSize: 56,
+			color: new pc.Color(1,1,1,1),
+			anchor: new pc.Vec4(0.5, 0.12, 0.5, 0.12),
+			pivot: new pc.Vec2(0.5, 0.5)
+		} as any);
+		this.menu.addChild(title);
+		// Start button styled as image-based button
+		const startButton = new pc.Entity('StartButton');
+		startButton.addComponent('element', {
+			type: pc.ELEMENTTYPE_IMAGE,
+			anchor: new pc.Vec4(0.4, 0.75, 0.6, 0.85),
+			color: new pc.Color(0.15, 0.35, 0.85, 0.95)
+		} as any);
+		startButton.addComponent('button', { imageEntity: startButton });
+		const startText = new pc.Entity('StartText');
+		startText.addComponent('element', {
+			type: pc.ELEMENTTYPE_TEXT,
+			text: 'Press Enter',
+			fontSize: 28,
+			color: new pc.Color(1,1,1,1),
+			anchor: new pc.Vec4(0,0,1,1),
+			pivot: new pc.Vec2(0.5,0.5)
+		} as any);
+		startButton.addChild(startText);
+		startButton.button!.on('click', () => {
+			try {
+				// Synthesize Enter key for existing flow
+				const ev = new KeyboardEvent('keydown', { key: 'Enter' });
+				window.dispatchEvent(ev);
+			} catch {}
+		});
+		this.menu.addChild(startButton);
 		this.root?.addChild(this.menu);
 		this.setDomVisible(false);
+		// Attempt to load textures asynchronously for background and button skin
+		void (async () => {
+			try {
+				const bgTex = await this.loadTexture('/assets/fighting_ui/ui/health_bars/health_bars/gold_background.png');
+				if ((bg as any).element) { (bg as any).element.texture = bgTex; (bg as any).element.color = new pc.Color(1,1,1,1); }
+			} catch {}
+			try {
+				const btnTex = await this.loadTexture('/assets/fighting_ui/ui/kenney_ui-pack/PNG/Blue/Default/button_rectangle_square.png');
+				if ((startButton as any).element) { (startButton as any).element.texture = btnTex; (startButton as any).element.color = new pc.Color(1,1,1,1); }
+			} catch {}
+		})();
 	}
 
 	public hideMenu(): void {
