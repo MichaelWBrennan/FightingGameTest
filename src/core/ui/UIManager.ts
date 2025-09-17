@@ -25,6 +25,9 @@ export class UIManager {
 	private healthFillTex: pc.Texture | null = null;
 	private meterSegTex: pc.Texture | null = null;
 
+	// Style
+	private style: 'modern' | 'classic' = 'modern';
+
 	constructor(app: pc.Application) {
 		this.app = app;
 	}
@@ -220,7 +223,16 @@ export class UIManager {
 	private async loadUiTextures(): Promise<void> {
 		// Load only once
 		if (this.healthBgTex && this.healthFillTex && this.meterSegTex) return;
-		// Try to load real textures; fall back to solid colors if missing
+
+		if (this.style === 'modern') {
+			// Generate crisp modern gradients procedurally
+			this.healthBgTex = this.createGradientTexture('#1F2937', '#0F172A');
+			this.healthFillTex = this.createGradientTexture('#22c55e', '#16a34a');
+			this.meterSegTex = this.createGradientTexture('#60a5fa', '#2563eb');
+			return;
+		}
+
+		// Classic image-based fallback
 		const bg = await this.tryLoadTexture(
 			'/assets/fighting_ui/ui/health_bars/health_bars/gray_bar.png',
 			new pc.Color(0.25, 0.25, 0.25, 1)
@@ -291,6 +303,31 @@ export class UIManager {
 		tex.setSource(canvas as unknown as HTMLImageElement);
 		tex.minFilter = pc.FILTER_NEAREST;
 		tex.magFilter = pc.FILTER_NEAREST;
+		return tex;
+	}
+
+	private createGradientTexture(start: string, end: string): pc.Texture {
+		const canvas = document.createElement('canvas');
+		canvas.width = 256;
+		canvas.height = 16;
+		const ctx = canvas.getContext('2d')!;
+		const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+		grad.addColorStop(0, start);
+		grad.addColorStop(1, end);
+		ctx.fillStyle = grad;
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		// subtle gloss line
+		ctx.fillStyle = 'rgba(255,255,255,0.08)';
+		ctx.fillRect(0, 0, canvas.width, 2);
+		const tex = new pc.Texture(this.app.graphicsDevice, {
+			width: canvas.width,
+			height: canvas.height,
+			format: pc.PIXELFORMAT_R8_G8_B8_A8,
+			autoMipmap: true
+		});
+		tex.setSource(canvas as unknown as HTMLImageElement);
+		tex.minFilter = pc.FILTER_LINEAR;
+		tex.magFilter = pc.FILTER_LINEAR;
 		return tex;
 	}
 
