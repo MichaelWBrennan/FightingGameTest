@@ -6,6 +6,8 @@ export class UIManager {
 	private root: pc.Entity | null = null;
 	private menu: pc.Entity | null = null;
 	private hud: pc.Entity | null = null;
+	// Runtime-generated font to ensure text renders without Editor font assets
+	private canvasFont: any | null = null;
 	private touchOverlay: HTMLDivElement | null = null;
 	private domContainer: HTMLDivElement | null = null;
 	private domP1: HTMLDivElement | null = null;
@@ -68,6 +70,8 @@ export class UIManager {
 			screenSpace: true
 		});
 		this.app.root.addChild(this.root);
+		// Ensure we have a runtime text font available for all text elements
+		this.ensureCanvasFont();
 		this.ensureDomFallback();
 		this.ensureTouchControls();
 		this.setupEventListeners();
@@ -708,6 +712,7 @@ export class UIManager {
 			anchor: new pc.Vec4(0.5, 0.88, 0.5, 0.96),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
+		this.applyTextFont(this.roundTimerText);
 		this.hud.addChild(this.roundTimerText);
 
 		// Round pips
@@ -734,6 +739,7 @@ export class UIManager {
 			anchor: new pc.Vec4(0.5, 0.5, 0.5, 0.5),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
+		this.applyTextFont(this.bannerText);
 		this.bannerText.enabled = false;
 		this.hud.addChild(this.bannerText);
 	}
@@ -917,6 +923,7 @@ export class UIManager {
 			anchor: new pc.Vec4(flip ? 0.05 : 0.25, 0, flip ? 0.75 : 0.98, 1),
 			pivot: new pc.Vec2(0, 0.5)
 		} as any);
+		this.applyTextFont(text);
 		container.addChild(text);
 		this.hud!.addChild(container);
 		return { root: container, text, portrait };
@@ -934,6 +941,7 @@ export class UIManager {
 			anchor: new pc.Vec4(0, 0.15, 1, 0.85),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
+		this.applyTextFont(hits);
 		container.addChild(hits);
 		const dmg = new pc.Entity('Damage');
 		dmg.addComponent('element', {
@@ -944,10 +952,44 @@ export class UIManager {
 			anchor: new pc.Vec4(0, 0, 1, 0.4),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
+		this.applyTextFont(dmg);
 		container.addChild(dmg);
 		container.enabled = false;
 		this.hud!.addChild(container);
 		return { container, hits, dmg };
+	}
+
+	// ================== Text rendering helpers ==================
+	private ensureCanvasFont(): void {
+		if (this.canvasFont) return;
+		try {
+			const CanvasFont = (pc as any).CanvasFont;
+			if (CanvasFont) {
+				// Prefer a legible system font; if custom fonts are loaded via CSS, the browser will use them
+				try {
+					this.canvasFont = new CanvasFont(this.app.graphicsDevice, {
+						fontName: 'KenPixel, KenneyFuture, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif',
+						fontSize: 48,
+						maxAtlasWidth: 2048,
+						maxAtlasHeight: 2048
+					});
+				} catch (e) {
+					// Fallback to older constructor signature if engine version differs
+					try {
+						this.canvasFont = new CanvasFont(this.app.graphicsDevice, 'system-ui, Arial', 48);
+					} catch {}
+				}
+			}
+		} catch {}
+	}
+
+	private applyTextFont(entity: pc.Entity): void {
+		try {
+			if (!this.canvasFont) this.ensureCanvasFont();
+			if (this.canvasFont && (entity as any).element) {
+				(entity as any).element.font = this.canvasFont;
+			}
+		} catch {}
 	}
 
 	private setupEventListeners(): void {
