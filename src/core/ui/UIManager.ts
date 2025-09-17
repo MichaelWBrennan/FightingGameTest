@@ -13,19 +13,41 @@ export class UIManager {
 	private p2HealthContainer: pc.Entity | null = null;
 	private p1HealthFill: pc.Entity | null = null;
 	private p2HealthFill: pc.Entity | null = null;
+	// Delayed white chip for health bars
+	private p1HealthChip: pc.Entity | null = null;
+	private p2HealthChip: pc.Entity | null = null;
 	private p1MeterContainer: pc.Entity | null = null;
 	private p2MeterContainer: pc.Entity | null = null;
 	private p1MeterSegments: pc.Entity[] = [];
 	private p2MeterSegments: pc.Entity[] = [];
+	// Drive gauges (SF6 style)
+	private p1DriveContainer: pc.Entity | null = null;
+	private p2DriveContainer: pc.Entity | null = null;
+	private p1DriveSegments: pc.Entity[] = [];
+	private p2DriveSegments: pc.Entity[] = [];
+	private p1BurnoutOverlay: pc.Entity | null = null;
+	private p2BurnoutOverlay: pc.Entity | null = null;
 	private roundTimerText: pc.Entity | null = null;
+	private roundTimerCapsule: pc.Entity | null = null;
 	private p1Pips: pc.Entity | null = null;
 	private p2Pips: pc.Entity | null = null;
+	// Nameplates & portraits
+	private p1NameText: pc.Entity | null = null;
+	private p2NameText: pc.Entity | null = null;
+	private p1Portrait: pc.Entity | null = null;
+	private p2Portrait: pc.Entity | null = null;
+	// Combo & announcer banners
+	private comboP1: { container: pc.Entity; hits: pc.Entity; dmg: pc.Entity } | null = null;
+	private comboP2: { container: pc.Entity; hits: pc.Entity; dmg: pc.Entity } | null = null;
+	private bannerText: pc.Entity | null = null;
 	// Textures
 	private healthBgTex: pc.Texture | null = null;
 	private healthFillTex: pc.Texture | null = null;
 	private meterSegTex: pc.Texture | null = null;
 	private glossTex: pc.Texture | null = null;
 	private pipTex: pc.Texture | null = null;
+	private capsuleTex: pc.Texture | null = null;
+	private nameplateTex: pc.Texture | null = null;
 
 	// Style
 	private style: 'modern' | 'classic' = 'modern';
@@ -45,6 +67,7 @@ export class UIManager {
 		});
 		this.app.root.addChild(this.root);
 		this.ensureDomFallback();
+		this.setupEventListeners();
 		try { (await import('./LoadingOverlay')).LoadingOverlay.endTask('ui_init', true); } catch {}
 	}
 
@@ -135,7 +158,7 @@ export class UIManager {
 		this.setDomVisible(false);
 	}
 
-	public updateHUD(p1Health: number, p2Health: number, p1Meter?: number, p2Meter?: number, p1Max?: number, p2Max?: number): void {
+	public updateHUD(p1Health: number, p2Health: number, p1Meter?: number, p2Meter?: number, p1Max?: number, p2Max?: number, p1Drive?: number, p2Drive?: number): void {
 		if (!this.hud) return;
 		const h1 = Math.max(0, Math.floor(p1Health));
 		const h2 = Math.max(0, Math.floor(p2Health));
@@ -143,6 +166,8 @@ export class UIManager {
 		const max2 = Math.max(1, Math.floor(p2Max ?? 1000));
 		const m1 = Math.max(0, Math.min(100, Math.floor((p1Meter ?? 0))));
 		const m2 = Math.max(0, Math.min(100, Math.floor((p2Meter ?? 0))));
+		const d1 = Math.max(0, Math.min(100, Math.floor((p1Drive ?? 100))));
+		const d2 = Math.max(0, Math.min(100, Math.floor((p2Drive ?? 100))));
 
 		// Update textured health bars if present
 		try {
@@ -156,19 +181,60 @@ export class UIManager {
 				const a = this.p2HealthFill.element.anchor as pc.Vec4;
 				this.p2HealthFill.element.anchor = new pc.Vec4(Math.max(0, 1 - r2), a.y, 1, a.w);
 			}
+			// Animate chip bars toward the fill ratio
+			if (this.p1HealthChip && this.p1HealthChip.element) {
+				const a = this.p1HealthChip.element.anchor as pc.Vec4;
+				const current = a.z;
+				const target = Math.max(0.001, h1 / max1);
+				const next = current + (target - current) * 0.08; // slow catch-up
+				this.p1HealthChip.element.anchor = new pc.Vec4(0, a.y, Math.max(0.001, next), a.w);
+			}
+			if (this.p2HealthChip && this.p2HealthChip.element) {
+				const a = this.p2HealthChip.element.anchor as pc.Vec4;
+				const currentLeft = a.x;
+				const targetLeft = Math.max(0, 1 - (h2 / max2));
+				const next = currentLeft + (targetLeft - currentLeft) * 0.08;
+				this.p2HealthChip.element.anchor = new pc.Vec4(Math.max(0, next), a.y, 1, a.w);
+			}
 		} catch {}
 
-		// Update meters as 4 segments based on percentage
+		// Update super meters as 3 segments based on percentage (SF6 SA levels)
 		try {
-			const segs1 = Math.max(0, Math.min(4, Math.floor((m1 / 100) * 4)));
-			const segs2 = Math.max(0, Math.min(4, Math.floor((m2 / 100) * 4)));
+			const segs1 = Math.max(0, Math.min(3, Math.floor((m1 / 100) * 3 + 0.0001)));
+			const segs2 = Math.max(0, Math.min(3, Math.floor((m2 / 100) * 3 + 0.0001)));
 			this.p1MeterSegments.forEach((e, i) => e.enabled = i < segs1);
 			this.p2MeterSegments.forEach((e, i) => e.enabled = i < segs2);
+		} catch {}
+
+		// Update drive gauges as 6 segments, burnout overlay when 0
+		try {
+			const dSegs1 = Math.max(0, Math.min(6, Math.floor((d1 / 100) * 6 + 0.0001)));
+			const dSegs2 = Math.max(0, Math.min(6, Math.floor((d2 / 100) * 6 + 0.0001)));
+			this.p1DriveSegments.forEach((e, i) => e.enabled = i < dSegs1);
+			this.p2DriveSegments.forEach((e, i) => e.enabled = i < dSegs2);
+			if (this.p1BurnoutOverlay && this.p1BurnoutOverlay.element) this.p1BurnoutOverlay.enabled = (dSegs1 === 0);
+			if (this.p2BurnoutOverlay && this.p2BurnoutOverlay.element) this.p2BurnoutOverlay.enabled = (dSegs2 === 0);
 		} catch {}
 
 		// Fallback DOM text (debug/diagnostic)
 		if (this.domP1) this.domP1.textContent = `P1: ${h1}${p1Max ? '/' + Math.floor(p1Max) : ''} | ${m1}%`;
 		if (this.domP2) this.domP2.textContent = `P2: ${h2}${p2Max ? '/' + Math.floor(p2Max) : ''} | ${m2}%`;
+	}
+
+	public setNameplates(p1Name: string, p2Name: string, p1PortraitId?: string, p2PortraitId?: string): void {
+		// Create if missing
+		if (!this.hud) return;
+		if (!this.p1NameText || !this.p2NameText) {
+			const left = this.createNameplate(new pc.Vec4(0.03, 0.82, 0.30, 0.88), false);
+			const right = this.createNameplate(new pc.Vec4(0.70, 0.82, 0.97, 0.88), true);
+			this.p1NameText = left.text; this.p1Portrait = left.portrait;
+			this.p2NameText = right.text; this.p2Portrait = right.portrait;
+		}
+		if (this.p1NameText?.element) this.p1NameText.element.text = (p1Name || 'PLAYER 1').toUpperCase();
+		if (this.p2NameText?.element) this.p2NameText.element.text = (p2Name || 'PLAYER 2').toUpperCase();
+		// Try to load portraits from conventional path; fall back to solid
+		if (p1PortraitId) this.setPortraitTexture(this.p1Portrait!, `/assets/portraits/${p1PortraitId}.png`, new pc.Color(0.12,0.12,0.12,1));
+		if (p2PortraitId) this.setPortraitTexture(this.p2Portrait!, `/assets/portraits/${p2PortraitId}.png`, new pc.Color(0.12,0.12,0.12,1));
 	}
 
 	private ensureDomFallback(): void {
@@ -212,6 +278,31 @@ export class UIManager {
 		this.domContainer.style.display = visible ? 'block' : 'none';
 	}
 
+	// Respect mobile safe-area insets by padding the screen element anchors
+	private applySafeAreaInsets(): void {
+		try {
+			const style = getComputedStyle(document.documentElement);
+			const l = parseFloat(style.getPropertyValue('env(safe-area-inset-left)') || '0') || 0;
+			const r = parseFloat(style.getPropertyValue('env(safe-area-inset-right)') || '0') || 0;
+			const t = parseFloat(style.getPropertyValue('env(safe-area-inset-top)') || '0') || 0;
+			const b = parseFloat(style.getPropertyValue('env(safe-area-inset-bottom)') || '0') || 0;
+			// Convert px to normalized anchor padding (approx using window size)
+			const w = Math.max(1, window.innerWidth);
+			const h = Math.max(1, window.innerHeight);
+			const padX = Math.max(0, Math.min(0.06, l / w + r / w));
+			const padY = Math.max(0, Math.min(0.08, t / h + b / h));
+			if (this.root && (this.root as any).screen) {
+				// Adjust reference resolution anchor indirectly by adding an overlay padding entity if needed
+				(this.root as any).screen.referenceResolution = new pc.Vec2(1920, 1080);
+			}
+			// Shift HUD groups down from the very edge
+			if (this.hud && this.hud.element) {
+				const a = this.hud.element.anchor as pc.Vec4;
+				this.hud.element.anchor = new pc.Vec4(a.x + padX * 0.5, a.y + padY * 0.5, a.z - padX * 0.5, a.w - padY * 0.5);
+			}
+		} catch {}
+	}
+
 	// ================== Fighting HUD helpers ==================
 	private async ensureFightingHudBuilt(): Promise<void> {
 		try {
@@ -233,6 +324,8 @@ export class UIManager {
 			this.meterSegTex = this.createGradientTexture('#60a5fa', '#2563eb');
 			this.glossTex = this.createVerticalAlphaGradientTexture(256, 28, 0.15, 0.0);
 			this.pipTex = this.createCircleTexture(22, '#94a3b8', 0.12);
+			this.capsuleTex = this.createRoundedGradientTexture(320, 80, 40, '#0b1220', '#0f172a', '#1f2937');
+			this.nameplateTex = this.createRoundedGradientTexture(420, 48, 16, '#0b1220', '#0f172a', '#1f2937');
 			return;
 		}
 
@@ -286,6 +379,15 @@ export class UIManager {
 			return await this.loadTexture(url);
 		} catch {
 			return this.createSolidTexture(fallbackColor);
+		}
+	}
+
+	private async setPortraitTexture(entity: pc.Entity, url: string, bg: pc.Color): Promise<void> {
+		try {
+			const tex = await this.loadTexture(url);
+			if (entity.element) { (entity.element as any).texture = tex; (entity.element as any).color = new pc.Color(1,1,1,1); }
+		} catch {
+			if (entity.element) { (entity.element as any).texture = this.createSolidTexture(bg) as any; (entity.element as any).color = new pc.Color(1,1,1,1); }
 		}
 	}
 
@@ -439,11 +541,29 @@ export class UIManager {
 		this.p1HealthContainer = this.createHealthBar(new pc.Vec4(0.03, 0.90, 0.47, 0.97), false);
 		this.p2HealthContainer = this.createHealthBar(new pc.Vec4(0.53, 0.90, 0.97, 0.97), true);
 
-		// Super/EX meters (bottom)
-		const p1m = this.createMeterBar(new pc.Vec4(0.03, 0.05, 0.35, 0.085), false, 4);
-		const p2m = this.createMeterBar(new pc.Vec4(0.65, 0.05, 0.97, 0.085), true, 4);
+		// Drive gauges (just below health bars) - 6 segments, burnout overlay
+		const p1d = this.createDriveGauge(new pc.Vec4(0.03, 0.885, 0.47, 0.900), false, 6);
+		const p2d = this.createDriveGauge(new pc.Vec4(0.53, 0.885, 0.97, 0.900), true, 6);
+		this.p1DriveContainer = p1d.container; this.p1DriveSegments = p1d.segments; this.p1BurnoutOverlay = p1d.burnout;
+		this.p2DriveContainer = p2d.container; this.p2DriveSegments = p2d.segments; this.p2BurnoutOverlay = p2d.burnout;
+
+		// Super/EX meters (bottom) - 3 segments for SA1-SA3
+		const p1m = this.createMeterBar(new pc.Vec4(0.03, 0.05, 0.35, 0.085), false, 3);
+		const p2m = this.createMeterBar(new pc.Vec4(0.65, 0.05, 0.97, 0.085), true, 3);
 		this.p1MeterContainer = p1m.container; this.p1MeterSegments = p1m.segments;
 		this.p2MeterContainer = p2m.container; this.p2MeterSegments = p2m.segments;
+
+		// Round timer (center top) with capsule background
+		if (this.capsuleTex) {
+			this.roundTimerCapsule = new pc.Entity('TimerCapsule');
+			this.roundTimerCapsule.addComponent('element', {
+				type: pc.ELEMENTTYPE_IMAGE,
+				texture: this.capsuleTex as any,
+				anchor: new pc.Vec4(0.44, 0.86, 0.56, 0.98),
+				color: new pc.Color(1,1,1,0.96)
+			} as any);
+			this.hud.addChild(this.roundTimerCapsule);
+		}
 
 		// Round timer (center top)
 		this.roundTimerText = new pc.Entity('RoundTimer');
@@ -460,6 +580,29 @@ export class UIManager {
 		// Round pips
 		this.p1Pips = this.createRoundPips('P1Pips', new pc.Vec4(0.25, 0.86, 0.35, 0.89), false);
 		this.p2Pips = this.createRoundPips('P2Pips', new pc.Vec4(0.65, 0.86, 0.75, 0.89), true);
+
+		// Nameplates & portraits
+		const left = this.createNameplate(new pc.Vec4(0.03, 0.82, 0.30, 0.88), false);
+		const right = this.createNameplate(new pc.Vec4(0.70, 0.82, 0.97, 0.88), true);
+		this.p1NameText = left.text; this.p1Portrait = left.portrait;
+		this.p2NameText = right.text; this.p2Portrait = right.portrait;
+
+		// Combo displays
+		this.comboP1 = this.createComboDisplay(new pc.Vec4(0.08, 0.70, 0.22, 0.80), new pc.Color(1, 0.92, 0.65));
+		this.comboP2 = this.createComboDisplay(new pc.Vec4(0.78, 0.70, 0.92, 0.80), new pc.Color(0.80, 0.92, 1));
+
+		// Announcer banner
+		this.bannerText = new pc.Entity('BannerText');
+		this.bannerText.addComponent('element', {
+			type: pc.ELEMENTTYPE_TEXT,
+			text: '',
+			fontSize: 84,
+			color: new pc.Color(1, 1, 1, 1),
+			anchor: new pc.Vec4(0.5, 0.5, 0.5, 0.5),
+			pivot: new pc.Vec2(0.5, 0.5)
+		} as any);
+		this.bannerText.enabled = false;
+		this.hud.addChild(this.bannerText);
 	}
 
 	private createHealthBar(anchor: pc.Vec4, flip: boolean): pc.Entity {
@@ -482,6 +625,15 @@ export class UIManager {
 			color: new pc.Color(1, 1, 1, 1)
 		} as any);
 
+		// Chip bar (white delayed damage)
+		const chip = new pc.Entity('Chip');
+		chip.addComponent('element', {
+			type: pc.ELEMENTTYPE_IMAGE,
+			texture: this.createGradientTexture('#ffffff', '#d1d5db') as any,
+			anchor: flip ? new pc.Vec4(0.999, 0, 1, 1) : new pc.Vec4(0, 0, 1, 1),
+			color: new pc.Color(1, 1, 1, 0.5)
+		} as any);
+
 		// Subtle gloss overlay for modern look
 		if (this.glossTex) {
 			const gloss = new pc.Entity('Gloss');
@@ -496,9 +648,10 @@ export class UIManager {
 
 		container.addChild(bg);
 		container.addChild(fill);
+		container.addChild(chip);
 		this.hud!.addChild(container);
 
-		if (flip) this.p2HealthFill = fill; else this.p1HealthFill = fill;
+		if (flip) { this.p2HealthFill = fill; this.p2HealthChip = chip; } else { this.p1HealthFill = fill; this.p1HealthChip = chip; }
 		return container;
 	}
 
@@ -535,6 +688,50 @@ export class UIManager {
 		return { container, segments: segs };
 	}
 
+	private createDriveGauge(anchor: pc.Vec4, flip: boolean, segments: number): { container: pc.Entity; segments: pc.Entity[]; burnout: pc.Entity } {
+		const container = new pc.Entity(flip ? 'P2_Drive' : 'P1_Drive');
+		container.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor });
+
+		const bg = new pc.Entity('BG');
+		bg.addComponent('element', {
+			type: pc.ELEMENTTYPE_IMAGE,
+			texture: this.healthBgTex as any,
+			anchor: new pc.Vec4(0, 0, 1, 1),
+			color: new pc.Color(1, 1, 1, 0.75)
+		} as any);
+		container.addChild(bg);
+
+		const segs: pc.Entity[] = [];
+		for (let i = 0; i < segments; i++) {
+			const left = i / segments;
+			const right = (i + 1) / segments;
+			const seg = new pc.Entity('DriveSeg_' + i);
+			seg.addComponent('element', {
+				type: pc.ELEMENTTYPE_IMAGE,
+				texture: this.createGradientTexture('#38bdf8', '#0ea5e9') as any,
+				anchor: new pc.Vec4(left + 0.005, 0.2, right - 0.005, 0.8),
+				color: new pc.Color(1, 1, 1, 1)
+			} as any);
+			seg.enabled = true;
+			container.addChild(seg);
+			segs.push(seg);
+		}
+
+		// Burnout overlay (red tint when empty)
+		const burnout = new pc.Entity('Burnout');
+		burnout.addComponent('element', {
+			type: pc.ELEMENTTYPE_IMAGE,
+			texture: this.createSolidTexture(new pc.Color(0.75, 0.10, 0.12, 1)) as any,
+			anchor: new pc.Vec4(0, 0, 1, 1),
+			color: new pc.Color(1, 1, 1, 0.0)
+		} as any);
+		burnout.enabled = false;
+		container.addChild(burnout);
+
+		this.hud!.addChild(container);
+		return { container, segments: segs, burnout };
+	}
+
 	private createRoundPips(name: string, anchor: pc.Vec4, flip: boolean): pc.Entity {
 		const container = new pc.Entity(name);
 		container.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor });
@@ -553,6 +750,103 @@ export class UIManager {
 		}
 		this.hud!.addChild(container);
 		return container;
+	}
+
+	private createNameplate(anchor: pc.Vec4, flip: boolean): { root: pc.Entity; text: pc.Entity; portrait: pc.Entity } {
+		const container = new pc.Entity(flip ? 'P2_Nameplate' : 'P1_Nameplate');
+		container.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor });
+		const bg = new pc.Entity('BG');
+		bg.addComponent('element', {
+			type: pc.ELEMENTTYPE_IMAGE,
+			texture: this.nameplateTex as any,
+			anchor: new pc.Vec4(0, 0, 1, 1),
+			color: new pc.Color(1, 1, 1, 0.95)
+		} as any);
+		container.addChild(bg);
+		// Portrait on outer side
+		const portrait = new pc.Entity('Portrait');
+		const pLeft = flip ? 0.78 : 0.02;
+		const pRight = flip ? 0.98 : 0.22;
+		portrait.addComponent('element', {
+			type: pc.ELEMENTTYPE_IMAGE,
+			texture: this.createSolidTexture(new pc.Color(0.12,0.12,0.12,1)) as any,
+			anchor: new pc.Vec4(pLeft, 0.05, pRight, 0.95),
+			color: new pc.Color(1,1,1,1)
+		} as any);
+		container.addChild(portrait);
+		// Name text centered toward inner side
+		const text = new pc.Entity('NameText');
+		text.addComponent('element', {
+			type: pc.ELEMENTTYPE_TEXT,
+			text: flip ? 'PLAYER 2' : 'PLAYER 1',
+			fontSize: 24,
+			color: new pc.Color(0.95, 0.98, 1, 1),
+			anchor: new pc.Vec4(flip ? 0.05 : 0.25, 0, flip ? 0.75 : 0.98, 1),
+			pivot: new pc.Vec2(0, 0.5)
+		} as any);
+		container.addChild(text);
+		this.hud!.addChild(container);
+		return { root: container, text, portrait };
+	}
+
+	private createComboDisplay(anchor: pc.Vec4, color: pc.Color): { container: pc.Entity; hits: pc.Entity; dmg: pc.Entity } {
+		const container = new pc.Entity('Combo');
+		container.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor });
+		const hits = new pc.Entity('Hits');
+		hits.addComponent('element', {
+			type: pc.ELEMENTTYPE_TEXT,
+			text: '',
+			fontSize: 44,
+			color,
+			anchor: new pc.Vec4(0, 0.15, 1, 0.85),
+			pivot: new pc.Vec2(0.5, 0.5)
+		} as any);
+		container.addChild(hits);
+		const dmg = new pc.Entity('Damage');
+		dmg.addComponent('element', {
+			type: pc.ELEMENTTYPE_TEXT,
+			text: '',
+			fontSize: 22,
+			color: new pc.Color(1,1,1,1),
+			anchor: new pc.Vec4(0, 0, 1, 0.4),
+			pivot: new pc.Vec2(0.5, 0.5)
+		} as any);
+		container.addChild(dmg);
+		container.enabled = false;
+		this.hud!.addChild(container);
+		return { container, hits, dmg };
+	}
+
+	private setupEventListeners(): void {
+		// Combo counter events
+		(this.app as any).on?.('ui:combo', (data: any) => {
+			try {
+				const side = (data?.playerId === 'player2') ? this.comboP2 : this.comboP1;
+				if (!side) return;
+				if (side.hits.element) side.hits.element.text = `${Math.max(1, Number(data?.hits || 1))} HITS`;
+				if (side.dmg.element) {
+					const dmg = Math.max(0, Math.floor(Number(data?.damage || 0)));
+					side.dmg.element.text = dmg > 0 ? `${dmg} dmg` : '';
+				}
+				side.container.enabled = true;
+				// Auto-hide after a short delay
+				setTimeout(() => { try { side.container.enabled = false; } catch {} }, 1200);
+			} catch {}
+		});
+		// Victory banner
+		(this.app as any).on?.('match:victory', (_winnerId: string) => {
+			this.showBanner('KO!');
+		});
+	}
+
+	private showBanner(text: string): void {
+		if (!this.bannerText || !this.bannerText.element) return;
+		this.bannerText.element.text = text;
+		this.bannerText.enabled = true;
+		try {
+			// Fade out
+			setTimeout(() => { try { if (this.bannerText) this.bannerText.enabled = false; } catch {} }, 1400);
+		} catch {}
 	}
 }
 

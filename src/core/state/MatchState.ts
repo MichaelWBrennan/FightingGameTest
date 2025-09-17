@@ -18,6 +18,17 @@ export class MatchState implements GameState {
 		const ui = (this.app as any)._ui as UIManager | undefined;
 		ui?.showHUD();
 		this.spawnCharactersFromSelection();
+		// Initialize nameplates once characters are ready (next frame)
+		setTimeout(() => {
+			try {
+				const services = (this.app as any)._services as any;
+				const characterManager: CharacterManager = services.resolve('characters');
+				const active = characterManager.getActiveCharacters();
+				if (active[0] && active[1]) {
+					ui?.setNameplates(active[0].config.displayName || active[0].config.name || 'Player 1', active[1].config.displayName || active[1].config.name || 'Player 2', active[0].id, active[1].id);
+				}
+			} catch {}
+		}, 0);
 	}
 
 	exit(): void {}
