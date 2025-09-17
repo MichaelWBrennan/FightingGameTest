@@ -204,7 +204,9 @@ export class CharacterSelectState implements GameState {
 		if (!p1 || !p2) return;
 		const p1Max = p1.maxHealth || p1.health;
 		const p2Max = p2.maxHealth || p2.health;
-		(this.app as any)._ui.updateHUD(p1.health, p2.health, p1.meter, p2.meter, p1Max, p2Max);
+		// Update HUD bars and set nameplates
+		(this.app as any)._ui.updateHUD(p1.health, p2.health, p1.meter, p2.meter, p1Max, p2Max, 100, 100);
+		(this.app as any)._ui.setNameplates(p1.config.displayName || p1.config.name || 'Player 1', p2.config.displayName || p2.config.name || 'Player 2', p1.id, p2.id);
 	}
 
 	private commitAndStart(): void {

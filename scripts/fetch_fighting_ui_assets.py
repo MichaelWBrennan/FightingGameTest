@@ -173,13 +173,11 @@ def main() -> int:
 
     # Curated OpenGameArt pages likely relevant to fighting UI (CC0 preferred)
     pages = [
-        # Kenney UI Pack mirror on OGA (license may be CC0 or similar)
-        "https://opengameart.org/content/ui-pack",
+        # Kenney UI Pack (widely used CC0 assets suitable for HUD construction)
+        "https://opengameart.org/content/kenney-ui-pack",
         # Health bars / HUD items (various authors; filter later by license text)
         "https://opengameart.org/content/health-bars",
-        "https://opengameart.org/content/rpg-gui-construction-kit",
-        # Hit sparks / effects
-        "https://opengameart.org/content/hit-sparks",
+        # Effects & explosions for KO/Perfect flair
         "https://opengameart.org/content/effects-and-explosions",
         # Numbers / fonts for timers and scores
         "https://opengameart.org/content/kenney-fonts",

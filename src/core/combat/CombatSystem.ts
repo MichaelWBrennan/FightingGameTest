@@ -40,6 +40,18 @@ export class CombatSystem {
     this.processInputs();
     this.updateHitboxes();
     this.checkCollisions();
+
+    // Update HUD each frame from authoritative character state
+    try {
+      const active = this.characterManager.getActiveCharacters();
+      const p1 = active[0];
+      const p2 = active[1];
+      if (p1 && p2) {
+        // Meter and drive are placeholders for now; map to meter
+        const ui: any = (this.app as any)._ui;
+        ui?.updateHUD(p1.health, p2.health, p1.meter, p2.meter, p1.maxHealth || p1.health, p2.maxHealth || p2.health, 100, 100);
+      }
+    } catch {}
   }
 
   // Deterministic step for rollback, driven by netcode
@@ -192,6 +204,16 @@ export class CombatSystem {
     this.hitstop = Math.floor(damage / 10); // Hitstop based on damage
     
     Logger.info(`${attacker.id} hits ${defender.id} for ${damage} damage`);
+
+    // Emit combo-like UI event (simplified)
+    try {
+      const ui: any = (this.app as any)._ui;
+      const hits = (attacker as any)._comboHits = ((attacker as any)._comboHits || 0) + 1;
+      const dmgAcc = (attacker as any)._comboDmg = ((attacker as any)._comboDmg || 0) + damage;
+      ui?.['app']?.fire?.('ui:combo', { playerId: attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 'player1' : 'player2', hits, damage: dmgAcc });
+      // Clear combo after brief delay
+      setTimeout(() => { try { (attacker as any)._comboHits = 0; (attacker as any)._comboDmg = 0; } catch {} }, 1200);
+    } catch {}
     
     if (defender.health <= 0) {
       this.handleKO(defender, attacker);
