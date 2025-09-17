@@ -13,6 +13,9 @@ export default function handler(_req: any, res: any) {
 		const assetsDataDir = fs.existsSync(path.join(cwd, 'public', 'assets', 'data'))
 			? path.join(cwd, 'public', 'assets', 'data')
 			: path.join(cwd, 'assets', 'data');
+		const assetsUiDir = fs.existsSync(path.join(cwd, 'public', 'assets', 'fighting_ui'))
+			? path.join(cwd, 'public', 'assets', 'fighting_ui')
+			: path.join(cwd, 'assets', 'fighting_ui');
 		const guessType = (p: string) => {
 			const ext = p.split('.').pop()?.toLowerCase();
 			if (ext === 'json') return 'json';
@@ -36,6 +39,7 @@ export default function handler(_req: any, res: any) {
 		};
 		walk(dataDir, dataDir, '/data');
 		walk(assetsDataDir, assetsDataDir, '/assets/data');
+		walk(assetsUiDir, assetsUiDir, '/assets/fighting_ui');
 
 		// If we still have nothing, try serving the prebuilt manifest.json if available
 		if (entries.length === 0) {

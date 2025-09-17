@@ -157,6 +157,8 @@ export class UIManager {
 		try {
 			await this.loadUiTextures();
 			this.buildFightingHud();
+			// Hide DOM fallback once textured HUD is successfully built
+			this.setDomVisible(false);
 		} catch {}
 	}
 

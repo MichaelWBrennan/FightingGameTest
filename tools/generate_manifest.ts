@@ -83,6 +83,31 @@ function main() {
 			}
 		}
 	}
+	// Copy fighting UI assets (images, fonts, etc.) into public/assets so they are accessible at /assets/fighting_ui/
+	const assetsUiDir = path.join(process.cwd(), 'assets', 'fighting_ui');
+	if (fs.existsSync(assetsUiDir)) {
+		const publicAssetsUiDir = path.join(publicAssetsDir, 'fighting_ui');
+		fs.mkdirSync(publicAssetsUiDir, { recursive: true });
+		const stack: string[] = [assetsUiDir];
+		while (stack.length) {
+			const dir = stack.pop()!;
+			for (const entry of fs.readdirSync(dir)) {
+				const p = path.join(dir, entry);
+				const st = fs.statSync(p);
+				if (st.isDirectory()) {
+					stack.push(p);
+				} else {
+					const rel = path.relative(assetsUiDir, p).replace(/\\/g, '/');
+					const dest = path.join(publicAssetsUiDir, rel);
+					fs.mkdirSync(path.dirname(dest), { recursive: true });
+					fs.copyFileSync(p, dest);
+					const sz = fs.statSync(dest).size;
+					entries.push({ path: `/assets/fighting_ui/${rel}`, type: guessType(rel), sha256: hashFile(dest), size: sz });
+				}
+			}
+		}
+	}
+
 	// Ensure store catalog listed if present
 	const catalogPath = path.join(dataDir, 'store', 'catalog.json');
 	if (fs.existsSync(catalogPath) && !entries.find(e => e.path.endsWith('/store/catalog.json'))) {
