@@ -24,6 +24,8 @@ export class UIManager {
 	private healthBgTex: pc.Texture | null = null;
 	private healthFillTex: pc.Texture | null = null;
 	private meterSegTex: pc.Texture | null = null;
+	private glossTex: pc.Texture | null = null;
+	private pipTex: pc.Texture | null = null;
 
 	// Style
 	private style: 'modern' | 'classic' = 'modern';
@@ -225,10 +227,12 @@ export class UIManager {
 		if (this.healthBgTex && this.healthFillTex && this.meterSegTex) return;
 
 		if (this.style === 'modern') {
-			// Generate crisp modern gradients procedurally
-			this.healthBgTex = this.createGradientTexture('#1F2937', '#0F172A');
+			// Generate modern textures procedurally (crisp, minimal, scalable)
+			this.healthBgTex = this.createRoundedGradientTexture(512, 28, 12, '#0f172a', '#111827', '#334155');
 			this.healthFillTex = this.createGradientTexture('#22c55e', '#16a34a');
 			this.meterSegTex = this.createGradientTexture('#60a5fa', '#2563eb');
+			this.glossTex = this.createVerticalAlphaGradientTexture(256, 28, 0.15, 0.0);
+			this.pipTex = this.createCircleTexture(22, '#94a3b8', 0.12);
 			return;
 		}
 
@@ -331,6 +335,99 @@ export class UIManager {
 		return tex;
 	}
 
+	private createVerticalAlphaGradientTexture(width: number, height: number, topA: number, bottomA: number): pc.Texture {
+		const canvas = document.createElement('canvas');
+		canvas.width = Math.max(2, width|0);
+		canvas.height = Math.max(2, height|0);
+		const ctx = canvas.getContext('2d')!;
+		const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+		grad.addColorStop(0, `rgba(255,255,255,${Math.max(0, Math.min(1, topA))})`);
+		grad.addColorStop(1, `rgba(255,255,255,${Math.max(0, Math.min(1, bottomA))})`);
+		ctx.fillStyle = grad;
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		const tex = new pc.Texture(this.app.graphicsDevice, {
+			width: canvas.width,
+			height: canvas.height,
+			format: pc.PIXELFORMAT_R8_G8_B8_A8,
+			autoMipmap: true
+		});
+		tex.setSource(canvas as unknown as HTMLImageElement);
+		tex.minFilter = pc.FILTER_LINEAR;
+		tex.magFilter = pc.FILTER_LINEAR;
+		return tex;
+	}
+
+	private createRoundedGradientTexture(width: number, height: number, radius: number, start: string, end: string, border: string | null = null): pc.Texture {
+		const canvas = document.createElement('canvas');
+		canvas.width = Math.max(2, width|0);
+		canvas.height = Math.max(2, height|0);
+		const ctx = canvas.getContext('2d')!;
+		const r = Math.max(0, radius|0);
+		const w = canvas.width, h = canvas.height;
+		const path = new Path2D();
+		path.moveTo(r, 0);
+		path.lineTo(w - r, 0);
+		path.quadraticCurveTo(w, 0, w, r);
+		path.lineTo(w, h - r);
+		path.quadraticCurveTo(w, h, w - r, h);
+		path.lineTo(r, h);
+		path.quadraticCurveTo(0, h, 0, h - r);
+		path.lineTo(0, r);
+		path.quadraticCurveTo(0, 0, r, 0);
+		path.closePath();
+		const grad = ctx.createLinearGradient(0, 0, w, 0);
+		grad.addColorStop(0, start);
+		grad.addColorStop(1, end);
+		ctx.fillStyle = grad;
+		ctx.fill(path);
+		if (border) {
+			ctx.strokeStyle = border;
+			ctx.lineWidth = Math.max(1, Math.round(h * 0.06));
+			ctx.stroke(path);
+		}
+		const tex = new pc.Texture(this.app.graphicsDevice, {
+			width: canvas.width,
+			height: canvas.height,
+			format: pc.PIXELFORMAT_R8_G8_B8_A8,
+			autoMipmap: true
+		});
+		tex.setSource(canvas as unknown as HTMLImageElement);
+		tex.minFilter = pc.FILTER_LINEAR;
+		tex.magFilter = pc.FILTER_LINEAR;
+		return tex;
+	}
+
+	private createCircleTexture(diameter: number, color: string, glow: number = 0): pc.Texture {
+		const d = Math.max(8, diameter|0);
+		const canvas = document.createElement('canvas');
+		canvas.width = d;
+		canvas.height = d;
+		const ctx = canvas.getContext('2d')!;
+		const r = d / 2;
+		if (glow > 0) {
+			const g = ctx.createRadialGradient(r, r, r * 0.2, r, r, r);
+			g.addColorStop(0, color);
+			g.addColorStop(1, 'rgba(0,0,0,0)');
+			ctx.fillStyle = g;
+			ctx.fillRect(0, 0, d, d);
+		}
+		ctx.beginPath();
+		ctx.arc(r, r, r * 0.8, 0, Math.PI * 2);
+		ctx.closePath();
+		ctx.fillStyle = color;
+		ctx.fill();
+		const tex = new pc.Texture(this.app.graphicsDevice, {
+			width: d,
+			height: d,
+			format: pc.PIXELFORMAT_R8_G8_B8_A8,
+			autoMipmap: true
+		});
+		tex.setSource(canvas as unknown as HTMLImageElement);
+		tex.minFilter = pc.FILTER_LINEAR;
+		tex.magFilter = pc.FILTER_LINEAR;
+		return tex;
+	}
+
 	private buildFightingHud(): void {
 		if (!this.hud || !this.root) return;
 		// Clear any leftovers
@@ -338,9 +435,9 @@ export class UIManager {
 			this.hud.children.slice().forEach(c => c.destroy());
 		} catch {}
 
-		// Health bars (top)
-		this.p1HealthContainer = this.createHealthBar(new pc.Vec4(0.03, 0.92, 0.47, 0.975), false);
-		this.p2HealthContainer = this.createHealthBar(new pc.Vec4(0.53, 0.92, 0.97, 0.975), true);
+		// Health bars (top) - slightly lower and wider for modern look
+		this.p1HealthContainer = this.createHealthBar(new pc.Vec4(0.03, 0.90, 0.47, 0.97), false);
+		this.p2HealthContainer = this.createHealthBar(new pc.Vec4(0.53, 0.90, 0.97, 0.97), true);
 
 		// Super/EX meters (bottom)
 		const p1m = this.createMeterBar(new pc.Vec4(0.03, 0.05, 0.35, 0.085), false, 4);
@@ -353,16 +450,16 @@ export class UIManager {
 		this.roundTimerText.addComponent('element', {
 			type: pc.ELEMENTTYPE_TEXT,
 			text: '99',
-			fontSize: 56,
-			color: new pc.Color(1, 1, 1),
-			anchor: new pc.Vec4(0.5, 0.90, 0.5, 0.97),
+			fontSize: 64,
+			color: new pc.Color(0.96, 0.98, 1),
+			anchor: new pc.Vec4(0.5, 0.88, 0.5, 0.96),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
 		this.hud.addChild(this.roundTimerText);
 
 		// Round pips
-		this.p1Pips = this.createRoundPips('P1Pips', new pc.Vec4(0.25, 0.885, 0.35, 0.91), false);
-		this.p2Pips = this.createRoundPips('P2Pips', new pc.Vec4(0.65, 0.885, 0.75, 0.91), true);
+		this.p1Pips = this.createRoundPips('P1Pips', new pc.Vec4(0.25, 0.86, 0.35, 0.89), false);
+		this.p2Pips = this.createRoundPips('P2Pips', new pc.Vec4(0.65, 0.86, 0.75, 0.89), true);
 	}
 
 	private createHealthBar(anchor: pc.Vec4, flip: boolean): pc.Entity {
@@ -384,6 +481,18 @@ export class UIManager {
 			anchor: flip ? new pc.Vec4(0.999, 0, 1, 1) : new pc.Vec4(0, 0, 1, 1),
 			color: new pc.Color(1, 1, 1, 1)
 		} as any);
+
+		// Subtle gloss overlay for modern look
+		if (this.glossTex) {
+			const gloss = new pc.Entity('Gloss');
+			gloss.addComponent('element', {
+				type: pc.ELEMENTTYPE_IMAGE,
+				texture: this.glossTex as any,
+				anchor: new pc.Vec4(0, 0, 1, 1),
+				color: new pc.Color(1, 1, 1, 0.45)
+			} as any);
+			container.addChild(gloss);
+		}
 
 		container.addChild(bg);
 		container.addChild(fill);
@@ -436,8 +545,9 @@ export class UIManager {
 			const left = (flip ? 1 - (i + 1) * (w + spacing) : i * (w + spacing));
 			pip.addComponent('element', {
 				type: pc.ELEMENTTYPE_IMAGE,
+				texture: this.pipTex as any,
 				anchor: new pc.Vec4(left, 0, left + w, 1),
-				color: new pc.Color(0.25, 0.25, 0.3, 0.9)
+				color: new pc.Color(1, 1, 1, 0.95)
 			} as any);
 			container.addChild(pip);
 		}
