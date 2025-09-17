@@ -220,11 +220,19 @@ export class UIManager {
 	private async loadUiTextures(): Promise<void> {
 		// Load only once
 		if (this.healthBgTex && this.healthFillTex && this.meterSegTex) return;
-		const [bg, fill, seg] = await Promise.all([
-			this.loadTexture('/assets/fighting_ui/ui/health_bars/health_bars/gray_bar.png'),
-			this.loadTexture('/assets/fighting_ui/ui/health_bars/health_bars/green_bar.png'),
-			this.loadTexture('/assets/fighting_ui/ui/health_bars/health_bars/yellow_bar.png')
-		]);
+		// Try to load real textures; fall back to solid colors if missing
+		const bg = await this.tryLoadTexture(
+			'/assets/fighting_ui/ui/health_bars/health_bars/gray_bar.png',
+			new pc.Color(0.25, 0.25, 0.25, 1)
+		);
+		const fill = await this.tryLoadTexture(
+			'/assets/fighting_ui/ui/health_bars/health_bars/green_bar.png',
+			new pc.Color(0.0, 0.9, 0.0, 1)
+		);
+		const seg = await this.tryLoadTexture(
+			'/assets/fighting_ui/ui/health_bars/health_bars/yellow_bar.png',
+			new pc.Color(1.0, 0.9, 0.0, 1)
+		);
 		this.healthBgTex = bg;
 		this.healthFillTex = fill;
 		this.meterSegTex = seg;
@@ -255,6 +263,35 @@ export class UIManager {
 				reject(e as any);
 			}
 		});
+	}
+
+	private async tryLoadTexture(url: string, fallbackColor: pc.Color): Promise<pc.Texture> {
+		try {
+			return await this.loadTexture(url);
+		} catch {
+			return this.createSolidTexture(fallbackColor);
+		}
+	}
+
+	private createSolidTexture(color: pc.Color): pc.Texture {
+		const canvas = document.createElement('canvas');
+		canvas.width = 2;
+		canvas.height = 2;
+		const ctx = canvas.getContext('2d');
+		if (ctx) {
+			ctx.fillStyle = `rgba(${Math.round(color.r * 255)},${Math.round(color.g * 255)},${Math.round(color.b * 255)},${color.a ?? 1})`;
+			ctx.fillRect(0, 0, 2, 2);
+		}
+		const tex = new pc.Texture(this.app.graphicsDevice, {
+			width: 2,
+			height: 2,
+			format: pc.PIXELFORMAT_R8_G8_B8_A8,
+			autoMipmap: true
+		});
+		tex.setSource(canvas as unknown as HTMLImageElement);
+		tex.minFilter = pc.FILTER_NEAREST;
+		tex.magFilter = pc.FILTER_NEAREST;
+		return tex;
 	}
 
 	private buildFightingHud(): void {
