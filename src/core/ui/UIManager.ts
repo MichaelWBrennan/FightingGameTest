@@ -1,10 +1,12 @@
 import * as pc from 'playcanvas';
+import { Platform } from '../utils/Platform';
 
 export class UIManager {
 	private app: pc.Application;
 	private root: pc.Entity | null = null;
 	private menu: pc.Entity | null = null;
 	private hud: pc.Entity | null = null;
+	private touchOverlay: HTMLDivElement | null = null;
 	private domContainer: HTMLDivElement | null = null;
 	private domP1: HTMLDivElement | null = null;
 	private domP2: HTMLDivElement | null = null;
@@ -67,6 +69,7 @@ export class UIManager {
 		});
 		this.app.root.addChild(this.root);
 		this.ensureDomFallback();
+		this.ensureTouchControls();
 		this.setupEventListeners();
 		try { (await import('./LoadingOverlay')).LoadingOverlay.endTask('ui_init', true); } catch {}
 	}
@@ -108,7 +111,7 @@ export class UIManager {
 		const startText = new pc.Entity('StartText');
 		startText.addComponent('element', {
 			type: pc.ELEMENTTYPE_TEXT,
-			text: 'Press Enter',
+			text: Platform.kind() === 'mobile' ? 'Tap to Start' : 'Press Enter',
 			fontSize: 28,
 			color: new pc.Color(1,1,1,1),
 			anchor: new pc.Vec4(0,0,1,1),
@@ -270,6 +273,136 @@ export class UIManager {
 			this.domContainer = container;
 			this.domP1 = p1;
 			this.domP2 = p2;
+		} catch {}
+	}
+
+	// ====== Touch Controls Overlay (Mobile) ======
+	private ensureTouchControls(): void {
+		if (Platform.kind() !== 'mobile') return;
+		try {
+			if (this.touchOverlay) return;
+			const overlay = document.createElement('div');
+			overlay.id = 'touch-controls';
+			overlay.style.position = 'fixed';
+			overlay.style.left = '0';
+			overlay.style.right = '0';
+			overlay.style.top = '0';
+			overlay.style.bottom = '0';
+			overlay.style.pointerEvents = 'none';
+			overlay.style.zIndex = '10001';
+			// D-Pad container (left)
+			const dpad = document.createElement('div');
+			dpad.style.position = 'absolute';
+			dpad.style.left = '16px';
+			dpad.style.bottom = '16px';
+			dpad.style.width = '180px';
+			dpad.style.height = '180px';
+			dpad.style.opacity = '0.75';
+			dpad.style.pointerEvents = 'auto';
+			dpad.style.touchAction = 'none';
+			// Buttons container (right)
+			const buttons = document.createElement('div');
+			buttons.style.position = 'absolute';
+			buttons.style.right = '16px';
+			buttons.style.bottom = '24px';
+			buttons.style.width = '260px';
+			buttons.style.height = '220px';
+			buttons.style.display = 'grid';
+			buttons.style.gridTemplateColumns = 'repeat(3, 1fr)';
+			buttons.style.gridTemplateRows = 'repeat(2, 1fr)';
+			buttons.style.gap = '12px';
+			buttons.style.opacity = '0.75';
+			buttons.style.pointerEvents = 'auto';
+			buttons.style.touchAction = 'none';
+
+			const mkBtn = (label: string) => {
+				const b = document.createElement('button');
+				b.textContent = label;
+				b.style.width = '80px';
+				b.style.height = '80px';
+				b.style.borderRadius = '50%';
+				b.style.border = 'none';
+				b.style.background = 'rgba(20,40,120,0.6)';
+				b.style.color = '#fff';
+				b.style.fontWeight = 'bold';
+				b.style.textShadow = '0 1px 2px rgba(0,0,0,0.6)';
+				b.style.boxShadow = '0 2px 8px rgba(0,0,0,0.35) inset, 0 2px 6px rgba(0,0,0,0.2)';
+				b.style.pointerEvents = 'auto';
+				b.oncontextmenu = (e) => { e.preventDefault(); };
+				return b;
+			};
+
+			// Build dpad (up, left, right, down)
+			const mkD = (name: string) => {
+				const d = document.createElement('div');
+				d.style.position = 'absolute';
+				d.style.width = '64px';
+				d.style.height = '64px';
+				d.style.borderRadius = '16px';
+				d.style.background = 'rgba(20,20,24,0.45)';
+				d.style.boxShadow = '0 2px 6px rgba(0,0,0,0.25) inset, 0 2px 6px rgba(0,0,0,0.2)';
+				d.setAttribute('data-dir', name);
+				return d;
+			};
+			const up = mkD('up'); up.style.left = '58px'; up.style.top = '0';
+			const left = mkD('left'); left.style.left = '0'; left.style.top = '58px';
+			const right = mkD('right'); right.style.right = '0'; right.style.left = '116px'; right.style.top = '58px';
+			const down = mkD('down'); down.style.left = '58px'; down.style.top = '116px';
+			dpad.appendChild(up); dpad.appendChild(left); dpad.appendChild(right); dpad.appendChild(down);
+
+			// Build attack buttons (LP, MP, HP, LK, MK, HK)
+			const labels = [
+				{ t: 'LP', a: 'lightPunch' },
+				{ t: 'MP', a: 'mediumPunch' },
+				{ t: 'HP', a: 'heavyPunch' },
+				{ t: 'LK', a: 'lightKick' },
+				{ t: 'MK', a: 'mediumKick' },
+				{ t: 'HK', a: 'heavyKick' }
+			] as const;
+			for (const it of labels) {
+				const b = mkBtn(it.t);
+				b.setAttribute('data-action', it.a);
+				buttons.appendChild(b);
+			}
+
+			overlay.appendChild(dpad);
+			overlay.appendChild(buttons);
+			document.body.appendChild(overlay);
+			this.touchOverlay = overlay;
+
+			// Wire events to InputManager touch API
+			const services: any = (this.app as any)._services;
+			const input: any = services?.resolve?.('input');
+			if (!input) return;
+
+			const pressDir = (dir: 'up'|'down'|'left'|'right', pressed: boolean) => {
+				try { input.setTouchDpad(dir, pressed); } catch {}
+			};
+			const pressAct = (act: 'lightPunch'|'mediumPunch'|'heavyPunch'|'lightKick'|'mediumKick'|'heavyKick', pressed: boolean) => {
+				try { input.setTouchButton(act, pressed); } catch {}
+			};
+
+			const bindPress = (el: HTMLElement, onPress: () => void, onRelease: () => void) => {
+				const downEv = (e: Event) => { e.preventDefault(); onPress(); };
+				const upEv = (e: Event) => { e.preventDefault(); onRelease(); };
+				el.addEventListener('touchstart', downEv, { passive: false });
+				el.addEventListener('touchend', upEv, { passive: false });
+				el.addEventListener('touchcancel', upEv, { passive: false });
+				el.addEventListener('mousedown', downEv);
+				el.addEventListener('mouseup', upEv);
+				el.addEventListener('mouseleave', upEv);
+			};
+
+			[dpad.querySelector('[data-dir="up"]')!, dpad.querySelector('[data-dir="down"]')!, dpad.querySelector('[data-dir="left"]')!, dpad.querySelector('[data-dir="right"]')!]
+				.forEach((el) => {
+					const dir = el.getAttribute('data-dir') as 'up'|'down'|'left'|'right';
+					bindPress(el as HTMLElement, () => pressDir(dir, true), () => pressDir(dir, false));
+				});
+
+			Array.from(buttons.querySelectorAll('button')).forEach((el) => {
+				const act = el.getAttribute('data-action') as 'lightPunch'|'mediumPunch'|'heavyPunch'|'lightKick'|'mediumKick'|'heavyKick';
+				bindPress(el as HTMLElement, () => pressAct(act, true), () => pressAct(act, false));
+			});
 		} catch {}
 	}
 

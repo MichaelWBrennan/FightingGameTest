@@ -32,6 +32,7 @@ import { LiveOpsService } from './liveops/LiveOpsService';
 import { NetcodeService } from './netcode/NetcodeService';
 import { ConfigService } from './utils/ConfigService';
 import { LoadingOverlay } from './ui/LoadingOverlay';
+import { Platform } from './utils/Platform';
 
 export class GameEngine {
   private app: pc.Application;
@@ -103,6 +104,7 @@ export class GameEngine {
     this.services.register('app', this.app);
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
+    this.services.register('input', this.inputManager);
     // Config service will be registered during initialize()
     this.preloader = new PreloadManager();
     this.aiManager = new AIManager(this.app);
@@ -358,6 +360,8 @@ export class GameEngine {
 
       // Wire main update loop
       this.updateHandler = (dt: number) => {
+        // Ensure input is updated first for deterministic reads
+        try { this.inputManager.update(); } catch {}
         this.pipeline.update(dt);
         this.stateStack.update(dt);
         if (!this.debugOverlay && typeof window !== 'undefined') {
