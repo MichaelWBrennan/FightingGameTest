@@ -18,7 +18,10 @@ SLPM_656.21*
 SLUS_209.49*
 THIRD_U.BIN*
 
+# Allow committing CC0 UI assets needed at build/runtime
+# Keep other large asset dirs ignored, but include fighting_ui
 assets
+!assets/fighting_ui/**
 asm
 libs
 bin
