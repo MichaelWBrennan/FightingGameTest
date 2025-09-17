@@ -104,7 +104,7 @@ export class UIManager {
 				if ((bg as any).element) { (bg as any).element.texture = bgTex; (bg as any).element.color = new pc.Color(1,1,1,1); }
 			} catch {}
 			try {
-				const btnTex = await this.loadTexture('/assets/fighting_ui/ui/kenney_ui-pack/PNG/Blue/Default/button_rectangle_square.png');
+				const btnTex = await this.loadTexture('/assets/fighting_ui/ui/kenney_ui-pack/PNG/Blue/Default/button_rectangle_flat.png');
 				if ((startButton as any).element) { (startButton as any).element.texture = btnTex; (startButton as any).element.color = new pc.Color(1,1,1,1); }
 			} catch {}
 		})();
