@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fighting UI Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="stage">
+      <div class="hud">
+        <div class="side left">
+          <div class="name" id="p1-name">Player One</div>
+          <div class="health-bar left">
+            <div class="bar-bg">
+              <div class="bar-fill" id="p1-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="center">
+          <div class="timer" id="timer">99</div>
+        </div>
+
+        <div class="side right">
+          <div class="name" id="p2-name">Player Two</div>
+          <div class="health-bar right">
+            <div class="bar-bg">
+              <div class="bar-fill" id="p2-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="group">
+          <button data-action="p1-minus">P1 -10</button>
+          <button data-action="p1-plus">P1 +10</button>
+        </div>
+        <div class="group">
+          <button data-action="timer-reset">Reset Timer</button>
+          <button data-action="timer-toggle">Start/Stop</button>
+        </div>
+        <div class="group">
+          <button data-action="p2-minus">P2 -10</button>
+          <button data-action="p2-plus">P2 +10</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./main.js"></script>
+  </body>
+  </html>
+
