@@ -28,6 +28,7 @@ app.get('/assets/manifest.json', (_req, res, next) => {
     const entries: Array<{ path: string; type: string; sha256?: string; size?: number }> = [];
     const dataDir = path.join(publicDir, 'data');
     const assetsDataDir = path.join(publicDir, 'assets', 'data');
+    const assetsUiDir = path.join(publicDir, 'assets', 'fighting_ui');
     const guessType = (p: string) => {
       const ext = p.split('.').pop()?.toLowerCase();
       if (ext === 'json') return 'json';
@@ -54,6 +55,7 @@ app.get('/assets/manifest.json', (_req, res, next) => {
     };
     walk(dataDir, dataDir, '/data');
     walk(assetsDataDir, assetsDataDir, '/assets/data');
+    walk(assetsUiDir, assetsUiDir, '/assets/fighting_ui');
     res.set('Content-Type', 'application/json; charset=utf-8');
     res.set('Cache-Control', 'no-store');
     res.send(JSON.stringify({ assets: entries }, null, 2));
