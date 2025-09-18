@@ -39,8 +39,7 @@ body {
 }
 
 .hud {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   padding: var(--hud-padding);
   height: var(--hud-height);
@@ -49,25 +48,29 @@ body {
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-.side { display: flex; flex-direction: column; gap: 8px; }
+.side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .side.right { align-items: flex-end; }
 
 .name {
-  font-size: 20px;
+  font-size: clamp(14px, 2.5vw, 20px);
   letter-spacing: 1px;
   text-shadow: 0 2px 0 rgba(0,0,0,0.6);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .center { display: flex; align-items: center; justify-content: center; }
 .timer {
-  font-size: 42px;
+  font-size: clamp(24px, 5vw, 42px);
   padding: 8px 16px;
   border-radius: 8px;
   background: rgba(0,0,0,0.5);
   border: 2px solid rgba(255,255,255,0.25);
 }
 
-.health-bar { width: var(--bar-width); }
+.health-bar { width: min(100%, var(--bar-width, 520px)); }
 .health-bar.right { transform: scaleX(-1); }
 
 .bar-bg {
@@ -90,6 +93,7 @@ body {
   justify-content: center;
   gap: 24px;
   padding: 16px;
+  flex-wrap: wrap;
 }
 
 .group { display: flex; gap: 8px; }
@@ -118,5 +122,22 @@ button:hover {
 
 button:active {
   filter: brightness(0.9);
+}
+
+@media (max-width: 1100px) {
+  :root { --bar-width: 420px; }
+}
+@media (max-width: 900px) {
+  .hud {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    text-align: center;
+    gap: 12px;
+    height: auto;
+  }
+  .side { align-items: center; }
+  .side.right { align-items: center; }
+  .health-bar.right { transform: none; }
+  .name { white-space: normal; }
 }
 
