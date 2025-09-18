@@ -39,10 +39,11 @@ body {
 }
 
 .hud {
+  display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   padding: var(--hud-padding);
-  height: var(--hud-height);
+  min-height: var(--hud-height);
   gap: 16px;
   background: rgba(0, 0, 0, 0.35);
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
@@ -76,7 +77,7 @@ body {
 .bar-bg {
   position: relative;
   width: 100%;
-  height: var(--bar-height);
+  height: var(--bar-height, 28px);
   background: url('/workspace/assets/fighting_ui/ui/health_bars/health_bars/gray_bar.png') left center / contain no-repeat;
 }
 
