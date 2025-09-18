@@ -72,6 +72,15 @@ export class UIManager {
 		this.app.root.addChild(this.root);
 		// Ensure we have a runtime text font available for all text elements
 		this.ensureCanvasFont();
+		// Retry on next tick in case CanvasFont extras attach after vendor loads
+		setTimeout(() => {
+			try {
+				if (!this.canvasFont && (pc as any).CanvasFont) {
+					this.ensureCanvasFont();
+					this.applyFontToAllText(this.root || undefined);
+				}
+			} catch {}
+		}, 0);
 		this.ensureDomFallback();
 		this.ensureTouchControls();
 		this.setupEventListeners();
@@ -103,6 +112,7 @@ export class UIManager {
 			anchor: new pc.Vec4(0.5, 0.12, 0.5, 0.12),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
+		this.applyTextFont(title);
 		this.menu.addChild(title);
 		// Start button styled as image-based button
 		const startButton = new pc.Entity('StartButton');
@@ -121,6 +131,7 @@ export class UIManager {
 			anchor: new pc.Vec4(0,0,1,1),
 			pivot: new pc.Vec2(0.5,0.5)
 		} as any);
+		this.applyTextFont(startText);
 		startButton.addChild(startText);
 		startButton.button!.on('click', () => {
 			try {
@@ -445,8 +456,10 @@ export class UIManager {
 		try {
 			await this.loadUiTextures();
 			this.buildFightingHud();
-			// Hide DOM fallback once textured HUD is successfully built
-			this.setDomVisible(false);
+			// Apply font to any text created during build
+			this.applyFontToAllText(this.hud || undefined);
+			// Hide DOM fallback only if a runtime font is available
+			if (this.canvasFont) this.setDomVisible(false); else this.setDomVisible(true);
 		} catch {}
 	}
 
@@ -983,11 +996,33 @@ export class UIManager {
 		} catch {}
 	}
 
+	public getRuntimeFont(): any | null {
+		return this.canvasFont;
+	}
+
 	private applyTextFont(entity: pc.Entity): void {
 		try {
 			if (!this.canvasFont) this.ensureCanvasFont();
 			if (this.canvasFont && (entity as any).element) {
 				(entity as any).element.font = this.canvasFont;
+			}
+		} catch {}
+	}
+
+	private applyFontToAllText(root?: pc.Entity | null): void {
+		try {
+			if (!this.canvasFont) return;
+			const start = root || this.root;
+			if (!start) return;
+			const stack: pc.Entity[] = [start];
+			while (stack.length) {
+				const ent = stack.pop()!;
+				if ((ent as any).element) {
+					try {
+						(ent as any).element.font = this.canvasFont;
+					} catch {}
+				}
+				try { ent.children.forEach((c) => stack.push(c)); } catch {}
 			}
 		} catch {}
 	}

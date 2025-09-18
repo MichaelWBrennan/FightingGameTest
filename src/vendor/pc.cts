@@ -6,6 +6,14 @@
 // Starting with PlayCanvas 1.65.x, the distributed builds are .mjs files.
 // Import explicit index.js to avoid directory resolution issues in some bundlers
 import * as pcModule from '../../node_modules/playcanvas/build/playcanvas.mjs/index.js';
+// Attempt to import PlayCanvas extras (CanvasFont, etc.) so runtime text works without editor assets.
+// Use dynamic import without top-level await to remain compatible with IIFE bundling.
+let extrasModule: any = null;
+Promise.resolve().then(() => import('../../node_modules/playcanvas/build/playcanvas-extras.mjs/index.js'))
+.then((m) => { extrasModule = m; })
+.catch(() => Promise.resolve().then(() => import('../../node_modules/playcanvas/build/playcanvas-extras.mjs'))
+.then((m) => { extrasModule = m; })
+.catch(() => { /* extras not available; text will rely on DOM fallback or asset fonts */ }));
 
 let pcGlobal: any = (globalThis as any).pc;
 try {
@@ -20,6 +28,24 @@ try {
       }
     }
   }
+} catch {}
+
+// Wire extras (notably CanvasFont) onto the pc namespace when available
+// When extras load, wire CanvasFont onto the pc namespace
+try {
+  const attachExtras = () => {
+    try {
+      const pcNS: any = (globalThis as any).pc || pcGlobal || {};
+      const extrasAny: any = (extrasModule as any)?.default || (extrasModule as any) || {};
+      const CanvasFont = extrasAny.CanvasFont || extrasAny.canvasfont?.CanvasFont || extrasAny.canvasFont?.CanvasFont || extrasAny['CanvasFont'];
+      if (CanvasFont && pcNS && !pcNS.CanvasFont) {
+        pcNS.CanvasFont = CanvasFont;
+      }
+    } catch {}
+  };
+  // Try now (in case extras resolved synchronously in bundle), and again on microtask
+  attachExtras();
+  Promise.resolve().then(attachExtras);
 } catch {}
 
 export = (globalThis as any).pc || pcGlobal || {};
