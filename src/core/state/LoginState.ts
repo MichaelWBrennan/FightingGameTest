@@ -62,6 +62,7 @@ export class LoginState implements GameState {
 			color: new pc.Color(1, 1, 1),
 			alignment: new pc.Vec2(0.5, 0.5)
 		});
+		this.applyRuntimeFont(title);
 		panel.addChild(title);
 
 		// Username group
@@ -89,6 +90,7 @@ export class LoginState implements GameState {
 			color: new pc.Color(0.8, 0.8, 0.9),
 			alignment: new pc.Vec2(0, 0.5)
 		});
+		this.applyRuntimeFont(inputLabel);
 		this.inputGroup.addChild(inputLabel);
 
 		this.usernameText = new pc.Entity('UsernameText');
@@ -100,6 +102,7 @@ export class LoginState implements GameState {
 			color: new pc.Color(1, 1, 1),
 			alignment: new pc.Vec2(0, 0.5)
 		});
+		this.applyRuntimeFont(this.usernameText);
 		this.inputGroup.addChild(this.usernameText);
 
 		// Prompt / button
@@ -112,6 +115,7 @@ export class LoginState implements GameState {
 			color: new pc.Color(0.9, 0.9, 1),
 			alignment: new pc.Vec2(0.5, 0.5)
 		});
+		this.applyRuntimeFont(this.promptText);
 		panel.addChild(this.promptText);
 
 		// Clickable login button (optional)
@@ -130,10 +134,21 @@ export class LoginState implements GameState {
 			color: new pc.Color(1, 1, 1),
 			alignment: new pc.Vec2(0.5, 0.5)
 		});
+		this.applyRuntimeFont(loginText);
 		loginBtn.addChild(loginText);
 		loginBtn.addComponent('button', { imageEntity: loginBtn });
 		loginBtn.button!.on('click', () => this.submit());
 		panel.addChild(loginBtn);
+	}
+
+	private applyRuntimeFont(entity: pc.Entity): void {
+		try {
+			const ui: any = (this.app as any)._ui;
+			const font = ui?.getRuntimeFont?.();
+			if (font && (entity as any).element) {
+				(entity as any).element.font = font;
+			}
+		} catch {}
 	}
 
 	private attachInput(): void {
