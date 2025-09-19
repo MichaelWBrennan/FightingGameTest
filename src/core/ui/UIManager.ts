@@ -722,7 +722,9 @@ export class UIManager {
 			text: '99',
 			fontSize: 64,
 			color: new pc.Color(0.96, 0.98, 1),
-			anchor: new pc.Vec4(0.5, 0.88, 0.5, 0.96),
+			// Give the timer a non-zero width so text is visible
+			anchor: new pc.Vec4(0.47, 0.885, 0.53, 0.975),
+			alignment: new pc.Vec2(0.5, 0.5),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
 		this.applyTextFont(this.roundTimerText);
