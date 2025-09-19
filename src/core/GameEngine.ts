@@ -143,6 +143,7 @@ export class GameEngine {
     this.services.register('characters', this.characterManager);
     this.services.register('stages', this.stageManager);
     this.services.register('combat', this.combatSystem);
+    this.services.register('anticheat', this.antiCheat);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
@@ -396,6 +397,11 @@ export class GameEngine {
         } catch {}
         // Replay
         try { this.replay?.update(); } catch {}
+        // Anti-cheat monitor surface
+        try {
+          const ac: any = this.services.resolve('anticheat');
+          this.debugOverlay?.setCheatAlerts(ac?.getReports?.() || []);
+        } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
@@ -410,6 +416,12 @@ export class GameEngine {
       try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
       try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
       try { this.matchmaking = new MatchmakingOverlay(); } catch {}
+      // Wire anti-cheat monitors
+      try {
+        const ac: any = this.antiCheat;
+        ac?.monitorInputRate?.(() => this.inputManager.getPressCount());
+        ac?.monitorPhysicsDivergence?.(() => this.combatSystem.getCurrentFrame());
+      } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
       throw error;

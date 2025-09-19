@@ -5,6 +5,7 @@ export class DebugOverlay {
 	private fpsLabel: HTMLDivElement;
 	private timingsLabel: HTMLDivElement;
 	private netcodeLabel: HTMLDivElement | null = null;
+	private cheatLabel: HTMLDivElement | null = null;
 	private lastTime = performance.now();
 	private frames = 0;
 	private fps = 0;
@@ -28,6 +29,9 @@ export class DebugOverlay {
 		this.netcodeLabel = document.createElement('div');
 		this.netcodeLabel.style.color = '#9f9';
 		this.container.appendChild(this.netcodeLabel);
+		this.cheatLabel = document.createElement('div');
+		this.cheatLabel.style.color = '#ff6666';
+		this.container.appendChild(this.cheatLabel);
 		document.body.appendChild(this.container);
 	}
 
@@ -54,5 +58,11 @@ export class DebugOverlay {
 		if (info.delay != null) parts.push(`Delay:${info.delay}`);
 		if (info.rollbacks != null) parts.push(`RB:${info.rollbacks}`);
 		this.netcodeLabel.textContent = parts.join('  ');
+	}
+
+	setCheatAlerts(reports: Array<{ type: string }>): void {
+		if (!this.cheatLabel) return;
+		if (!reports || reports.length === 0) { this.cheatLabel.textContent = ''; return; }
+		this.cheatLabel.textContent = `CHEAT ALERTS: ${reports.map(r => r.type).join(', ')}`;
 	}
 }

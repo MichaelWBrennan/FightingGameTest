@@ -32,6 +32,7 @@ export class InputManager {
   private prevP1Inputs: PlayerInputs;
   private prevP2Inputs: PlayerInputs;
   private lastTapTs: Array<{ left: number; right: number; up: number; down: number }>; // per player
+  private inputPressCount = 0;
 
   // Motion buffer and input leniency
   private history: Array<{ t: number; p1: PlayerInputs }>[] = [];
@@ -78,16 +79,16 @@ export class InputManager {
     // Player 1 controls using PlayCanvas keycodes to ensure compatibility
     this.keyboard.on(pc.EVENT_KEYDOWN as any, (e: any) => {
       switch (e.key) {
-        case pc.KEY_W: this.keyboardInputs.up = true; break;
-        case pc.KEY_S: this.keyboardInputs.down = true; break;
-        case pc.KEY_A: this.keyboardInputs.left = true; break;
-        case pc.KEY_D: this.keyboardInputs.right = true; break;
-        case pc.KEY_U: this.keyboardInputs.lightPunch = true; break;
-        case pc.KEY_I: this.keyboardInputs.mediumPunch = true; break;
-        case pc.KEY_O: this.keyboardInputs.heavyPunch = true; break;
-        case pc.KEY_J: this.keyboardInputs.lightKick = true; break;
-        case pc.KEY_K: this.keyboardInputs.mediumKick = true; break;
-        case pc.KEY_L: this.keyboardInputs.heavyKick = true; break;
+        case pc.KEY_W: this.keyboardInputs.up = true; this.inputPressCount++; break;
+        case pc.KEY_S: this.keyboardInputs.down = true; this.inputPressCount++; break;
+        case pc.KEY_A: this.keyboardInputs.left = true; this.inputPressCount++; break;
+        case pc.KEY_D: this.keyboardInputs.right = true; this.inputPressCount++; break;
+        case pc.KEY_U: this.keyboardInputs.lightPunch = true; this.inputPressCount++; break;
+        case pc.KEY_I: this.keyboardInputs.mediumPunch = true; this.inputPressCount++; break;
+        case pc.KEY_O: this.keyboardInputs.heavyPunch = true; this.inputPressCount++; break;
+        case pc.KEY_J: this.keyboardInputs.lightKick = true; this.inputPressCount++; break;
+        case pc.KEY_K: this.keyboardInputs.mediumKick = true; this.inputPressCount++; break;
+        case pc.KEY_L: this.keyboardInputs.heavyKick = true; this.inputPressCount++; break;
       }
     });
 
@@ -236,4 +237,6 @@ export class InputManager {
   public clearAllTouch(): void {
     this.touchInputs = this.createEmptyInputs();
   }
+
+  public getPressCount(): number { return this.inputPressCount; }
 }
