@@ -38,6 +38,7 @@ import { NetplayOverlay } from './ui/NetplayOverlay';
 import { ReplayService } from './utils/ReplayService';
 import { MatchmakingOverlay } from './ui/MatchmakingOverlay';
 import { EffectsOverlay } from './graphics/EffectsOverlay';
+import { SfxService } from './utils/SfxService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -74,6 +75,7 @@ export class GameEngine {
   private replay: ReplayService | null = null;
   private matchmaking: MatchmakingOverlay | null = null;
   private effects: EffectsOverlay | null = null;
+  private sfx: SfxService | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -421,6 +423,7 @@ export class GameEngine {
       try { this.matchmaking = new MatchmakingOverlay(); } catch {}
       try { this.effects = new EffectsOverlay(this.app); } catch {}
       try { if (this.effects) this.services.register('effects', this.effects); } catch {}
+      try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
       // Wire anti-cheat monitors
       try {
         const ac: any = this.antiCheat;

@@ -309,8 +309,10 @@ export class CombatSystem {
       // Emit event for UI feedback
       this.app.fire('combat:parry', { attacker, defender });
       const effects: any = (this.app as any)._services?.resolve?.('effects');
+      const sfx: any = (this.app as any)._services?.resolve?.('sfx');
       const p = defender.entity.getPosition();
       effects?.spawn?.(p.x, p.y + 1.0, 'parry');
+      sfx?.play?.('parry');
     } catch {}
   }
 
@@ -395,8 +397,10 @@ export class CombatSystem {
       }
       // Hitspark at defender position
       const effects: any = (this.app as any)._services?.resolve?.('effects');
+      const sfx: any = (this.app as any)._services?.resolve?.('sfx');
       const p = defender.entity.getPosition();
       effects?.spawn?.(p.x, p.y + 1.0);
+      sfx?.play?.('hit');
     } catch {}
 
     // Increment juggle points and decay later
@@ -464,8 +468,10 @@ export class CombatSystem {
     setTimeout(() => { try { defender.guardMeter = Math.min(100, (defender.guardMeter ?? 0) + 5); } catch {} }, 400);
     try {
       const effects: any = (this.app as any)._services?.resolve?.('effects');
+      const sfx: any = (this.app as any)._services?.resolve?.('sfx');
       const p = defender.entity.getPosition();
       effects?.spawn?.(p.x, p.y + 1.0, 'block');
+      sfx?.play?.('block');
     } catch {}
   }
 

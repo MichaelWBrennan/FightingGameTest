@@ -266,6 +266,9 @@ export class InputManager {
     return false;
   }
 
+  // External API to tweak motion leniency
+  public setMotionLeniency(ms: number): void { this.bufferMs = Math.max(60, Math.min(400, Math.floor(ms))); }
+
   // ===== Touch API for UI layer =====
   public setTouchDpad(direction: 'up'|'down'|'left'|'right', pressed: boolean): void {
     this.touchInputs[direction] = pressed;
