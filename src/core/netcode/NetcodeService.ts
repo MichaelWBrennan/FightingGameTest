@@ -44,5 +44,12 @@ export class NetcodeService {
     this.netcode.pushLocal(bits);
     this.netcode.advance();
   }
+
+  getStats(): { rtt?: number; delay?: number; rollbacks?: number } {
+    try {
+      const rb = (this.netcode as any).getStats?.();
+      return { delay: rb?.frameDelay ?? 0, rollbacks: rb?.rollbacks ?? 0 };
+    } catch { return {}; }
+  }
 }
 

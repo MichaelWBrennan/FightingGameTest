@@ -16,6 +16,7 @@ export class RollbackNetcode {
   private predictedRemote: Map<number, number> = new Map();
   private snapshots: Map<number, GameStateSnapshot> = new Map();
   private running = false;
+  private rollbackEvents = 0;
 
   constructor(
     private adapter: DeterministicAdapter,
@@ -85,6 +86,7 @@ export class RollbackNetcode {
   private rollbackTo(frame: number): void {
     const snap = this.snapshots.get(frame);
     if (!snap) return;
+    this.rollbackEvents++;
     this.adapter.loadState(snap);
 
     // re-simulate from frame to currentFrame-1
@@ -97,6 +99,10 @@ export class RollbackNetcode {
       // once confirmed, clear prediction
       if (this.remoteInputs.has(f)) this.predictedRemote.delete(f);
     }
+  }
+
+  public getStats(): { frameDelay: number; rollbacks: number } {
+    return { frameDelay: this.frameDelay, rollbacks: this.rollbackEvents };
   }
 }
 

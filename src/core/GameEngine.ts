@@ -371,6 +371,13 @@ export class GameEngine {
         }
         this.debugOverlay?.update();
         this.debugOverlay?.setTimings(this.pipeline.getTimings());
+        // Netcode stats (if enabled)
+        try {
+          const net: any = this.services.resolve('netcode');
+          if (net?.isEnabled?.() && net?.getStats) {
+            this.debugOverlay?.setNetcodeInfo(net.getStats());
+          }
+        } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
