@@ -245,13 +245,13 @@ export class UIManager {
 		// Create if missing
 		if (!this.hud) return;
 		if (!this.p1NameText || !this.p2NameText) {
-			const left = this.createNameplate(new pc.Vec4(0.03, 0.82, 0.30, 0.88), false);
-			const right = this.createNameplate(new pc.Vec4(0.70, 0.82, 0.97, 0.88), true);
+			const left = this.createNameplate(new pc.Vec4(0.03, 0.79, 0.30, 0.85), false);
+			const right = this.createNameplate(new pc.Vec4(0.70, 0.79, 0.97, 0.85), true);
 			this.p1NameText = left.text; this.p1Portrait = left.portrait;
 			this.p2NameText = right.text; this.p2Portrait = right.portrait;
 		}
-		if (this.p1NameText?.element) this.p1NameText.element.text = (p1Name || 'PLAYER 1').toUpperCase();
-		if (this.p2NameText?.element) this.p2NameText.element.text = (p2Name || 'PLAYER 2').toUpperCase();
+		if (this.p1NameText?.element) this.p1NameText.element.text = `PLAYER 1: ${(p1Name || 'PLAYER 1').toUpperCase()}`;
+		if (this.p2NameText?.element) this.p2NameText.element.text = `PLAYER 2: ${(p2Name || 'PLAYER 2').toUpperCase()}`;
 		// Try to load portraits from conventional path; fall back to solid
 		if (p1PortraitId) this.setPortraitTexture(this.p1Portrait!, `/assets/portraits/${p1PortraitId}.png`, new pc.Color(0.12,0.12,0.12,1));
 		if (p2PortraitId) this.setPortraitTexture(this.p2Portrait!, `/assets/portraits/${p2PortraitId}.png`, new pc.Color(0.12,0.12,0.12,1));
