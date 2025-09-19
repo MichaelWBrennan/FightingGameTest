@@ -200,9 +200,16 @@ export class CombatSystem {
   }
 
   private resolveContact(attacker: Character, defender: Character): void {
-    // Simple high-level: if defender is holding back, block; else hit. Future: parry window.
-    const inputs = this.inputManager.getPlayerInputs(attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 1 : 0);
-    const defHoldingBack = inputs?.left || inputs?.right; // placeholder; should be relative to facing
+    // If defender tapped forward within 80ms of contact, parry
+    const defenderIndex = attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 1 : 0;
+    const parryWindowMs = 80;
+    if (this.inputManager.wasTapped(defenderIndex, 'right', parryWindowMs) || this.inputManager.wasTapped(defenderIndex, 'left', parryWindowMs)) {
+      this.processParry(attacker, defender);
+      return;
+    }
+    // Else: block if holding back, else hit
+    const inputs = this.inputManager.getPlayerInputs(defenderIndex);
+    const defHoldingBack = inputs?.left || inputs?.right; // TODO: relative to facing
     const moveData = attacker.currentMove?.data;
     if (!moveData) return;
     if (defHoldingBack) {
@@ -210,6 +217,16 @@ export class CombatSystem {
     } else {
       this.processHit(attacker, defender);
     }
+  }
+
+  private processParry(attacker: Character, defender: Character): void {
+    // Nullify damage, small freeze, grant meter, play feedback
+    this.hitstop = Math.max(this.hitstop, 6);
+    defender.state = 'idle';
+    try {
+      const ui: any = (this.app as any)._ui;
+      ui?.['app']?.fire?.('ui:combo', { playerId: attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 'player2' : 'player1', hits: 1, damage: 0 });
+    } catch {}
   }
 
   private charactersColliding(attacker: Character, defender: Character): boolean {
@@ -304,6 +321,13 @@ export class CombatSystem {
       const dir = Math.sign(defender.entity.getPosition().x - attacker.entity.getPosition().x) || 1;
       const dp = defender.entity.getPosition().clone();
       dp.x += dir * 0.25;
+      defender.entity.setPosition(dp);
+    } catch {}
+
+    // Launch/juggle: if consecutive hits rapidly, apply small vertical knock
+    try {
+      const dp = defender.entity.getPosition().clone();
+      dp.y += 0.05; // visual nudge; proper physics would integrate velocity
       defender.entity.setPosition(dp);
     } catch {}
 

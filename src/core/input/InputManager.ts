@@ -29,6 +29,9 @@ export class InputManager {
 
   private player1Inputs: PlayerInputs;
   private player2Inputs: PlayerInputs;
+  private prevP1Inputs: PlayerInputs;
+  private prevP2Inputs: PlayerInputs;
+  private lastTapTs: Array<{ left: number; right: number; up: number; down: number }>; // per player
 
   // Motion buffer and input leniency
   private history: Array<{ t: number; p1: PlayerInputs }>[] = [];
@@ -46,6 +49,9 @@ export class InputManager {
 
     this.player1Inputs = this.createEmptyInputs();
     this.player2Inputs = this.createEmptyInputs();
+    this.prevP1Inputs = this.createEmptyInputs();
+    this.prevP2Inputs = this.createEmptyInputs();
+    this.lastTapTs = [ { left: 0, right: 0, up: 0, down: 0 }, { left: 0, right: 0, up: 0, down: 0 } ];
 
     this.setupKeyboardBindings();
   }
@@ -110,7 +116,10 @@ export class InputManager {
     this.updateGamepadInputs();
 
     // Aggregate per-device inputs for player 1; player 2 TBD
-    this.player1Inputs = this.aggregateInputs(this.keyboardInputs, this.gamepadInputs, this.touchInputs);
+    const nextP1 = this.aggregateInputs(this.keyboardInputs, this.gamepadInputs, this.touchInputs);
+    this.updateDirectionTaps(0, nextP1, this.prevP1Inputs);
+    this.prevP1Inputs = this.player1Inputs;
+    this.player1Inputs = nextP1;
 
     // Record motion history for leniency and specials
     const now = performance.now();
@@ -198,6 +207,22 @@ export class InputManager {
   }
 
   private matchesDir(d: string, target: string): boolean { return d === target; }
+
+  private updateDirectionTaps(playerIndex: number, curr: PlayerInputs, prev: PlayerInputs): void {
+    const now = performance.now();
+    const taps = this.lastTapTs[playerIndex];
+    const directions: Array<keyof PlayerInputs & ('left'|'right'|'up'|'down')> = ['left','right','up','down'];
+    for (const dir of directions) {
+      if ((curr as any)[dir] && !(prev as any)[dir]) {
+        taps[dir] = now;
+      }
+    }
+  }
+
+  public wasTapped(playerIndex: number, dir: 'left'|'right'|'up'|'down', windowMs: number): boolean {
+    const ts = this.lastTapTs[playerIndex]?.[dir] || 0;
+    return (performance.now() - ts) <= Math.max(0, windowMs);
+  }
 
   // ===== Touch API for UI layer =====
   public setTouchDpad(direction: 'up'|'down'|'left'|'right', pressed: boolean): void {
