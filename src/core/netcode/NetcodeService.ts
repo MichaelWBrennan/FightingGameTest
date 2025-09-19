@@ -10,6 +10,7 @@ import { inputsToBits } from './types';
 export class NetcodeService {
   private netcode?: RollbackNetcode;
   private enabled = false;
+  private desiredDelay = 2;
 
   constructor(private combat: CombatSystem, private chars: CharacterManager, private input: InputManager) {}
 
@@ -42,6 +43,7 @@ export class NetcodeService {
     const p1 = this.input.getPlayerInputs(0);
     const bits = inputsToBits(p1);
     this.netcode.pushLocal(bits);
+    try { (this.netcode as any).setFrameDelay?.(this.desiredDelay); } catch {}
     this.netcode.advance();
   }
 
@@ -51,5 +53,7 @@ export class NetcodeService {
       return { delay: rb?.frameDelay ?? 0, rollbacks: rb?.rollbacks ?? 0 };
     } catch { return {}; }
   }
+
+  setDesiredDelay(frames: number): void { this.desiredDelay = Math.max(0, Math.min(10, Math.floor(frames))); }
 }
 

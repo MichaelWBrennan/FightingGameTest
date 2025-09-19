@@ -238,6 +238,23 @@ export class CombatSystem {
     
     Logger.info(`${attacker.id} hits ${defender.id} for ${damage} damage`);
 
+    // VFX/SFX and camera shake
+    try {
+      const cam = this.app.root.findByName('MainCamera');
+      if (cam) {
+        const start = performance.now();
+        const original = cam.getLocalPosition().clone();
+        const shake = () => {
+          const t = performance.now() - start;
+          if (t > 120) { cam.setLocalPosition(original); return; }
+          const mag = 0.05;
+          cam.setLocalPosition(original.x + (Math.random()-0.5)*mag, original.y + (Math.random()-0.5)*mag, original.z);
+          requestAnimationFrame(shake);
+        };
+        requestAnimationFrame(shake);
+      }
+    } catch {}
+
     // Emit combo-like UI event (simplified)
     try {
       const ui: any = (this.app as any)._ui;

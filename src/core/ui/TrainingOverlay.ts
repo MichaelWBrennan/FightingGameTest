@@ -8,6 +8,7 @@ export class TrainingOverlay {
   private paused = false;
   private hitboxLayer: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
+  private stepRequested = false;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -44,7 +45,7 @@ export class TrainingOverlay {
   private onKey(e: KeyboardEvent): void {
     if (e.key === 'F2') this.hitboxToggle = !this.hitboxToggle;
     if (e.key === 'F3') this.paused = !this.paused;
-    if (e.key === 'F4') this.stepOne();
+    if (e.key === 'F4') this.stepRequested = true;
   }
 
   private renderInputs(): void {
@@ -108,12 +109,7 @@ export class TrainingOverlay {
     } catch {}
   }
 
-  stepOne(): void {
-    try {
-      const engine: any = (this.app as any);
-      // Placeholder: could gate main update loop with paused flag
-    } catch {}
-  }
+  consumeStep(): boolean { const s = this.stepRequested; this.stepRequested = false; return s; }
 
   get showHitboxes(): boolean { return this.hitboxToggle; }
   get isPaused(): boolean { return this.paused; }

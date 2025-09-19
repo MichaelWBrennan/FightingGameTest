@@ -367,10 +367,10 @@ export class GameEngine {
         // Ensure input is updated first for deterministic reads
         try { this.inputManager.update(); } catch {}
         // Pause gating for training
-        if (!this.trainingOverlay || !this.trainingOverlay.isPaused) {
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
           this.pipeline.update(dt);
         }
-        if (!this.trainingOverlay || !this.trainingOverlay.isPaused) {
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
           this.stateStack.update(dt);
         }
         if (!this.debugOverlay && typeof window !== 'undefined') {
@@ -380,9 +380,11 @@ export class GameEngine {
         }
         this.debugOverlay?.update();
         this.debugOverlay?.setTimings(this.pipeline.getTimings());
-        // Netcode stats (if enabled)
+        // Netcode
         try {
           const net: any = this.services.resolve('netcode');
+          // advance netcode each frame to drive rollback sim when enabled
+          net?.step?.();
           if (net?.isEnabled?.() && net?.getStats) {
             this.debugOverlay?.setNetcodeInfo(net.getStats());
           }

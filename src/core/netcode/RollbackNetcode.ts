@@ -35,6 +35,11 @@ export class RollbackNetcode {
     this.running = false;
   }
 
+  setFrameDelay(frames: number): void {
+    const f = Math.max(0, Math.min(10, Math.floor(frames)));
+    (this as any).frameDelay = f;
+  }
+
   pushLocal(bits: number): void {
     const targetFrame = this.currentFrame + this.frameDelay;
     this.localInputs.set(targetFrame, bits);
