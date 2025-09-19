@@ -142,6 +142,7 @@ export class GameEngine {
     this.services.register('netcode', this.netcode);
     this.services.register('characters', this.characterManager);
     this.services.register('stages', this.stageManager);
+    this.services.register('combat', this.combatSystem);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 

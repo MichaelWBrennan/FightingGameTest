@@ -47,7 +47,15 @@ export class MatchmakingOverlay {
       this.paired = true;
       this.inQueue = false;
       this.status.textContent = `Match: ${m.session} (${m.host ? 'You host' : 'You join'})`;
-      // In a full integration, call NetcodeService.enableWebRTC with BroadcastSignaling(session, host)
+      // Auto-connect using WebRTC transport via NetcodeService
+      try {
+        const services: any = (window as any).pc?.Application?.getApplication?._services || (document as any)._services || (window as any)._services;
+        const net = services?.resolve?.('netcode');
+        // dynamic import to stay compatible in browser
+        (import('../netcode/BroadcastSignaling')).then(({ BroadcastSignaling }) => {
+          try { const signaling = new BroadcastSignaling(m.session); net?.enableWebRTC(signaling, m.host); } catch {}
+        }).catch(() => {});
+      } catch {}
     }
   }
 
