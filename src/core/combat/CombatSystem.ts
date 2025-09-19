@@ -394,7 +394,14 @@ export class CombatSystem {
 
   // Allow cancels from startup/active into defined follow-ups
   private canCancel(fromMove: string, toMove: string, phase: 'startup'|'active'|'recovery'): boolean {
-    // Simple rule: allow light->medium->heavy chains and specials from any on hit
+    // Prefer data-driven cancels from move config
+    try {
+      const cfg = this.characterManager.getActiveCharacters().find(c => c.currentMove?.name === fromMove)?.config;
+      const move = cfg?.moves?.[fromMove];
+      const table: string[] = (move?.cancels as string[]) || [];
+      if (table.includes(toMove) && phase !== 'recovery') return true;
+    } catch {}
+    // Fallback: allow light->medium->heavy chains and specials from any non-recovery
     const order: Record<string, number> = { lightPunch: 1, lightKick: 1, mediumPunch: 2, mediumKick: 2, heavyPunch: 3, heavyKick: 3 } as any;
     const a = order[fromMove] ?? 0;
     const b = order[toMove] ?? 0;

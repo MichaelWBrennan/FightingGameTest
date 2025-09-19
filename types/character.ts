@@ -115,6 +115,7 @@ export interface AttackData {
   properties?: AttackProperties;
   ex?: boolean;
   meterCost?: number;
+  cancels?: string[];
 }
 
 export interface AttackProperties {

@@ -36,6 +36,7 @@ import { Platform } from './utils/Platform';
 import { TrainingOverlay } from './ui/TrainingOverlay';
 import { NetplayOverlay } from './ui/NetplayOverlay';
 import { ReplayService } from './utils/ReplayService';
+import { MatchmakingOverlay } from './ui/MatchmakingOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -70,6 +71,7 @@ export class GameEngine {
   private trainingOverlay: TrainingOverlay | null = null;
   private netplayOverlay: NetplayOverlay | null = null;
   private replay: ReplayService | null = null;
+  private matchmaking: MatchmakingOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -406,6 +408,7 @@ export class GameEngine {
       try { this.trainingOverlay = new TrainingOverlay(this.app); } catch {}
       try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
       try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
+      try { this.matchmaking = new MatchmakingOverlay(); } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
       throw error;

@@ -147,9 +147,13 @@ export class CharacterManager {
       walkSpeed: 150
     } as any;
     const basicMoves: Record<string, any> = {
-      light_punch: { damage: 30, startup: 4, active: 2, recovery: 8, blockAdvantage: -1, hitAdvantage: 1 },
-      heavy_punch: { damage: 90, startup: 10, active: 3, recovery: 16, blockAdvantage: -4, hitAdvantage: 2 },
-      light_kick: { damage: 25, startup: 3, active: 2, recovery: 7, blockAdvantage: 0, hitAdvantage: 1 }
+      light_punch: { damage: 30, startup: 4, active: 2, recovery: 8, blockAdvantage: -1, hitAdvantage: 1, cancels: ['mediumPunch','heavyPunch','hadoken'] },
+      medium_punch: { damage: 50, startup: 7, active: 3, recovery: 12, blockAdvantage: -2, hitAdvantage: 2, cancels: ['heavyPunch','hadoken'] },
+      heavy_punch: { damage: 90, startup: 10, active: 3, recovery: 16, blockAdvantage: -4, hitAdvantage: 2, cancels: ['hadoken'] },
+      light_kick: { damage: 25, startup: 3, active: 2, recovery: 7, blockAdvantage: 0, hitAdvantage: 1, cancels: ['mediumKick','heavyKick','hadoken'] },
+      medium_kick: { damage: 45, startup: 6, active: 2, recovery: 10, blockAdvantage: -1, hitAdvantage: 2, cancels: ['heavyKick','hadoken'] },
+      heavy_kick: { damage: 85, startup: 11, active: 3, recovery: 18, blockAdvantage: -5, hitAdvantage: 1, cancels: ['hadoken'] },
+      hadoken: { damage: 70, startup: 12, active: 1, recovery: 20, blockAdvantage: -8, hitAdvantage: 0 }
     };
     const cfg = {
       characterId,
@@ -166,7 +170,16 @@ export class CharacterManager {
       strengths: ['fundamentals'],
       weaknesses: ['specialization'],
       uniqueMechanics: ['hadoken'],
-      moves: basicMoves
+      moves: {
+        ...basicMoves,
+        // camelCase aliases
+        lightPunch: basicMoves.light_punch,
+        mediumPunch: basicMoves.medium_punch,
+        heavyPunch: basicMoves.heavy_punch,
+        lightKick: basicMoves.light_kick,
+        mediumKick: basicMoves.medium_kick,
+        heavyKick: basicMoves.heavy_kick
+      }
     } as unknown as CharacterConfig;
     return cfg;
   }
