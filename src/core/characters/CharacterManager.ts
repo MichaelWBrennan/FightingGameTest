@@ -153,7 +153,7 @@ export class CharacterManager {
       light_kick: { damage: 25, startup: 3, active: 2, recovery: 7, blockAdvantage: 0, hitAdvantage: 1, cancels: ['mediumKick','heavyKick','hadoken'] },
       medium_kick: { damage: 45, startup: 6, active: 2, recovery: 10, blockAdvantage: -1, hitAdvantage: 2, cancels: ['heavyKick','hadoken'] },
       heavy_kick: { damage: 85, startup: 11, active: 3, recovery: 18, blockAdvantage: -5, hitAdvantage: 1, cancels: ['hadoken'] },
-      hadoken: { damage: 70, startup: 12, active: 1, recovery: 20, blockAdvantage: -8, hitAdvantage: 0 }
+      hadoken: { damage: 70, startup: 12, active: 1, recovery: 20, blockAdvantage: -8, hitAdvantage: 0, projectile: { speed: 0.22, lifetime: 90, width: 0.6, height: 0.6 } }
     };
     const cfg = {
       characterId,

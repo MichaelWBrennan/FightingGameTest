@@ -176,6 +176,8 @@ export class InputManager {
     this.player1Inputs.tatsumaki = this.detectQCB('kick');
     // Simple throw: LP+LK pressed together
     (this.player1Inputs as any).throw = (this.player1Inputs.lightPunch && this.player1Inputs.lightKick);
+    // Throw tech: MP+MK pressed together
+    (this.player1Inputs as any).tech = (this.player1Inputs.mediumPunch && this.player1Inputs.mediumKick);
     this.player2Inputs.hadoken = false;
   }
 

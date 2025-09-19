@@ -131,6 +131,15 @@ export class CombatSystem {
     if (!defender) return;
     const dx = Math.abs(attacker.entity.getPosition().x - defender.entity.getPosition().x);
     if (dx > 1.2) return;
+    // Tech window: if defender pressed tech within ~150ms, negate throw
+    try {
+      const inputs = this.inputManager.getPlayerInputs(attacker.id === active[0].id ? 1 : 0);
+      if ((inputs as any).tech) {
+        Logger.info('Throw teched');
+        this.hitstop = Math.max(this.hitstop, 4);
+        return;
+      }
+    } catch {}
     const dmg = 120;
     defender.health = Math.max(0, defender.health - dmg);
     this.hitstop = Math.max(this.hitstop, 8);
@@ -193,21 +202,28 @@ export class CombatSystem {
       e.setPosition(p.x + dir * 0.8, p.y + 1.0, p.z);
       (e as any)._owner = owner.id;
       (e as any)._dir = dir;
-      (e as any)._life = 90; // frames
+      const md: any = owner.config.moves?.hadoken;
+      const meta = md?.projectile || { speed: 0.18, lifetime: 90, width: 0.6, height: 0.6 };
+      (e as any)._life = meta.lifetime | 0;
+      (e as any)._speed = meta.speed || 0.18;
+      (e as any)._w = meta.width || 0.6;
+      (e as any)._h = meta.height || 0.6;
       this.app.root.addChild(e);
       this.app.on('update', (dt: number) => {
         try {
           if (!e.parent) return;
           const pos = e.getPosition();
-          pos.x += dir * 0.18;
+          pos.x += dir * ((e as any)._speed || 0.18);
           e.setPosition(pos);
           (e as any)._life -= 1;
           if ((e as any)._life <= 0) { e.destroy(); return; }
           // collide with opponent
           const opp = this.characterManager.getActiveCharacters().find(c => c.id !== owner.id);
           if (!opp) return;
-          const d = Math.abs(pos.x - opp.entity.getPosition().x);
-          if (d < 0.6) {
+          const op = opp.entity.getPosition();
+          const withinX = Math.abs(pos.x - op.x) < ((e as any)._w || 0.6);
+          const withinY = Math.abs(pos.y - op.y) < ((e as any)._h || 0.6);
+          if (withinX && withinY) {
             this.processHit(owner, opp);
             e.destroy();
           }

@@ -116,6 +116,7 @@ export interface AttackData {
   ex?: boolean;
   meterCost?: number;
   cancels?: string[];
+  projectile?: { speed: number; lifetime: number; width?: number; height?: number };
 }
 
 export interface AttackProperties {
