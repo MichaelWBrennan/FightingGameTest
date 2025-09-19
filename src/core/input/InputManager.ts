@@ -30,6 +30,11 @@ export class InputManager {
   private player1Inputs: PlayerInputs;
   private player2Inputs: PlayerInputs;
 
+  // Motion buffer and input leniency
+  private history: Array<{ t: number; p1: PlayerInputs }>[] = [];
+  private bufferMs = 120; // lenient buffer for motions
+  private lastUpdateTs = 0;
+
   constructor(app: pc.Application) {
     this.app = app;
     this.keyboard = app.keyboard;
@@ -107,7 +112,12 @@ export class InputManager {
     // Aggregate per-device inputs for player 1; player 2 TBD
     this.player1Inputs = this.aggregateInputs(this.keyboardInputs, this.gamepadInputs, this.touchInputs);
 
-    // Update special move detection
+    // Record motion history for leniency and specials
+    const now = performance.now();
+    this.lastUpdateTs = now;
+    this.pushHistory(now, this.player1Inputs);
+    this.pruneHistory(now);
+    // Update special move detection (buffered)
     this.updateSpecialMoves();
   }
 
@@ -151,15 +161,43 @@ export class InputManager {
   }
 
   private updateSpecialMoves(): void {
-    // Simple special move detection (should be expanded with proper motion buffer)
-    this.player1Inputs.hadoken = this.detectHadoken(this.player1Inputs);
-    this.player2Inputs.hadoken = this.detectHadoken(this.player2Inputs);
+    this.player1Inputs.hadoken = this.detectBufferedHadoken();
+    this.player2Inputs.hadoken = false; // TODO: add P2 aggregation when supported
   }
 
-  private detectHadoken(inputs: PlayerInputs): boolean {
-    // Simplified hadoken detection (down -> forward + punch)
-    return inputs.down && inputs.right && inputs.lightPunch;
+  private pushHistory(ts: number, p1: PlayerInputs): void {
+    this.history.push([{ t: ts, p1: { ...p1 } } as any]);
   }
+
+  private pruneHistory(now: number): void {
+    while (this.history.length && (now - (this.history[0][0] as any).t) > this.bufferMs) this.history.shift();
+  }
+
+  private detectBufferedHadoken(): boolean {
+    // Detect down, down-forward, forward within buffer window + punch press
+    const seq = ['down', 'down_forward', 'forward'] as const;
+    let idx = 0;
+    let punch = false;
+    for (let i = this.history.length - 1; i >= 0; i--) {
+      const rec = (this.history[i][0] as any).p1 as PlayerInputs;
+      const dir = this.getDir(rec);
+      if (!punch && (rec.lightPunch || rec.mediumPunch || rec.heavyPunch)) punch = true;
+      if (idx < seq.length && this.matchesDir(dir, seq[idx])) idx++;
+      if (idx >= seq.length && punch) return true;
+    }
+    return false;
+  }
+
+  private getDir(p: PlayerInputs): 'neutral'|'down'|'forward'|'down_forward'|'up'|'back' {
+    if (p.down && p.right) return 'down_forward';
+    if (p.right) return 'forward';
+    if (p.down) return 'down';
+    if (p.up) return 'up';
+    if (p.left) return 'back';
+    return 'neutral';
+  }
+
+  private matchesDir(d: string, target: string): boolean { return d === target; }
 
   // ===== Touch API for UI layer =====
   public setTouchDpad(direction: 'up'|'down'|'left'|'right', pressed: boolean): void {

@@ -4,6 +4,7 @@ export class DebugOverlay {
 	private container: HTMLDivElement;
 	private fpsLabel: HTMLDivElement;
 	private timingsLabel: HTMLDivElement;
+	private netcodeLabel: HTMLDivElement | null = null;
 	private lastTime = performance.now();
 	private frames = 0;
 	private fps = 0;
@@ -24,6 +25,9 @@ export class DebugOverlay {
 		this.timingsLabel = document.createElement('div');
 		this.container.appendChild(this.fpsLabel);
 		this.container.appendChild(this.timingsLabel);
+		this.netcodeLabel = document.createElement('div');
+		this.netcodeLabel.style.color = '#9f9';
+		this.container.appendChild(this.netcodeLabel);
 		document.body.appendChild(this.container);
 	}
 
@@ -41,5 +45,14 @@ export class DebugOverlay {
 	setTimings(samples: TimingSample[]): void {
 		const text = samples.map(s => `${s.name}:${s.ms.toFixed(2)}ms`).join('  ');
 		this.timingsLabel.textContent = text;
+	}
+
+	setNetcodeInfo(info: { rtt?: number; delay?: number; rollbacks?: number }): void {
+		if (!this.netcodeLabel) return;
+		const parts: string[] = [];
+		if (info.rtt != null) parts.push(`RTT:${Math.round(info.rtt)}ms`);
+		if (info.delay != null) parts.push(`Delay:${info.delay}`);
+		if (info.rollbacks != null) parts.push(`RB:${info.rollbacks}`);
+		this.netcodeLabel.textContent = parts.join('  ');
 	}
 }

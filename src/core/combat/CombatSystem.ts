@@ -143,7 +143,6 @@ export class CombatSystem {
 
   private updateHitboxes(): void {
     const activeCharacters = this.characterManager.getActiveCharacters();
-    
     for (const character of activeCharacters) {
       if (character.currentMove) {
         this.updateMoveFrames(character);
@@ -186,12 +185,15 @@ export class CombatSystem {
   }
 
   private charactersColliding(attacker: Character, defender: Character): boolean {
-    const attackerPos = attacker.entity.getPosition();
-    const defenderPos = defender.entity.getPosition();
-    const distance = attackerPos.distance(defenderPos);
-    
-    // Simple collision detection - should be replaced with proper hitbox system
-    return distance < 2.0;
+    // Basic AABB overlap using per-character bounds (placeholder until per-frame boxes wired)
+    const a = attacker.entity.getPosition();
+    const b = defender.entity.getPosition();
+    const halfW = 0.6, halfH = 1.0;
+    const aMinX = a.x - halfW, aMaxX = a.x + halfW, aMinY = a.y - 0.1, aMaxY = a.y + halfH;
+    const bMinX = b.x - halfW, bMaxX = b.x + halfW, bMinY = b.y - 0.1, bMaxY = b.y + halfH;
+    const overlapX = aMinX <= bMaxX && aMaxX >= bMinX;
+    const overlapY = aMinY <= bMaxY && aMaxY >= bMinY;
+    return overlapX && overlapY;
   }
 
   private processHit(attacker: Character, defender: Character): void {
