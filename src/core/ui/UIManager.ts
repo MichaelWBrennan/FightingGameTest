@@ -734,9 +734,9 @@ export class UIManager {
 		this.p1Pips = this.createRoundPips('P1Pips', new pc.Vec4(0.25, 0.86, 0.35, 0.89), false);
 		this.p2Pips = this.createRoundPips('P2Pips', new pc.Vec4(0.65, 0.86, 0.75, 0.89), true);
 
-		// Nameplates & portraits
-		const left = this.createNameplate(new pc.Vec4(0.03, 0.82, 0.30, 0.88), false);
-		const right = this.createNameplate(new pc.Vec4(0.70, 0.82, 0.97, 0.88), true);
+		// Nameplates & portraits (lowered slightly to avoid overlapping health/drive bars)
+		const left = this.createNameplate(new pc.Vec4(0.03, 0.79, 0.30, 0.85), false);
+		const right = this.createNameplate(new pc.Vec4(0.70, 0.79, 0.97, 0.85), true);
 		this.p1NameText = left.text; this.p1Portrait = left.portrait;
 		this.p2NameText = right.text; this.p2Portrait = right.portrait;
 
