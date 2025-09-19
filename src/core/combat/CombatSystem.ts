@@ -90,6 +90,7 @@ export class CombatSystem {
         if (other.ownerId === pr.ownerId) continue;
         if (Math.abs(pr.x - other.x) < Math.max(pr.w, other.w) && Math.abs(pr.y - other.y) < Math.max(pr.h, other.h)) {
           toRemove.push(i); toRemove.push(j);
+          try { const fx: any = (this.app as any)._services?.resolve?.('effects'); fx?.spawn?.((pr.x+other.x)*0.5, (pr.y+other.y)*0.5, 'clash'); } catch {}
         }
       }
       // Hit opponent

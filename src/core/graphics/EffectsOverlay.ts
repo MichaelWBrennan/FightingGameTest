@@ -3,6 +3,12 @@ import * as pc from 'playcanvas';
 export class EffectsOverlay {
   private app: pc.Application;
   private pool: pc.Entity[] = [];
+  private config: Record<string, { color: pc.Color; size: number; life: number }> = {
+    hit: { color: new pc.Color(1,1,1,1), size: 1.0, life: 80 },
+    block: { color: new pc.Color(1,1,0.5,1), size: 1.0, life: 80 },
+    parry: { color: new pc.Color(0.6,0.8,1,1), size: 1.2, life: 90 },
+    clash: { color: new pc.Color(1,0.7,0.2,1), size: 1.1, life: 70 }
+  };
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -16,17 +22,17 @@ export class EffectsOverlay {
     return e;
   }
 
-  spawn(x: number, y: number, kind: 'hit'|'block'|'parry' = 'hit'): void {
+  spawn(x: number, y: number, kind: 'hit'|'block'|'parry'|'clash' = 'hit'): void {
     const e = this.pool.pop() || this.createSpark();
     e.enabled = true;
     e.setPosition(x, y, 0);
     const el: any = e.element;
+    const cfg = this.config[kind];
     if (el) {
-      if (kind === 'parry') el.color = new pc.Color(0.6,0.8,1,1);
-      else if (kind === 'block') el.color = new pc.Color(1,1,0.5,1);
-      else el.color = new pc.Color(1,1,1,1);
+      el.color = cfg.color;
+      el.width = 32 * cfg.size; el.height = 32 * cfg.size;
     }
-    setTimeout(() => { try { if (el) el.color = new pc.Color(1,1,1,0); e.enabled = false; this.pool.push(e); } catch {} }, 80);
+    setTimeout(() => { try { if (el) el.color = new pc.Color(1,1,1,0); e.enabled = false; this.pool.push(e); } catch {} }, cfg.life);
   }
 }
 
