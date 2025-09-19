@@ -364,8 +364,13 @@ export class GameEngine {
       this.updateHandler = (dt: number) => {
         // Ensure input is updated first for deterministic reads
         try { this.inputManager.update(); } catch {}
-        this.pipeline.update(dt);
-        this.stateStack.update(dt);
+        // Pause gating for training
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused) {
+          this.pipeline.update(dt);
+        }
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused) {
+          this.stateStack.update(dt);
+        }
         if (!this.debugOverlay && typeof window !== 'undefined') {
           import('./debug/DebugOverlay').then(({ DebugOverlay }) => {
             if (!this.debugOverlay) this.debugOverlay = new DebugOverlay();
