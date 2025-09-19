@@ -48,7 +48,14 @@ export class ReplayService {
     } else if (this.playing) {
       if (this.playIndex >= this.buffer.length) { this.stopPlayback(); return; }
       const fr = this.buffer[this.playIndex++];
+      const before = (this.combat as any).getCurrentFrame?.() || 0;
       this.combat.stepWithInputs(fr.p0, fr.p1);
+      // Determinism check: optional lightweight checksum via combat adapter payload if exposed in future
+      const after = (this.combat as any).getCurrentFrame?.() || 0;
+      if (after !== before + 1) {
+        // eslint-disable-next-line no-console
+        console.warn('[replay] non-monotonic frame during playback');
+      }
     }
   }
 

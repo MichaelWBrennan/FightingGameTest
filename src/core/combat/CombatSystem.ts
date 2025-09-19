@@ -181,6 +181,39 @@ export class CombatSystem {
     };
 
     Logger.info(`${character.id} executing ${moveName}`);
+    // Spawn simple projectile on hadoken
+    if (moveName === 'hadoken') this.spawnProjectile(character, Math.sign(character.facing) || 1);
+  }
+
+  private spawnProjectile(owner: Character, dir: number): void {
+    try {
+      const e = new pc.Entity('projectile');
+      e.addComponent('script');
+      const p = owner.entity.getPosition().clone();
+      e.setPosition(p.x + dir * 0.8, p.y + 1.0, p.z);
+      (e as any)._owner = owner.id;
+      (e as any)._dir = dir;
+      (e as any)._life = 90; // frames
+      this.app.root.addChild(e);
+      this.app.on('update', (dt: number) => {
+        try {
+          if (!e.parent) return;
+          const pos = e.getPosition();
+          pos.x += dir * 0.18;
+          e.setPosition(pos);
+          (e as any)._life -= 1;
+          if ((e as any)._life <= 0) { e.destroy(); return; }
+          // collide with opponent
+          const opp = this.characterManager.getActiveCharacters().find(c => c.id !== owner.id);
+          if (!opp) return;
+          const d = Math.abs(pos.x - opp.entity.getPosition().x);
+          if (d < 0.6) {
+            this.processHit(owner, opp);
+            e.destroy();
+          }
+        } catch {}
+      });
+    } catch {}
   }
 
   private updateHitboxes(): void {
@@ -259,6 +292,9 @@ export class CombatSystem {
       defender.meter = Math.min(100, (defender.meter || 0) + 5);
       // Emit event for UI feedback
       this.app.fire('combat:parry', { attacker, defender });
+      const effects: any = (this.app as any)._services?.resolve?.('effects');
+      const p = defender.entity.getPosition();
+      effects?.spawn?.(p.x, p.y + 1.0, 'parry');
     } catch {}
   }
 
@@ -410,6 +446,11 @@ export class CombatSystem {
     this.hitstop = Math.max(this.hitstop, 3);
     // Guard meter regen after short delay
     setTimeout(() => { try { defender.guardMeter = Math.min(100, (defender.guardMeter ?? 0) + 5); } catch {} }, 400);
+    try {
+      const effects: any = (this.app as any)._services?.resolve?.('effects');
+      const p = defender.entity.getPosition();
+      effects?.spawn?.(p.x, p.y + 1.0, 'block');
+    } catch {}
   }
 
   // Allow cancels from startup/active into defined follow-ups

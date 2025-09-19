@@ -16,12 +16,16 @@ export class EffectsOverlay {
     return e;
   }
 
-  spawn(x: number, y: number): void {
+  spawn(x: number, y: number, kind: 'hit'|'block'|'parry' = 'hit'): void {
     const e = this.pool.pop() || this.createSpark();
     e.enabled = true;
     e.setPosition(x, y, 0);
     const el: any = e.element;
-    if (el) el.color = new pc.Color(1,1,1,1);
+    if (el) {
+      if (kind === 'parry') el.color = new pc.Color(0.6,0.8,1,1);
+      else if (kind === 'block') el.color = new pc.Color(1,1,0.5,1);
+      else el.color = new pc.Color(1,1,1,1);
+    }
     setTimeout(() => { try { if (el) el.color = new pc.Color(1,1,1,0); e.enabled = false; this.pool.push(e); } catch {} }, 80);
   }
 }
