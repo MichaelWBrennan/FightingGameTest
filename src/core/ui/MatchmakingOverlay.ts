@@ -3,6 +3,8 @@ export class MatchmakingOverlay {
   private container: HTMLDivElement;
   private status: HTMLSpanElement;
   private inQueue = false;
+  private myId = Math.random().toString(36).slice(2, 8);
+  private paired = false;
 
   constructor() {
     this.bc = new BroadcastChannel('fg-queue');
@@ -31,20 +33,21 @@ export class MatchmakingOverlay {
   private toggleQueue(): void {
     this.inQueue = !this.inQueue;
     this.status.textContent = this.inQueue ? 'Searching…' : 'Idle';
-    if (this.inQueue) this.bc.postMessage({ t: 'find', id: this.uuid() });
+    if (this.inQueue) this.bc.postMessage({ t: 'find', id: this.myId });
   }
 
   private onMsg(m: any): void {
-    if (!this.inQueue) return;
-    if (m?.t === 'find') {
-      // Pair immediately for demo: session = min(id,id2)+max(id,id2)
-      const mine = 'me';
-      const session = (mine < m.id ? mine + m.id : m.id + mine);
-      this.bc.postMessage({ t: 'pair', session });
+    if (!this.inQueue || this.paired) return;
+    if (m?.t === 'find' && m.id !== this.myId) {
+      const session = (this.myId < m.id ? this.myId + m.id : m.id + this.myId);
+      const host = this.myId < m.id; // Lower id hosts
+      this.bc.postMessage({ t: 'offer', session, host, to: m.id, from: this.myId });
     }
-    if (m?.t === 'pair') {
-      this.status.textContent = 'Match found: ' + m.session;
-      // consumer can use NetplayOverlay to host/join this session code
+    if (m?.t === 'offer' && m.to === this.myId && !this.paired) {
+      this.paired = true;
+      this.inQueue = false;
+      this.status.textContent = `Match: ${m.session} (${m.host ? 'You host' : 'You join'})`;
+      // In a full integration, call NetcodeService.enableWebRTC with BroadcastSignaling(session, host)
     }
   }
 
