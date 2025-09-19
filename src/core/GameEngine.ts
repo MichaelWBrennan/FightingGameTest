@@ -409,6 +409,13 @@ export class GameEngine {
           const ac: any = this.services.resolve('anticheat');
           this.debugOverlay?.setCheatAlerts(ac?.getReports?.() || []);
         } catch {}
+        // Determinism status surface
+        try {
+          const det: any = this.services.resolve('det');
+          const last = det?.getLastValidatedFrame?.() ?? -1;
+          const mis = det?.getLastMismatchFrame?.() ?? -1;
+          this.debugOverlay?.setDeterminism(last, mis < 0 || mis < last);
+        } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
