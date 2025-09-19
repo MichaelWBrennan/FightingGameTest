@@ -9,6 +9,8 @@ export class UIManager {
 	// Runtime-generated font to ensure text renders without Editor font assets
 	private canvasFont: any | null = null;
 	private touchOverlay: HTMLDivElement | null = null;
+	private touchDpad: HTMLDivElement | null = null;
+	private touchButtons: HTMLDivElement | null = null;
 	private domContainer: HTMLDivElement | null = null;
 	private domP1: HTMLDivElement | null = null;
 	private domP2: HTMLDivElement | null = null;
@@ -83,8 +85,56 @@ export class UIManager {
 		}, 0);
 		this.ensureDomFallback();
 		this.ensureTouchControls();
+		this.applySafeAreaInsets();
+		this.bindResizeHandlers();
+		this.updateResponsiveLayout();
 		this.setupEventListeners();
 		try { (await import('./LoadingOverlay')).LoadingOverlay.endTask('ui_init', true); } catch {}
+	}
+	private bindResizeHandlers(): void {
+		try {
+			const handler = () => {
+				try { this.applySafeAreaInsets(); } catch {}
+				try { this.updateResponsiveLayout(); } catch {}
+			};
+			window.addEventListener('resize', handler);
+			window.addEventListener('orientationchange', handler as any);
+		} catch {}
+	}
+
+	private updateResponsiveLayout(): void {
+		try {
+			const w = Math.max(1, window.innerWidth || 1);
+			const h = Math.max(1, window.innerHeight || 1);
+			const portrait = h >= w;
+			// Adjust screen reference if available (helps text scale feel consistent)
+			if (this.root && (this.root as any).screen) {
+				const refW = portrait ? 1080 : 1920;
+				const refH = portrait ? 1920 : 1080;
+				(this.root as any).screen.referenceResolution = new pc.Vec2(refW, refH);
+			}
+			// Resize touch controls for mobile
+			if (this.touchOverlay && Platform.kind() === 'mobile') {
+				const minDim = Math.min(w, h);
+				const dpadSize = Math.round(Math.max(120, Math.min(240, minDim * (portrait ? 0.28 : 0.22))));
+				const buttonSize = Math.round(Math.max(64, Math.min(112, minDim * (portrait ? 0.12 : 0.10))));
+				const gap = Math.round(buttonSize * 0.18);
+				if (this.touchDpad) {
+					this.touchDpad.style.width = `${dpadSize}px`;
+					this.touchDpad.style.height = `${dpadSize}px`;
+				}
+				if (this.touchButtons) {
+					this.touchButtons.style.width = `${buttonSize * 3 + gap * 2}px`;
+					this.touchButtons.style.height = `${buttonSize * 2 + gap}px`;
+					(this.touchButtons.style as any).gap = `${gap}px`;
+					Array.from(this.touchButtons.querySelectorAll('button')).forEach((el: Element) => {
+						const b = el as HTMLButtonElement;
+						b.style.width = `${buttonSize}px`;
+						b.style.height = `${buttonSize}px`;
+					});
+				}
+			}
+		} catch {}
 	}
 
 	public showMenu(): void {
@@ -386,6 +436,10 @@ export class UIManager {
 			overlay.appendChild(buttons);
 			document.body.appendChild(overlay);
 			this.touchOverlay = overlay;
+			this.touchDpad = dpad;
+			this.touchButtons = buttons;
+			// Initial responsive sizing
+			this.updateResponsiveLayout();
 
 			// Wire events to InputManager touch API
 			const services: any = (this.app as any)._services;
