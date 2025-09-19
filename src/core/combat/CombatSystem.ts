@@ -200,16 +200,20 @@ export class CombatSystem {
   }
 
   private resolveContact(attacker: Character, defender: Character): void {
-    // If defender tapped forward within 80ms of contact, parry
+    // If defender tapped toward attacker within parry window, parry
     const defenderIndex = attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 1 : 0;
-    const parryWindowMs = 80;
-    if (this.inputManager.wasTapped(defenderIndex, 'right', parryWindowMs) || this.inputManager.wasTapped(defenderIndex, 'left', parryWindowMs)) {
+    const parryWindowMs = 90;
+    const ax = attacker.entity.getPosition().x;
+    const dx = ax - defender.entity.getPosition().x;
+    const toward: 'left'|'right' = dx < 0 ? 'left' : 'right';
+    if (this.inputManager.wasTapped(defenderIndex, toward, parryWindowMs)) {
       this.processParry(attacker, defender);
       return;
     }
     // Else: block if holding back, else hit
     const inputs = this.inputManager.getPlayerInputs(defenderIndex);
-    const defHoldingBack = inputs?.left || inputs?.right; // TODO: relative to facing
+    const away: 'left'|'right' = toward === 'left' ? 'right' : 'left';
+    const defHoldingBack = (away === 'left' ? inputs.left : inputs.right);
     const moveData = attacker.currentMove?.data;
     if (!moveData) return;
     if (defHoldingBack) {
@@ -224,8 +228,10 @@ export class CombatSystem {
     this.hitstop = Math.max(this.hitstop, 6);
     defender.state = 'idle';
     try {
-      const ui: any = (this.app as any)._ui;
-      ui?.['app']?.fire?.('ui:combo', { playerId: attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 'player2' : 'player1', hits: 1, damage: 0 });
+      // Meter gain
+      defender.meter = Math.min(100, (defender.meter || 0) + 5);
+      // Emit event for UI feedback
+      this.app.fire('combat:parry', { attacker, defender });
     } catch {}
   }
 
@@ -282,7 +288,11 @@ export class CombatSystem {
     if (hitsSoFar >= 1) {
       scale = this.comboScalingStart * Math.pow(this.comboScalingStep, Math.max(0, hitsSoFar - 1));
     }
-    const damage = Math.max(1, Math.floor(moveData.damage * scale));
+    // Juggle limit: reduce damage heavily if juggle points exceed limit
+    const juggle = (defender as any)._jugglePoints || 0;
+    const juggleLimit = 6;
+    const jugglePenalty = juggle >= juggleLimit ? 0.25 : 1.0;
+    const damage = Math.max(1, Math.floor(moveData.damage * scale * jugglePenalty));
     
     defender.health = Math.max(0, defender.health - damage);
     this.hitstop = Math.floor(damage / 10); // Hitstop based on damage
@@ -304,6 +314,12 @@ export class CombatSystem {
         };
         requestAnimationFrame(shake);
       }
+    } catch {}
+
+    // Increment juggle points and decay later
+    try {
+      (defender as any)._jugglePoints = ((defender as any)._jugglePoints || 0) + 2;
+      setTimeout(() => { try { (defender as any)._jugglePoints = 0; } catch {} }, 1500);
     } catch {}
 
     // Emit combo-like UI event (simplified)
