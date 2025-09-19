@@ -43,7 +43,18 @@ export class NetcodeService {
     const p1 = this.input.getPlayerInputs(0);
     const bits = inputsToBits(p1);
     this.netcode.pushLocal(bits);
-    try { (this.netcode as any).setFrameDelay?.(this.desiredDelay); } catch {}
+    // Adaptive frame delay based on transport RTT if available
+    try {
+      const anyNc: any = this.netcode as any;
+      const tr = (anyNc.transport || anyNc._transport || (anyNc as any));
+      const rtt = tr?.getRttMs?.();
+      if (typeof rtt === 'number' && isFinite(rtt)) {
+        const frames = Math.max(0, Math.min(6, Math.round(rtt / 50)));
+        (this.netcode as any).setFrameDelay?.(Math.max(frames, this.desiredDelay));
+      } else {
+        (this.netcode as any).setFrameDelay?.(this.desiredDelay);
+      }
+    } catch { (this.netcode as any).setFrameDelay?.(this.desiredDelay); }
     this.netcode.advance();
   }
 

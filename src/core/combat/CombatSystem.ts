@@ -341,6 +341,10 @@ export class CombatSystem {
         };
         requestAnimationFrame(shake);
       }
+      // Hitspark at defender position
+      const effects: any = (this.app as any)._services?.resolve?.('effects');
+      const p = defender.entity.getPosition();
+      effects?.spawn?.(p.x, p.y + 1.0);
     } catch {}
 
     // Increment juggle points and decay later

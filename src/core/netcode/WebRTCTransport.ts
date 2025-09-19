@@ -1,11 +1,12 @@
 import { Transport } from './RollbackNetcode';
 
-type RTCMsg = { t: 'i'; f: number; b: number } | { t: 'p'; ts: number };
+type RTCMsg = { t: 'i'; f: number; b: number } | { t: 'p'; ts: number; echo?: boolean };
 
 export class WebRTCTransport implements Transport {
   private pc: RTCPeerConnection;
   private dc?: RTCDataChannel;
   private interval?: any;
+  private rttMs = 0;
 
   public onRemoteInput?: (frame: number, bits: number) => void;
 
@@ -40,7 +41,7 @@ export class WebRTCTransport implements Transport {
     dc.onmessage = (e) => this.onMessage(e.data);
     dc.onopen = () => {
       this.interval = setInterval(() => {
-        this.send({ t: 'p', ts: performance.now() });
+        this.send({ t: 'p', ts: performance.now(), echo: false });
       }, 500);
     };
     dc.onclose = () => { if (this.interval) clearInterval(this.interval); };
@@ -55,13 +56,22 @@ export class WebRTCTransport implements Transport {
       const m = typeof d === 'string' ? JSON.parse(d) as RTCMsg : JSON.parse(new TextDecoder().decode(d)) as RTCMsg;
       if (m.t === 'i') {
         this.onRemoteInput?.(m.f, m.b);
+      } else if (m.t === 'p') {
+        const now = performance.now();
+        if (m.echo) {
+          // Received pong for our ping
+          this.rttMs = Math.max(0, now - m.ts);
+        } else {
+          // Echo back for their RTT
+          this.send({ t: 'p', ts: m.ts, echo: true });
+        }
       }
-      // 'p' messages are currently ignored; could be used for RTT
     } catch {}
   }
 
   connect(): void {}
   disconnect(): void { try { this.pc.close(); } catch {} }
   sendLocalInput(frame: number, bits: number): void { this.send({ t: 'i', f: frame, b: bits }); }
+  getRttMs(): number { return this.rttMs; }
 }
 

@@ -146,6 +146,7 @@ export class GameEngine {
     this.services.register('stages', this.stageManager);
     this.services.register('combat', this.combatSystem);
     this.services.register('anticheat', this.antiCheat);
+    this.services.register('effects', null as any);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
@@ -419,6 +420,7 @@ export class GameEngine {
       try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
       try { this.matchmaking = new MatchmakingOverlay(); } catch {}
       try { this.effects = new EffectsOverlay(this.app); } catch {}
+      try { if (this.effects) this.services.register('effects', this.effects); } catch {}
       // Wire anti-cheat monitors
       try {
         const ac: any = this.antiCheat;
