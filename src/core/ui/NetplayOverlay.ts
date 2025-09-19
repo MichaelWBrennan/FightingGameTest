@@ -72,7 +72,7 @@ export class NetplayOverlay {
     this.container.appendChild(this.statusEl);
 
     const toggleBtn = document.createElement('button');
-    toggleBtn.textContent = 'Netplay';
+    toggleBtn.textContent = 'Netplay (F6)';
     toggleBtn.style.position = 'fixed';
     toggleBtn.style.right = '8px';
     toggleBtn.style.bottom = '8px';

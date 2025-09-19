@@ -35,6 +35,7 @@ import { LoadingOverlay } from './ui/LoadingOverlay';
 import { Platform } from './utils/Platform';
 import { TrainingOverlay } from './ui/TrainingOverlay';
 import { NetplayOverlay } from './ui/NetplayOverlay';
+import { ReplayService } from './utils/ReplayService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -68,6 +69,7 @@ export class GameEngine {
   private updateHandler: ((dt: number) => void) | null = null;
   private trainingOverlay: TrainingOverlay | null = null;
   private netplayOverlay: NetplayOverlay | null = null;
+  private replay: ReplayService | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -389,6 +391,8 @@ export class GameEngine {
             this.debugOverlay?.setNetcodeInfo(net.getStats());
           }
         } catch {}
+        // Replay
+        try { this.replay?.update(); } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
@@ -398,9 +402,10 @@ export class GameEngine {
       try { LoadingOverlay.complete(); } catch {}
       try { setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 1000); } catch {}
 
-      // Initialize training overlay (toggle with F1 via UIManager banner or use F2-F4)
+      // Initialize overlays/services
       try { this.trainingOverlay = new TrainingOverlay(this.app); } catch {}
       try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
+      try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
       throw error;
