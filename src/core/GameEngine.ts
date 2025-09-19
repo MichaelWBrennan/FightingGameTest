@@ -37,6 +37,7 @@ import { TrainingOverlay } from './ui/TrainingOverlay';
 import { NetplayOverlay } from './ui/NetplayOverlay';
 import { ReplayService } from './utils/ReplayService';
 import { MatchmakingOverlay } from './ui/MatchmakingOverlay';
+import { EffectsOverlay } from './graphics/EffectsOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -72,6 +73,7 @@ export class GameEngine {
   private netplayOverlay: NetplayOverlay | null = null;
   private replay: ReplayService | null = null;
   private matchmaking: MatchmakingOverlay | null = null;
+  private effects: EffectsOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -416,6 +418,7 @@ export class GameEngine {
       try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
       try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
       try { this.matchmaking = new MatchmakingOverlay(); } catch {}
+      try { this.effects = new EffectsOverlay(this.app); } catch {}
       // Wire anti-cheat monitors
       try {
         const ac: any = this.antiCheat;

@@ -120,6 +120,22 @@ export class CombatSystem {
     if (inputs.hadoken) {
       this.executeMove(character, 'hadoken');
     }
+    if ((inputs as any).throw) {
+      this.executeThrow(character);
+    }
+  }
+
+  private executeThrow(attacker: Character): void {
+    const active = this.characterManager.getActiveCharacters();
+    const defender = active.find(c => c.id !== attacker.id);
+    if (!defender) return;
+    const dx = Math.abs(attacker.entity.getPosition().x - defender.entity.getPosition().x);
+    if (dx > 1.2) return;
+    const dmg = 120;
+    defender.health = Math.max(0, defender.health - dmg);
+    this.hitstop = Math.max(this.hitstop, 8);
+    Logger.info(`${attacker.id} throws for ${dmg}`);
+    if (defender.health <= 0) this.handleKO(defender, attacker);
   }
 
   private findPressedAttack(inputs: any): string | null {

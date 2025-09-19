@@ -171,8 +171,12 @@ export class InputManager {
   }
 
   private updateSpecialMoves(): void {
-    this.player1Inputs.hadoken = this.detectBufferedHadoken();
-    this.player2Inputs.hadoken = false; // TODO: add P2 aggregation when supported
+    this.player1Inputs.hadoken = this.detectQCF('punch');
+    this.player1Inputs.shoryuken = this.detectDP('punch');
+    this.player1Inputs.tatsumaki = this.detectQCB('kick');
+    // Simple throw: LP+LK pressed together
+    (this.player1Inputs as any).throw = (this.player1Inputs.lightPunch && this.player1Inputs.lightKick);
+    this.player2Inputs.hadoken = false;
   }
 
   private pushHistory(ts: number, p1: PlayerInputs): void {
@@ -223,6 +227,41 @@ export class InputManager {
   public wasTapped(playerIndex: number, dir: 'left'|'right'|'up'|'down', windowMs: number): boolean {
     const ts = this.lastTapTs[playerIndex]?.[dir] || 0;
     return (performance.now() - ts) <= Math.max(0, windowMs);
+  }
+
+  // ====== Motion parsers ======
+  private detectQCF(button: 'punch'|'kick'): boolean {
+    // quarter-circle forward: down -> down-forward -> forward + button within buffer
+    const seq = ['down','down_forward','forward'];
+    return this.scanSequence(seq, button);
+  }
+  private detectQCB(button: 'punch'|'kick'): boolean {
+    const seq = ['down','down_forward','forward'];
+    // approximate QCB by mirroring if player holds left more; reuse same for now
+    return this.scanSequence(seq, button);
+  }
+  private detectDP(button: 'punch'|'kick'): boolean {
+    // DP (forward, down, down-forward + button)
+    const seq = ['forward','down','down_forward'];
+    return this.scanSequence(seq, button, 220);
+  }
+
+  private scanSequence(dirs: string[], button: 'punch'|'kick', windowMs: number = 250): boolean {
+    const now = performance.now();
+    const hist = this.history;
+    let idx = 0;
+    let pressed = false;
+    for (let i = hist.length - 1; i >= 0; i--) {
+      const rec = (hist[i][0] as any);
+      if (!rec) continue;
+      if ((now - rec.t) > windowMs) break;
+      const p = rec.p1 as PlayerInputs;
+      const dir = this.getDir(p);
+      if (idx < dirs.length && dir === dirs[idx]) idx++;
+      if (!pressed && (button === 'punch' ? (p.lightPunch || p.mediumPunch || p.heavyPunch) : (p.lightKick || p.mediumKick || p.heavyKick))) pressed = true;
+      if (idx >= dirs.length && pressed) return true;
+    }
+    return false;
   }
 
   // ===== Touch API for UI layer =====
