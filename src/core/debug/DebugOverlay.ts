@@ -6,6 +6,7 @@ export class DebugOverlay {
 	private timingsLabel: HTMLDivElement;
 	private netcodeLabel: HTMLDivElement | null = null;
 	private cheatLabel: HTMLDivElement | null = null;
+	private detLabel: HTMLDivElement | null = null;
 	private lastTime = performance.now();
 	private frames = 0;
 	private fps = 0;
@@ -32,6 +33,9 @@ export class DebugOverlay {
 		this.cheatLabel = document.createElement('div');
 		this.cheatLabel.style.color = '#ff6666';
 		this.container.appendChild(this.cheatLabel);
+        this.detLabel = document.createElement('div');
+        this.detLabel.style.color = '#6ff';
+        this.container.appendChild(this.detLabel);
 		document.body.appendChild(this.container);
 	}
 
@@ -65,4 +69,9 @@ export class DebugOverlay {
 		if (!reports || reports.length === 0) { this.cheatLabel.textContent = ''; return; }
 		this.cheatLabel.textContent = `CHEAT ALERTS: ${reports.map(r => r.type).join(', ')}`;
 	}
+
+	setDeterminism(frame: number, ok: boolean): void {
+        if (!this.detLabel) return;
+        this.detLabel.textContent = ok ? '' : `DET MISMATCH @${frame}`;
+    }
 }

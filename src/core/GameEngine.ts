@@ -39,6 +39,7 @@ import { ReplayService } from './utils/ReplayService';
 import { MatchmakingOverlay } from './ui/MatchmakingOverlay';
 import { EffectsOverlay } from './graphics/EffectsOverlay';
 import { SfxService } from './utils/SfxService';
+import { DeterminismService } from './utils/DeterminismService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -76,6 +77,7 @@ export class GameEngine {
   private matchmaking: MatchmakingOverlay | null = null;
   private effects: EffectsOverlay | null = null;
   private sfx: SfxService | null = null;
+  private det: DeterminismService | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -424,6 +426,7 @@ export class GameEngine {
       try { this.effects = new EffectsOverlay(this.app); } catch {}
       try { if (this.effects) this.services.register('effects', this.effects); } catch {}
       try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
+      try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
       // Wire anti-cheat monitors
       try {
         const ac: any = this.antiCheat;

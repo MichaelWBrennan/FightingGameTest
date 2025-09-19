@@ -377,6 +377,7 @@ export class CombatSystem {
     
     defender.health = Math.max(0, defender.health - damage);
     this.hitstop = Math.floor(damage / 10); // Hitstop based on damage
+    try { const sfx: any = (this.app as any)._services?.resolve?.('sfx'); sfx?.setDuck?.(true); setTimeout(()=>{ try { sfx?.setDuck?.(false); } catch {} }, Math.max(60, this.hitstop*16)); } catch {}
     
     Logger.info(`${attacker.id} hits ${defender.id} for ${damage} damage`);
 

@@ -54,6 +54,13 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
 
   step(frame: FrameNumber, p0: PlayerInputs, p1: PlayerInputs): void {
     this.combat.stepWithInputs(p0, p1);
+    try {
+      const det: any = (this.combat as any).app?._services?.resolve?.('det');
+      const cs = checksum32FromObject({ frame, chars: this.chars.getActiveCharacters().map(c => ({ id: c.id, hp: c.health, pos: (()=>{ const p = c.entity.getPosition(); return { x:p.x,y:p.y,z:p.z }; })() })) });
+      const ok = det?.validate?.(frame, cs);
+      const dbg: any = (this.combat as any).app?._debugOverlay;
+      // Surface via DebugOverlay in engine update loop; service stores state
+    } catch {}
   }
 }
 

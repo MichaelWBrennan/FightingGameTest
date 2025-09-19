@@ -1,6 +1,7 @@
 export class SfxService {
   private buffers: Map<string, HTMLAudioElement> = new Map();
   private volume = 0.9;
+  private duck = 1.0;
 
   preload(map: Record<string, string>): void {
     Object.entries(map).forEach(([k, url]) => {
@@ -13,7 +14,13 @@ export class SfxService {
   play(key: string): void {
     const a = this.buffers.get(key);
     if (!a) return;
-    try { a.currentTime = 0; a.play().catch(()=>{}); } catch {}
+    try {
+      const inst = new Audio(a.src);
+      inst.volume = Math.max(0, Math.min(1, this.volume * this.duck));
+      inst.play().catch(()=>{});
+    } catch {}
   }
+
+  setDuck(active: boolean): void { this.duck = active ? 0.6 : 1.0; }
 }
 
