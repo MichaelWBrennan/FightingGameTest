@@ -193,9 +193,22 @@ export class CombatSystem {
     const [p1, p2] = activeCharacters;
     
     if (p1.currentMove?.phase === 'active' && this.charactersColliding(p1, p2)) {
-      this.processHit(p1, p2);
+      this.resolveContact(p1, p2);
     } else if (p2.currentMove?.phase === 'active' && this.charactersColliding(p2, p1)) {
-      this.processHit(p2, p1);
+      this.resolveContact(p2, p1);
+    }
+  }
+
+  private resolveContact(attacker: Character, defender: Character): void {
+    // Simple high-level: if defender is holding back, block; else hit. Future: parry window.
+    const inputs = this.inputManager.getPlayerInputs(attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 1 : 0);
+    const defHoldingBack = inputs?.left || inputs?.right; // placeholder; should be relative to facing
+    const moveData = attacker.currentMove?.data;
+    if (!moveData) return;
+    if (defHoldingBack) {
+      this.processBlock(attacker, defender, moveData);
+    } else {
+      this.processHit(attacker, defender);
     }
   }
 
@@ -286,9 +299,33 @@ export class CombatSystem {
       setTimeout(() => { try { (attacker as any)._comboHits = 0; (attacker as any)._comboDmg = 0; } catch {} }, 1200);
     } catch {}
     
+    // Pushback
+    try {
+      const dir = Math.sign(defender.entity.getPosition().x - attacker.entity.getPosition().x) || 1;
+      const dp = defender.entity.getPosition().clone();
+      dp.x += dir * 0.25;
+      defender.entity.setPosition(dp);
+    } catch {}
+
     if (defender.health <= 0) {
       this.handleKO(defender, attacker);
     }
+  }
+
+  private processBlock(attacker: Character, defender: Character, moveData: any): void {
+    // Chip damage and blockstun
+    const chip = Math.max(0, Math.floor(moveData.damage * 0.1));
+    defender.health = Math.max(0, defender.health - chip);
+    defender.state = 'blockstun';
+    // Pushback stronger on block
+    try {
+      const dir = Math.sign(defender.entity.getPosition().x - attacker.entity.getPosition().x) || 1;
+      const dp = defender.entity.getPosition().clone();
+      dp.x += dir * 0.35;
+      defender.entity.setPosition(dp);
+    } catch {}
+    // brief hitstop on block too
+    this.hitstop = Math.max(this.hitstop, 3);
   }
 
   // Allow cancels from startup/active into defined follow-ups
