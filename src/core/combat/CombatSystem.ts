@@ -19,6 +19,8 @@ export class CombatSystem {
   private inputManager!: InputManager;
   private frameCounter = 0;
   private hitstop = 0;
+  private comboScalingStart = 0.8; // 80% after first hit
+  private comboScalingStep = 0.9;  // multiply per subsequent hit
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -80,8 +82,16 @@ export class CombatSystem {
   }
 
   private processCharacterInputs(character: Character, inputs: any): void {
-    if (character.state !== 'idle' && character.state !== 'walking') {
-      return; // Character is in an active state
+    // Allow cancels when in startup/active
+    const canAct = (character.state === 'idle' || character.state === 'walking');
+    if (!canAct) {
+      if (character.currentMove) {
+        const next = this.findPressedAttack(inputs);
+        if (next && this.canCancel(character.currentMove.name, next, character.currentMove.phase)) {
+          this.executeMove(character, next);
+        }
+      }
+      return;
     }
 
     // Process movement
@@ -92,18 +102,23 @@ export class CombatSystem {
     }
 
     // Process attacks
-    if (inputs.lightPunch) {
-      this.executeMove(character, 'lightPunch');
-    } else if (inputs.mediumPunch) {
-      this.executeMove(character, 'mediumPunch');
-    } else if (inputs.heavyPunch) {
-      this.executeMove(character, 'heavyPunch');
-    }
+    const pressed = this.findPressedAttack(inputs);
+    if (pressed) this.executeMove(character, pressed);
 
     // Process special moves (simplified motion detection)
     if (inputs.hadoken) {
       this.executeMove(character, 'hadoken');
     }
+  }
+
+  private findPressedAttack(inputs: any): string | null {
+    if (inputs.lightPunch) return 'lightPunch';
+    if (inputs.mediumPunch) return 'mediumPunch';
+    if (inputs.heavyPunch) return 'heavyPunch';
+    if (inputs.lightKick) return 'lightKick';
+    if (inputs.mediumKick) return 'mediumKick';
+    if (inputs.heavyKick) return 'heavyKick';
+    return null;
   }
 
   private moveCharacter(character: Character, direction: number): void {
@@ -231,7 +246,13 @@ export class CombatSystem {
     if (!attacker.currentMove) return;
 
     const moveData = attacker.currentMove.data;
-    const damage = moveData.damage;
+    // Damage scaling based on current combo count on attacker
+    const hitsSoFar = (attacker as any)._comboHits || 0;
+    let scale = 1.0;
+    if (hitsSoFar >= 1) {
+      scale = this.comboScalingStart * Math.pow(this.comboScalingStep, Math.max(0, hitsSoFar - 1));
+    }
+    const damage = Math.max(1, Math.floor(moveData.damage * scale));
     
     defender.health = Math.max(0, defender.health - damage);
     this.hitstop = Math.floor(damage / 10); // Hitstop based on damage
@@ -268,6 +289,17 @@ export class CombatSystem {
     if (defender.health <= 0) {
       this.handleKO(defender, attacker);
     }
+  }
+
+  // Allow cancels from startup/active into defined follow-ups
+  private canCancel(fromMove: string, toMove: string, phase: 'startup'|'active'|'recovery'): boolean {
+    // Simple rule: allow light->medium->heavy chains and specials from any on hit
+    const order: Record<string, number> = { lightPunch: 1, lightKick: 1, mediumPunch: 2, mediumKick: 2, heavyPunch: 3, heavyKick: 3 } as any;
+    const a = order[fromMove] ?? 0;
+    const b = order[toMove] ?? 0;
+    if (b > a && phase !== 'recovery') return true;
+    if (/hadoken|shoryuken|tatsu/.test(toMove) && phase !== 'recovery') return true;
+    return false;
   }
 
   private handleKO(ko: Character, winner: Character): void {
