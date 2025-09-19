@@ -40,6 +40,7 @@ export class CombatSystem {
 
     this.frameCounter++;
     this.processInputs();
+    this.updateFacing();
     this.updateHitboxes();
     this.checkCollisions();
 
@@ -66,8 +67,18 @@ export class CombatSystem {
     const activeCharacters = this.characterManager.getActiveCharacters();
     if (activeCharacters[0]) this.processCharacterInputs(activeCharacters[0], p0);
     if (activeCharacters[1]) this.processCharacterInputs(activeCharacters[1], p1);
+    this.updateFacing();
     this.updateHitboxes();
     this.checkCollisions();
+  }
+
+  private updateFacing(): void {
+    const a = this.characterManager.getActiveCharacters();
+    if (a.length !== 2) return;
+    const [p1, p2] = a;
+    const dx = p2.entity.getPosition().x - p1.entity.getPosition().x;
+    p1.facing = dx >= 0 ? 1 : -1;
+    p2.facing = -p1.facing as 1 | -1;
   }
 
   private processInputs(): void {
@@ -354,7 +365,18 @@ export class CombatSystem {
 
   private processBlock(attacker: Character, defender: Character, moveData: any): void {
     // Chip damage and blockstun
-    const chip = Math.max(0, Math.floor(moveData.damage * 0.1));
+    const guard = Math.max(0, Math.min(100, (defender.guardMeter ?? 100)));
+    const guardCost = Math.max(1, Math.floor(moveData.damage * 0.5));
+    let chip = Math.max(0, Math.floor(moveData.damage * 0.1));
+    if (guard <= guardCost) {
+      // Guard crush: guard breaks, deal small bonus chip and reset guard
+      chip += 10;
+      defender.guardMeter = 100;
+      defender.state = 'hitstun';
+    } else {
+      defender.guardMeter = guard - guardCost;
+      defender.state = 'blockstun';
+    }
     defender.health = Math.max(0, defender.health - chip);
     defender.state = 'blockstun';
     // Pushback stronger on block
@@ -366,6 +388,8 @@ export class CombatSystem {
     } catch {}
     // brief hitstop on block too
     this.hitstop = Math.max(this.hitstop, 3);
+    // Guard meter regen after short delay
+    setTimeout(() => { try { defender.guardMeter = Math.min(100, (defender.guardMeter ?? 0) + 5); } catch {} }, 400);
   }
 
   // Allow cancels from startup/active into defined follow-ups

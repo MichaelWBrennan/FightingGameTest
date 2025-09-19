@@ -280,7 +280,9 @@ export class CharacterManager {
         active: 0,
         recovery: 0,
         advantage: 0
-      }
+      },
+      facing: 1,
+      guardMeter: 100
     };
 
     this.characters.set(characterId, character);

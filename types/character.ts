@@ -182,6 +182,8 @@ export interface Character {
   state: 'idle' | 'walking' | 'attacking' | 'hitstun' | 'blockstun' | 'ko';
   currentMove: null | { name: string; data: AttackData; currentFrame: number; phase: 'startup' | 'active' | 'recovery' };
   frameData: { startup: number; active: number; recovery: number; advantage: number };
+  facing: 1 | -1;
+  guardMeter?: number;
 }
 
 export interface CharacterConfig extends CharacterData {}
