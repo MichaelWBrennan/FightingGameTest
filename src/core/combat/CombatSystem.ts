@@ -185,7 +185,38 @@ export class CombatSystem {
   }
 
   private charactersColliding(attacker: Character, defender: Character): boolean {
-    // Basic AABB overlap using per-character bounds (placeholder until per-frame boxes wired)
+    // Try per-frame hit/hurtboxes from animations if available
+    try {
+      const aPos = attacker.entity.getPosition();
+      const dPos = defender.entity.getPosition();
+      const configA: any = attacker.config;
+      const configD: any = defender.config;
+      const animKeyA = attacker.currentMove ? `move_${attacker.currentMove.name}` : 'idle';
+      const framesA = configA.animations?.[animKeyA]?.frames as any[] | undefined;
+      const frameIdxA = attacker.currentMove ? Math.max(0, Math.min((framesA?.length || 1) - 1, attacker.currentMove.currentFrame | 0)) : 0;
+      const fA = framesA && framesA[frameIdxA];
+      const animKeyD = 'idle';
+      const framesD = configD.animations?.[animKeyD]?.frames as any[] | undefined;
+      const fD = framesD && framesD[0];
+      const hitboxes: Array<{ x:number; y:number; width:number; height:number }> = (fA?.hitboxes || []) as any;
+      const hurtboxes: Array<{ x:number; y:number; width:number; height:number }> = (fD?.hurtboxes || [{ x:-0.4, y:0, width:0.8, height:1.6 }]) as any;
+      for (const hb of hitboxes) {
+        const aMinX = aPos.x + hb.x;
+        const aMaxX = aMinX + hb.width;
+        const aMinY = aPos.y + hb.y;
+        const aMaxY = aMinY + hb.height;
+        for (const hu of hurtboxes) {
+          const bMinX = dPos.x + hu.x;
+          const bMaxX = bMinX + hu.width;
+          const bMinY = dPos.y + hu.y;
+          const bMaxY = bMinY + hu.height;
+          const overlapX = aMinX <= bMaxX && aMaxX >= bMinX;
+          const overlapY = aMinY <= bMaxY && aMaxY >= bMinY;
+          if (overlapX && overlapY) return true;
+        }
+      }
+    } catch {}
+    // Fallback coarse AABB
     const a = attacker.entity.getPosition();
     const b = defender.entity.getPosition();
     const halfW = 0.6, halfH = 1.0;

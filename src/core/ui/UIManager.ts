@@ -1152,6 +1152,16 @@ export class UIManager {
 		(this.app as any).on?.('match:victory', (_winnerId: string) => {
 			this.showBanner('KO!');
 		});
+		// Training overlay toggles
+		try {
+			const onKey = (e: KeyboardEvent) => {
+				if (e.key === 'F1') {
+					const b = this.bannerText;
+					if (b) { b.enabled = !b.enabled; if (b.element) b.element.text = b.enabled ? 'TRAINING' : ''; }
+				}
+			};
+			window.addEventListener('keydown', onKey);
+		} catch {}
 	}
 
 	private showBanner(text: string): void {
