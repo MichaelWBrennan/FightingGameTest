@@ -37,6 +37,7 @@ export class InputManager {
   // Motion buffer and input leniency
   private history: Array<{ t: number; p1: PlayerInputs }>[] = [];
   private bufferMs = 120; // lenient buffer for motions
+  private leniencyByMotion: Partial<Record<'QCF'|'QCB'|'DP', number>> = {};
   private lastUpdateTs = 0;
 
   constructor(app: pc.Application) {
@@ -235,17 +236,17 @@ export class InputManager {
   private detectQCF(button: 'punch'|'kick'): boolean {
     // quarter-circle forward: down -> down-forward -> forward + button within buffer
     const seq = ['down','down_forward','forward'];
-    return this.scanSequence(seq, button);
+    return this.scanSequence(seq, button, this.leniencyByMotion.QCF ?? 250);
   }
   private detectQCB(button: 'punch'|'kick'): boolean {
     const seq = ['down','down_forward','forward'];
     // approximate QCB by mirroring if player holds left more; reuse same for now
-    return this.scanSequence(seq, button);
+    return this.scanSequence(seq, button, this.leniencyByMotion.QCB ?? 250);
   }
   private detectDP(button: 'punch'|'kick'): boolean {
     // DP (forward, down, down-forward + button)
     const seq = ['forward','down','down_forward'];
-    return this.scanSequence(seq, button, 220);
+    return this.scanSequence(seq, button, this.leniencyByMotion.DP ?? 220);
   }
 
   private scanSequence(dirs: string[], button: 'punch'|'kick', windowMs: number = 250): boolean {
@@ -268,6 +269,7 @@ export class InputManager {
 
   // External API to tweak motion leniency
   public setMotionLeniency(ms: number): void { this.bufferMs = Math.max(60, Math.min(400, Math.floor(ms))); }
+  public setMotionLeniencyFor(motion: 'QCF'|'QCB'|'DP', ms: number): void { this.leniencyByMotion[motion] = Math.max(60, Math.min(500, Math.floor(ms))); }
 
   // ===== Touch API for UI layer =====
   public setTouchDpad(direction: 'up'|'down'|'left'|'right', pressed: boolean): void {

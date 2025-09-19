@@ -21,6 +21,8 @@ export class CombatSystem {
   private hitstop = 0;
   private comboScalingStart = 0.8; // 80% after first hit
   private comboScalingStep = 0.9;  // multiply per subsequent hit
+  private projectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
+  private freeProjectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -41,6 +43,7 @@ export class CombatSystem {
     this.frameCounter++;
     this.processInputs();
     this.updateFacing();
+    this.updateProjectiles();
     this.updateHitboxes();
     this.checkCollisions();
 
@@ -68,8 +71,47 @@ export class CombatSystem {
     if (activeCharacters[0]) this.processCharacterInputs(activeCharacters[0], p0);
     if (activeCharacters[1]) this.processCharacterInputs(activeCharacters[1], p1);
     this.updateFacing();
+    this.updateProjectiles();
     this.updateHitboxes();
     this.checkCollisions();
+  }
+
+  private updateProjectiles(): void {
+    if (this.projectiles.length === 0) return;
+    const toRemove: number[] = [];
+    for (let i = 0; i < this.projectiles.length; i++) {
+      const pr = this.projectiles[i];
+      pr.x += pr.dir * pr.speed;
+      pr.life -= 1;
+      if (pr.life <= 0) { toRemove.push(i); continue; }
+      // Clash with other projectiles (owner filter)
+      for (let j = i + 1; j < this.projectiles.length; j++) {
+        const other = this.projectiles[j];
+        if (other.ownerId === pr.ownerId) continue;
+        if (Math.abs(pr.x - other.x) < Math.max(pr.w, other.w) && Math.abs(pr.y - other.y) < Math.max(pr.h, other.h)) {
+          toRemove.push(i); toRemove.push(j);
+        }
+      }
+      // Hit opponent
+      const opp = this.characterManager.getActiveCharacters().find(c => c.id !== pr.ownerId);
+      if (opp) {
+        const op = opp.entity.getPosition();
+        if (Math.abs(pr.x - op.x) < pr.w && Math.abs(pr.y - op.y) < pr.h) {
+          const owner = this.characterManager.getActiveCharacters().find(c => c.id === pr.ownerId);
+          if (owner) this.processHit(owner, opp);
+          toRemove.push(i);
+        }
+      }
+    }
+    toRemove.sort((a,b) => b-a);
+    let last = -1;
+    for (const idx of toRemove) {
+      if (idx === last) continue; last = idx;
+      if (idx >= 0 && idx < this.projectiles.length) {
+        const freed = this.projectiles.splice(idx, 1)[0];
+        this.freeProjectiles.push(freed);
+      }
+    }
   }
 
   private updateFacing(): void {
@@ -196,39 +238,21 @@ export class CombatSystem {
 
   private spawnProjectile(owner: Character, dir: number): void {
     try {
-      const e = new pc.Entity('projectile');
-      e.addComponent('script');
-      const p = owner.entity.getPosition().clone();
-      e.setPosition(p.x + dir * 0.8, p.y + 1.0, p.z);
-      (e as any)._owner = owner.id;
-      (e as any)._dir = dir;
+      const p = owner.entity.getPosition();
       const md: any = owner.config.moves?.hadoken;
       const meta = md?.projectile || { speed: 0.18, lifetime: 90, width: 0.6, height: 0.6 };
-      (e as any)._life = meta.lifetime | 0;
-      (e as any)._speed = meta.speed || 0.18;
-      (e as any)._w = meta.width || 0.6;
-      (e as any)._h = meta.height || 0.6;
-      this.app.root.addChild(e);
-      this.app.on('update', (dt: number) => {
-        try {
-          if (!e.parent) return;
-          const pos = e.getPosition();
-          pos.x += dir * ((e as any)._speed || 0.18);
-          e.setPosition(pos);
-          (e as any)._life -= 1;
-          if ((e as any)._life <= 0) { e.destroy(); return; }
-          // collide with opponent
-          const opp = this.characterManager.getActiveCharacters().find(c => c.id !== owner.id);
-          if (!opp) return;
-          const op = opp.entity.getPosition();
-          const withinX = Math.abs(pos.x - op.x) < ((e as any)._w || 0.6);
-          const withinY = Math.abs(pos.y - op.y) < ((e as any)._h || 0.6);
-          if (withinX && withinY) {
-            this.processHit(owner, opp);
-            e.destroy();
-          }
-        } catch {}
-      });
+      const slot = this.freeProjectiles.pop() || { x: 0, y: 0, dir, ownerId: owner.id, speed: meta.speed || 0.18, w: meta.width || 0.6, h: meta.height || 0.6, life: (meta.lifetime | 0) };
+      slot.x = p.x + dir * 0.8;
+      slot.y = p.y + 1.0;
+      slot.dir = dir;
+      slot.ownerId = owner.id;
+      slot.speed = meta.speed || 0.18;
+      slot.w = meta.width || 0.6;
+      slot.h = meta.height || 0.6;
+      slot.life = (meta.lifetime | 0);
+      this.projectiles.push(slot);
+      const sfx: any = (this.app as any)._services?.resolve?.('sfx');
+      sfx?.play?.('hadoken');
     } catch {}
   }
 
