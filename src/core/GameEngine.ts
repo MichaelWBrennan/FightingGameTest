@@ -34,6 +34,7 @@ import { ConfigService } from './utils/ConfigService';
 import { LoadingOverlay } from './ui/LoadingOverlay';
 import { Platform } from './utils/Platform';
 import { TrainingOverlay } from './ui/TrainingOverlay';
+import { NetplayOverlay } from './ui/NetplayOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -66,6 +67,7 @@ export class GameEngine {
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
   private trainingOverlay: TrainingOverlay | null = null;
+  private netplayOverlay: NetplayOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -396,6 +398,7 @@ export class GameEngine {
 
       // Initialize training overlay (toggle with F1 via UIManager banner or use F2-F4)
       try { this.trainingOverlay = new TrainingOverlay(this.app); } catch {}
+      try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
       throw error;
