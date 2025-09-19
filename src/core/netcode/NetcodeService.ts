@@ -1,6 +1,7 @@
 import { RollbackNetcode } from './RollbackNetcode';
 import { CombatDeterministicAdapter } from './DeterministicAdapter';
 import { LocalTransport } from './LocalTransport';
+import { WebRTCTransport } from './WebRTCTransport';
 import { InputManager, PlayerInputs } from '../input/InputManager';
 import { CharacterManager } from '../characters/CharacterManager';
 import { CombatSystem } from '../combat/CombatSystem';
@@ -19,6 +20,14 @@ export class NetcodeService {
     a.setPeer(b); b.setPeer(a);
     // single Rollback instance drives both players; peer delivers remote inputs
     this.netcode = new RollbackNetcode(adapter, a, 2, 12);
+    this.enabled = true;
+    this.netcode.start();
+  }
+
+  enableWebRTC(signaling: { send(s: any): void; on(cb: (s: any) => void): void }, isOfferer: boolean): void {
+    const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
+    const rtc = new WebRTCTransport(isOfferer, signaling);
+    this.netcode = new RollbackNetcode(adapter, rtc, 2, 12);
     this.enabled = true;
     this.netcode.start();
   }
