@@ -113,6 +113,8 @@ export class UIManager {
 				const refH = portrait ? 1920 : 1080;
 				(this.root as any).screen.referenceResolution = new pc.Vec2(refW, refH);
 			}
+			// Apply HUD orientation layout
+			this.applyHudOrientationLayout(portrait);
 			// Resize touch controls for mobile
 			if (this.touchOverlay && Platform.kind() === 'mobile') {
 				const minDim = Math.min(w, h);
@@ -133,6 +135,51 @@ export class UIManager {
 						b.style.height = `${buttonSize}px`;
 					});
 				}
+			}
+		} catch {}
+	}
+
+	private applyHudOrientationLayout(portrait: boolean): void {
+		try {
+			if (!this.hud) return;
+			const set = (e: pc.Entity | null | undefined, a: pc.Vec4) => { try { if (e && (e as any).element) (e as any).element.anchor = a; } catch {} };
+			if (portrait) {
+				// Top: health bars slightly narrower with bigger center gap
+				set(this.p1HealthContainer, new pc.Vec4(0.05, 0.885, 0.48, 0.965));
+				set(this.p2HealthContainer, new pc.Vec4(0.52, 0.885, 0.95, 0.965));
+				// Drive just below
+				set(this.p1DriveContainer, new pc.Vec4(0.05, 0.870, 0.48, 0.885));
+				set(this.p2DriveContainer, new pc.Vec4(0.52, 0.870, 0.95, 0.885));
+				// Timer in center
+				set(this.roundTimerCapsule, new pc.Vec4(0.43, 0.86, 0.57, 0.985));
+				set(this.roundTimerText, new pc.Vec4(0.47, 0.875, 0.53, 0.970));
+				// Pips
+				set(this.p1Pips, new pc.Vec4(0.18, 0.83, 0.32, 0.86));
+				set(this.p2Pips, new pc.Vec4(0.68, 0.83, 0.82, 0.86));
+				// Nameplate containers
+				const p1Plate = (this.p1NameText && (this.p1NameText.parent as pc.Entity)) || null;
+				const p2Plate = (this.p2NameText && (this.p2NameText.parent as pc.Entity)) || null;
+				set(p1Plate, new pc.Vec4(0.05, 0.76, 0.40, 0.82));
+				set(p2Plate, new pc.Vec4(0.60, 0.76, 0.95, 0.82));
+				// Bottom meters a bit wider
+				set(this.p1MeterContainer, new pc.Vec4(0.05, 0.05, 0.45, 0.085));
+				set(this.p2MeterContainer, new pc.Vec4(0.55, 0.05, 0.95, 0.085));
+			} else {
+				// Restore landscape defaults
+				set(this.p1HealthContainer, new pc.Vec4(0.03, 0.90, 0.47, 0.97));
+				set(this.p2HealthContainer, new pc.Vec4(0.53, 0.90, 0.97, 0.97));
+				set(this.p1DriveContainer, new pc.Vec4(0.03, 0.885, 0.47, 0.900));
+				set(this.p2DriveContainer, new pc.Vec4(0.53, 0.885, 0.97, 0.900));
+				set(this.roundTimerCapsule, new pc.Vec4(0.44, 0.86, 0.56, 0.98));
+				set(this.roundTimerText, new pc.Vec4(0.47, 0.885, 0.53, 0.975));
+				set(this.p1Pips, new pc.Vec4(0.25, 0.86, 0.35, 0.89));
+				set(this.p2Pips, new pc.Vec4(0.65, 0.86, 0.75, 0.89));
+				set(this.p1MeterContainer, new pc.Vec4(0.03, 0.05, 0.35, 0.085));
+				set(this.p2MeterContainer, new pc.Vec4(0.65, 0.05, 0.97, 0.085));
+				const p1Plate = (this.p1NameText && (this.p1NameText.parent as pc.Entity)) || null;
+				const p2Plate = (this.p2NameText && (this.p2NameText.parent as pc.Entity)) || null;
+				set(p1Plate, new pc.Vec4(0.03, 0.79, 0.30, 0.85));
+				set(p2Plate, new pc.Vec4(0.70, 0.79, 0.97, 0.85));
 			}
 		} catch {}
 	}
