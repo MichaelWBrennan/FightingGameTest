@@ -162,13 +162,13 @@ export class UIManager {
 
 	public showHUD(): void {
 		this.hideMenu();
-		if (this.hud) { this.hud.enabled = true; this.setDomVisible(true); return; }
+		if (this.hud) { this.hud.enabled = true; this.setDomVisible(false); return; }
 		this.hud = new pc.Entity('MatchHUD');
 		this.hud.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0,0,1,1) });
 		this.root?.addChild(this.hud);
 		// Build textured HUD asynchronously
 		void this.ensureFightingHudBuilt();
-		this.setDomVisible(true);
+		this.setDomVisible(false);
 	}
 
 	public hideHUD(): void {
@@ -234,9 +234,11 @@ export class UIManager {
 			if (this.p2BurnoutOverlay && this.p2BurnoutOverlay.element) this.p2BurnoutOverlay.enabled = (dSegs2 === 0);
 		} catch {}
 
-		// Fallback DOM text (debug/diagnostic)
-		if (this.domP1) this.domP1.textContent = `P1: ${h1}${p1Max ? '/' + Math.floor(p1Max) : ''} | ${m1}%`;
-		if (this.domP2) this.domP2.textContent = `P2: ${h2}${p2Max ? '/' + Math.floor(p2Max) : ''} | ${m2}%`;
+		// Fallback DOM text (debug/diagnostic) is disabled for production HUD
+		if (false) {
+			if (this.domP1) this.domP1.textContent = `P1: ${h1}${p1Max ? '/' + Math.floor(p1Max) : ''} | ${m1}%`;
+			if (this.domP2) this.domP2.textContent = `P2: ${h2}${p2Max ? '/' + Math.floor(p2Max) : ''} | ${m2}%`;
+		}
 	}
 
 	public setNameplates(p1Name: string, p2Name: string, p1PortraitId?: string, p2PortraitId?: string): void {
