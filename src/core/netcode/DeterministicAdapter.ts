@@ -17,6 +17,8 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
     const characters = this.chars.getActiveCharacters().map(c => ({
       id: c.id,
       health: c.health,
+      meter: c.meter,
+      guardMeter: c.guardMeter ?? 100,
       state: c.state,
       currentMove: c.currentMove ? {
         name: c.currentMove.name,
@@ -45,8 +47,10 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
       const src = p.characters.find((x: any) => x.id === ch.id);
       if (!src) continue;
       ch.health = src.health;
+      ch.meter = src.meter ?? ch.meter;
+      ch.guardMeter = src.guardMeter ?? ch.guardMeter;
       ch.state = src.state;
-      ch.currentMove = src.currentMove ? { name: src.currentMove.name, data: ch.config.moves[src.currentMove.name], currentFrame: src.currentMove.currentFrame, phase: src.currentMove.phase } : null;
+      ch.currentMove = (src.currentMove && src.currentMove.name) ? { name: src.currentMove.name, data: ch.config.moves[src.currentMove.name], currentFrame: src.currentMove.currentFrame, phase: src.currentMove.phase } : null;
       ch.frameData = src.frameData ? { ...src.frameData } : null;
       ch.entity.setPosition(new pc.Vec3(src.position.x, src.position.y, src.position.z));
     }

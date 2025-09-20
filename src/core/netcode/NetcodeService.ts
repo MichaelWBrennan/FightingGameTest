@@ -198,6 +198,8 @@ export class NetcodeService {
         view.setFloat32(off, p.x ?? 0, true); off += 4;
         view.setFloat32(off, p.y ?? 0, true); off += 4;
         view.setFloat32(off, p.z ?? 0, true); off += 4;
+        view.setFloat32(off, (c?.meter ?? 0), true); off += 4;
+        view.setFloat32(off, (c?.guardMeter ?? 100), true); off += 4;
         view.setInt8(off, this.stateToCode(c?.state)); off += 1;
         const has = c?.currentMove ? 1 : 0; view.setUint8(off, has); off += 1;
         if (has) {
@@ -229,6 +231,8 @@ export class NetcodeService {
         const x = view.getFloat32(off, true); off += 4;
         const y = view.getFloat32(off, true); off += 4;
         const z = view.getFloat32(off, true); off += 4;
+        const meter = view.getFloat32(off, true); off += 4;
+        const guardMeter = view.getFloat32(off, true); off += 4;
         const state = this.codeToState(view.getInt8(off)); off += 1;
         const has = view.getUint8(off); off += 1;
         let currentMove: any = null;
@@ -237,7 +241,7 @@ export class NetcodeService {
           const ph = this.codeToPhase(view.getInt8(off)); off += 1;
           currentMove = { name: '', currentFrame: cf, phase: ph };
         }
-        characters.push({ id, health, state, currentMove, frameData: null, position: { x, y, z } });
+        characters.push({ id, health, meter, guardMeter, state, currentMove, frameData: null, position: { x, y, z } });
       }
       const payload = { frame, hitstop, characters };
       return { frame: cs.frame, checksum: cs.checksum, payload } as GameStateSnapshot;
