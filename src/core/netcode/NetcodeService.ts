@@ -13,6 +13,8 @@ export class NetcodeService {
   private desiredDelay = 2;
   private jitterBufferFrames = 1; // target smoothing frames for jitter
   private frameBudget = 10; // rollback budget window
+  private lastRollbackCount = 0;
+  private lastResyncAt = 0;
 
   constructor(private combat: CombatSystem, private chars: CharacterManager, private input: InputManager) {}
   public useWorker = false;
@@ -40,6 +42,17 @@ export class NetcodeService {
     this.enabled = true;
     this.netcode.start();
     try { (rtc as any).sendClockProbe?.(); } catch {}
+    try {
+      (rtc as any).onCtrlMessage = (m: any) => {
+        if (!m || typeof m !== 'object') return;
+        if (m.t === 'resync_req') {
+          // Only host responds with snapshot
+          try { if ((rtc as any).getIsOfferer?.()) this.sendResyncSnapshot(); } catch {}
+        } else if (m.t === 'resync_snap' && m.frame != null && m.payload) {
+          this.applyResyncSnapshot(m.frame|0, m.checksum|0, this.fromBase64(m.payload));
+        }
+      };
+    } catch {}
     if (this.useWorker && typeof Worker !== 'undefined') {
       try {
         // @ts-ignore
@@ -128,6 +141,19 @@ export class NetcodeService {
       }
     } catch { (this.netcode as any).setFrameDelay?.(this.desiredDelay); }
     this.netcode.advance();
+    // Monitor rollback pressure and trigger auto-resync if needed
+    try {
+      const s: any = (this.netcode as any).getStats?.();
+      if (s && typeof s.rollbacks === 'number') {
+        const now = (performance?.now?.() || Date.now());
+        const delta = (s.rollbacks | 0) - (this.lastRollbackCount | 0);
+        if (delta >= 20 && now - this.lastResyncAt > 3000) {
+          this.requestResync();
+          this.lastResyncAt = now;
+        }
+        this.lastRollbackCount = s.rollbacks | 0;
+      }
+    } catch {}
   }
 
   getStats(): { rtt?: number; jitter?: number; delay?: number; rollbacks?: number; ooo?: number; loss?: number; tx?: number; rx?: number; cur?: number; confirmed?: number } {
@@ -168,6 +194,42 @@ export class NetcodeService {
       tr?.setJitterWindow?.(this.jitterBufferFrames);
     } catch {}
   }
+
+  // Desync auto-recovery via control channel snapshot sync
+  private requestResync(): void {
+    try {
+      const tr: any = (this.netcode as any).transport;
+      if (!tr) return;
+      if (tr.getIsOfferer?.()) {
+        // host sends immediately
+        this.sendResyncSnapshot();
+      } else {
+        tr.sendControl?.({ t: 'resync_req' });
+      }
+    } catch {}
+  }
+  private sendResyncSnapshot(): void {
+    try {
+      const cur = (this.netcode as any).getCurrentFrame?.() ?? 0;
+      const snap = (this.netcode as any).adapter?.saveState?.(cur);
+      if (!snap) return;
+      const cs = this.compressSnapshot(snap);
+      const payload = this.toBase64(new Uint8Array(cs.buf));
+      const tr: any = (this.netcode as any).transport;
+      tr?.sendControl?.({ t: 'resync_snap', frame: cs.frame, checksum: cs.checksum, payload });
+    } catch {}
+  }
+  private applyResyncSnapshot(frame: number, checksum: number, buf: ArrayBuffer | null): void {
+    try {
+      if (!buf) return;
+      const cs = { frame, checksum, buf };
+      const snap = this.decompressSnapshot(cs);
+      (this.netcode as any).adapter?.loadState?.(snap);
+      this.lastRollbackCount = (this.netcode as any).getStats?.()?.rollbacks | 0;
+    } catch {}
+  }
+  private toBase64(u8: Uint8Array): string { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return btoa(s); }
+  private fromBase64(b64: string): ArrayBuffer | null { try { const s = atob(b64); const u8 = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u8[i] = s.charCodeAt(i); return u8.buffer; } catch { return null; } }
 
   private compressSnapshot(snap: GameStateSnapshot): { frame: number; checksum: number; buf: ArrayBuffer } {
     try {

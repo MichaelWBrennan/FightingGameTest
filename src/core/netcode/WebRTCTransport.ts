@@ -23,6 +23,7 @@ export class WebRTCTransport implements Transport {
   private jitterWindowFrames = 1;
 
   public onRemoteInput?: (frame: number, bits: number) => void;
+  public onCtrlMessage?: (msg: any) => void;
   private key?: CryptoKey;
   private outQueue: RTCMsg[] = [];
   private drainTimer?: any;
@@ -91,6 +92,7 @@ export class WebRTCTransport implements Transport {
   }
 
   private setupReliableChannel(dc: RTCDataChannel): void {
+    this.reliable = dc;
     dc.onmessage = (e) => this.onCtrl(e.data);
   }
 
@@ -230,6 +232,8 @@ export class WebRTCTransport implements Transport {
         } else if (m.phase === 'final') {
           // other side computes; nothing to do here for now
         }
+      } else {
+        this.onCtrlMessage?.(m);
       }
     } catch {}
   }
@@ -237,6 +241,9 @@ export class WebRTCTransport implements Transport {
   public sendClockProbe(): void {
     try { this.reliable?.send(JSON.stringify({ t: 'clock', phase: 'req', ts: performance.now() })); } catch {}
   }
+
+  public sendControl(msg: any): void { try { this.reliable?.send(JSON.stringify(msg)); } catch {} }
+  public getIsOfferer(): boolean { return this.isOfferer; }
 
   private handleRemoteInput(frame: number, bits: number): void {
     // Deliver in order if possible; otherwise buffer briefly up to jitterWindowFrames

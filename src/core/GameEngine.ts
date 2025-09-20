@@ -49,6 +49,8 @@ import { OptionsOverlay } from './ui/OptionsOverlay';
 import { MatchmakingService } from './online/MatchmakingService';
 import { AnalyticsService } from './utils/AnalyticsService';
 import { LobbiesOverlay } from './ui/LobbiesOverlay';
+import { RankedOverlay } from './ui/RankedOverlay';
+import { StreamingOverlay } from './ui/StreamingOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -93,6 +95,8 @@ export class GameEngine {
   private mmService: MatchmakingService | null = null;
   private analytics: AnalyticsService | null = null;
   private lobbies: LobbiesOverlay | null = null;
+  private ranked: RankedOverlay | null = null;
+  private streaming: StreamingOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -463,6 +467,8 @@ export class GameEngine {
       try { this.cmdList = new CommandListOverlay(); this.cmdList.setCommands([{ name: 'Hadoken', input: 'QCF + P' }, { name: 'Shoryuken', input: 'DP + P' }, { name: 'Tatsumaki', input: 'QCB + K' }, { name: 'Sonic Boom', input: 'Charge back, forward + P' }, { name: 'Flash Kick', input: 'Charge down, up + K' }, { name: 'Command Grab', input: '360 + P' }]); } catch {}
       try { this.options = new OptionsOverlay(this.services); } catch {}
       try { if (this.mmService) { this.lobbies = new LobbiesOverlay(this.mmService); } } catch {}
+      try { this.ranked = new RankedOverlay(); } catch {}
+      try { this.streaming = new StreamingOverlay(this.app.graphicsDevice.canvas as any); } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({
