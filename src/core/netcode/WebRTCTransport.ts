@@ -5,6 +5,7 @@ type RTCMsg = { t: 'i'; f: number; b: number } | { t: 'p'; ts: number; echo?: bo
 export class WebRTCTransport implements Transport {
   private pc: RTCPeerConnection;
   private dc?: RTCDataChannel;
+  private reliable?: RTCDataChannel;
   private pingTimer?: any;
   private rttMs = 0;
   private jitterMs = 0;
@@ -38,9 +39,15 @@ export class WebRTCTransport implements Transport {
     if (isOfferer) {
       const dc = this.pc.createDataChannel('fg', { ordered: true, maxRetransmits: 0 });
       this.setupDataChannel(dc);
+      // reliable control channel for config/clock sync
+      this.reliable = this.pc.createDataChannel('ctrl', { ordered: true });
+      this.setupReliableChannel(this.reliable);
       this.createAndSendOffer();
     } else {
-      this.pc.ondatachannel = (e) => this.setupDataChannel(e.channel);
+      this.pc.ondatachannel = (e) => {
+        if (e.channel.label === 'fg') this.setupDataChannel(e.channel);
+        else if (e.channel.label === 'ctrl') this.setupReliableChannel(e.channel);
+      };
     }
     this.signaling.on(async (msg) => {
       try {
@@ -75,6 +82,10 @@ export class WebRTCTransport implements Transport {
     };
     dc.onclose = () => { if (this.pingTimer) clearInterval(this.pingTimer); this.tryReconnect(); };
     dc.onerror = () => { this.tryReconnect(); };
+  }
+
+  private setupReliableChannel(dc: RTCDataChannel): void {
+    dc.onmessage = (e) => this.onCtrl(e.data);
   }
 
   private createAndSendOffer(): void {
@@ -114,6 +125,25 @@ export class WebRTCTransport implements Transport {
         }
       }
     } catch {}
+  }
+
+  private onCtrl(d: any): void {
+    try {
+      const m = typeof d === 'string' ? JSON.parse(d) : JSON.parse(String(d));
+      if (m?.t === 'clock') {
+        // simple two-way clock sync: measure RTT/2 offset
+        const now = performance.now();
+        if (m.phase === 'req') {
+          this.reliable?.send(JSON.stringify({ t: 'clock', phase: 'resp', ts: m.ts, now }));
+        } else if (m.phase === 'final') {
+          // other side computes; nothing to do here for now
+        }
+      }
+    } catch {}
+  }
+
+  public sendClockProbe(): void {
+    try { this.reliable?.send(JSON.stringify({ t: 'clock', phase: 'req', ts: performance.now() })); } catch {}
   }
 
   private handleRemoteInput(frame: number, bits: number): void {

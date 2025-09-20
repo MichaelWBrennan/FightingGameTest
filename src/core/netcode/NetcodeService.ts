@@ -33,6 +33,7 @@ export class NetcodeService {
     this.netcode = new RollbackNetcode(adapter, rtc, 2, 12);
     this.enabled = true;
     this.netcode.start();
+    try { (rtc as any).sendClockProbe?.(); } catch {}
   }
 
   disable(): void { this.enabled = false; this.netcode?.stop(); }
