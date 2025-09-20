@@ -5,6 +5,7 @@ export interface CheatReport {
 
 export class AntiCheat {
   private reports: CheatReport[] = [];
+  private lastRemoteDesyncFrame: number = -1;
 
   monitorInputRate(getInputCount: () => number): void {
     let lastCount = getInputCount();
@@ -26,6 +27,18 @@ export class AntiCheat {
         this.reports.push({ type: 'physics_divergence', details: { value, reference } });
       }
     }, 2000);
+  }
+
+  monitorRemoteStateSanity(getStats: () => { delay?: number; rollbacks?: number; cur?: number; confirmed?: number } | undefined): void {
+    setInterval(() => {
+      try {
+        const st = getStats?.();
+        if (!st) return;
+        if ((st.rollbacks ?? 0) > 120) this.reports.push({ type: 'excessive_rollbacks', details: { rollbacks: st.rollbacks } });
+        if ((st.delay ?? 0) > 8) this.reports.push({ type: 'high_input_delay', details: { delay: st.delay } });
+        if ((st.cur ?? 0) - (st.confirmed ?? 0) > 15) this.reports.push({ type: 'large_prediction_gap', details: { cur: st.cur, confirmed: st.confirmed } });
+      } catch {}
+    }, 1500);
   }
 
   getReports(): CheatReport[] { return [...this.reports]; }

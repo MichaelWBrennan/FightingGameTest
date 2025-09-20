@@ -86,6 +86,7 @@ export class UIManager {
 		this.ensureDomFallback();
 		this.ensureTouchControls();
 		this.applySafeAreaInsets();
+		try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); if (i18n) { (this as any)._i18n = i18n; } } catch {}
 		this.bindResizeHandlers();
 		this.updateResponsiveLayout();
 		this.setupEventListeners();
@@ -203,7 +204,7 @@ export class UIManager {
 		const title = new pc.Entity('MenuTitle');
 		title.addComponent('element', {
 			type: pc.ELEMENTTYPE_TEXT,
-			text: 'Street Fighter III',
+			text: ((this as any)._i18n?.t?.('title') || 'Street Fighter III'),
 			fontSize: 56,
 			color: new pc.Color(1,1,1,1),
 			anchor: new pc.Vec4(0.5, 0.12, 0.5, 0.12),

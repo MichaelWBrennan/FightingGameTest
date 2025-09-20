@@ -43,6 +43,7 @@ import { DeterminismService } from './utils/DeterminismService';
 import { InputRemapOverlay } from './ui/InputRemapOverlay';
 import { TuningOverlay } from './ui/TuningOverlay';
 import { ConfigLoader } from './utils/ConfigLoader';
+import { I18nService } from './utils/I18n';
 
 export class GameEngine {
   private app: pc.Application;
@@ -81,6 +82,7 @@ export class GameEngine {
   private effects: EffectsOverlay | null = null;
   private sfx: SfxService | null = null;
   private det: DeterminismService | null = null;
+  private i18n: I18nService | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -445,6 +447,7 @@ export class GameEngine {
         loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
         loader.loadJson<any>('/assets/config/projectiles.json').then(cfg => { /* hook for global projectile mods */ }).catch(()=>{});
       } catch {}
+      try { this.i18n = new I18nService(); await this.i18n.load('en'); this.services.register('i18n', this.i18n); } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({
@@ -460,6 +463,8 @@ export class GameEngine {
         const ac: any = this.antiCheat;
         ac?.monitorInputRate?.(() => this.inputManager.getPressCount());
         ac?.monitorPhysicsDivergence?.(() => this.combatSystem.getCurrentFrame());
+        const net: any = this.services.resolve('netcode');
+        ac?.monitorRemoteStateSanity?.(() => net?.getStats?.());
       } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
