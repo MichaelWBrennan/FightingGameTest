@@ -44,6 +44,7 @@ import { InputRemapOverlay } from './ui/InputRemapOverlay';
 import { TuningOverlay } from './ui/TuningOverlay';
 import { ConfigLoader } from './utils/ConfigLoader';
 import { I18nService } from './utils/I18n';
+import { CommandListOverlay } from './ui/CommandListOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -83,6 +84,7 @@ export class GameEngine {
   private sfx: SfxService | null = null;
   private det: DeterminismService | null = null;
   private i18n: I18nService | null = null;
+  private cmdList: CommandListOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -448,6 +450,7 @@ export class GameEngine {
         loader.loadJson<any>('/assets/config/projectiles.json').then(cfg => { /* hook for global projectile mods */ }).catch(()=>{});
       } catch {}
       try { this.i18n = new I18nService(); const saved = (typeof localStorage !== 'undefined' && localStorage.getItem('locale')) || 'en'; await this.i18n.load(saved); this.services.register('i18n', this.i18n); } catch {}
+      try { this.cmdList = new CommandListOverlay(); this.cmdList.setCommands([{ name: 'Hadoken', input: 'QCF + P' }, { name: 'Shoryuken', input: 'DP + P' }, { name: 'Tatsumaki', input: 'QCB + K' }, { name: 'Sonic Boom', input: 'Charge back, forward + P' }, { name: 'Flash Kick', input: 'Charge down, up + K' }, { name: 'Command Grab', input: '360 + P' }]); } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({

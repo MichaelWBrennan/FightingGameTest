@@ -75,11 +75,11 @@ export class DebugOverlay {
     this.netcodeLabel.textContent = parts.join('  ');
     const qual = document.getElementById('net-quality') as HTMLDivElement | null;
     if (qual) {
-      const r = info.rtt ?? 0, j = info.jitter ?? 0, l = info.loss ?? 0;
+			const r = info.rtt ?? 0, j = info.jitter ?? 0, l = info.loss ?? 0;
       let grade = 'GOOD';
       if (r > 120 || j > 30 || l > 3) grade = 'FAIR';
       if (r > 200 || j > 60 || l > 8) grade = 'POOR';
-      qual.textContent = `Link: ${grade}`;
+			qual.textContent = `Link: ${grade}`;
       qual.style.color = grade === 'GOOD' ? '#9f9' : grade === 'FAIR' ? '#ffeb3b' : '#ff6666';
     }
 	}

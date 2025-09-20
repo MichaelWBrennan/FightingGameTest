@@ -53,6 +53,10 @@ export class InputManager {
   private keyUpTimestamps: Record<string, number> = {};
   // SOCD policy: 'neutral' or 'last'
   private socdPolicy: 'neutral' | 'last' = 'neutral';
+  // Charge and 360 detection
+  private chargeHoldMs = 900;
+  private lastChargeBackTs = 0;
+  private lastChargeDownTs = 0;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -154,6 +158,11 @@ export class InputManager {
     // Update special move detection (buffered)
     this.updateSpecialMoves();
     this.applyNegativeEdge(this.player1Inputs);
+
+    // Update special motions: charge and 360
+    (this.player1Inputs as any).sonicBoom = this.detectChargeBackForward('punch');
+    (this.player1Inputs as any).flashKick = this.detectChargeDownUp('kick');
+    (this.player1Inputs as any).commandGrab = this.detect360('punch');
 
     // Advance P2 playback (used by training mode)
     if (this.p2Playback.active && this.p2Playback.seq.length > 0) {
@@ -273,10 +282,13 @@ export class InputManager {
 
   private getDir(p: PlayerInputs): 'neutral'|'down'|'forward'|'down_forward'|'up'|'back' {
     if (p.down && p.right) return 'down_forward';
+    if (p.down && p.left) return 'down' as any;
+    if (p.up && p.right) return 'up' as any;
+    if (p.up && p.left) return 'up' as any;
     if (p.right) return 'forward';
+    if (p.left) return 'back';
     if (p.down) return 'down';
     if (p.up) return 'up';
-    if (p.left) return 'back';
     return 'neutral';
   }
 
@@ -333,6 +345,65 @@ export class InputManager {
       if (idx < dirs.length && dir === dirs[idx]) idx++;
       if (!pressed && (button === 'punch' ? (p.lightPunch || p.mediumPunch || p.heavyPunch) : (p.lightKick || p.mediumKick || p.heavyKick))) pressed = true;
       if (idx >= dirs.length && pressed) return true;
+    }
+    return false;
+  }
+
+  // ===== Additional motion detectors =====
+  private detectChargeBackForward(button: 'punch'|'kick'): boolean {
+    const now = performance.now();
+    const heldBack = this.player1Inputs.left;
+    if (heldBack) this.lastChargeBackTs = Math.max(this.lastChargeBackTs, this.keyDownTimestamps['left'] || now);
+    const heldLongEnough = (now - this.lastChargeBackTs) >= this.chargeHoldMs;
+    if (!heldLongEnough) return false;
+    const hist = this.history;
+    let forwardThenButton = false;
+    for (let i = hist.length - 1; i >= 0; i--) {
+      const rec = (hist[i][0] as any);
+      if ((now - rec.t) > 250) break;
+      const p = rec.p1 as PlayerInputs;
+      const dir = this.getDir(p);
+      const btn = (button === 'punch') ? (p.lightPunch || p.mediumPunch || p.heavyPunch) : (p.lightKick || p.mediumKick || p.heavyKick);
+      if (dir === 'forward' && btn) { forwardThenButton = true; break; }
+    }
+    if (forwardThenButton) { this.lastChargeBackTs = 0; return true; }
+    return false;
+  }
+
+  private detectChargeDownUp(button: 'punch'|'kick'): boolean {
+    const now = performance.now();
+    const heldDown = this.player1Inputs.down;
+    if (heldDown) this.lastChargeDownTs = Math.max(this.lastChargeDownTs, this.keyDownTimestamps['down'] || now);
+    const heldLongEnough = (now - this.lastChargeDownTs) >= this.chargeHoldMs;
+    if (!heldLongEnough) return false;
+    const hist = this.history;
+    let upThenButton = false;
+    for (let i = hist.length - 1; i >= 0; i--) {
+      const rec = (hist[i][0] as any);
+      if ((now - rec.t) > 250) break;
+      const p = rec.p1 as PlayerInputs;
+      const dir = this.getDir(p);
+      const btn = (button === 'punch') ? (p.lightPunch || p.mediumPunch || p.heavyPunch) : (p.lightKick || p.mediumKick || p.heavyKick);
+      if (dir === 'up' && btn) { upThenButton = true; break; }
+    }
+    if (upThenButton) { this.lastChargeDownTs = 0; return true; }
+    return false;
+  }
+
+  private detect360(button: 'punch'|'kick'): boolean {
+    const now = performance.now();
+    const seq = ['down','down_forward','forward','up','back'];
+    const hist = this.history;
+    let idx = 0;
+    let pressed = false;
+    for (let i = hist.length - 1; i >= 0; i--) {
+      const rec = (hist[i][0] as any);
+      if ((now - rec.t) > 600) break;
+      const p = rec.p1 as PlayerInputs;
+      const dir = this.getDir(p);
+      if (idx < seq.length && dir === seq[idx]) idx++;
+      if (!pressed && (button === 'punch' ? (p.lightPunch || p.mediumPunch || p.heavyPunch) : (p.lightKick || p.mediumKick || p.heavyKick))) pressed = true;
+      if (idx >= seq.length && pressed) return true;
     }
     return false;
   }

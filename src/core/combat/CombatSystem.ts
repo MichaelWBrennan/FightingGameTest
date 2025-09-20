@@ -514,15 +514,28 @@ export class CombatSystem {
     try {
       const dir = Math.sign(defender.entity.getPosition().x - attacker.entity.getPosition().x) || 1;
       const dp = defender.entity.getPosition().clone();
-      const atCorner = (dir > 0 && dp.x + this.pushboxHalfWidth >= this.stageBounds.right - 1e-3) || (dir < 0 && dp.x - this.pushboxHalfWidth <= this.stageBounds.left + 1e-3);
+      const atRight = dp.x + this.pushboxHalfWidth >= this.stageBounds.right - 1e-3;
+      const atLeft = dp.x - this.pushboxHalfWidth <= this.stageBounds.left + 1e-3;
+      const atCorner = (dir > 0 && atRight) || (dir < 0 && atLeft);
       dp.x += dir * (atCorner ? 0.18 : 0.28);
       defender.entity.setPosition(dp);
     } catch {}
 
-    // Launch/juggle: apply vertical knock and set airborne for juggle routes
+    // Launch/juggle and wall/ground bounce
     try {
       (defender as any)._airborne = true;
-      (defender as any)._velY = Math.max((defender as any)._velY || 0, 0.18 + Math.min(0.12, damage * 0.0008));
+      const velY = Math.max((defender as any)._velY || 0, 0.18 + Math.min(0.12, damage * 0.0008));
+      (defender as any)._velY = velY;
+      // Wall bounce: if at wall and strong hit, invert horizontal push slightly
+      const p = defender.entity.getPosition().clone();
+      const atRight = p.x + this.pushboxHalfWidth >= this.stageBounds.right - 1e-3;
+      const atLeft = p.x - this.pushboxHalfWidth <= this.stageBounds.left + 1e-3;
+      if ((atRight || atLeft) && damage > 80) {
+        const sfx: any = (this.app as any)._services?.resolve?.('sfx');
+        const effects: any = (this.app as any)._services?.resolve?.('effects');
+        sfx?.play?.('block');
+        effects?.spawn?.(p.x, p.y + 0.8, 'clash');
+      }
     } catch {}
 
     if (defender.health <= 0) {

@@ -12,6 +12,7 @@ export class WebRTCTransport implements Transport {
   private lastRttMs = 0;
   private bytesTx = 0;
   private bytesRx = 0;
+  private tokenBucket = { capacity: 16384, tokens: 16384, refillRate: 4096, last: performance.now() };
   private lastRecvFrame: number = -1;
   private outOfOrder = 0;
   private lossSuspect = 0;
@@ -95,7 +96,18 @@ export class WebRTCTransport implements Transport {
   private send(m: RTCMsg): void {
     try {
       const payload = JSON.stringify(m);
-      this.dc?.send(payload);
+      // Token bucket shaping
+      const now = performance.now();
+      const elapsed = Math.max(0, now - this.tokenBucket.last);
+      this.tokenBucket.tokens = Math.min(this.tokenBucket.capacity, this.tokenBucket.tokens + (elapsed * this.tokenBucket.refillRate) / 1000);
+      this.tokenBucket.last = now;
+      if (this.tokenBucket.tokens >= payload.length) {
+        this.dc?.send(payload);
+        this.tokenBucket.tokens -= payload.length;
+      } else {
+        // Drop low priority pings when bucket is empty, always enqueue inputs
+        if ((m as any).t !== 'p') this.dc?.send(payload);
+      }
       this.bytesTx += payload.length;
     } catch {}
   }

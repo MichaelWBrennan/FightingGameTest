@@ -15,6 +15,7 @@ export class NetcodeService {
   private frameBudget = 10; // rollback budget window
 
   constructor(private combat: CombatSystem, private chars: CharacterManager, private input: InputManager) {}
+  public useWorker = false;
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
