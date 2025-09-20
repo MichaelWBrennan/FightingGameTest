@@ -57,6 +57,7 @@ export class InputManager {
   private chargeHoldMs = 900;
   private lastChargeBackTs = 0;
   private lastChargeDownTs = 0;
+  private facingRight = true;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -281,14 +282,13 @@ export class InputManager {
   }
 
   private getDir(p: PlayerInputs): 'neutral'|'down'|'forward'|'down_forward'|'up'|'back' {
-    if (p.down && p.right) return 'down_forward';
-    if (p.down && p.left) return 'down' as any;
-    if (p.up && p.right) return 'up' as any;
-    if (p.up && p.left) return 'up' as any;
-    if (p.right) return 'forward';
-    if (p.left) return 'back';
+    const fwd = this.facingRight ? 'right' : 'left';
+    const back = this.facingRight ? 'left' : 'right';
+    if (p.down && (p as any)[fwd]) return 'down_forward';
+    if ((p as any)[fwd]) return 'forward';
     if (p.down) return 'down';
     if (p.up) return 'up';
+    if ((p as any)[back]) return 'back';
     return 'neutral';
   }
 
@@ -413,6 +413,7 @@ export class InputManager {
   public setMotionLeniencyFor(motion: 'QCF'|'QCB'|'DP', ms: number): void { this.leniencyByMotion[motion] = Math.max(60, Math.min(500, Math.floor(ms))); }
   public setSocdPolicy(policy: 'neutral'|'last'): void { this.socdPolicy = policy; }
   public setNegativeEdgeWindow(ms: number): void { this.negativeEdgeWindowMs = Math.max(0, Math.min(200, Math.floor(ms))); }
+  public setFacingRight(on: boolean): void { this.facingRight = !!on; }
 
   // ===== Touch API for UI layer =====
   public setTouchDpad(direction: 'up'|'down'|'left'|'right', pressed: boolean): void {
