@@ -18,6 +18,22 @@ export class EffectsOverlay {
   constructor(app: pc.Application) {
     this.app = app;
     for (let i = 0; i < 12; i++) this.pool.push(this.createSpark());
+    // Afterimage canvas layer (simple trails demo)
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.style.position = 'fixed'; canvas.style.left = '0'; canvas.style.top = '0'; canvas.style.pointerEvents = 'none'; canvas.style.zIndex = '9998';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+      window.addEventListener('resize', resize); resize();
+      let last = performance.now();
+      const tick = () => {
+        const now = performance.now(); const dt = now - last; last = now;
+        if (ctx) { ctx.fillStyle = 'rgba(0,0,0,0.08)'; ctx.fillRect(0,0,canvas.width,canvas.height); }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    } catch {}
   }
 
   private createSpark(): pc.Entity {

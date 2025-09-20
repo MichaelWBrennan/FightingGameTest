@@ -130,6 +130,10 @@ export class InputManager {
       if (code === map.mediumKick) { this.keyboardInputs.mediumKick = false; this.keyUpTimestamps['mediumKick'] = now; }
       if (code === map.heavyKick) { this.keyboardInputs.heavyKick = false; this.keyUpTimestamps['heavyKick'] = now; }
     });
+    try {
+      window.addEventListener('gamepadconnected', () => { try { console.log('[input] gamepad connected'); } catch {} });
+      window.addEventListener('gamepaddisconnected', () => { this.gamepadInputs = this.createEmptyInputs(); });
+    } catch {}
   }
 
   public getPlayerInputs(playerIndex: number): PlayerInputs {

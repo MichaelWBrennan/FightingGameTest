@@ -43,5 +43,16 @@ export class AntiCheat {
 
   getReports(): CheatReport[] { return [...this.reports]; }
   clearReports(): void { this.reports = []; }
+
+  // Tamper/devtools detection (heuristic)
+  monitorDevtools(): void {
+    try {
+      setInterval(() => {
+        const threshold = 160; // ms when devtools throttles timers
+        const start = performance.now(); debugger; const elapsed = performance.now() - start;
+        if (elapsed > threshold) this.reports.push({ type: 'devtools_detected', details: { elapsed } });
+      }, 5000);
+    } catch {}
+  }
 }
 

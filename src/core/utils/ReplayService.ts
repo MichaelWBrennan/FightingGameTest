@@ -2,7 +2,7 @@ import { InputManager, PlayerInputs } from '../input/InputManager';
 import { CombatSystem } from '../combat/CombatSystem';
 
 interface ReplayFrame { f: number; p0: PlayerInputs; p1: PlayerInputs }
-interface ReplayData { version: number; frames: ReplayFrame[]; meta: { date: string } }
+interface ReplayData { version: number; frames: ReplayFrame[]; meta: { date: string; winner?: string; duration?: number; characters?: string[] } }
 
 export class ReplayService {
   private recording = false;
@@ -27,7 +27,9 @@ export class ReplayService {
   stopRecording(): ReplayData | null {
     if (!this.recording) return null;
     this.recording = false;
-    return { version: 1, frames: this.buffer.slice(), meta: { date: new Date().toISOString() } };
+    // Basic metadata stub
+    const meta = { date: new Date().toISOString(), duration: this.buffer.length / 60, characters: [] as string[] };
+    return { version: 1, frames: this.buffer.slice(), meta };
   }
 
   play(data: ReplayData): void {
