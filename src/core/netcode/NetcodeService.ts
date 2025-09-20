@@ -177,7 +177,7 @@ export class NetcodeService {
       size += 4 /*frame*/ + 2 /*hitstop*/ + 1 /*num*/;
       for (let i = 0; i < num; i++) {
         size += 1 + idLens[i];
-        size += 4 /*health*/ + 4*3 /*pos*/ + 1 /*state*/ + 1 /*has*/;
+        size += 4 /*health*/ + 4*3 /*pos*/ + 4 /*meter*/ + 4 /*guard*/ + 1 /*state*/ + 1 /*has*/;
         const has = chars[i]?.currentMove ? 1 : 0;
         if (has) size += 2 /*currentFrame*/ + 1 /*phase*/;
       }
