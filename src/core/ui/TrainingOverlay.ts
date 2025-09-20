@@ -4,11 +4,15 @@ export class TrainingOverlay {
   private app: pc.Application;
   private container: HTMLDivElement;
   private inputLabel: HTMLDivElement;
+  private statsLabel: HTMLDivElement | null = null;
   private hitboxToggle = false;
   private paused = false;
   private hitboxLayer: HTMLCanvasElement | null = null;
   private ctx: CanvasRenderingContext2D | null = null;
   private stepRequested = false;
+  private saveState: any | null = null;
+  private dummyMode: 'idle'|'block_all'|'block_random'|'reversal' = 'idle';
+  private modeLabel: HTMLDivElement | null = null;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -24,10 +28,15 @@ export class TrainingOverlay {
     this.container.style.zIndex = '10002';
     this.inputLabel = document.createElement('div');
     this.container.appendChild(this.inputLabel);
+    this.statsLabel = document.createElement('div');
+    this.container.appendChild(this.statsLabel);
+    this.modeLabel = document.createElement('div');
+    this.modeLabel.textContent = 'Dummy: idle';
+    this.container.appendChild(this.modeLabel);
     document.body.appendChild(this.container);
 
     window.addEventListener('keydown', (e) => this.onKey(e));
-    this.app.on('update', () => { this.renderInputs(); this.renderBoxes(); });
+    this.app.on('update', () => { this.renderInputs(); this.renderStats(); this.renderBoxes(); });
 
     // Overlay canvas for hitbox rendering
     this.hitboxLayer = document.createElement('canvas');
@@ -46,6 +55,11 @@ export class TrainingOverlay {
     if (e.key === 'F2') this.hitboxToggle = !this.hitboxToggle;
     if (e.key === 'F3') this.paused = !this.paused;
     if (e.key === 'F4') this.stepRequested = true;
+    if (e.key === 'F5') this.saveTrainingState();
+    if (e.key === 'F6') this.loadTrainingState();
+    if (e.key === 'F7') this.cycleDummyMode();
+    if (e.key === 'F8') this.resetMid();
+    if (e.key === 'F9') this.resetCorner('left');
   }
 
   private renderInputs(): void {
@@ -56,6 +70,20 @@ export class TrainingOverlay {
       const p1 = input.getPlayerInputs(0);
       this.inputLabel.textContent = `P1: ${['up','down','left','right','lightPunch','mediumPunch','heavyPunch','lightKick','mediumKick','heavyKick']
         .filter(k => (p1 as any)[k]).join(' ')}`;
+    } catch {}
+  }
+
+  private renderStats(): void {
+    if (!this.statsLabel) return;
+    try {
+      const services: any = (this.app as any)._services;
+      const combat = services?.resolve?.('combat');
+      const chars = services?.resolve?.('characters');
+      const frame = combat?.getCurrentFrame?.() ?? 0;
+      const p = chars?.getActiveCharacters?.() || [];
+      const p1 = p[0], p2 = p[1];
+      const hs = combat?.isInHistop?.() ? 'H' : '';
+      this.statsLabel.textContent = `F:${frame}${hs}  P1:${p1?.health ?? '?'}  P2:${p2?.health ?? '?'}`;
     } catch {}
   }
 
@@ -113,5 +141,75 @@ export class TrainingOverlay {
 
   get showHitboxes(): boolean { return this.hitboxToggle; }
   get isPaused(): boolean { return this.paused; }
+  getDummyMode(): 'idle'|'block_all'|'block_random'|'reversal' { return this.dummyMode; }
+
+  private saveTrainingState(): void {
+    try {
+      const services: any = (this.app as any)._services;
+      const combat = services?.resolve?.('combat');
+      const chars = services?.resolve?.('characters');
+      if (!combat || !chars) return;
+      const frame = combat.getCurrentFrame?.();
+      const snapshot = { frame, chars: JSON.stringify(chars.getActiveCharacters?.().map((c: any) => ({ id: c.id, pos: c.entity.getPosition().clone(), health: c.health, meter: c.meter }))) };
+      this.saveState = snapshot;
+    } catch {}
+  }
+
+  private loadTrainingState(): void {
+    if (!this.saveState) return;
+    try {
+      const services: any = (this.app as any)._services;
+      const chars = services?.resolve?.('characters');
+      const data = JSON.parse(this.saveState.chars);
+      const list = chars.getActiveCharacters?.();
+      for (const d of data) {
+        const c = list.find((x: any) => x.id === d.id);
+        if (!c) continue;
+        c.entity.setPosition(d.pos);
+        c.health = d.health;
+        c.meter = d.meter;
+        c.state = 'idle';
+        c.currentMove = null;
+      }
+    } catch {}
+  }
+
+  private cycleDummyMode(): void {
+    const order: Array<'idle'|'block_all'|'block_random'|'reversal'> = ['idle','block_all','block_random','reversal'];
+    const idx = order.indexOf(this.dummyMode);
+    this.dummyMode = order[(idx + 1) % order.length];
+    if (this.modeLabel) this.modeLabel.textContent = `Dummy: ${this.dummyMode}`;
+  }
+
+  private resetMid(): void {
+    try {
+      const services: any = (this.app as any)._services;
+      const chars = services?.resolve?.('characters');
+      const p = chars?.getActiveCharacters?.() || [];
+      if (p[0] && p[1]) {
+        const a = p[0].entity.getPosition().clone();
+        const b = p[1].entity.getPosition().clone();
+        a.x = -1.2; b.x = 1.2; a.y = b.y = 0;
+        p[0].entity.setPosition(a); p[1].entity.setPosition(b);
+        p[0].state = p[1].state = 'idle'; p[0].currentMove = p[1].currentMove = null;
+      }
+    } catch {}
+  }
+
+  private resetCorner(side: 'left'|'right'): void {
+    try {
+      const services: any = (this.app as any)._services;
+      const chars = services?.resolve?.('characters');
+      const p = chars?.getActiveCharacters?.() || [];
+      if (p[0] && p[1]) {
+        const a = p[0].entity.getPosition().clone();
+        const b = p[1].entity.getPosition().clone();
+        if (side === 'left') { a.x = -5.4; b.x = -3.8; } else { a.x = 3.8; b.x = 5.4; }
+        a.y = b.y = 0;
+        p[0].entity.setPosition(a); p[1].entity.setPosition(b);
+        p[0].state = p[1].state = 'idle'; p[0].currentMove = p[1].currentMove = null;
+      }
+    } catch {}
+  }
 }
 

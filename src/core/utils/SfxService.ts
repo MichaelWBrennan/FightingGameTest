@@ -28,5 +28,16 @@ export class SfxService {
 
   setBusVolume(bus: 'master'|'sfx'|'ui', vol: number): void { this.busGain[bus] = Math.max(0, Math.min(1, vol)); }
   setPriority(key: string, prio: number): void { this.priorities[key] = prio; }
+
+  vibrate(ms: number = 20): void {
+    try {
+      if (typeof navigator !== 'undefined' && (navigator as any).vibrate) (navigator as any).vibrate(ms);
+    } catch {}
+    try {
+      const pads = (window as any).pc?.Application?.getApplication?.().gamepads?.pads as any[];
+      const pad = pads && pads[0];
+      if (pad && pad.vibrationActuator) pad.vibrationActuator.playEffect('dual-rumble', { duration: ms, strongMagnitude: 0.4, weakMagnitude: 0.6 });
+    } catch {}
+  }
 }
 

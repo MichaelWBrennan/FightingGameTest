@@ -44,6 +44,12 @@ export class InputManager {
   private bufferMs = 120; // lenient buffer for motions
   private leniencyByMotion: Partial<Record<'QCF'|'QCB'|'DP', number>> = {};
   private lastUpdateTs = 0;
+  // Negative-edge & hold buffers
+  private negativeEdgeWindowMs = 60;
+  private keyDownTimestamps: Record<string, number> = {};
+  private keyUpTimestamps: Record<string, number> = {};
+  // SOCD policy: 'neutral' or 'last'
+  private socdPolicy: 'neutral' | 'last' = 'neutral';
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -87,31 +93,34 @@ export class InputManager {
       const code = e.event?.code || e.code;
       if (!code) return;
       const map = this.keyMap;
-      if (code === map.up) { this.keyboardInputs.up = true; this.inputPressCount++; }
-      if (code === map.down) { this.keyboardInputs.down = true; this.inputPressCount++; }
-      if (code === map.left) { this.keyboardInputs.left = true; this.inputPressCount++; }
-      if (code === map.right) { this.keyboardInputs.right = true; this.inputPressCount++; }
-      if (code === map.lightPunch) { this.keyboardInputs.lightPunch = true; this.inputPressCount++; }
-      if (code === map.mediumPunch) { this.keyboardInputs.mediumPunch = true; this.inputPressCount++; }
-      if (code === map.heavyPunch) { this.keyboardInputs.heavyPunch = true; this.inputPressCount++; }
-      if (code === map.lightKick) { this.keyboardInputs.lightKick = true; this.inputPressCount++; }
-      if (code === map.mediumKick) { this.keyboardInputs.mediumKick = true; this.inputPressCount++; }
-      if (code === map.heavyKick) { this.keyboardInputs.heavyKick = true; this.inputPressCount++; }
+      const now = performance.now();
+      if (code === map.up) { this.keyboardInputs.up = true; this.inputPressCount++; this.keyDownTimestamps['up'] = now; }
+      if (code === map.down) { this.keyboardInputs.down = true; this.inputPressCount++; this.keyDownTimestamps['down'] = now; }
+      if (code === map.left) { this.keyboardInputs.left = true; this.inputPressCount++; this.keyDownTimestamps['left'] = now; }
+      if (code === map.right) { this.keyboardInputs.right = true; this.inputPressCount++; this.keyDownTimestamps['right'] = now; }
+      if (code === map.lightPunch) { this.keyboardInputs.lightPunch = true; this.inputPressCount++; this.keyDownTimestamps['lightPunch'] = now; }
+      if (code === map.mediumPunch) { this.keyboardInputs.mediumPunch = true; this.inputPressCount++; this.keyDownTimestamps['mediumPunch'] = now; }
+      if (code === map.heavyPunch) { this.keyboardInputs.heavyPunch = true; this.inputPressCount++; this.keyDownTimestamps['heavyPunch'] = now; }
+      if (code === map.lightKick) { this.keyboardInputs.lightKick = true; this.inputPressCount++; this.keyDownTimestamps['lightKick'] = now; }
+      if (code === map.mediumKick) { this.keyboardInputs.mediumKick = true; this.inputPressCount++; this.keyDownTimestamps['mediumKick'] = now; }
+      if (code === map.heavyKick) { this.keyboardInputs.heavyKick = true; this.inputPressCount++; this.keyDownTimestamps['heavyKick'] = now; }
     });
 
     this.keyboard.on(pc.EVENT_KEYUP as any, (e: any) => {
-      switch (e.key) {
-        case pc.KEY_W: this.keyboardInputs.up = false; break;
-        case pc.KEY_S: this.keyboardInputs.down = false; break;
-        case pc.KEY_A: this.keyboardInputs.left = false; break;
-        case pc.KEY_D: this.keyboardInputs.right = false; break;
-        case pc.KEY_U: this.keyboardInputs.lightPunch = false; break;
-        case pc.KEY_I: this.keyboardInputs.mediumPunch = false; break;
-        case pc.KEY_O: this.keyboardInputs.heavyPunch = false; break;
-        case pc.KEY_J: this.keyboardInputs.lightKick = false; break;
-        case pc.KEY_K: this.keyboardInputs.mediumKick = false; break;
-        case pc.KEY_L: this.keyboardInputs.heavyKick = false; break;
-      }
+      const code = e.event?.code || e.code;
+      if (!code) return;
+      const map = this.keyMap;
+      const now = performance.now();
+      if (code === map.up) { this.keyboardInputs.up = false; this.keyUpTimestamps['up'] = now; }
+      if (code === map.down) { this.keyboardInputs.down = false; this.keyUpTimestamps['down'] = now; }
+      if (code === map.left) { this.keyboardInputs.left = false; this.keyUpTimestamps['left'] = now; }
+      if (code === map.right) { this.keyboardInputs.right = false; this.keyUpTimestamps['right'] = now; }
+      if (code === map.lightPunch) { this.keyboardInputs.lightPunch = false; this.keyUpTimestamps['lightPunch'] = now; }
+      if (code === map.mediumPunch) { this.keyboardInputs.mediumPunch = false; this.keyUpTimestamps['mediumPunch'] = now; }
+      if (code === map.heavyPunch) { this.keyboardInputs.heavyPunch = false; this.keyUpTimestamps['heavyPunch'] = now; }
+      if (code === map.lightKick) { this.keyboardInputs.lightKick = false; this.keyUpTimestamps['lightKick'] = now; }
+      if (code === map.mediumKick) { this.keyboardInputs.mediumKick = false; this.keyUpTimestamps['mediumKick'] = now; }
+      if (code === map.heavyKick) { this.keyboardInputs.heavyKick = false; this.keyUpTimestamps['heavyKick'] = now; }
     });
   }
 
@@ -124,7 +133,8 @@ export class InputManager {
     this.updateGamepadInputs();
 
     // Aggregate per-device inputs for player 1; player 2 TBD
-    const nextP1 = this.aggregateInputs(this.keyboardInputs, this.gamepadInputs, this.touchInputs);
+    const nextP1Raw = this.aggregateInputs(this.keyboardInputs, this.gamepadInputs, this.touchInputs);
+    const nextP1 = this.applySocdPolicy(nextP1Raw, this.prevP1Inputs);
     this.updateDirectionTaps(0, nextP1, this.prevP1Inputs);
     this.prevP1Inputs = this.player1Inputs;
     this.player1Inputs = nextP1;
@@ -136,6 +146,7 @@ export class InputManager {
     this.pruneHistory(now);
     // Update special move detection (buffered)
     this.updateSpecialMoves();
+    this.applyNegativeEdge(this.player1Inputs);
   }
 
   private aggregateInputs(...sources: PlayerInputs[]): PlayerInputs {
@@ -177,6 +188,28 @@ export class InputManager {
     }
   }
 
+  private applySocdPolicy(curr: PlayerInputs, prev: PlayerInputs): PlayerInputs {
+    const out = { ...curr } as PlayerInputs;
+    if (this.socdPolicy === 'neutral') {
+      if (out.left && out.right) { out.left = false; out.right = false; }
+      if (out.up && out.down) { out.up = false; out.down = false; }
+    } else if (this.socdPolicy === 'last') {
+      // last input priority for opposing directions
+      if (curr.left && curr.right) {
+        // use timestamps if available
+        const lts = this.keyDownTimestamps['left'] || 0;
+        const rts = this.keyDownTimestamps['right'] || 0;
+        if (lts === rts) { out.left = false; out.right = false; } else if (lts > rts) { out.right = false; } else { out.left = false; }
+      }
+      if (curr.up && curr.down) {
+        const uts = this.keyDownTimestamps['up'] || 0;
+        const dts = this.keyDownTimestamps['down'] || 0;
+        if (uts === dts) { out.up = false; out.down = false; } else if (uts > dts) { out.down = false; } else { out.up = false; }
+      }
+    }
+    return out;
+  }
+
   private updateSpecialMoves(): void {
     this.player1Inputs.hadoken = this.detectQCF('punch');
     this.player1Inputs.shoryuken = this.detectDP('punch');
@@ -186,6 +219,18 @@ export class InputManager {
     // Throw tech: MP+MK pressed together
     (this.player1Inputs as any).tech = (this.player1Inputs.mediumPunch && this.player1Inputs.mediumKick);
     this.player2Inputs.hadoken = false;
+  }
+
+  private applyNegativeEdge(p: PlayerInputs): void {
+    const now = performance.now();
+    const checkNeg = (key: keyof PlayerInputs) => {
+      const upTs = this.keyUpTimestamps[key as string];
+      if (upTs && (now - upTs) <= this.negativeEdgeWindowMs) {
+        (p as any)[key] = true;
+      }
+    };
+    // Negative edge for punches/kicks only
+    ['lightPunch','mediumPunch','heavyPunch','lightKick','mediumKick','heavyKick'].forEach(k => checkNeg(k as any));
   }
 
   private pushHistory(ts: number, p1: PlayerInputs): void {
@@ -229,6 +274,10 @@ export class InputManager {
     for (const dir of directions) {
       if ((curr as any)[dir] && !(prev as any)[dir]) {
         taps[dir] = now;
+        this.keyDownTimestamps[dir] = now;
+      }
+      if (!(curr as any)[dir] && (prev as any)[dir]) {
+        this.keyUpTimestamps[dir] = now;
       }
     }
   }
@@ -276,6 +325,8 @@ export class InputManager {
   // External API to tweak motion leniency
   public setMotionLeniency(ms: number): void { this.bufferMs = Math.max(60, Math.min(400, Math.floor(ms))); }
   public setMotionLeniencyFor(motion: 'QCF'|'QCB'|'DP', ms: number): void { this.leniencyByMotion[motion] = Math.max(60, Math.min(500, Math.floor(ms))); }
+  public setSocdPolicy(policy: 'neutral'|'last'): void { this.socdPolicy = policy; }
+  public setNegativeEdgeWindow(ms: number): void { this.negativeEdgeWindowMs = Math.max(0, Math.min(200, Math.floor(ms))); }
 
   // ===== Touch API for UI layer =====
   public setTouchDpad(direction: 'up'|'down'|'left'|'right', pressed: boolean): void {

@@ -429,7 +429,7 @@ export class GameEngine {
       try { setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 1000); } catch {}
 
       // Initialize overlays/services
-      try { this.trainingOverlay = new TrainingOverlay(this.app); } catch {}
+      try { this.trainingOverlay = new TrainingOverlay(this.app); (this.app as any)._training = this.trainingOverlay; } catch {}
       try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
       try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
       try { this.matchmaking = new MatchmakingOverlay(); } catch {}
@@ -443,7 +443,16 @@ export class GameEngine {
         loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
         loader.loadJson<any>('/assets/config/projectiles.json').then(cfg => { /* hook for global projectile mods */ }).catch(()=>{});
       } catch {}
-      try { new TuningOverlay((ms) => this.inputManager.setMotionLeniency(ms), (vol) => this.sfx?.setVolume?.(vol)); } catch {}
+      try {
+        const net: any = this.services.resolve('netcode');
+        new TuningOverlay({
+          setLeniency: (ms) => this.inputManager.setMotionLeniency(ms),
+          setVol: (vol) => this.sfx?.setVolume?.(vol),
+          setSocd: (p) => this.inputManager.setSocdPolicy(p),
+          setNegEdge: (ms) => this.inputManager.setNegativeEdgeWindow(ms),
+          setJitterBuffer: (f) => net?.setJitterBuffer?.(f)
+        });
+      } catch {}
       // Wire anti-cheat monitors
       try {
         const ac: any = this.antiCheat;

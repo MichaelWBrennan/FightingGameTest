@@ -23,6 +23,8 @@ export class CombatSystem {
   private comboScalingStart = 0.8; // 80% after first hit
   private comboScalingStep = 0.9;  // multiply per subsequent hit
   private projectileManager: ProjectileManager | null = null;
+  private pushboxHalfWidth = 0.45;
+  private stageBounds = { left: -6, right: 6 };
   private projectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
   private freeProjectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
 
@@ -46,6 +48,7 @@ export class CombatSystem {
     this.frameCounter++;
     this.processInputs();
     this.updateFacing();
+    this.applyPushboxesAndCorner();
     this.projectileManager?.update();
     this.updateHitboxes();
     this.checkCollisions();
@@ -74,9 +77,50 @@ export class CombatSystem {
     if (activeCharacters[0]) this.processCharacterInputs(activeCharacters[0], p0);
     if (activeCharacters[1]) this.processCharacterInputs(activeCharacters[1], p1);
     this.updateFacing();
+    this.applyPushboxesAndCorner();
     this.projectileManager?.update();
     this.updateHitboxes();
     this.checkCollisions();
+  }
+
+  private applyPushboxesAndCorner(): void {
+    const list = this.characterManager.getActiveCharacters();
+    if (list.length !== 2) return;
+    const a = list[0];
+    const b = list[1];
+    const aw = this.pushboxHalfWidth, bw = this.pushboxHalfWidth;
+    const aPos = a.entity.getPosition().clone();
+    const bPos = b.entity.getPosition().clone();
+    // Stage clamp first
+    aPos.x = Math.max(this.stageBounds.left + aw, Math.min(this.stageBounds.right - aw, aPos.x));
+    bPos.x = Math.max(this.stageBounds.left + bw, Math.min(this.stageBounds.right - bw, bPos.x));
+    // Resolve overlap by separating along x equally
+    const aMin = aPos.x - aw, aMax = aPos.x + aw;
+    const bMin = bPos.x - bw, bMax = bPos.x + bw;
+    const overlap = Math.min(aMax, bMax) - Math.max(aMin, bMin);
+    if (overlap > 0) {
+      const push = overlap * 0.5 + 1e-3;
+      const dir = Math.sign(bPos.x - aPos.x) || 1;
+      aPos.x -= dir * push;
+      bPos.x += dir * push;
+      // Corner rules: if one is at wall, only move the other
+      const aAtLeft = aPos.x - aw <= this.stageBounds.left + 1e-3;
+      const aAtRight = aPos.x + aw >= this.stageBounds.right - 1e-3;
+      const bAtLeft = bPos.x - bw <= this.stageBounds.left + 1e-3;
+      const bAtRight = bPos.x + bw >= this.stageBounds.right - 1e-3;
+      if (aAtLeft || aAtRight) {
+        // don't move A further into wall; move B only
+        aPos.x += dir * push; // revert
+        bPos.x += dir * push; // move double for separation
+      } else if (bAtLeft || bAtRight) {
+        bPos.x -= dir * push;
+        aPos.x -= dir * push;
+      }
+      aPos.x = Math.max(this.stageBounds.left + aw, Math.min(this.stageBounds.right - aw, aPos.x));
+      bPos.x = Math.max(this.stageBounds.left + bw, Math.min(this.stageBounds.right - bw, bPos.x));
+    }
+    a.entity.setPosition(aPos);
+    b.entity.setPosition(bPos);
   }
 
 
@@ -262,8 +306,30 @@ export class CombatSystem {
       this.processParry(attacker, defender);
       return;
     }
-    // Else: block if holding back, else hit
-    const inputs = this.inputManager.getPlayerInputs(defenderIndex);
+    // Invulnerability check (defender current move defines invuln window)
+    try {
+      const dMove = defender.currentMove;
+      const inv = (dMove?.data as any)?.invulnFrames as [number, number] | undefined;
+      if (inv && dMove?.currentFrame != null) {
+        if (dMove.currentFrame >= inv[0] && dMove.currentFrame <= inv[1]) return; // no hit
+      }
+    } catch {}
+    // Else: block if holding back, else hit (training dummy overrides)
+    let inputs = this.inputManager.getPlayerInputs(defenderIndex);
+    try {
+      const training: any = (this.app as any)._training;
+      const mode = training?.getDummyMode?.();
+      if (mode === 'block_all') {
+        // Force away direction
+        const awayDir = toward === 'left' ? 'right' : 'left';
+        (inputs as any)[awayDir] = true;
+      } else if (mode === 'block_random') {
+        if (Math.random() < 0.6) {
+          const awayDir = toward === 'left' ? 'right' : 'left';
+          (inputs as any)[awayDir] = true;
+        }
+      }
+    } catch {}
     const away: 'left'|'right' = toward === 'left' ? 'right' : 'left';
     const defHoldingBack = (away === 'left' ? inputs.left : inputs.right);
     const moveData = attacker.currentMove?.data;
@@ -271,7 +337,20 @@ export class CombatSystem {
     if (defHoldingBack) {
       this.processBlock(attacker, defender, moveData);
     } else {
-      this.processHit(attacker, defender);
+      // Armor check: consume armor instead of full hit
+      const armor = (defender.currentMove?.data as any)?.armor as { hits?: number } | undefined;
+      if (armor && (defender as any)._armorHitsRemaining == null) (defender as any)._armorHitsRemaining = Math.max(1, armor.hits || 1);
+      if ((defender as any)._armorHitsRemaining > 0) {
+        (defender as any)._armorHitsRemaining--;
+        try {
+          const effects: any = (this.app as any)._services?.resolve?.('effects');
+          effects?.spawn?.(defender.entity.getPosition().x, defender.entity.getPosition().y + 1.0, 'clash');
+          const sfx: any = (this.app as any)._services?.resolve?.('sfx'); sfx?.play?.('block');
+        } catch {}
+        this.hitstop = Math.max(this.hitstop, 4);
+      } else {
+        this.processHit(attacker, defender);
+      }
     }
   }
 
@@ -352,7 +431,8 @@ export class CombatSystem {
     const damage = Math.max(1, Math.floor(moveData.damage * scale * jugglePenalty));
     
     defender.health = Math.max(0, defender.health - damage);
-    this.hitstop = Math.floor(damage / 10); // Hitstop based on damage
+    // Base hitstop + scale with damage (capped)
+    this.hitstop = Math.min(12, 4 + Math.floor(damage / 12));
     try { const sfx: any = (this.app as any)._services?.resolve?.('sfx'); sfx?.setDuck?.(true); setTimeout(()=>{ try { sfx?.setDuck?.(false); } catch {} }, Math.max(60, this.hitstop*16)); } catch {}
     
     Logger.info(`${attacker.id} hits ${defender.id} for ${damage} damage`);
@@ -378,6 +458,7 @@ export class CombatSystem {
       const p = defender.entity.getPosition();
       effects?.spawn?.(p.x, p.y + 1.0);
       sfx?.play?.('hit');
+      sfx?.vibrate?.(25);
     } catch {}
 
     // Increment juggle points and decay later
@@ -396,11 +477,12 @@ export class CombatSystem {
       setTimeout(() => { try { (attacker as any)._comboHits = 0; (attacker as any)._comboDmg = 0; } catch {} }, 1200);
     } catch {}
     
-    // Pushback
+    // Pushback (corner stronger)
     try {
       const dir = Math.sign(defender.entity.getPosition().x - attacker.entity.getPosition().x) || 1;
       const dp = defender.entity.getPosition().clone();
-      dp.x += dir * 0.25;
+      const atCorner = (dir > 0 && dp.x + this.pushboxHalfWidth >= this.stageBounds.right - 1e-3) || (dir < 0 && dp.x - this.pushboxHalfWidth <= this.stageBounds.left + 1e-3);
+      dp.x += dir * (atCorner ? 0.18 : 0.28);
       defender.entity.setPosition(dp);
     } catch {}
 
@@ -449,6 +531,7 @@ export class CombatSystem {
       const p = defender.entity.getPosition();
       effects?.spawn?.(p.x, p.y + 1.0, 'block');
       sfx?.play?.('block');
+      sfx?.vibrate?.(12);
     } catch {}
   }
 

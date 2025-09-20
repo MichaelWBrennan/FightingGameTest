@@ -53,7 +53,11 @@ export class MatchmakingOverlay {
         const net = services?.resolve?.('netcode');
         // dynamic import to stay compatible in browser
         (import('../netcode/BroadcastSignaling')).then(({ BroadcastSignaling }) => {
-          try { const signaling = new BroadcastSignaling(m.session); net?.enableWebRTC(signaling, m.host); } catch {}
+          try {
+            const signaling = new BroadcastSignaling(m.session);
+            const ice = [ { urls: ['stun:stun.l.google.com:19302'] } ] as any;
+            net?.enableWebRTC(signaling, m.host, ice);
+          } catch {}
         }).catch(() => {});
       } catch {}
     }
