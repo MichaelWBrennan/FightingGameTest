@@ -481,7 +481,12 @@ export class CombatSystem {
     // Juggle limit: reduce damage heavily if juggle points exceed limit
     const juggle = (defender as any)._jugglePoints || 0;
     const juggleLimit = (attacker.currentMove?.data as any)?.juggleLimit ?? 6;
-    const jugglePenalty = juggle >= juggleLimit ? 0.25 : 1.0;
+    const scalingTable = (attacker.currentMove?.data as any)?.juggleScaling as number[] | undefined;
+    let jugglePenalty = juggle >= juggleLimit ? 0.25 : 1.0;
+    if (Array.isArray(scalingTable) && scalingTable.length > 0) {
+      const idx = Math.min(scalingTable.length - 1, Math.max(0, Math.floor(juggle / Math.max(1, (attacker.currentMove?.data as any)?.juggleAdd ?? 2))));
+      jugglePenalty = Math.min(jugglePenalty, scalingTable[idx] ?? jugglePenalty);
+    }
     // Counterhit if defender was in startup
     const isCounter = !!(defender.currentMove && defender.currentMove.phase === 'startup');
     const counterScale = isCounter ? 1.2 : 1.0;

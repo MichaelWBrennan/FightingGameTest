@@ -125,6 +125,7 @@ export interface AttackData {
     type: 'wall' | 'ground' | 'both';
     strength: number; // 0..1 multiplier for bounce velocity
   };
+  juggleScaling?: number[]; // optional per-juggle scaling factors, e.g., [1,0.8,0.6,0.4]
 }
 
 export interface AttackProperties {
