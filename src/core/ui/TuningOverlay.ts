@@ -1,6 +1,6 @@
 export class TuningOverlay {
   private container: HTMLDivElement;
-  constructor(private hooks: { setLeniency: (ms: number) => void; setVol: (vol: number) => void; setSocd?: (p: 'neutral'|'last') => void; setNegEdge?: (ms: number) => void; setJitterBuffer?: (frames: number) => void }) {
+  constructor(private hooks: { setLeniency: (ms: number) => void; setVol: (vol: number) => void; setSocd?: (p: 'neutral'|'last') => void; setNegEdge?: (ms: number) => void; setJitterBuffer?: (frames: number) => void; setLocale?: (locale: string) => void }) {
     this.container = document.createElement('div');
     this.container.style.position = 'fixed';
     this.container.style.right = '8px';
@@ -29,11 +29,17 @@ export class TuningOverlay {
     const l3 = document.createElement('div'); l3.textContent = 'SOCD Policy';
     const l4 = document.createElement('div'); l4.textContent = 'Negative-edge (ms)';
     const l5 = document.createElement('div'); l5.textContent = 'Jitter buffer (frames)';
+    const l6 = document.createElement('div'); l6.textContent = 'Language';
     this.container.appendChild(l1); this.container.appendChild(len);
     this.container.appendChild(l2); this.container.appendChild(vol);
     this.container.appendChild(l3); this.container.appendChild(socd);
     this.container.appendChild(l4); this.container.appendChild(neg);
+    // Locale selector
+    const loc = document.createElement('select');
+    ['en','es'].forEach(code => { const o = document.createElement('option'); o.value = code; o.text = code.toUpperCase(); loc.appendChild(o); });
+    loc.onchange = () => this.hooks.setLocale?.(loc.value);
     this.container.appendChild(l5); this.container.appendChild(jit);
+    this.container.appendChild(l6); this.container.appendChild(loc);
     document.body.appendChild(this.container);
   }
 }
