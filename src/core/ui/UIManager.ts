@@ -1139,10 +1139,10 @@ export class UIManager {
 			try {
 				const side = (data?.playerId === 'player2') ? this.comboP2 : this.comboP1;
 				if (!side) return;
-				if (side.hits.element) side.hits.element.text = `${Math.max(1, Number(data?.hits || 1))} HITS`;
+				if (side.hits.element) side.hits.element.text = `${Math.max(1, Number(data?.hits || 1))} ${((this as any)._i18n?.t?.('hits_suffix')) || 'HITS'}`;
 				if (side.dmg.element) {
 					const dmg = Math.max(0, Math.floor(Number(data?.damage || 0)));
-					side.dmg.element.text = dmg > 0 ? `${dmg} dmg` : '';
+					side.dmg.element.text = dmg > 0 ? `${dmg} ${((this as any)._i18n?.t?.('damage_suffix')) || 'dmg'}` : '';
 				}
 				side.container.enabled = true;
 				// Auto-hide after a short delay
@@ -1151,7 +1151,8 @@ export class UIManager {
 		});
 		// Victory banner + rounds/rematch flow
 		(this.app as any).on?.('match:victory', (_winnerId: string) => {
-			this.showBanner('KO!');
+			const koText = ((this as any)._i18n?.t?.('ko')) || 'KO!';
+			this.showBanner(koText);
 			try {
 				const on = (this as any);
 				on._roundWins = on._roundWins || { p1: 0, p2: 0 };
@@ -1161,6 +1162,19 @@ export class UIManager {
 				setTimeout(() => { try { this.showRematchPrompt(); } catch {} }, 1200);
 			} catch {}
 		});
+		// Update static texts when locale changes
+		try {
+			window.addEventListener('i18n:changed', () => {
+				try {
+					const t = this.app.root.findByName('MenuTitle') as any;
+					if (t?.element) t.element.text = ((this as any)._i18n?.t?.('title')) || 'Street Fighter III';
+				} catch {}
+				try {
+					const s = this.app.root.findByName('StartText') as any;
+					if (s?.element) s.element.text = Platform.kind() === 'mobile' ? (((this as any)._i18n?.t?.('tap_to_start')) || 'Tap to Start') : (((this as any)._i18n?.t?.('press_enter')) || 'Press Enter');
+				} catch {}
+			});
+		} catch {}
 		// Anti-cheat penalty prompt
 		setInterval(() => {
 			try {
