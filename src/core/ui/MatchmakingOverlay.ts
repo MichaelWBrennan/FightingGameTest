@@ -19,12 +19,13 @@ export class MatchmakingOverlay {
     this.container.style.borderRadius = '6px';
     this.container.style.font = '12px system-ui';
     this.container.style.zIndex = '10003';
+    const i18n: any = (window as any).pc?.Application?.getApplication?._services?.resolve?.('i18n') || (window as any)._services?.resolve?.('i18n');
     const btn = document.createElement('button');
-    btn.textContent = 'Quick Match';
+    btn.textContent = (i18n?.t?.('quick_match') || 'Quick Match');
     btn.onclick = () => this.toggleQueue();
     btn.style.marginRight = '8px';
     this.status = document.createElement('span');
-    this.status.textContent = 'Idle';
+    this.status.textContent = (i18n?.t?.('idle') || 'Idle');
     this.container.appendChild(btn);
     this.container.appendChild(this.status);
     document.body.appendChild(this.container);
@@ -32,7 +33,7 @@ export class MatchmakingOverlay {
 
   private toggleQueue(): void {
     this.inQueue = !this.inQueue;
-    this.status.textContent = this.inQueue ? 'Searching…' : 'Idle';
+    this.status.textContent = this.inQueue ? (i18n?.t?.('searching') || 'Searching…') : (i18n?.t?.('idle') || 'Idle');
     if (this.inQueue) this.bc.postMessage({ t: 'find', id: this.myId });
   }
 
@@ -46,7 +47,7 @@ export class MatchmakingOverlay {
     if (m?.t === 'offer' && m.to === this.myId && !this.paired) {
       this.paired = true;
       this.inQueue = false;
-      this.status.textContent = `Match: ${m.session} (${m.host ? 'You host' : 'You join'})`;
+      this.status.textContent = `Match: ${m.session} (${m.host ? (i18n?.t?.('you_host') || 'You host') : (i18n?.t?.('you_join') || 'You join')})`;
       // Auto-connect using WebRTC transport via NetcodeService
       try {
         const services: any = (window as any).pc?.Application?.getApplication?._services || (document as any)._services || (window as any)._services;
