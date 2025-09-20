@@ -121,6 +121,10 @@ export interface AttackData {
   juggleStart?: number; // points added on first launch
   juggleAdd?: number;   // points added on subsequent hits
   juggleLimit?: number; // max juggle points allowed before scaling/whiff
+  bounce?: {
+    type: 'wall' | 'ground' | 'both';
+    strength: number; // 0..1 multiplier for bounce velocity
+  };
 }
 
 export interface AttackProperties {

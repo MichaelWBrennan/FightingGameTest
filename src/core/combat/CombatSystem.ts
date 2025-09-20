@@ -27,6 +27,7 @@ export class CombatSystem {
   private stageBounds = { left: -6, right: 6 };
   private gravity = 0.012;
   private bounceFactor = 0.42;
+  private airFriction = 0.98;
   private projectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
   private freeProjectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
 
@@ -95,9 +96,19 @@ export class CombatSystem {
       const airborne = (ch as any)._airborne === true;
       if (!airborne) continue;
       const velY = (ch as any)._velY ?? 0;
+      const velX = (ch as any)._velX ?? 0;
       let vy = velY - gravity;
+      let vx = velX * this.airFriction;
       const pos = ch.entity.getPosition().clone();
       pos.y += vy;
+      pos.x += vx;
+      if (pos.x + this.pushboxHalfWidth >= this.stageBounds.right) {
+        pos.x = this.stageBounds.right - this.pushboxHalfWidth;
+        vx = -Math.abs(vx) * bounce;
+      } else if (pos.x - this.pushboxHalfWidth <= this.stageBounds.left) {
+        pos.x = this.stageBounds.left + this.pushboxHalfWidth;
+        vx = Math.abs(vx) * bounce;
+      }
       if (pos.y <= 0) {
         pos.y = 0;
         if (Math.abs(vy) > 0.08) {
@@ -110,6 +121,7 @@ export class CombatSystem {
         }
       }
       (ch as any)._velY = vy;
+      (ch as any)._velX = vx;
       ch.entity.setPosition(pos);
     }
   }
@@ -531,6 +543,7 @@ export class CombatSystem {
       const atLeft = dp.x - this.pushboxHalfWidth <= this.stageBounds.left + 1e-3;
       const atCorner = (dir > 0 && atRight) || (dir < 0 && atLeft);
       dp.x += dir * (atCorner ? 0.18 : 0.28);
+      (defender as any)._velX = dir * (atCorner ? 0.06 : 0.12);
       defender.entity.setPosition(dp);
     } catch {}
 
@@ -543,11 +556,17 @@ export class CombatSystem {
       const p = defender.entity.getPosition().clone();
       const atRight = p.x + this.pushboxHalfWidth >= this.stageBounds.right - 1e-3;
       const atLeft = p.x - this.pushboxHalfWidth <= this.stageBounds.left + 1e-3;
-      if ((atRight || atLeft) && damage > 80) {
+      const bounceMeta = (attacker.currentMove?.data as any)?.bounce;
+      if ((atRight || atLeft) && (damage > 80 || bounceMeta?.type === 'wall')) {
         const sfx: any = (this.app as any)._services?.resolve?.('sfx');
         const effects: any = (this.app as any)._services?.resolve?.('effects');
         sfx?.play?.('block');
         effects?.spawn?.(p.x, p.y + 0.8, 'clash');
+        const str = Math.max(0.2, Math.min(1, bounceMeta?.strength ?? 0.6));
+        (defender as any)._velX = -((defender as any)._velX || 0) * str;
+      }
+      if (bounceMeta?.type === 'ground') {
+        (defender as any)._velY = Math.max((defender as any)._velY, (bounceMeta?.strength ?? 0.6) * 0.22);
       }
     } catch {}
 
