@@ -11,7 +11,8 @@ export class EffectsOverlay {
     counter: { color: new pc.Color(1,0.3,0.3,1), size: 1.25, life: 95 },
     light: { color: new pc.Color(0.9,0.9,1,1), size: 0.9, life: 70 },
     medium: { color: new pc.Color(1,0.85,0.6,1), size: 1.1, life: 80 },
-    heavy: { color: new pc.Color(1,0.6,0.4,1), size: 1.3, life: 90 }
+    heavy: { color: new pc.Color(1,0.6,0.4,1), size: 1.3, life: 90 },
+    guardcrush: { color: new pc.Color(1,0.2,0.2,1), size: 1.35, life: 110 }
   };
 
   constructor(app: pc.Application) {
@@ -26,7 +27,7 @@ export class EffectsOverlay {
     return e;
   }
 
-  spawn(x: number, y: number, kind: 'hit'|'block'|'parry'|'clash'|'counter'|'light'|'medium'|'heavy' = 'hit'): void {
+  spawn(x: number, y: number, kind: 'hit'|'block'|'parry'|'clash'|'counter'|'light'|'medium'|'heavy'|'guardcrush' = 'hit'): void {
     const e = this.pool.pop() || this.createSpark();
     e.enabled = true;
     e.setPosition(x, y, 0);

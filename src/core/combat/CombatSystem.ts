@@ -559,6 +559,7 @@ export class CombatSystem {
       chip += 10;
       defender.guardMeter = 100;
       defender.state = 'hitstun';
+      try { const effects: any = (this.app as any)._services?.resolve?.('effects'); const p = defender.entity.getPosition(); effects?.spawn?.(p.x, p.y + 1.0, 'guardcrush'); } catch {}
     } else {
       defender.guardMeter = guard - guardCost;
       defender.state = 'blockstun';
