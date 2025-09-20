@@ -105,14 +105,17 @@ export class CombatSystem {
       if (pos.x + this.pushboxHalfWidth >= this.stageBounds.right) {
         pos.x = this.stageBounds.right - this.pushboxHalfWidth;
         vx = -Math.abs(vx) * bounce;
+        this.pulseCamera(120, 0.92);
       } else if (pos.x - this.pushboxHalfWidth <= this.stageBounds.left) {
         pos.x = this.stageBounds.left + this.pushboxHalfWidth;
         vx = Math.abs(vx) * bounce;
+        this.pulseCamera(120, 0.92);
       }
       if (pos.y <= 0) {
         pos.y = 0;
         if (Math.abs(vy) > 0.08) {
           vy = -vy * bounce;
+          this.pulseCamera(120, 0.94);
         } else {
           vy = 0;
           (ch as any)._airborne = false;
@@ -477,7 +480,7 @@ export class CombatSystem {
     }
     // Juggle limit: reduce damage heavily if juggle points exceed limit
     const juggle = (defender as any)._jugglePoints || 0;
-    const juggleLimit = 6;
+    const juggleLimit = (attacker.currentMove?.data as any)?.juggleLimit ?? 6;
     const jugglePenalty = juggle >= juggleLimit ? 0.25 : 1.0;
     // Counterhit if defender was in startup
     const isCounter = !!(defender.currentMove && defender.currentMove.phase === 'startup');
@@ -667,5 +670,22 @@ export class CombatSystem {
 
   public isInHistop(): boolean {
     return this.hitstop > 0;
+  }
+
+  private pulseCamera(durationMs: number, zoom: number): void {
+    try {
+      const cam = this.app.root.findByName('MainCamera');
+      if (!cam || !(cam as any).camera) return;
+      const start = performance.now();
+      const initial = (cam as any).camera.orthoHeight || 5;
+      const target = initial * zoom;
+      const tick = () => {
+        const t = Math.min(1, (performance.now() - start) / durationMs);
+        const k = t < 0.5 ? (t * 2) : (1 - (t - 0.5) * 2);
+        (cam as any).camera.orthoHeight = initial + (target - initial) * k;
+        if (t < 1) requestAnimationFrame(tick); else (cam as any).camera.orthoHeight = initial;
+      };
+      requestAnimationFrame(tick);
+    } catch {}
   }
 }
