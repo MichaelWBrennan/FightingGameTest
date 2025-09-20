@@ -48,6 +48,7 @@ export class CombatSystem {
     this.frameCounter++;
     this.processInputs();
     this.updateFacing();
+    this.updateAirbornePhysics();
     this.applyPushboxesAndCorner();
     this.projectileManager?.update();
     this.updateHitboxes();
@@ -77,10 +78,38 @@ export class CombatSystem {
     if (activeCharacters[0]) this.processCharacterInputs(activeCharacters[0], p0);
     if (activeCharacters[1]) this.processCharacterInputs(activeCharacters[1], p1);
     this.updateFacing();
+    this.updateAirbornePhysics();
     this.applyPushboxesAndCorner();
     this.projectileManager?.update();
     this.updateHitboxes();
     this.checkCollisions();
+  }
+
+  private updateAirbornePhysics(): void {
+    const list = this.characterManager.getActiveCharacters();
+    const gravity = 0.012;
+    const bounce = 0.45;
+    for (const ch of list) {
+      const airborne = (ch as any)._airborne === true;
+      if (!airborne) continue;
+      const velY = (ch as any)._velY ?? 0;
+      let vy = velY - gravity;
+      const pos = ch.entity.getPosition().clone();
+      pos.y += vy;
+      if (pos.y <= 0) {
+        pos.y = 0;
+        if (Math.abs(vy) > 0.08) {
+          vy = -vy * bounce;
+        } else {
+          vy = 0;
+          (ch as any)._airborne = false;
+          (ch as any)._jugglePoints = Math.max(0, ((ch as any)._jugglePoints || 0) - 2);
+          ch.state = 'idle';
+        }
+      }
+      (ch as any)._velY = vy;
+      ch.entity.setPosition(pos);
+    }
   }
 
   private applyPushboxesAndCorner(): void {
@@ -428,11 +457,14 @@ export class CombatSystem {
     const juggle = (defender as any)._jugglePoints || 0;
     const juggleLimit = 6;
     const jugglePenalty = juggle >= juggleLimit ? 0.25 : 1.0;
-    const damage = Math.max(1, Math.floor(moveData.damage * scale * jugglePenalty));
+    // Counterhit if defender was in startup
+    const isCounter = !!(defender.currentMove && defender.currentMove.phase === 'startup');
+    const counterScale = isCounter ? 1.2 : 1.0;
+    const damage = Math.max(1, Math.floor(moveData.damage * scale * jugglePenalty * counterScale));
     
     defender.health = Math.max(0, defender.health - damage);
     // Base hitstop + scale with damage (capped)
-    this.hitstop = Math.min(12, 4 + Math.floor(damage / 12));
+    this.hitstop = Math.min(14, 4 + Math.floor(damage / 12) + (isCounter ? 1 : 0));
     try { const sfx: any = (this.app as any)._services?.resolve?.('sfx'); sfx?.setDuck?.(true); setTimeout(()=>{ try { sfx?.setDuck?.(false); } catch {} }, Math.max(60, this.hitstop*16)); } catch {}
     
     Logger.info(`${attacker.id} hits ${defender.id} for ${damage} damage`);
@@ -456,8 +488,9 @@ export class CombatSystem {
       const effects: any = (this.app as any)._services?.resolve?.('effects');
       const sfx: any = (this.app as any)._services?.resolve?.('sfx');
       const p = defender.entity.getPosition();
-      effects?.spawn?.(p.x, p.y + 1.0);
-      sfx?.play?.('hit');
+      effects?.spawn?.(p.x, p.y + 1.0, isCounter ? 'counter' : 'hit');
+      const frame = this.getCurrentFrame();
+      if (sfx?.playDeterministic) sfx.playDeterministic(`hit_${attacker.id}_${defender.id}`, frame, 'hit'); else sfx?.play?.('hit');
       sfx?.vibrate?.(25);
     } catch {}
 
@@ -486,16 +519,21 @@ export class CombatSystem {
       defender.entity.setPosition(dp);
     } catch {}
 
-    // Launch/juggle: if consecutive hits rapidly, apply small vertical knock
+    // Launch/juggle: apply vertical knock and set airborne for juggle routes
     try {
-      const dp = defender.entity.getPosition().clone();
-      dp.y += 0.05; // visual nudge; proper physics would integrate velocity
-      defender.entity.setPosition(dp);
+      (defender as any)._airborne = true;
+      (defender as any)._velY = Math.max((defender as any)._velY || 0, 0.18 + Math.min(0.12, damage * 0.0008));
     } catch {}
 
     if (defender.health <= 0) {
       this.handleKO(defender, attacker);
     }
+
+    // Enable cancel windows based on outcome
+    try {
+      (attacker as any)._cancelOutcome = 'hit';
+      (attacker as any)._canCancelUntil = this.frameCounter + 10;
+    } catch {}
   }
 
   private processBlock(attacker: Character, defender: Character, moveData: any): void {
@@ -530,8 +568,15 @@ export class CombatSystem {
       const sfx: any = (this.app as any)._services?.resolve?.('sfx');
       const p = defender.entity.getPosition();
       effects?.spawn?.(p.x, p.y + 1.0, 'block');
-      sfx?.play?.('block');
+      const frame = this.getCurrentFrame();
+      if (sfx?.playDeterministic) sfx.playDeterministic(`block_${attacker.id}_${defender.id}`, frame, 'block'); else sfx?.play?.('block');
       sfx?.vibrate?.(12);
+    } catch {}
+
+    // Cancel window on block
+    try {
+      (attacker as any)._cancelOutcome = 'block';
+      (attacker as any)._canCancelUntil = this.frameCounter + 6;
     } catch {}
   }
 
@@ -541,8 +586,17 @@ export class CombatSystem {
     try {
       const cfg = this.characterManager.getActiveCharacters().find(c => c.currentMove?.name === fromMove)?.config;
       const move = cfg?.moves?.[fromMove];
-      const table: string[] = (move?.cancels as string[]) || [];
-      if (table.includes(toMove) && phase !== 'recovery') return true;
+      const until = (this as any).frameCounter;
+      const allowOutcome = (this as any)._cancelOutcome || 'any';
+      const limit = (this as any)._canCancelUntil || -1;
+      const basic: string[] = Array.isArray((move as any)?.cancels) ? (move as any).cancels as string[] : [];
+      const adv = (move as any)?.cancelTable as any;
+      const inWindow = (limit >= 0) ? (until <= limit) : true;
+      if (adv && inWindow && phase !== 'recovery') {
+        const list = adv[allowOutcome] || adv['any'] || [];
+        if (Array.isArray(list) && list.includes(toMove)) return true;
+      }
+      if (basic.includes(toMove) && phase !== 'recovery') return true;
     } catch {}
     // Fallback: allow light->medium->heavy chains and specials from any non-recovery
     const order: Record<string, number> = { lightPunch: 1, lightKick: 1, mediumPunch: 2, mediumKick: 2, heavyPunch: 3, heavyKick: 3 } as any;

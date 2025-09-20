@@ -1148,9 +1148,17 @@ export class UIManager {
 				setTimeout(() => { try { side.container.enabled = false; } catch {} }, 1200);
 			} catch {}
 		});
-		// Victory banner
+		// Victory banner + rounds/rematch flow
 		(this.app as any).on?.('match:victory', (_winnerId: string) => {
 			this.showBanner('KO!');
+			try {
+				const on = (this as any);
+				on._roundWins = on._roundWins || { p1: 0, p2: 0 };
+				const isP1 = _winnerId === (this.app as any)._services?.resolve?.('characters')?.getActiveCharacters?.()[0]?.id;
+				if (isP1) on._roundWins.p1++; else on._roundWins.p2++;
+				(this.app as any).fire?.('ui:roundwins', isP1 ? 'player1' : 'player2', isP1 ? on._roundWins.p1 : on._roundWins.p2);
+				setTimeout(() => { try { this.showRematchPrompt(); } catch {} }, 1200);
+			} catch {}
 		});
 		// Training overlay toggles
 		try {
@@ -1171,6 +1179,43 @@ export class UIManager {
 		try {
 			// Fade out
 			setTimeout(() => { try { if (this.bannerText) this.bannerText.enabled = false; } catch {} }, 1400);
+		} catch {}
+	}
+
+	private showRematchPrompt(): void {
+		try {
+			const container = new pc.Entity('RematchPrompt');
+			container.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0.35, 0.42, 0.65, 0.58) });
+			const bg = new pc.Entity('BG');
+			bg.addComponent('element', { type: pc.ELEMENTTYPE_IMAGE, texture: this.capsuleTex as any, anchor: new pc.Vec4(0,0,1,1), color: new pc.Color(1,1,1,0.95) } as any);
+			container.addChild(bg);
+			const text = new pc.Entity('Text');
+			text.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: 'Rematch?  [Enter] Yes   [Esc] No', fontSize: 28, color: new pc.Color(1,1,1,1), anchor: new pc.Vec4(0,0,1,1), pivot: new pc.Vec2(0.5,0.5), alignment: new pc.Vec2(0.5,0.5) } as any);
+			this.applyTextFont(text);
+			container.addChild(text);
+			this.hud?.addChild(container);
+			const onKey = (e: KeyboardEvent) => {
+				if (e.key === 'Enter') { this.requestRematch(true); cleanup(); }
+				if (e.key === 'Escape') { this.requestRematch(false); cleanup(); }
+			};
+			const cleanup = () => { try { window.removeEventListener('keydown', onKey); container.destroy(); } catch {} };
+			window.addEventListener('keydown', onKey);
+		} catch {}
+	}
+
+	private requestRematch(yes: boolean): void {
+		try {
+			(this.app as any).fire?.('match:rematch', { accept: yes });
+			if (yes) {
+				// Reset health and positions
+				const chars: any = (this.app as any)._services?.resolve?.('characters');
+				const list = chars?.getActiveCharacters?.() || [];
+				if (list[0] && list[1]) {
+					list[0].health = list[0].maxHealth || 1000; list[1].health = list[1].maxHealth || 1000;
+					const a = list[0].entity.getPosition().clone(); const b = list[1].entity.getPosition().clone(); a.x = -1.2; b.x = 1.2; a.y = b.y = 0; list[0].entity.setPosition(a); list[1].entity.setPosition(b);
+					list[0].state = list[1].state = 'idle'; list[0].currentMove = list[1].currentMove = null;
+				}
+			}
 		} catch {}
 	}
 }

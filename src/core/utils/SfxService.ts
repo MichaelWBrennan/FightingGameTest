@@ -39,5 +39,11 @@ export class SfxService {
       if (pad && pad.vibrationActuator) pad.vibrationActuator.playEffect('dual-rumble', { duration: ms, strongMagnitude: 0.4, weakMagnitude: 0.6 });
     } catch {}
   }
+
+  // Optional deterministic scheduling API for rollback friendliness
+  playDeterministic(instanceId: string, frame: number, key: string, bus: 'sfx'|'ui' = 'sfx', priority: number = 0): void {
+    // For now, route to play(); instanceId/frame reserved for future dedupe logic
+    this.play(key, bus, priority);
+  }
 }
 
