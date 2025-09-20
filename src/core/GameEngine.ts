@@ -48,6 +48,7 @@ import { CommandListOverlay } from './ui/CommandListOverlay';
 import { OptionsOverlay } from './ui/OptionsOverlay';
 import { MatchmakingService } from './online/MatchmakingService';
 import { AnalyticsService } from './utils/AnalyticsService';
+import { LobbiesOverlay } from './ui/LobbiesOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -91,6 +92,7 @@ export class GameEngine {
   private options: OptionsOverlay | null = null;
   private mmService: MatchmakingService | null = null;
   private analytics: AnalyticsService | null = null;
+  private lobbies: LobbiesOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -449,7 +451,7 @@ export class GameEngine {
       try { if (this.effects) this.services.register('effects', this.effects); } catch {}
       try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
       try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
-      try { this.analytics = new AnalyticsService(); this.analytics.setEndpoint(''); this.services.register('analytics', this.analytics); } catch {}
+      try { this.analytics = new AnalyticsService(); this.analytics.setEndpoint(''); this.analytics.startAutoFlush(4000); this.services.register('analytics', this.analytics); } catch {}
       try { this.mmService = new MatchmakingService(); this.services.register('matchmakingService', this.mmService); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
@@ -460,6 +462,7 @@ export class GameEngine {
       try { this.i18n = new I18nService(); const saved = (typeof localStorage !== 'undefined' && localStorage.getItem('locale')) || 'en'; await this.i18n.load(saved); this.services.register('i18n', this.i18n); } catch {}
       try { this.cmdList = new CommandListOverlay(); this.cmdList.setCommands([{ name: 'Hadoken', input: 'QCF + P' }, { name: 'Shoryuken', input: 'DP + P' }, { name: 'Tatsumaki', input: 'QCB + K' }, { name: 'Sonic Boom', input: 'Charge back, forward + P' }, { name: 'Flash Kick', input: 'Charge down, up + K' }, { name: 'Command Grab', input: '360 + P' }]); } catch {}
       try { this.options = new OptionsOverlay(this.services); } catch {}
+      try { if (this.mmService) { this.lobbies = new LobbiesOverlay(this.mmService); } } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({

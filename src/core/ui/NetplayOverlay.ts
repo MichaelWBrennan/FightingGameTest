@@ -118,6 +118,7 @@ export class NetplayOverlay {
       const signaling = new BroadcastSignaling(session);
       const ice = turnUrl ? [{ urls: [turnUrl] }] : undefined as any;
       net.enableWebRTC(signaling, isOfferer, ice, psk);
+      try { const analytics = services?.resolve?.('analytics'); analytics?.track?.('netplay_start', { session, host: !!isOfferer, turn: !!turnUrl, psk: !!psk }); } catch {}
       try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(isOfferer ? (i18n?.t?.('hosting_wait') || 'Hosting… Waiting for peer.') : (i18n?.t?.('joining') || 'Joining…')); } catch { this.setStatus(isOfferer ? 'Hosting… Waiting for peer.' : 'Joining…'); }
     } catch (e) {
       this.setStatus('Failed to start: ' + (e as any)?.message);

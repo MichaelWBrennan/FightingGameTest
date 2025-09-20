@@ -11,5 +11,8 @@ export class AnalyticsService {
     if (!this.endpoint) { try { console.log('[analytics]', batch); } catch {} return; }
     try { fetch(this.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ events: batch }) }).catch(()=>{}); } catch {}
   }
+  startAutoFlush(intervalMs: number = 5000): void {
+    try { setInterval(() => this.flush(), Math.max(1000, intervalMs|0)); } catch {}
+  }
 }
 

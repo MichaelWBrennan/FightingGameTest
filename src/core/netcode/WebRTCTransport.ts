@@ -24,6 +24,8 @@ export class WebRTCTransport implements Transport {
 
   public onRemoteInput?: (frame: number, bits: number) => void;
   private key?: CryptoKey;
+  private outQueue: RTCMsg[] = [];
+  private drainTimer?: any;
 
   constructor(
     private isOfferer: boolean,
@@ -81,8 +83,10 @@ export class WebRTCTransport implements Transport {
       this.pingTimer = setInterval(() => {
         this.send({ t: 'p', ts: performance.now(), echo: false });
       }, 500);
+      if (this.drainTimer) clearInterval(this.drainTimer);
+      this.drainTimer = setInterval(() => this.drain(), 8);
     };
-    dc.onclose = () => { if (this.pingTimer) clearInterval(this.pingTimer); this.tryReconnect(); };
+    dc.onclose = () => { if (this.pingTimer) clearInterval(this.pingTimer); if (this.drainTimer) clearInterval(this.drainTimer); this.tryReconnect(); };
     dc.onerror = () => { this.tryReconnect(); };
   }
 
@@ -94,32 +98,71 @@ export class WebRTCTransport implements Transport {
     this.pc.createOffer().then(o => this.pc.setLocalDescription(o)).then(() => this.signaling.send({ sdp: this.pc.localDescription })).catch(() => {});
   }
 
-  private send(m: RTCMsg): void {
-    try {
-      const payload = JSON.stringify(m);
-      const out = this.encryptIfReady(payload);
-      // Token bucket shaping
-      const now = performance.now();
-      const elapsed = Math.max(0, now - this.tokenBucket.last);
-      this.tokenBucket.tokens = Math.min(this.tokenBucket.capacity, this.tokenBucket.tokens + (elapsed * this.tokenBucket.refillRate) / 1000);
-      this.tokenBucket.last = now;
-      if (this.tokenBucket.tokens >= out.length) {
-        this.dc?.send(out);
-        this.tokenBucket.tokens -= out.length;
-      } else {
-        // Drop low priority pings when bucket is empty, always enqueue inputs
-        if ((m as any).t !== 'p') this.dc?.send(out);
+  private send(m: RTCMsg): void { this.outQueue.push(m); }
+
+  private async drain(): Promise<void> {
+    if (!this.dc || this.dc.readyState !== 'open') return;
+    if (this.outQueue.length === 0) return;
+    const now = performance.now();
+    const elapsed = Math.max(0, now - this.tokenBucket.last);
+    this.tokenBucket.tokens = Math.min(this.tokenBucket.capacity, this.tokenBucket.tokens + (elapsed * this.tokenBucket.refillRate) / 1000);
+    this.tokenBucket.last = now;
+    // Process a few messages per tick to keep latency low
+    for (let i = 0; i < 4 && this.outQueue.length > 0; i++) {
+      const m = this.outQueue[0];
+      try {
+        // Serialize
+        const json = JSON.stringify(m);
+        if (this.key) {
+          const enc = await this.encrypt(json);
+          const length = enc.byteLength;
+          if (this.tokenBucket.tokens >= length) {
+            this.dc.send(enc);
+            this.tokenBucket.tokens -= length;
+            this.bytesTx += length;
+            this.outQueue.shift();
+          } else {
+            // Drop low-priority pings under congestion
+            if ((m as any).t === 'p') { this.outQueue.shift(); }
+            break;
+          }
+        } else {
+          const length = json.length;
+          if (this.tokenBucket.tokens >= length) {
+            this.dc.send(json);
+            this.tokenBucket.tokens -= length;
+            this.bytesTx += length;
+            this.outQueue.shift();
+          } else {
+            if ((m as any).t === 'p') { this.outQueue.shift(); }
+            break;
+          }
+        }
+      } catch {
+        // Drop malformed
+        this.outQueue.shift();
       }
-      this.bytesTx += out.length;
-    } catch {}
+    }
   }
 
-  private onMessage(d: any): void {
+  private async onMessage(d: any): Promise<void> {
     try {
-      const rawStr = typeof d === 'string' ? d : (typeof d?.byteLength === 'number' ? new TextDecoder().decode(d) : String(d));
-      const raw = this.decryptIfReady(rawStr) || rawStr;
-      this.bytesRx += (raw?.length || 0);
-      const m = JSON.parse(raw) as RTCMsg;
+      let text: string | null = null;
+      if (typeof d === 'string') {
+        text = d;
+        this.bytesRx += d.length;
+      } else if (typeof d?.byteLength === 'number') {
+        const ab: ArrayBuffer = d as ArrayBuffer;
+        const dec = this.key ? await this.decrypt(ab) : null;
+        if (dec !== null) { text = dec; this.bytesRx += ab.byteLength; }
+        else {
+          // Fallback: assume UTF-8 string payload
+          const s = new TextDecoder().decode(ab);
+          text = s; this.bytesRx += ab.byteLength;
+        }
+      }
+      if (!text) return;
+      const m = JSON.parse(text) as RTCMsg;
       if (m.t === 'i') {
         // track basic ordering/loss metrics
         if (this.lastRecvFrame >= 0 && m.f > this.lastRecvFrame + 1) this.lossSuspect += (m.f - this.lastRecvFrame - 1);
@@ -150,19 +193,30 @@ export class WebRTCTransport implements Transport {
       this.key = await crypto.subtle.importKey('raw', keyData, 'AES-GCM', false, ['encrypt','decrypt']);
     } catch {}
   }
-  private encryptIfReady(s: string): string {
-    try {
-      if (!this.key) return s;
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const data = new TextEncoder().encode(s);
-      // Note: async would require refactor; send plaintext if crypto not available synchronously
-      // In production, migrate to async pipeline with queue
-    } catch {}
-    return s;
+  // Encrypted payload format: [4 bytes magic 'F','G','E','C'][12 bytes IV][ciphertext]
+  private async encrypt(s: string): Promise<ArrayBuffer> {
+    if (!this.key) throw new Error('No key');
+    const magic = new Uint8Array([0x46,0x47,0x45,0x43]);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const data = new TextEncoder().encode(s);
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, this.key, data);
+    const out = new Uint8Array(4 + 12 + (ct as ArrayBuffer).byteLength);
+    out.set(magic, 0);
+    out.set(iv, 4);
+    out.set(new Uint8Array(ct as ArrayBuffer), 16);
+    return out.buffer;
   }
-  private decryptIfReady(s: string): string | null {
-    try { if (!this.key) return s; } catch {}
-    return s;
+  private async decrypt(buf: ArrayBuffer): Promise<string | null> {
+    try {
+      if (!this.key) return null;
+      const u8 = new Uint8Array(buf);
+      if (u8.byteLength < 16) return null;
+      if (!(u8[0] === 0x46 && u8[1] === 0x47 && u8[2] === 0x45 && u8[3] === 0x43)) return null;
+      const iv = u8.slice(4, 16);
+      const ct = u8.slice(16);
+      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, this.key!, ct);
+      return new TextDecoder().decode(new Uint8Array(pt));
+    } catch { return null; }
   }
 
   private onCtrl(d: any): void {

@@ -21,11 +21,12 @@ export class MatchmakingOverlay {
     this.container.style.zIndex = '10003';
     const i18n: any = (window as any).pc?.Application?.getApplication?._services?.resolve?.('i18n') || (window as any)._services?.resolve?.('i18n');
     const btn = document.createElement('button');
-    btn.textContent = (i18n?.t?.('quick_match') || 'Quick Match');
+    const loc = i18n; // capture for closures
+    btn.textContent = (loc?.t?.('quick_match') || 'Quick Match');
     btn.onclick = () => this.toggleQueue();
     btn.style.marginRight = '8px';
     this.status = document.createElement('span');
-    this.status.textContent = (i18n?.t?.('idle') || 'Idle');
+    this.status.textContent = (loc?.t?.('idle') || 'Idle');
     this.container.appendChild(btn);
     this.container.appendChild(this.status);
     document.body.appendChild(this.container);
@@ -33,7 +34,10 @@ export class MatchmakingOverlay {
 
   private toggleQueue(): void {
     this.inQueue = !this.inQueue;
-    this.status.textContent = this.inQueue ? (i18n?.t?.('searching') || 'Searching…') : (i18n?.t?.('idle') || 'Idle');
+    const services: any = (window as any).pc?.Application?.getApplication?._services || (window as any)._services;
+    const i18nS = services?.resolve?.('i18n');
+    this.status.textContent = this.inQueue ? (i18nS?.t?.('searching') || 'Searching…') : (i18nS?.t?.('idle') || 'Idle');
+    try { const services: any = (window as any).pc?.Application?.getApplication?._services || (window as any)._services; services?.resolve?.('analytics')?.track?.(this.inQueue ? 'quickmatch_search' : 'quickmatch_stop'); } catch {}
     if (this.inQueue) this.bc.postMessage({ t: 'find', id: this.myId });
   }
 
@@ -47,11 +51,12 @@ export class MatchmakingOverlay {
     if (m?.t === 'offer' && m.to === this.myId && !this.paired) {
       this.paired = true;
       this.inQueue = false;
-      this.status.textContent = `Match: ${m.session} (${m.host ? (i18n?.t?.('you_host') || 'You host') : (i18n?.t?.('you_join') || 'You join')})`;
+      try { const i18nS = ((window as any).pc?.Application?.getApplication?._services || (window as any)._services)?.resolve?.('i18n'); this.status.textContent = `Match: ${m.session} (${m.host ? (i18nS?.t?.('you_host') || 'You host') : (i18nS?.t?.('you_join') || 'You join')})`; } catch { this.status.textContent = `Match: ${m.session} (${m.host ? 'You host' : 'You join'})`; }
       // Auto-connect using WebRTC transport via NetcodeService
       try {
         const services: any = (window as any).pc?.Application?.getApplication?._services || (document as any)._services || (window as any)._services;
         const net = services?.resolve?.('netcode');
+        try { services?.resolve?.('analytics')?.track?.('match_found', { session: m.session, host: m.host }); } catch {}
         // dynamic import to stay compatible in browser
         (import('../netcode/BroadcastSignaling')).then(({ BroadcastSignaling }) => {
           try {
