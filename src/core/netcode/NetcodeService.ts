@@ -169,14 +169,94 @@ export class NetcodeService {
   }
 
   private compressSnapshot(snap: GameStateSnapshot): { frame: number; checksum: number; buf: ArrayBuffer } {
-    const payload = JSON.stringify(snap.payload);
-    const buf = this.encoder.encode(payload).buffer;
-    return { frame: snap.frame, checksum: snap.checksum, buf };
+    try {
+      const chars = Array.isArray((snap as any).payload?.characters) ? (snap as any).payload.characters : [];
+      const num = Math.min(2, chars.length);
+      const idLens = new Array<number>(num).fill(0).map((_, i) => Math.min(255, (chars[i]?.id?.length || 0)));
+      let size = 0;
+      size += 4 /*frame*/ + 2 /*hitstop*/ + 1 /*num*/;
+      for (let i = 0; i < num; i++) {
+        size += 1 + idLens[i];
+        size += 4 /*health*/ + 4*3 /*pos*/ + 1 /*state*/ + 1 /*has*/;
+        const has = chars[i]?.currentMove ? 1 : 0;
+        if (has) size += 2 /*currentFrame*/ + 1 /*phase*/;
+      }
+      const buf = new ArrayBuffer(size);
+      const view = new DataView(buf);
+      let off = 0;
+      view.setUint32(off, (snap as any).payload?.frame ?? snap.frame, true); off += 4;
+      view.setUint16(off, ((snap as any).payload?.hitstop ?? 0) & 0xffff, true); off += 2;
+      view.setUint8(off, num); off += 1;
+      for (let i = 0; i < num; i++) {
+        const c = chars[i];
+        const id = (c?.id || '').slice(0, idLens[i]);
+        view.setUint8(off, id.length); off += 1;
+        for (let j = 0; j < id.length; j++) view.setUint8(off + j, id.charCodeAt(j) & 0xff);
+        off += id.length;
+        view.setFloat32(off, (c?.health ?? 0), true); off += 4;
+        const p = c?.position || { x: 0, y: 0, z: 0 };
+        view.setFloat32(off, p.x ?? 0, true); off += 4;
+        view.setFloat32(off, p.y ?? 0, true); off += 4;
+        view.setFloat32(off, p.z ?? 0, true); off += 4;
+        view.setInt8(off, this.stateToCode(c?.state)); off += 1;
+        const has = c?.currentMove ? 1 : 0; view.setUint8(off, has); off += 1;
+        if (has) {
+          view.setUint16(off, (c.currentMove.currentFrame | 0) & 0xffff, true); off += 2;
+          view.setInt8(off, this.phaseToCode(c.currentMove.phase)); off += 1;
+        }
+      }
+      return { frame: snap.frame, checksum: snap.checksum, buf };
+    } catch {
+      const payload = JSON.stringify(snap.payload);
+      const buf = this.encoder.encode(payload).buffer;
+      return { frame: snap.frame, checksum: snap.checksum, buf };
+    }
   }
   private decompressSnapshot(cs: { frame: number; checksum: number; buf: ArrayBuffer }): GameStateSnapshot {
-    const json = this.decoder.decode(new Uint8Array(cs.buf));
-    const payload = JSON.parse(json);
-    return { frame: cs.frame, checksum: cs.checksum, payload } as GameStateSnapshot;
+    try {
+      const view = new DataView(cs.buf);
+      let off = 0;
+      const frame = view.getUint32(off, true); off += 4;
+      const hitstop = view.getUint16(off, true); off += 2;
+      const num = view.getUint8(off); off += 1;
+      const characters: any[] = [];
+      for (let i = 0; i < num; i++) {
+        const idLen = view.getUint8(off); off += 1;
+        let id = '';
+        for (let j = 0; j < idLen; j++) id += String.fromCharCode(view.getUint8(off + j));
+        off += idLen;
+        const health = view.getFloat32(off, true); off += 4;
+        const x = view.getFloat32(off, true); off += 4;
+        const y = view.getFloat32(off, true); off += 4;
+        const z = view.getFloat32(off, true); off += 4;
+        const state = this.codeToState(view.getInt8(off)); off += 1;
+        const has = view.getUint8(off); off += 1;
+        let currentMove: any = null;
+        if (has) {
+          const cf = view.getUint16(off, true); off += 2;
+          const ph = this.codeToPhase(view.getInt8(off)); off += 1;
+          currentMove = { name: '', currentFrame: cf, phase: ph };
+        }
+        characters.push({ id, health, state, currentMove, frameData: null, position: { x, y, z } });
+      }
+      const payload = { frame, hitstop, characters };
+      return { frame: cs.frame, checksum: cs.checksum, payload } as GameStateSnapshot;
+    } catch {
+      const json = this.decoder.decode(new Uint8Array(cs.buf));
+      const payload = JSON.parse(json);
+      return { frame: cs.frame, checksum: cs.checksum, payload } as GameStateSnapshot;
+    }
   }
+
+  private stateToCode(state: string): number {
+    switch ((state || '').toLowerCase()) {
+      case 'idle': return 0; case 'walking': return 1; case 'attacking': return 2; case 'hitstun': return 3; case 'blockstun': return 4; case 'ko': return 5; default: return 0;
+    }
+  }
+  private codeToState(code: number): string {
+    switch (code | 0) { case 0: return 'idle'; case 1: return 'walking'; case 2: return 'attacking'; case 3: return 'hitstun'; case 4: return 'blockstun'; case 5: return 'ko'; default: return 'idle'; }
+  }
+  private phaseToCode(phase: string): number { switch ((phase || '').toLowerCase()) { case 'startup': return 0; case 'active': return 1; case 'recovery': return 2; default: return 0; } }
+  private codeToPhase(code: number): 'startup'|'active'|'recovery' { switch (code | 0) { case 0: return 'startup'; case 1: return 'active'; case 2: return 'recovery'; default: return 'startup'; } }
 }
 
