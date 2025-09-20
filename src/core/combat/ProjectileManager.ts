@@ -75,5 +75,16 @@ export class ProjectileManager {
       if (idx >= 0 && idx < this.list.length) this.free.push(this.list.splice(idx,1)[0]);
     }
   }
+
+  serialize(): any[] {
+    return this.list.map(p => ({ x: p.x, y: p.y, dir: p.dir, ownerId: p.ownerId, speed: p.speed, w: p.w, h: p.h, life: p.life }));
+  }
+  deserialize(arr: any[]): void {
+    this.list.length = 0;
+    for (const s of (arr || [])) {
+      const pr: Projectile = { x: s.x, y: s.y, dir: s.dir, ownerId: s.ownerId, speed: s.speed, w: s.w, h: s.h, life: s.life };
+      this.list.push(pr);
+    }
+  }
 }
 

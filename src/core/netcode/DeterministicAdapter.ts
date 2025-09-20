@@ -31,7 +31,8 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
     const payload = {
       frame: this.combat.getCurrentFrame(),
       hitstop: (this.combat as any).hitstop ?? 0,
-      characters
+      characters,
+      projectiles: (this.combat as any).projectileManager?.serialize?.() || []
     };
     return { frame, payload, checksum: checksum32FromObject(payload) };
   }
@@ -54,6 +55,7 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
       ch.frameData = src.frameData ? { ...src.frameData } : null;
       ch.entity.setPosition(new pc.Vec3(src.position.x, src.position.y, src.position.z));
     }
+    try { (this.combat as any).projectileManager?.deserialize?.(p.projectiles || []); } catch {}
   }
 
   step(frame: FrameNumber, p0: PlayerInputs, p1: PlayerInputs): void {
