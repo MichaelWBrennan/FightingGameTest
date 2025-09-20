@@ -46,6 +46,8 @@ import { ConfigLoader } from './utils/ConfigLoader';
 import { I18nService } from './utils/I18n';
 import { CommandListOverlay } from './ui/CommandListOverlay';
 import { OptionsOverlay } from './ui/OptionsOverlay';
+import { MatchmakingService } from './online/MatchmakingService';
+import { AnalyticsService } from './utils/AnalyticsService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -87,6 +89,8 @@ export class GameEngine {
   private i18n: I18nService | null = null;
   private cmdList: CommandListOverlay | null = null;
   private options: OptionsOverlay | null = null;
+  private mmService: MatchmakingService | null = null;
+  private analytics: AnalyticsService | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -445,6 +449,8 @@ export class GameEngine {
       try { if (this.effects) this.services.register('effects', this.effects); } catch {}
       try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
       try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
+      try { this.analytics = new AnalyticsService(); this.analytics.setEndpoint(''); this.services.register('analytics', this.analytics); } catch {}
+      try { this.mmService = new MatchmakingService(); this.services.register('matchmakingService', this.mmService); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
         const loader = new ConfigLoader();

@@ -66,6 +66,12 @@ export class NetplayOverlay {
     actions.appendChild(joinBtn);
     this.container.appendChild(actions);
 
+    // TURN/PSK inputs
+    const turnRow = document.createElement('div'); turnRow.style.display = 'flex'; turnRow.style.gap = '6px'; turnRow.style.marginTop = '6px';
+    const turn = document.createElement('input'); turn.placeholder = 'TURN url'; turn.style.flex = '1'; turnRow.appendChild(turn);
+    const psk = document.createElement('input'); psk.placeholder = 'PSK (optional)'; psk.style.flex = '1'; turnRow.appendChild(psk);
+    this.container.appendChild(turnRow);
+
     this.statusEl = document.createElement('div');
     this.statusEl.style.marginTop = '8px';
     this.statusEl.style.opacity = '0.85';
@@ -88,8 +94,8 @@ export class NetplayOverlay {
     document.body.appendChild(toggleBtn);
     document.body.appendChild(this.container);
 
-    hostBtn.onclick = () => this.start(true);
-    joinBtn.onclick = () => this.start(false);
+    hostBtn.onclick = () => this.start(true, turn.value, psk.value);
+    joinBtn.onclick = () => this.start(false, turn.value, psk.value);
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'F6') this.toggle();
@@ -101,7 +107,7 @@ export class NetplayOverlay {
     this.container.style.display = this.visible ? 'block' : 'none';
   }
 
-  private start(isOfferer: boolean): void {
+  private start(isOfferer: boolean, turnUrl?: string, psk?: string): void {
     const session = (this.sessionInput.value || '').trim();
     if (!session) { try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(i18n?.t?.('enter_session') || 'Enter a session code'); } catch { this.setStatus('Enter a session code'); } return; }
     localStorage.setItem('netplay_session', session);
@@ -110,7 +116,8 @@ export class NetplayOverlay {
       const net = services?.resolve?.('netcode');
       if (!net) { try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(i18n?.t?.('netcode_unavailable') || 'Netcode service not available'); } catch { this.setStatus('Netcode service not available'); } return; }
       const signaling = new BroadcastSignaling(session);
-      net.enableWebRTC(signaling, isOfferer);
+      const ice = turnUrl ? [{ urls: [turnUrl] }] : undefined as any;
+      net.enableWebRTC(signaling, isOfferer, ice, psk);
       try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(isOfferer ? (i18n?.t?.('hosting_wait') || 'Hosting… Waiting for peer.') : (i18n?.t?.('joining') || 'Joining…')); } catch { this.setStatus(isOfferer ? 'Hosting… Waiting for peer.' : 'Joining…'); }
     } catch (e) {
       this.setStatus('Failed to start: ' + (e as any)?.message);

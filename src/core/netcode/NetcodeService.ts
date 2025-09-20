@@ -32,9 +32,10 @@ export class NetcodeService {
     this.netcode.start();
   }
 
-  enableWebRTC(signaling: { send(s: any): void; on(cb: (s: any) => void): void }, isOfferer: boolean, ice?: RTCIceServer[]): void {
+  enableWebRTC(signaling: { send(s: any): void; on(cb: (s: any) => void): void }, isOfferer: boolean, ice?: RTCIceServer[], psk?: string): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
     const rtc = new WebRTCTransport(isOfferer, signaling, ice);
+    try { if (psk) (rtc as any).setPreSharedKey?.(psk); } catch {}
     this.netcode = new RollbackNetcode(adapter, rtc, 2, 12);
     this.enabled = true;
     this.netcode.start();
