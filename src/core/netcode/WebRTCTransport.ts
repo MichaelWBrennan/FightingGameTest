@@ -15,6 +15,10 @@ export class WebRTCTransport implements Transport {
   private outOfOrder = 0;
   private lossSuspect = 0;
   private closed = false;
+  // Simple resequencer/jitter window
+  private pendingInputs: Map<number, number> = new Map();
+  private deliveredFrame: number = -1;
+  private jitterWindowFrames = 1;
 
   public onRemoteInput?: (frame: number, bits: number) => void;
 
@@ -95,7 +99,7 @@ export class WebRTCTransport implements Transport {
         if (this.lastRecvFrame >= 0 && m.f > this.lastRecvFrame + 1) this.lossSuspect += (m.f - this.lastRecvFrame - 1);
         if (this.lastRecvFrame >= 0 && m.f <= this.lastRecvFrame) this.outOfOrder++;
         this.lastRecvFrame = Math.max(this.lastRecvFrame, m.f);
-        this.onRemoteInput?.(m.f, m.b);
+        this.handleRemoteInput(m.f, m.b);
       } else if (m.t === 'p') {
         const now = performance.now();
         if (m.echo) {
@@ -110,6 +114,41 @@ export class WebRTCTransport implements Transport {
         }
       }
     } catch {}
+  }
+
+  private handleRemoteInput(frame: number, bits: number): void {
+    // Deliver in order if possible; otherwise buffer briefly up to jitterWindowFrames
+    if (frame <= this.deliveredFrame + 1) {
+      // in-order or immediate next
+      this.deliveredFrame = Math.max(this.deliveredFrame, frame);
+      this.onRemoteInput?.(frame, bits);
+      this.flushPending();
+      return;
+    }
+    const gap = frame - (this.deliveredFrame + 1);
+    if (gap <= this.jitterWindowFrames) {
+      this.pendingInputs.set(frame, bits);
+      this.flushPending();
+    } else {
+      // Gap too large: don't hold up sim, deliver now
+      this.deliveredFrame = Math.max(this.deliveredFrame, frame);
+      this.onRemoteInput?.(frame, bits);
+      // Best effort: flush any contiguous ones waiting
+      this.flushPending();
+    }
+    // Prevent unbounded growth
+    if (this.pendingInputs.size > 64) this.pendingInputs.clear();
+  }
+
+  private flushPending(): void {
+    let next = this.deliveredFrame + 1;
+    while (this.pendingInputs.has(next)) {
+      const bits = this.pendingInputs.get(next)!;
+      this.pendingInputs.delete(next);
+      this.onRemoteInput?.(next, bits);
+      this.deliveredFrame = next;
+      next++;
+    }
   }
 
   private tryReconnect(): void {
@@ -138,5 +177,6 @@ export class WebRTCTransport implements Transport {
   getLossSuspectCount(): number { return this.lossSuspect; }
   getBytesTx(): number { return this.bytesTx; }
   getBytesRx(): number { return this.bytesRx; }
+  setJitterWindow(frames: number): void { this.jitterWindowFrames = Math.max(0, Math.min(6, Math.floor(frames))); }
 }
 

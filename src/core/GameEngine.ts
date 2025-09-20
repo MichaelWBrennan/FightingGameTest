@@ -450,7 +450,7 @@ export class GameEngine {
           setVol: (vol) => this.sfx?.setVolume?.(vol),
           setSocd: (p) => this.inputManager.setSocdPolicy(p),
           setNegEdge: (ms) => this.inputManager.setNegativeEdgeWindow(ms),
-          setJitterBuffer: (f) => net?.setJitterBuffer?.(f)
+          setJitterBuffer: (f) => { net?.setJitterBuffer?.(f); net?.applyTransportJitterWindow?.(); }
         });
       } catch {}
       // Wire anti-cheat monitors

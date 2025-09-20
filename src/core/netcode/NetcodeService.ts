@@ -84,5 +84,12 @@ export class NetcodeService {
 
   setDesiredDelay(frames: number): void { this.desiredDelay = Math.max(0, Math.min(10, Math.floor(frames))); }
   setJitterBuffer(frames: number): void { this.jitterBufferFrames = Math.max(0, Math.min(4, Math.floor(frames))); }
+  applyTransportJitterWindow(): void {
+    try {
+      const anyNc: any = this.netcode as any;
+      const tr = (anyNc.transport || anyNc._transport || (anyNc as any));
+      tr?.setJitterWindow?.(this.jitterBufferFrames);
+    } catch {}
+  }
 }
 
