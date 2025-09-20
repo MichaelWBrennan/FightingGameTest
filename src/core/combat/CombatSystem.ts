@@ -210,12 +210,16 @@ export class CombatSystem {
     const active = this.characterManager.getActiveCharacters();
     const defender = active.find(c => c.id !== attacker.id);
     if (!defender) return;
+    const move = attacker.config.moves?.['throw'] as any;
+    const range = Math.max(0.6, Math.min(1.6, (move?.range || 1.0)));
+    const techWindowMs = Math.max(80, Math.min(200, (move?.techWindowMs || 150)));
     const dx = Math.abs(attacker.entity.getPosition().x - defender.entity.getPosition().x);
-    if (dx > 1.2) return;
+    if (dx > range) return;
     // Tech window: if defender pressed tech within ~150ms, negate throw
     try {
-      const inputs = this.inputManager.getPlayerInputs(attacker.id === active[0].id ? 1 : 0);
-      if ((inputs as any).tech) {
+      const defenderIndex = attacker.id === active[0].id ? 1 : 0;
+      const inputs = this.inputManager.getPlayerInputs(defenderIndex);
+      if ((inputs as any).tech || this.inputManager.wasTapped(defenderIndex, (attacker.entity.getPosition().x > defender.entity.getPosition().x) ? 'right' : 'left', techWindowMs)) {
         Logger.info('Throw teched');
         this.hitstop = Math.max(this.hitstop, 4);
         return;

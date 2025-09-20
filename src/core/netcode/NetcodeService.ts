@@ -16,6 +16,7 @@ export class NetcodeService {
 
   constructor(private combat: CombatSystem, private chars: CharacterManager, private input: InputManager) {}
   public useWorker = false;
+  private worker?: Worker;
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
@@ -43,6 +44,9 @@ export class NetcodeService {
 
   step(): void {
     if (!this.enabled || !this.netcode) return;
+    if (this.useWorker) {
+      try { this.worker?.postMessage({ t: 'step' }); } catch {}
+    }
     // acquire local inputs (P1) and treat P2 as remote via transport
     const p1 = this.input.getPlayerInputs(0);
     const bits = inputsToBits(p1);
@@ -86,6 +90,16 @@ export class NetcodeService {
 
   setDesiredDelay(frames: number): void { this.desiredDelay = Math.max(0, Math.min(10, Math.floor(frames))); }
   setJitterBuffer(frames: number): void { this.jitterBufferFrames = Math.max(0, Math.min(4, Math.floor(frames))); }
+  enableWorker(on: boolean): void {
+    this.useWorker = !!on;
+    if (on && typeof Worker !== 'undefined') {
+      try {
+        // @ts-ignore: bundler should inline worker or use proper loader
+        this.worker = new Worker(new URL('./NetcodeWorker.ts', import.meta.url));
+        this.worker.postMessage({ t: 'init' });
+      } catch {}
+    }
+  }
   applyTransportJitterWindow(): void {
     try {
       const anyNc: any = this.netcode as any;
