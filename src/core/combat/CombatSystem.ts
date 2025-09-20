@@ -152,6 +152,10 @@ export class CombatSystem {
     }
     a.entity.setPosition(aPos);
     b.entity.setPosition(bPos);
+    try {
+      const input: any = (this.app as any)._services?.resolve?.('input');
+      if (input) input.setFacingRight?.(aPos.x <= bPos.x);
+    } catch {}
   }
 
 

@@ -5,7 +5,7 @@ import { WebRTCTransport } from './WebRTCTransport';
 import { InputManager, PlayerInputs } from '../input/InputManager';
 import { CharacterManager } from '../characters/CharacterManager';
 import { CombatSystem } from '../combat/CombatSystem';
-import { inputsToBits } from './types';
+import { inputsToBits, bitsToInputs, GameStateSnapshot } from './types';
 
 export class NetcodeService {
   private netcode?: RollbackNetcode;
@@ -17,6 +17,7 @@ export class NetcodeService {
   constructor(private combat: CombatSystem, private chars: CharacterManager, private input: InputManager) {}
   public useWorker = false;
   private worker?: Worker;
+  private snapshots: Map<number, GameStateSnapshot> = new Map();
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
@@ -42,19 +43,31 @@ export class NetcodeService {
         this.worker = new Worker(new URL('./NetcodeWorker.ts', import.meta.url));
         this.worker.onmessage = (e: MessageEvent<any>) => {
           const m = e.data;
-          if (m?.t === 'stats') { /* optional surfacing; main loop pulls via getStats */ }
-          else if (m?.t === 'save') { try { (this.netcode as any).adapter?.saveState?.(m.frame); } catch {} }
-          else if (m?.t === 'load') { try { const snap = (this.netcode as any).adapter?.saveState?.(m.frame); (this.netcode as any).adapter?.loadState?.(snap); } catch {} }
-          else if (m?.t === 'step') {
+          if (m?.t === 'stats') { /* optionally surface */ }
+          else if (m?.t === 'save') {
             try {
-              const p0 = (this as any).input?.getPlayerInputs?.(0);
-              const p1 = (this as any).input?.getPlayerInputs?.(1) || {};
+              const snap = (this.netcode as any).adapter?.saveState?.(m.frame);
+              if (snap) this.snapshots.set(m.frame | 0, snap);
+            } catch {}
+          } else if (m?.t === 'load') {
+            try {
+              const snap = this.snapshots.get(m.frame | 0);
+              if (snap) (this.netcode as any).adapter?.loadState?.(snap);
+            } catch {}
+          } else if (m?.t === 'step') {
+            try {
+              const p0 = bitsToInputs(m.localBits >>> 0);
+              const p1 = bitsToInputs(m.remoteBits >>> 0);
               (this.netcode as any).adapter?.step?.(m.frame, p0, p1);
             } catch {}
           }
         };
         this.worker.postMessage({ t: 'init', delay: 2, maxRb: 12 });
       } catch {}
+    }
+    // In worker mode, forward remote inputs to worker
+    if (this.useWorker) {
+      try { const tr: any = (this.netcode as any).transport; if (tr) tr.onRemoteInput = (f: number, b: number) => { try { this.worker?.postMessage({ t: 'remote', frame: f|0, bits: b>>>0 }); } catch {} }; } catch {}
     }
   }
 
@@ -68,7 +81,21 @@ export class NetcodeService {
       try {
         const p1 = this.input.getPlayerInputs(0);
         const bits = inputsToBits(p1);
+        // still send to transport via netcode pipeline for the peer
+        this.netcode.pushLocal(bits);
+        // also inform worker
         this.worker?.postMessage({ t: 'local', bits });
+        // adaptive delay -> worker
+        try {
+          const anyNc: any = this.netcode as any;
+          const tr = (anyNc.transport || anyNc._transport || (anyNc as any));
+          const rtt = tr?.getRttMs?.(); const jitter = tr?.getJitterMs?.();
+          if (typeof rtt === 'number') {
+            const base = Math.round(rtt / 50); const jf = typeof jitter==='number'?Math.round(jitter/50):0;
+            const frames = Math.max(0, Math.min(8, base + Math.min(this.jitterBufferFrames, jf)));
+            this.worker?.postMessage({ t: 'setDelay', delay: Math.max(frames, this.desiredDelay) });
+          }
+        } catch {}
         this.worker?.postMessage({ t: 'tick' });
         return;
       } catch {}
