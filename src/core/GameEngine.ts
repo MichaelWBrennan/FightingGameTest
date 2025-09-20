@@ -447,7 +447,7 @@ export class GameEngine {
         loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
         loader.loadJson<any>('/assets/config/projectiles.json').then(cfg => { /* hook for global projectile mods */ }).catch(()=>{});
       } catch {}
-      try { this.i18n = new I18nService(); await this.i18n.load('en'); this.services.register('i18n', this.i18n); } catch {}
+      try { this.i18n = new I18nService(); const saved = (typeof localStorage !== 'undefined' && localStorage.getItem('locale')) || 'en'; await this.i18n.load(saved); this.services.register('i18n', this.i18n); } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({
@@ -456,7 +456,7 @@ export class GameEngine {
           setSocd: (p) => this.inputManager.setSocdPolicy(p),
           setNegEdge: (ms) => this.inputManager.setNegativeEdgeWindow(ms),
           setJitterBuffer: (f) => { net?.setJitterBuffer?.(f); net?.applyTransportJitterWindow?.(); },
-          setLocale: async (locale) => { try { await this.i18n?.load(locale); } catch {} }
+          setLocale: async (locale) => { try { await this.i18n?.load(locale); if (typeof localStorage !== 'undefined') localStorage.setItem('locale', locale); } catch {} }
         });
       } catch {}
       // Wire anti-cheat monitors
