@@ -24,7 +24,7 @@ export class NetplayOverlay {
     this.container.style.display = 'none';
 
     const title = document.createElement('div');
-    title.textContent = 'Netplay (WebRTC)';
+    try { const i18n: any = (app as any)._services?.resolve?.('i18n'); title.textContent = i18n?.t?.('netplay_title') || 'Netplay (WebRTC)'; } catch { title.textContent = 'Netplay (WebRTC)'; }
     title.style.fontWeight = 'bold';
     title.style.marginBottom = '6px';
     this.container.appendChild(title);
@@ -34,7 +34,7 @@ export class NetplayOverlay {
     row.style.gap = '6px';
     row.style.marginBottom = '6px';
     this.sessionInput = document.createElement('input');
-    this.sessionInput.placeholder = 'Session code (e.g. abc123)';
+    try { const i18n: any = (app as any)._services?.resolve?.('i18n'); this.sessionInput.placeholder = i18n?.t?.('netplay_session_ph') || 'Session code (e.g. abc123)'; } catch { this.sessionInput.placeholder = 'Session code (e.g. abc123)'; }
     this.sessionInput.value = localStorage.getItem('netplay_session') || '';
     this.sessionInput.style.flex = '1';
     this.sessionInput.style.padding = '6px 8px';
@@ -47,10 +47,10 @@ export class NetplayOverlay {
     actions.style.display = 'flex';
     actions.style.gap = '6px';
     const hostBtn = document.createElement('button');
-    hostBtn.textContent = 'Host';
+    try { const i18n: any = (app as any)._services?.resolve?.('i18n'); hostBtn.textContent = i18n?.t?.('host') || 'Host'; } catch { hostBtn.textContent = 'Host'; }
     hostBtn.style.flex = '1';
     const joinBtn = document.createElement('button');
-    joinBtn.textContent = 'Join';
+    try { const i18n: any = (app as any)._services?.resolve?.('i18n'); joinBtn.textContent = i18n?.t?.('join') || 'Join'; } catch { joinBtn.textContent = 'Join'; }
     joinBtn.style.flex = '1';
     [hostBtn, joinBtn].forEach(b => {
       b.style.cursor = 'pointer';
@@ -72,7 +72,7 @@ export class NetplayOverlay {
     this.container.appendChild(this.statusEl);
 
     const toggleBtn = document.createElement('button');
-    toggleBtn.textContent = 'Netplay (F6)';
+    try { const i18n: any = (app as any)._services?.resolve?.('i18n'); toggleBtn.textContent = i18n?.t?.('netplay_toggle') || 'Netplay (F6)'; } catch { toggleBtn.textContent = 'Netplay (F6)'; }
     toggleBtn.style.position = 'fixed';
     toggleBtn.style.right = '8px';
     toggleBtn.style.bottom = '8px';
@@ -103,15 +103,15 @@ export class NetplayOverlay {
 
   private start(isOfferer: boolean): void {
     const session = (this.sessionInput.value || '').trim();
-    if (!session) { this.setStatus('Enter a session code'); return; }
+    if (!session) { try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(i18n?.t?.('enter_session') || 'Enter a session code'); } catch { this.setStatus('Enter a session code'); } return; }
     localStorage.setItem('netplay_session', session);
     try {
       const services: any = (this.app as any)._services;
       const net = services?.resolve?.('netcode');
-      if (!net) { this.setStatus('Netcode service not available'); return; }
+      if (!net) { try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(i18n?.t?.('netcode_unavailable') || 'Netcode service not available'); } catch { this.setStatus('Netcode service not available'); } return; }
       const signaling = new BroadcastSignaling(session);
       net.enableWebRTC(signaling, isOfferer);
-      this.setStatus(isOfferer ? 'Hosting… Waiting for peer.' : 'Joining…');
+      try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(isOfferer ? (i18n?.t?.('hosting_wait') || 'Hosting… Waiting for peer.') : (i18n?.t?.('joining') || 'Joining…')); } catch { this.setStatus(isOfferer ? 'Hosting… Waiting for peer.' : 'Joining…'); }
     } catch (e) {
       this.setStatus('Failed to start: ' + (e as any)?.message);
     }

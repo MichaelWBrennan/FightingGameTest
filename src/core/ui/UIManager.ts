@@ -223,7 +223,7 @@ export class UIManager {
 		const startText = new pc.Entity('StartText');
 		startText.addComponent('element', {
 			type: pc.ELEMENTTYPE_TEXT,
-			text: Platform.kind() === 'mobile' ? 'Tap to Start' : 'Press Enter',
+			text: Platform.kind() === 'mobile' ? (((this as any)._i18n?.t?.('tap_to_start')) || 'Tap to Start') : (((this as any)._i18n?.t?.('press_enter')) || 'Press Enter'),
 			fontSize: 28,
 			color: new pc.Color(1,1,1,1),
 			anchor: new pc.Vec4(0,0,1,1),
@@ -1161,6 +1161,15 @@ export class UIManager {
 				setTimeout(() => { try { this.showRematchPrompt(); } catch {} }, 1200);
 			} catch {}
 		});
+		// Anti-cheat penalty prompt
+		setInterval(() => {
+			try {
+				const ac: any = (this.app as any)._services?.resolve?.('anticheat');
+				const reports = ac?.getReports?.() || [];
+				const severe = reports.find((r: any) => r?.type === 'excessive_rollbacks' || r?.type === 'large_prediction_gap');
+				if (severe) this.showPenaltyNotice();
+			} catch {}
+		}, 3000);
 		// Training overlay toggles
 		try {
 			const onKey = (e: KeyboardEvent) => {
@@ -1201,6 +1210,23 @@ export class UIManager {
 			};
 			const cleanup = () => { try { window.removeEventListener('keydown', onKey); container.destroy(); } catch {} };
 			window.addEventListener('keydown', onKey);
+		} catch {}
+	}
+
+	private showPenaltyNotice(): void {
+		try {
+			if (!this.hud) return;
+			const box = new pc.Entity('PenaltyNotice');
+			box.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0.28, 0.12, 0.72, 0.24) });
+			const bg = new pc.Entity('BG');
+			bg.addComponent('element', { type: pc.ELEMENTTYPE_IMAGE, texture: this.capsuleTex as any, anchor: new pc.Vec4(0,0,1,1), color: new pc.Color(1,0.85,0.85,0.98) } as any);
+			box.addChild(bg);
+			const text = new pc.Entity('Text');
+			text.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: ((this as any)._i18n?.t?.('penalty_notice') || 'Connection instability detected. Penalties may apply.'), fontSize: 24, color: new pc.Color(0.2,0,0,1), anchor: new pc.Vec4(0,0,1,1), pivot: new pc.Vec2(0.5,0.5), alignment: new pc.Vec2(0.5,0.5) } as any);
+			this.applyTextFont(text);
+			box.addChild(text);
+			this.hud.addChild(box);
+			setTimeout(() => { try { box.destroy(); } catch {} }, 3000);
 		} catch {}
 	}
 

@@ -42,5 +42,6 @@ export class AntiCheat {
   }
 
   getReports(): CheatReport[] { return [...this.reports]; }
+  clearReports(): void { this.reports = []; }
 }
 
