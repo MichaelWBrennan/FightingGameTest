@@ -1200,7 +1200,7 @@ export class UIManager {
 			bg.addComponent('element', { type: pc.ELEMENTTYPE_IMAGE, texture: this.capsuleTex as any, anchor: new pc.Vec4(0,0,1,1), color: new pc.Color(1,1,1,0.95) } as any);
 			container.addChild(bg);
 			const text = new pc.Entity('Text');
-			text.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: 'Rematch?  [Enter] Yes   [Esc] No', fontSize: 28, color: new pc.Color(1,1,1,1), anchor: new pc.Vec4(0,0,1,1), pivot: new pc.Vec2(0.5,0.5), alignment: new pc.Vec2(0.5,0.5) } as any);
+			text.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: (((this as any)._i18n?.t?.('rematch_yes')) || 'Rematch?  [Enter] Yes   [Esc] No'), fontSize: 28, color: new pc.Color(1,1,1,1), anchor: new pc.Vec4(0,0,1,1), pivot: new pc.Vec2(0.5,0.5), alignment: new pc.Vec2(0.5,0.5) } as any);
 			this.applyTextFont(text);
 			container.addChild(text);
 			this.hud?.addChild(container);
