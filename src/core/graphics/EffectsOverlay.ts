@@ -34,5 +34,17 @@ export class EffectsOverlay {
     }
     setTimeout(() => { try { if (el) el.color = new pc.Color(1,1,1,0); e.enabled = false; this.pool.push(e); } catch {} }, cfg.life);
   }
+
+  applyConfig(raw: any): void {
+    try {
+      const next: any = {};
+      Object.keys(this.config).forEach(k => {
+        const src = raw?.[k];
+        if (src) next[k] = { color: new pc.Color(src.r ?? 1, src.g ?? 1, src.b ?? 1, 1), size: src.size ?? this.config[k].size, life: src.life ?? this.config[k].life };
+        else next[k] = this.config[k];
+      });
+      this.config = next;
+    } catch {}
+  }
 }
 

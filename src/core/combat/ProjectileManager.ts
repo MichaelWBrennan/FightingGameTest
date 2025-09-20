@@ -36,6 +36,10 @@ export class ProjectileManager {
     this.spawn(owner, meta.speed || 0.18, (meta.lifetime | 0) || 90, meta.width || 0.6, meta.height || 0.6, dir);
   }
 
+  applyConfig(cfg: any): void {
+    // No-op now; per-move metadata already used. Could apply global modifiers (speedScale, sizeScale)
+  }
+
   update(): void {
     if (this.list.length === 0) return;
     const toRemove: number[] = [];

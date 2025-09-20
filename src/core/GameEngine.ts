@@ -41,6 +41,8 @@ import { EffectsOverlay } from './graphics/EffectsOverlay';
 import { SfxService } from './utils/SfxService';
 import { DeterminismService } from './utils/DeterminismService';
 import { InputRemapOverlay } from './ui/InputRemapOverlay';
+import { TuningOverlay } from './ui/TuningOverlay';
+import { ConfigLoader } from './utils/ConfigLoader';
 
 export class GameEngine {
   private app: pc.Application;
@@ -436,6 +438,12 @@ export class GameEngine {
       try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
       try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
+      try {
+        const loader = new ConfigLoader();
+        loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
+        loader.loadJson<any>('/assets/config/projectiles.json').then(cfg => { /* hook for global projectile mods */ }).catch(()=>{});
+      } catch {}
+      try { new TuningOverlay((ms) => this.inputManager.setMotionLeniency(ms), (vol) => this.sfx?.setVolume?.(vol)); } catch {}
       // Wire anti-cheat monitors
       try {
         const ac: any = this.antiCheat;
