@@ -36,6 +36,26 @@ export class NetcodeService {
     this.enabled = true;
     this.netcode.start();
     try { (rtc as any).sendClockProbe?.(); } catch {}
+    if (this.useWorker && typeof Worker !== 'undefined') {
+      try {
+        // @ts-ignore
+        this.worker = new Worker(new URL('./NetcodeWorker.ts', import.meta.url));
+        this.worker.onmessage = (e: MessageEvent<any>) => {
+          const m = e.data;
+          if (m?.t === 'stats') { /* optional surfacing; main loop pulls via getStats */ }
+          else if (m?.t === 'save') { try { (this.netcode as any).adapter?.saveState?.(m.frame); } catch {} }
+          else if (m?.t === 'load') { try { const snap = (this.netcode as any).adapter?.saveState?.(m.frame); (this.netcode as any).adapter?.loadState?.(snap); } catch {} }
+          else if (m?.t === 'step') {
+            try {
+              const p0 = (this as any).input?.getPlayerInputs?.(0);
+              const p1 = (this as any).input?.getPlayerInputs?.(1) || {};
+              (this.netcode as any).adapter?.step?.(m.frame, p0, p1);
+            } catch {}
+          }
+        };
+        this.worker.postMessage({ t: 'init', delay: 2, maxRb: 12 });
+      } catch {}
+    }
   }
 
   disable(): void { this.enabled = false; this.netcode?.stop(); }
@@ -45,7 +65,13 @@ export class NetcodeService {
   step(): void {
     if (!this.enabled || !this.netcode) return;
     if (this.useWorker) {
-      try { this.worker?.postMessage({ t: 'step' }); } catch {}
+      try {
+        const p1 = this.input.getPlayerInputs(0);
+        const bits = inputsToBits(p1);
+        this.worker?.postMessage({ t: 'local', bits });
+        this.worker?.postMessage({ t: 'tick' });
+        return;
+      } catch {}
     }
     // acquire local inputs (P1) and treat P2 as remote via transport
     const p1 = this.input.getPlayerInputs(0);
