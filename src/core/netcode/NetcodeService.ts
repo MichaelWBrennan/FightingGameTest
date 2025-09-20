@@ -17,7 +17,9 @@ export class NetcodeService {
   constructor(private combat: CombatSystem, private chars: CharacterManager, private input: InputManager) {}
   public useWorker = false;
   private worker?: Worker;
-  private snapshots: Map<number, GameStateSnapshot> = new Map();
+  private snapshots: Map<number, { frame: number; checksum: number; buf: ArrayBuffer }> = new Map();
+  private encoder: TextEncoder = new TextEncoder();
+  private decoder: TextDecoder = new TextDecoder();
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
@@ -47,12 +49,18 @@ export class NetcodeService {
           else if (m?.t === 'save') {
             try {
               const snap = (this.netcode as any).adapter?.saveState?.(m.frame);
-              if (snap) this.snapshots.set(m.frame | 0, snap);
+              if (snap) {
+                const data = this.compressSnapshot(snap);
+                this.snapshots.set(m.frame | 0, data);
+              }
             } catch {}
           } else if (m?.t === 'load') {
             try {
-              const snap = this.snapshots.get(m.frame | 0);
-              if (snap) (this.netcode as any).adapter?.loadState?.(snap);
+              const cs = this.snapshots.get(m.frame | 0);
+              if (cs) {
+                const snap = this.decompressSnapshot(cs);
+                (this.netcode as any).adapter?.loadState?.(snap);
+              }
             } catch {}
           } else if (m?.t === 'step') {
             try {
@@ -159,6 +167,17 @@ export class NetcodeService {
       const tr = (anyNc.transport || anyNc._transport || (anyNc as any));
       tr?.setJitterWindow?.(this.jitterBufferFrames);
     } catch {}
+  }
+
+  private compressSnapshot(snap: GameStateSnapshot): { frame: number; checksum: number; buf: ArrayBuffer } {
+    const payload = JSON.stringify(snap.payload);
+    const buf = this.encoder.encode(payload).buffer;
+    return { frame: snap.frame, checksum: snap.checksum, buf };
+  }
+  private decompressSnapshot(cs: { frame: number; checksum: number; buf: ArrayBuffer }): GameStateSnapshot {
+    const json = this.decoder.decode(new Uint8Array(cs.buf));
+    const payload = JSON.parse(json);
+    return { frame: cs.frame, checksum: cs.checksum, payload } as GameStateSnapshot;
   }
 }
 
