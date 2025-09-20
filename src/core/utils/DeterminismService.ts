@@ -20,5 +20,8 @@ export class DeterminismService {
 
   getLastMismatchFrame(): number { return this.lastMismatchFrame; }
   getLastValidatedFrame(): number { return this.lastValidatedFrame; }
+  getStatus(): { ok: boolean; lastValidatedFrame: number; lastMismatchFrame: number } {
+    return { ok: this.lastMismatchFrame < 0 || this.lastValidatedFrame >= this.lastMismatchFrame, lastValidatedFrame: this.lastValidatedFrame, lastMismatchFrame: this.lastMismatchFrame };
+  }
 }
 

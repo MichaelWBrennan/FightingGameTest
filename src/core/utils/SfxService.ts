@@ -4,6 +4,7 @@ export class SfxService {
   private duck = 1.0;
   private busGain: Record<'master'|'sfx'|'ui', number> = { master: 1.0, sfx: 1.0, ui: 1.0 };
   private priorities: Record<string, number> = {};
+  private scheduled: Map<string, { frame: number; key: string; bus: 'sfx'|'ui'; prio: number }[]> = new Map();
 
   preload(map: Record<string, string>): void {
     Object.entries(map).forEach(([k, url]) => {
@@ -42,8 +43,28 @@ export class SfxService {
 
   // Optional deterministic scheduling API for rollback friendliness
   playDeterministic(instanceId: string, frame: number, key: string, bus: 'sfx'|'ui' = 'sfx', priority: number = 0): void {
-    // For now, route to play(); instanceId/frame reserved for future dedupe logic
-    this.play(key, bus, priority);
+    const arr = this.scheduled.get(instanceId) || [];
+    arr.push({ frame, key, bus, prio: priority });
+    this.scheduled.set(instanceId, arr);
+  }
+
+  // Called by the game loop with current frame to emit any due sounds deterministically
+  flushScheduled(frame: number): void {
+    try {
+      for (const [id, list] of Array.from(this.scheduled.entries())) {
+        const due = list.filter(it => it.frame === frame);
+        // Deduplicate by key per frame, keep highest priority
+        const best: Record<string, { bus: 'sfx'|'ui'; prio: number }> = {} as any;
+        for (const it of due) {
+          const prev = best[it.key];
+          if (!prev || it.prio > prev.prio) best[it.key] = { bus: it.bus, prio: it.prio };
+        }
+        Object.keys(best).forEach(k => this.play(k, best[k].bus, best[k].prio));
+        // Clean emitted items
+        const remaining = list.filter(it => it.frame > frame);
+        if (remaining.length > 0) this.scheduled.set(id, remaining); else this.scheduled.delete(id);
+      }
+    } catch {}
   }
 }
 

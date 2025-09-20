@@ -405,6 +405,8 @@ export class GameEngine {
             this.debugOverlay?.setNetcodeInfo(net.getStats());
           }
         } catch {}
+        // Deterministic SFX flush
+        try { (this.sfx as any)?.flushScheduled?.(this.combatSystem.getCurrentFrame()); } catch {}
         // Replay
         try { this.replay?.update(); } catch {}
         // Anti-cheat monitor surface
