@@ -29,7 +29,9 @@ export class ReplayService {
     this.recording = false;
     // Basic metadata stub
     const meta = { date: new Date().toISOString(), duration: this.buffer.length / 60, characters: [] as string[] };
-    return { version: 1, frames: this.buffer.slice(), meta };
+    const rep = { version: 1, frames: this.buffer.slice(), meta };
+    try { const services: any = (window as any).pc?.Application?.getApplication?._services || (window as any)._services; services?.resolve?.('analytics')?.track?.('replay_recorded', { frames: this.buffer.length }); services?.resolve?.('replayArchive')?.addReplay?.(rep); } catch {}
+    return rep;
   }
 
   play(data: ReplayData): void {

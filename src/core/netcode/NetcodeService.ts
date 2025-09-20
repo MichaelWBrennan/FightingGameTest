@@ -194,9 +194,12 @@ export class NetcodeService {
       tr?.setJitterWindow?.(this.jitterBufferFrames);
     } catch {}
   }
+  // Expose minimal handles for UI controls
+  _getTransport(): any { try { return (this.netcode as any)?.transport; } catch { return null; } }
+  requestResync(): void { this.doRequestResync(); }
 
   // Desync auto-recovery via control channel snapshot sync
-  private requestResync(): void {
+  private doRequestResync(): void {
     try {
       const tr: any = (this.netcode as any).transport;
       if (!tr) return;

@@ -69,6 +69,8 @@ export class NetplayOverlay {
     // TURN/PSK inputs
     const turnRow = document.createElement('div'); turnRow.style.display = 'flex'; turnRow.style.gap = '6px'; turnRow.style.marginTop = '6px';
     const turn = document.createElement('input'); turn.placeholder = 'TURN url'; turn.style.flex = '1'; turnRow.appendChild(turn);
+    const turnUser = document.createElement('input'); turnUser.placeholder = 'TURN user'; turnUser.style.flex = '1'; turnRow.appendChild(turnUser);
+    const turnPass = document.createElement('input'); turnPass.placeholder = 'TURN pass'; turnPass.type = 'password'; turnPass.style.flex = '1'; turnRow.appendChild(turnPass);
     const psk = document.createElement('input'); psk.placeholder = 'PSK (optional)'; psk.style.flex = '1'; turnRow.appendChild(psk);
     this.container.appendChild(turnRow);
 
@@ -76,6 +78,15 @@ export class NetplayOverlay {
     this.statusEl.style.marginTop = '8px';
     this.statusEl.style.opacity = '0.85';
     this.container.appendChild(this.statusEl);
+
+    // Reconnect/Restart ICE controls
+    const recRow = document.createElement('div'); recRow.style.display = 'flex'; recRow.style.gap = '6px'; recRow.style.marginTop = '6px';
+    const btnResync = document.createElement('button'); btnResync.textContent = 'Resync';
+    const btnIce = document.createElement('button'); btnIce.textContent = 'Restart ICE';
+    btnResync.onclick = () => { try { const net: any = (this.app as any)._services?.resolve?.('netcode'); (net as any)?.requestResync?.(); } catch {} };
+    btnIce.onclick = () => { try { const net: any = (this.app as any)._services?.resolve?.('netcode'); const tr: any = (net as any)?._getTransport?.(); tr?.restartIce?.(); } catch {} };
+    recRow.appendChild(btnResync); recRow.appendChild(btnIce);
+    this.container.appendChild(recRow);
 
     const toggleBtn = document.createElement('button');
     try { const i18n: any = (app as any)._services?.resolve?.('i18n'); toggleBtn.textContent = i18n?.t?.('netplay_toggle') || 'Netplay (F6)'; } catch { toggleBtn.textContent = 'Netplay (F6)'; }
@@ -116,7 +127,11 @@ export class NetplayOverlay {
       const net = services?.resolve?.('netcode');
       if (!net) { try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(i18n?.t?.('netcode_unavailable') || 'Netcode service not available'); } catch { this.setStatus('Netcode service not available'); } return; }
       const signaling = new BroadcastSignaling(session);
-      const ice = turnUrl ? [{ urls: [turnUrl] }] : undefined as any;
+      // Read TURN fields directly from DOM
+      const form = this.container.querySelectorAll('input');
+      const tu = (form?.[1] as HTMLInputElement | undefined)?.value || undefined;
+      const tp = (form?.[2] as HTMLInputElement | undefined)?.value || undefined;
+      const ice = turnUrl ? [{ urls: [turnUrl], username: tu as any, credential: tp as any }] : undefined as any;
       net.enableWebRTC(signaling, isOfferer, ice, psk);
       try { const analytics = services?.resolve?.('analytics'); analytics?.track?.('netplay_start', { session, host: !!isOfferer, turn: !!turnUrl, psk: !!psk }); } catch {}
       try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(isOfferer ? (i18n?.t?.('hosting_wait') || 'Hosting… Waiting for peer.') : (i18n?.t?.('joining') || 'Joining…')); } catch { this.setStatus(isOfferer ? 'Hosting… Waiting for peer.' : 'Joining…'); }

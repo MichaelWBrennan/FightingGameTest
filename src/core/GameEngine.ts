@@ -51,6 +51,8 @@ import { AnalyticsService } from './utils/AnalyticsService';
 import { LobbiesOverlay } from './ui/LobbiesOverlay';
 import { RankedOverlay } from './ui/RankedOverlay';
 import { StreamingOverlay } from './ui/StreamingOverlay';
+import { ReplayArchiveOverlay } from './ui/ReplayArchiveOverlay';
+import { ReconnectOverlay } from './ui/ReconnectOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -97,6 +99,8 @@ export class GameEngine {
   private lobbies: LobbiesOverlay | null = null;
   private ranked: RankedOverlay | null = null;
   private streaming: StreamingOverlay | null = null;
+  private replayArchive: ReplayArchiveOverlay | null = null;
+  private reconnect: ReconnectOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -449,7 +453,7 @@ export class GameEngine {
       // Initialize overlays/services
       try { this.trainingOverlay = new TrainingOverlay(this.app); (this.app as any)._training = this.trainingOverlay; } catch {}
       try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
-      try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
+      try { this.replay = new ReplayService(this.inputManager, this.combatSystem); this.services.register('replay', this.replay); } catch {}
       try { this.matchmaking = new MatchmakingOverlay(); } catch {}
       try { this.effects = new EffectsOverlay(this.app); } catch {}
       try { if (this.effects) this.services.register('effects', this.effects); } catch {}
@@ -469,6 +473,8 @@ export class GameEngine {
       try { if (this.mmService) { this.lobbies = new LobbiesOverlay(this.mmService); } } catch {}
       try { this.ranked = new RankedOverlay(); } catch {}
       try { this.streaming = new StreamingOverlay(this.app.graphicsDevice.canvas as any); } catch {}
+      try { this.replayArchive = new ReplayArchiveOverlay(); this.services.register('replayArchive', this.replayArchive); } catch {}
+      try { this.reconnect = new ReconnectOverlay(); } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({

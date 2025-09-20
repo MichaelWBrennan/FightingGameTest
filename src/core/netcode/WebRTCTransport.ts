@@ -21,6 +21,7 @@ export class WebRTCTransport implements Transport {
   private pendingInputs: Map<number, number> = new Map();
   private deliveredFrame: number = -1;
   private jitterWindowFrames = 1;
+  private lastDeliveredBits: number = 0;
 
   public onRemoteInput?: (frame: number, bits: number) => void;
   public onCtrlMessage?: (msg: any) => void;
@@ -244,6 +245,12 @@ export class WebRTCTransport implements Transport {
 
   public sendControl(msg: any): void { try { this.reliable?.send(JSON.stringify(msg)); } catch {} }
   public getIsOfferer(): boolean { return this.isOfferer; }
+  public restartIce(): void {
+    try {
+      (this.pc as any).restartIce?.();
+      if (this.isOfferer) this.createAndSendOffer(); else this.signaling.send({ renegotiate: true });
+    } catch { this.tryReconnect(); }
+  }
 
   private handleRemoteInput(frame: number, bits: number): void {
     // Deliver in order if possible; otherwise buffer briefly up to jitterWindowFrames
@@ -251,6 +258,7 @@ export class WebRTCTransport implements Transport {
       // in-order or immediate next
       this.deliveredFrame = Math.max(this.deliveredFrame, frame);
       this.onRemoteInput?.(frame, bits);
+      this.lastDeliveredBits = bits;
       this.flushPending();
       return;
     }
@@ -261,7 +269,9 @@ export class WebRTCTransport implements Transport {
     } else {
       // Gap too large: don't hold up sim, deliver now
       this.deliveredFrame = Math.max(this.deliveredFrame, frame);
-      this.onRemoteInput?.(frame, bits);
+      // Packet loss concealment: if bits look empty, reuse last delivered
+      const plcBits = (bits === 0 && this.lastDeliveredBits !== 0) ? this.lastDeliveredBits : bits;
+      this.onRemoteInput?.(frame, plcBits);
       // Best effort: flush any contiguous ones waiting
       this.flushPending();
     }

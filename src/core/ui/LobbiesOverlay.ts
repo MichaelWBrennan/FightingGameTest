@@ -5,6 +5,7 @@ export class LobbiesOverlay {
   private header: HTMLDivElement;
   private listEl: HTMLDivElement;
   private friendsEl: HTMLDivElement;
+  private invitesEl: HTMLDivElement | null = null;
   private createName: HTMLInputElement;
   private createMax: HTMLInputElement;
   private nameInput: HTMLInputElement;
@@ -65,6 +66,10 @@ export class LobbiesOverlay {
     const friendsTitle = document.createElement('div'); friendsTitle.textContent = 'Friends'; friendsTitle.style.marginTop = '8px'; friendsTitle.style.opacity = '0.9';
     this.container.appendChild(friendsTitle);
     this.friendsEl = document.createElement('div'); this.friendsEl.style.display = 'flex'; this.friendsEl.style.flexDirection = 'column'; this.friendsEl.style.gap = '4px'; this.container.appendChild(this.friendsEl);
+    // Invites area
+    const invTitle = document.createElement('div'); invTitle.textContent = 'Invites'; invTitle.style.marginTop = '8px'; invTitle.style.opacity = '0.9';
+    this.container.appendChild(invTitle);
+    this.invitesEl = document.createElement('div'); this.invitesEl.style.display = 'flex'; this.invitesEl.style.flexDirection = 'column'; this.invitesEl.style.gap = '4px'; this.container.appendChild(this.invitesEl);
     const addRow = document.createElement('div'); addRow.style.display = 'flex'; addRow.style.gap = '6px';
     const addId = document.createElement('input'); addId.placeholder = 'Friend id'; addId.style.flex = '1';
     const addBtn = document.createElement('button'); addBtn.textContent = 'Add'; addBtn.onclick = () => { const id = (addId.value || '').trim(); if (id) { this.svc.addFriend(id); this.track('friend_add'); this.refresh(); } };
@@ -79,6 +84,7 @@ export class LobbiesOverlay {
 
     // Listen to service events
     this.svc.on(() => this.refresh());
+    try { (window as any).addEventListener('message', (e: MessageEvent) => { const m = e.data; if (m?.t === 'lobby_invite' && this.invitesEl) this.renderInvite(m); }); } catch {}
     window.addEventListener('keydown', (e) => { if (e.key === 'F7') this.toggle(); });
 
     this.refresh();
@@ -115,10 +121,30 @@ export class LobbiesOverlay {
     for (const f of p.friends) {
       const row = document.createElement('div'); row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.gap = '6px';
       const name = document.createElement('div'); name.textContent = f; name.style.flex = '1';
+      const invite = document.createElement('button'); invite.textContent = 'Invite'; invite.onclick = () => this.sendInvite(f);
       const rm = document.createElement('button'); rm.textContent = 'Remove'; rm.onclick = () => { this.svc.removeFriend(f); this.track('friend_remove'); this.refresh(); };
-      row.appendChild(name); row.appendChild(rm);
+      row.appendChild(name); row.appendChild(invite); row.appendChild(rm);
       this.friendsEl.appendChild(row);
     }
+  }
+
+  private sendInvite(friendId: string): void {
+    try {
+      // Local broadcast as a stub for invites
+      const p = this.svc.getProfile();
+      window.postMessage({ t: 'lobby_invite', from: p.id, to: friendId, lobby: (this.svc.listLobbies(p.region)[0]?.id || null) }, '*');
+      this.track('invite_send', { to: friendId });
+    } catch {}
+  }
+
+  private renderInvite(m: any): void {
+    if (!this.invitesEl) return;
+    const row = document.createElement('div'); row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.gap = '6px';
+    const label = document.createElement('div'); label.textContent = `Invite from ${m.from}`; label.style.flex = '1';
+    const accept = document.createElement('button'); accept.textContent = 'Accept'; accept.onclick = () => { if (m.lobby) this.svc.joinLobby(m.lobby); this.track('invite_accept', { from: m.from }); this.refresh(); row.remove(); };
+    const decline = document.createElement('button'); decline.textContent = 'Decline'; decline.onclick = () => { this.track('invite_decline', { from: m.from }); row.remove(); };
+    row.appendChild(label); row.appendChild(accept); row.appendChild(decline);
+    this.invitesEl.appendChild(row);
   }
 
   private track(name: string, props?: Record<string, any>): void {
