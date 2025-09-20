@@ -7,6 +7,7 @@ type WorkerMsg =
   | { t: 'local'; bits: number }
   | { t: 'remote'; frame: number; bits: number }
   | { t: 'setDelay'; delay: number }
+  | { t: 'saved'; frame: number; checksum: number; buf?: ArrayBuffer }
   | { t: 'shutdown' };
 
 interface Stats { cur: number; rollbacks: number; frameDelay: number }
@@ -18,6 +19,7 @@ let maxRollback = 10;
 const localInputs = new Map<number, number>();
 const remoteInputs = new Map<number, number>();
 const predictedRemote = new Map<number, number>();
+const snapshots = new Map<number, { frame: number; checksum: number; buf?: ArrayBuffer }>();
 
 function postStats(): void {
   const s: Stats = { cur: currentFrame, rollbacks, frameDelay };
@@ -26,7 +28,11 @@ function postStats(): void {
 
 // eslint-disable-next-line no-restricted-globals
 function requestSave(frame: number): void { (postMessage as any)({ t: 'save', frame }); }
-function requestLoad(frame: number): void { (postMessage as any)({ t: 'load', frame }); }
+function requestLoad(frame: number): void {
+  const cs = snapshots.get(frame);
+  if (cs && cs.buf) (postMessage as any)({ t: 'load', frame, checksum: cs.checksum, cs: cs.buf }, [cs.buf]);
+  else (postMessage as any)({ t: 'load', frame });
+}
 function requestStep(frame: number, localBits: number, remoteBits: number): void {
   (postMessage as any)({ t: 'step', frame, localBits, remoteBits });
 }
@@ -83,6 +89,9 @@ self.onmessage = (e: MessageEvent<WorkerMsg>) => {
       break;
     case 'setDelay':
       frameDelay = Math.max(0, Math.min(10, Math.floor(m.delay)));
+      break;
+    case 'saved':
+      snapshots.set(m.frame | 0, { frame: m.frame | 0, checksum: m.checksum | 0, buf: m.buf });
       break;
     case 'shutdown':
       try { (close as any)(); } catch {}

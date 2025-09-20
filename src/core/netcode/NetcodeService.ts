@@ -52,15 +52,14 @@ export class NetcodeService {
               if (snap) {
                 const data = this.compressSnapshot(snap);
                 this.snapshots.set(m.frame | 0, data);
+                // return snapshot to worker to store
+                try { const buf = data.buf; this.worker?.postMessage({ t: 'saved', frame: data.frame, checksum: data.checksum, buf }, [buf]); } catch { this.worker?.postMessage({ t: 'saved', frame: data.frame, checksum: data.checksum }); }
               }
             } catch {}
           } else if (m?.t === 'load') {
             try {
-              const cs = this.snapshots.get(m.frame | 0);
-              if (cs) {
-                const snap = this.decompressSnapshot(cs);
-                (this.netcode as any).adapter?.loadState?.(snap);
-              }
+              const cs = m?.cs ? { frame: m.frame|0, checksum: m.checksum|0, buf: m.cs as ArrayBuffer } : this.snapshots.get(m.frame | 0);
+              if (cs) { const snap = this.decompressSnapshot(cs as any); (this.netcode as any).adapter?.loadState?.(snap); }
             } catch {}
           } else if (m?.t === 'step') {
             try {
