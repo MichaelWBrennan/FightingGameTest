@@ -7,7 +7,8 @@ export class EffectsOverlay {
     hit: { color: new pc.Color(1,1,1,1), size: 1.0, life: 80 },
     block: { color: new pc.Color(1,1,0.5,1), size: 1.0, life: 80 },
     parry: { color: new pc.Color(0.6,0.8,1,1), size: 1.2, life: 90 },
-    clash: { color: new pc.Color(1,0.7,0.2,1), size: 1.1, life: 70 }
+    clash: { color: new pc.Color(1,0.7,0.2,1), size: 1.1, life: 70 },
+    counter: { color: new pc.Color(1,0.3,0.3,1), size: 1.25, life: 95 }
   };
 
   constructor(app: pc.Application) {

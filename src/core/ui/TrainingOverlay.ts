@@ -13,6 +13,8 @@ export class TrainingOverlay {
   private saveState: any | null = null;
   private dummyMode: 'idle'|'block_all'|'block_random'|'reversal' = 'idle';
   private modeLabel: HTMLDivElement | null = null;
+  private slots: any[] = [null, null, null];
+  private rec: { active: boolean; buf: any[] } = { active: false, buf: [] };
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -36,7 +38,7 @@ export class TrainingOverlay {
     document.body.appendChild(this.container);
 
     window.addEventListener('keydown', (e) => this.onKey(e));
-    this.app.on('update', () => { this.renderInputs(); this.renderStats(); this.renderBoxes(); });
+    this.app.on('update', () => { this.onUpdate(); });
 
     // Overlay canvas for hitbox rendering
     this.hitboxLayer = document.createElement('canvas');
@@ -60,6 +62,10 @@ export class TrainingOverlay {
     if (e.key === 'F7') this.cycleDummyMode();
     if (e.key === 'F8') this.resetMid();
     if (e.key === 'F9') this.resetCorner('left');
+    // Recording controls
+    if (e.key === 'F10') this.toggleRecord();
+    if (e.key === 'F11') this.playSlot(0);
+    if (e.key === 'F12') this.playSlot(1);
   }
 
   private renderInputs(): void {
@@ -84,6 +90,21 @@ export class TrainingOverlay {
       const p1 = p[0], p2 = p[1];
       const hs = combat?.isInHistop?.() ? 'H' : '';
       this.statsLabel.textContent = `F:${frame}${hs}  P1:${p1?.health ?? '?'}  P2:${p2?.health ?? '?'}`;
+    } catch {}
+  }
+
+  private onUpdate(): void {
+    this.renderInputs(); this.renderStats(); this.renderBoxes();
+    // If recording, capture P2 input each frame
+    try {
+      if (this.rec.active) {
+        const services: any = (this.app as any)._services;
+        const input = services?.resolve?.('input');
+        if (input) {
+          const p2 = input.getPlayerInputs(1);
+          this.rec.buf.push({ ...p2 });
+        }
+      }
     } catch {}
   }
 
@@ -179,6 +200,27 @@ export class TrainingOverlay {
     const idx = order.indexOf(this.dummyMode);
     this.dummyMode = order[(idx + 1) % order.length];
     if (this.modeLabel) this.modeLabel.textContent = `Dummy: ${this.dummyMode}`;
+  }
+
+  private toggleRecord(): void {
+    if (!this.rec.active) {
+      this.rec.active = true; this.rec.buf = [];
+      if (this.modeLabel) this.modeLabel.textContent = 'Recording...';
+    } else {
+      this.rec.active = false;
+      this.slots[0] = this.rec.buf.slice();
+      if (this.modeLabel) this.modeLabel.textContent = 'Dummy: idle (saved to Slot 1)';
+    }
+  }
+
+  private playSlot(index: number): void {
+    try {
+      const seq = this.slots[index];
+      if (!seq || seq.length === 0) return;
+      const services: any = (this.app as any)._services;
+      const input = services?.resolve?.('input');
+      input?.startPlaybackForP2?.(seq, true);
+    } catch {}
   }
 
   private resetMid(): void {

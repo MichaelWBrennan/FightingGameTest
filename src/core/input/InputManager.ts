@@ -44,6 +44,9 @@ export class InputManager {
   private bufferMs = 120; // lenient buffer for motions
   private leniencyByMotion: Partial<Record<'QCF'|'QCB'|'DP', number>> = {};
   private lastUpdateTs = 0;
+  // P2 playback/injection for training mode
+  private p2Injected: PlayerInputs | null = null;
+  private p2Playback: { active: boolean; seq: PlayerInputs[]; cursor: number; loop: boolean } = { active: false, seq: [], cursor: 0, loop: false };
   // Negative-edge & hold buffers
   private negativeEdgeWindowMs = 60;
   private keyDownTimestamps: Record<string, number> = {};
@@ -125,7 +128,11 @@ export class InputManager {
   }
 
   public getPlayerInputs(playerIndex: number): PlayerInputs {
-    return playerIndex === 0 ? this.player1Inputs : this.player2Inputs;
+    if (playerIndex === 0) return this.player1Inputs;
+    // Training overrides for P2
+    if (this.p2Injected) return this.p2Injected;
+    if (this.p2Playback.active && this.p2Playback.seq.length > 0) return this.p2Playback.seq[Math.min(this.p2Playback.cursor, this.p2Playback.seq.length - 1)];
+    return this.player2Inputs;
   }
 
   public update(): void {
@@ -147,6 +154,14 @@ export class InputManager {
     // Update special move detection (buffered)
     this.updateSpecialMoves();
     this.applyNegativeEdge(this.player1Inputs);
+
+    // Advance P2 playback (used by training mode)
+    if (this.p2Playback.active && this.p2Playback.seq.length > 0) {
+      this.p2Playback.cursor++;
+      if (this.p2Playback.cursor >= this.p2Playback.seq.length) {
+        if (this.p2Playback.loop) this.p2Playback.cursor = 0; else this.p2Playback.active = false;
+      }
+    }
   }
 
   private aggregateInputs(...sources: PlayerInputs[]): PlayerInputs {
@@ -343,4 +358,15 @@ export class InputManager {
 
   public getPressCount(): number { return this.inputPressCount; }
   public setKeyMap(map: Partial<Record<string, string>>): void { Object.assign(this.keyMap, map); }
+
+  // ===== Training hooks (P2 injection/playback) =====
+  public setInjectedInputs(playerIndex: number, inputs: PlayerInputs | null): void {
+    if (playerIndex !== 1) return;
+    this.p2Injected = inputs;
+  }
+  public startPlaybackForP2(sequence: PlayerInputs[], loop: boolean = false): void {
+    this.p2Playback = { active: true, seq: sequence.map(s => ({ ...s })), cursor: 0, loop };
+  }
+  public stopPlaybackForP2(): void { this.p2Playback.active = false; this.p2Playback.seq = []; this.p2Playback.cursor = 0; }
+  public isPlaybackForP2Active(): boolean { return this.p2Playback.active; }
 }
