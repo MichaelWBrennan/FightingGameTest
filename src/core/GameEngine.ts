@@ -40,6 +40,7 @@ import { MatchmakingOverlay } from './ui/MatchmakingOverlay';
 import { EffectsOverlay } from './graphics/EffectsOverlay';
 import { SfxService } from './utils/SfxService';
 import { DeterminismService } from './utils/DeterminismService';
+import { InputRemapOverlay } from './ui/InputRemapOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -434,6 +435,7 @@ export class GameEngine {
       try { if (this.effects) this.services.register('effects', this.effects); } catch {}
       try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
       try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
+      try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       // Wire anti-cheat monitors
       try {
         const ac: any = this.antiCheat;

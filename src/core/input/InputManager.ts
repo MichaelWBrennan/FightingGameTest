@@ -33,6 +33,11 @@ export class InputManager {
   private prevP2Inputs: PlayerInputs;
   private lastTapTs: Array<{ left: number; right: number; up: number; down: number }>; // per player
   private inputPressCount = 0;
+  private keyMap: Record<string, string> = {
+    lightPunch: 'KeyU', mediumPunch: 'KeyI', heavyPunch: 'KeyO',
+    lightKick: 'KeyJ', mediumKick: 'KeyK', heavyKick: 'KeyL',
+    up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD'
+  };
 
   // Motion buffer and input leniency
   private history: Array<{ t: number; p1: PlayerInputs }>[] = [];
@@ -79,18 +84,19 @@ export class InputManager {
   private setupKeyboardBindings(): void {
     // Player 1 controls using PlayCanvas keycodes to ensure compatibility
     this.keyboard.on(pc.EVENT_KEYDOWN as any, (e: any) => {
-      switch (e.key) {
-        case pc.KEY_W: this.keyboardInputs.up = true; this.inputPressCount++; break;
-        case pc.KEY_S: this.keyboardInputs.down = true; this.inputPressCount++; break;
-        case pc.KEY_A: this.keyboardInputs.left = true; this.inputPressCount++; break;
-        case pc.KEY_D: this.keyboardInputs.right = true; this.inputPressCount++; break;
-        case pc.KEY_U: this.keyboardInputs.lightPunch = true; this.inputPressCount++; break;
-        case pc.KEY_I: this.keyboardInputs.mediumPunch = true; this.inputPressCount++; break;
-        case pc.KEY_O: this.keyboardInputs.heavyPunch = true; this.inputPressCount++; break;
-        case pc.KEY_J: this.keyboardInputs.lightKick = true; this.inputPressCount++; break;
-        case pc.KEY_K: this.keyboardInputs.mediumKick = true; this.inputPressCount++; break;
-        case pc.KEY_L: this.keyboardInputs.heavyKick = true; this.inputPressCount++; break;
-      }
+      const code = e.event?.code || e.code;
+      if (!code) return;
+      const map = this.keyMap;
+      if (code === map.up) { this.keyboardInputs.up = true; this.inputPressCount++; }
+      if (code === map.down) { this.keyboardInputs.down = true; this.inputPressCount++; }
+      if (code === map.left) { this.keyboardInputs.left = true; this.inputPressCount++; }
+      if (code === map.right) { this.keyboardInputs.right = true; this.inputPressCount++; }
+      if (code === map.lightPunch) { this.keyboardInputs.lightPunch = true; this.inputPressCount++; }
+      if (code === map.mediumPunch) { this.keyboardInputs.mediumPunch = true; this.inputPressCount++; }
+      if (code === map.heavyPunch) { this.keyboardInputs.heavyPunch = true; this.inputPressCount++; }
+      if (code === map.lightKick) { this.keyboardInputs.lightKick = true; this.inputPressCount++; }
+      if (code === map.mediumKick) { this.keyboardInputs.mediumKick = true; this.inputPressCount++; }
+      if (code === map.heavyKick) { this.keyboardInputs.heavyKick = true; this.inputPressCount++; }
     });
 
     this.keyboard.on(pc.EVENT_KEYUP as any, (e: any) => {
@@ -285,4 +291,5 @@ export class InputManager {
   }
 
   public getPressCount(): number { return this.inputPressCount; }
+  public setKeyMap(map: Partial<Record<string, string>>): void { Object.assign(this.keyMap, map); }
 }
