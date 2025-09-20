@@ -117,6 +117,10 @@ export interface AttackData {
   meterCost?: number;
   cancels?: string[];
   projectile?: { speed: number; lifetime: number; width?: number; height?: number };
+  // Juggle rules (optional)
+  juggleStart?: number; // points added on first launch
+  juggleAdd?: number;   // points added on subsequent hits
+  juggleLimit?: number; // max juggle points allowed before scaling/whiff
 }
 
 export interface AttackProperties {

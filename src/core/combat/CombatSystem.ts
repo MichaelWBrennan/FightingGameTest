@@ -25,6 +25,8 @@ export class CombatSystem {
   private projectileManager: ProjectileManager | null = null;
   private pushboxHalfWidth = 0.45;
   private stageBounds = { left: -6, right: 6 };
+  private gravity = 0.012;
+  private bounceFactor = 0.42;
   private projectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
   private freeProjectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
 
@@ -87,8 +89,8 @@ export class CombatSystem {
 
   private updateAirbornePhysics(): void {
     const list = this.characterManager.getActiveCharacters();
-    const gravity = 0.012;
-    const bounce = 0.45;
+    const gravity = this.gravity;
+    const bounce = this.bounceFactor;
     for (const ch of list) {
       const airborne = (ch as any)._airborne === true;
       if (!airborne) continue;
@@ -498,9 +500,12 @@ export class CombatSystem {
       sfx?.vibrate?.(25);
     } catch {}
 
-    // Increment juggle points and decay later
+    // Increment juggle points based on move data and decay later
     try {
-      (defender as any)._jugglePoints = ((defender as any)._jugglePoints || 0) + 2;
+      const add = (attacker.currentMove?.data as any)?.juggleAdd ?? 2;
+      const start = (attacker.currentMove?.data as any)?.juggleStart ?? 0;
+      const jp = (defender as any)._jugglePoints || 0;
+      (defender as any)._jugglePoints = jp > 0 ? (jp + add) : (jp + Math.max(add, start));
       setTimeout(() => { try { (defender as any)._jugglePoints = 0; } catch {} }, 1500);
     } catch {}
 
