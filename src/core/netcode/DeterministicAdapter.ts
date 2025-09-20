@@ -17,6 +17,8 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
     const characters = this.chars.getActiveCharacters().map(c => ({
       id: c.id,
       health: c.health,
+      meter: c.meter,
+      guardMeter: c.guardMeter ?? 100,
       state: c.state,
       currentMove: c.currentMove ? {
         name: c.currentMove.name,
@@ -45,8 +47,10 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
       const src = p.characters.find((x: any) => x.id === ch.id);
       if (!src) continue;
       ch.health = src.health;
+      ch.meter = src.meter ?? ch.meter;
+      ch.guardMeter = src.guardMeter ?? ch.guardMeter;
       ch.state = src.state;
-      ch.currentMove = src.currentMove ? { name: src.currentMove.name, data: ch.config.moves[src.currentMove.name], currentFrame: src.currentMove.currentFrame, phase: src.currentMove.phase } : null;
+      ch.currentMove = (src.currentMove && src.currentMove.name) ? { name: src.currentMove.name, data: ch.config.moves[src.currentMove.name], currentFrame: src.currentMove.currentFrame, phase: src.currentMove.phase } : null;
       ch.frameData = src.frameData ? { ...src.frameData } : null;
       ch.entity.setPosition(new pc.Vec3(src.position.x, src.position.y, src.position.z));
     }
@@ -54,6 +58,13 @@ export class CombatDeterministicAdapter implements DeterministicAdapter {
 
   step(frame: FrameNumber, p0: PlayerInputs, p1: PlayerInputs): void {
     this.combat.stepWithInputs(p0, p1);
+    try {
+      const det: any = (this.combat as any).app?._services?.resolve?.('det');
+      const cs = checksum32FromObject({ frame, chars: this.chars.getActiveCharacters().map(c => ({ id: c.id, hp: c.health, pos: (()=>{ const p = c.entity.getPosition(); return { x:p.x,y:p.y,z:p.z }; })() })) });
+      const ok = det?.validate?.(frame, cs);
+      const dbg: any = (this.combat as any).app?._debugOverlay;
+      // Surface via DebugOverlay in engine update loop; service stores state
+    } catch {}
   }
 }
 

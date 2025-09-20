@@ -16,6 +16,7 @@ export class FighterCameraController {
   private cameraZ = 10.0;
   private updateHandler: ((dt: number) => void) | null = null;
   private resizeHandler: (() => void) | null = null;
+  private orientationPortrait = false;
 
   constructor(app: pc.Application, cameraEntity: pc.Entity) {
     this.app = app;
@@ -56,6 +57,7 @@ export class FighterCameraController {
     this.resizeHandler = () => this.onResize();
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', this.resizeHandler);
+      window.addEventListener('orientationchange', this.resizeHandler as any);
     }
   }
 
@@ -97,6 +99,29 @@ export class FighterCameraController {
 
   private onResize(): void {
     // Recompute target ortho height instantly on resize to prevent visible popping
+    try {
+      const gd: any = this.app.graphicsDevice as any;
+      const w = gd.width || (gd.canvas ? gd.canvas.width : window.innerWidth || 1280);
+      const h = gd.height || (gd.canvas ? gd.canvas.height : window.innerHeight || 720);
+      const portrait = h >= w;
+      if (portrait !== this.orientationPortrait) {
+        this.orientationPortrait = portrait;
+        // Loosen horizontal margin and zoom out a touch on portrait
+        if (portrait) {
+          this.horizontalMargin = 2.4;
+          this.minOrthoHeight = 4.6;
+          this.maxOrthoHeight = 11.5;
+          this.cameraY = 2.0;
+          this.cameraZ = 12.0;
+        } else {
+          this.horizontalMargin = 1.6;
+          this.minOrthoHeight = 3.6;
+          this.maxOrthoHeight = 9.0;
+          this.cameraY = 1.6;
+          this.cameraZ = 10.0;
+        }
+      }
+    } catch {}
     const targets = this.getTargetEntities();
     const aspect = this.getAspectRatio();
     if (targets.length > 0) {

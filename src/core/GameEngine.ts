@@ -33,6 +33,19 @@ import { NetcodeService } from './netcode/NetcodeService';
 import { ConfigService } from './utils/ConfigService';
 import { LoadingOverlay } from './ui/LoadingOverlay';
 import { Platform } from './utils/Platform';
+import { TrainingOverlay } from './ui/TrainingOverlay';
+import { NetplayOverlay } from './ui/NetplayOverlay';
+import { ReplayService } from './utils/ReplayService';
+import { MatchmakingOverlay } from './ui/MatchmakingOverlay';
+import { EffectsOverlay } from './graphics/EffectsOverlay';
+import { SfxService } from './utils/SfxService';
+import { DeterminismService } from './utils/DeterminismService';
+import { InputRemapOverlay } from './ui/InputRemapOverlay';
+import { TuningOverlay } from './ui/TuningOverlay';
+import { ConfigLoader } from './utils/ConfigLoader';
+import { I18nService } from './utils/I18n';
+import { CommandListOverlay } from './ui/CommandListOverlay';
+import { OptionsOverlay } from './ui/OptionsOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -64,6 +77,16 @@ export class GameEngine {
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
+  private trainingOverlay: TrainingOverlay | null = null;
+  private netplayOverlay: NetplayOverlay | null = null;
+  private replay: ReplayService | null = null;
+  private matchmaking: MatchmakingOverlay | null = null;
+  private effects: EffectsOverlay | null = null;
+  private sfx: SfxService | null = null;
+  private det: DeterminismService | null = null;
+  private i18n: I18nService | null = null;
+  private cmdList: CommandListOverlay | null = null;
+  private options: OptionsOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -134,6 +157,9 @@ export class GameEngine {
     this.services.register('netcode', this.netcode);
     this.services.register('characters', this.characterManager);
     this.services.register('stages', this.stageManager);
+    this.services.register('combat', this.combatSystem);
+    this.services.register('anticheat', this.antiCheat);
+    this.services.register('effects', null as any);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
@@ -362,8 +388,13 @@ export class GameEngine {
       this.updateHandler = (dt: number) => {
         // Ensure input is updated first for deterministic reads
         try { this.inputManager.update(); } catch {}
-        this.pipeline.update(dt);
-        this.stateStack.update(dt);
+        // Pause gating for training
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
+          this.pipeline.update(dt);
+        }
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
+          this.stateStack.update(dt);
+        }
         if (!this.debugOverlay && typeof window !== 'undefined') {
           import('./debug/DebugOverlay').then(({ DebugOverlay }) => {
             if (!this.debugOverlay) this.debugOverlay = new DebugOverlay();
@@ -371,6 +402,31 @@ export class GameEngine {
         }
         this.debugOverlay?.update();
         this.debugOverlay?.setTimings(this.pipeline.getTimings());
+        // Netcode
+        try {
+          const net: any = this.services.resolve('netcode');
+          // advance netcode each frame to drive rollback sim when enabled
+          net?.step?.();
+          if (net?.isEnabled?.() && net?.getStats) {
+            this.debugOverlay?.setNetcodeInfo(net.getStats());
+          }
+        } catch {}
+        // Deterministic SFX flush
+        try { (this.sfx as any)?.flushScheduled?.(this.combatSystem.getCurrentFrame()); } catch {}
+        // Replay
+        try { this.replay?.update(); } catch {}
+        // Anti-cheat monitor surface
+        try {
+          const ac: any = this.services.resolve('anticheat');
+          this.debugOverlay?.setCheatAlerts(ac?.getReports?.() || []);
+        } catch {}
+        // Determinism status surface
+        try {
+          const det: any = this.services.resolve('det');
+          const last = det?.getLastValidatedFrame?.() ?? -1;
+          const mis = det?.getLastMismatchFrame?.() ?? -1;
+          this.debugOverlay?.setDeterminism(last, mis < 0 || mis < last);
+        } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
@@ -379,6 +435,44 @@ export class GameEngine {
       // Safety: ensure loading overlay is hidden even if caller forgets
       try { LoadingOverlay.complete(); } catch {}
       try { setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 1000); } catch {}
+
+      // Initialize overlays/services
+      try { this.trainingOverlay = new TrainingOverlay(this.app); (this.app as any)._training = this.trainingOverlay; } catch {}
+      try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
+      try { this.replay = new ReplayService(this.inputManager, this.combatSystem); } catch {}
+      try { this.matchmaking = new MatchmakingOverlay(); } catch {}
+      try { this.effects = new EffectsOverlay(this.app); } catch {}
+      try { if (this.effects) this.services.register('effects', this.effects); } catch {}
+      try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
+      try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
+      try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
+      try {
+        const loader = new ConfigLoader();
+        loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
+        loader.loadJson<any>('/assets/config/projectiles.json').then(cfg => { /* hook for global projectile mods */ }).catch(()=>{});
+      } catch {}
+      try { this.i18n = new I18nService(); const saved = (typeof localStorage !== 'undefined' && localStorage.getItem('locale')) || 'en'; await this.i18n.load(saved); this.services.register('i18n', this.i18n); } catch {}
+      try { this.cmdList = new CommandListOverlay(); this.cmdList.setCommands([{ name: 'Hadoken', input: 'QCF + P' }, { name: 'Shoryuken', input: 'DP + P' }, { name: 'Tatsumaki', input: 'QCB + K' }, { name: 'Sonic Boom', input: 'Charge back, forward + P' }, { name: 'Flash Kick', input: 'Charge down, up + K' }, { name: 'Command Grab', input: '360 + P' }]); } catch {}
+      try { this.options = new OptionsOverlay(this.services); } catch {}
+      try {
+        const net: any = this.services.resolve('netcode');
+        new TuningOverlay({
+          setLeniency: (ms) => this.inputManager.setMotionLeniency(ms),
+          setVol: (vol) => this.sfx?.setVolume?.(vol),
+          setSocd: (p) => this.inputManager.setSocdPolicy(p),
+          setNegEdge: (ms) => this.inputManager.setNegativeEdgeWindow(ms),
+          setJitterBuffer: (f) => { net?.setJitterBuffer?.(f); net?.applyTransportJitterWindow?.(); },
+          setLocale: async (locale) => { try { await this.i18n?.load(locale); if (typeof localStorage !== 'undefined') localStorage.setItem('locale', locale); } catch {} }
+        });
+      } catch {}
+      // Wire anti-cheat monitors
+      try {
+        const ac: any = this.antiCheat;
+        ac?.monitorInputRate?.(() => this.inputManager.getPressCount());
+        ac?.monitorPhysicsDivergence?.(() => this.combatSystem.getCurrentFrame());
+        const net: any = this.services.resolve('netcode');
+        ac?.monitorRemoteStateSanity?.(() => net?.getStats?.());
+      } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
       throw error;
