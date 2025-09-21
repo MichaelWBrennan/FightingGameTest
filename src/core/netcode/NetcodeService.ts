@@ -20,10 +20,13 @@ export class NetcodeService {
   public useWorker = false;
   private worker?: Worker;
   private snapshots: Map<number, { frame: number; checksum: number; buf: ArrayBuffer }> = new Map();
+  private snapshotFrames: number[] = [];
+  private maxSnapshots = 256;
   private encoder: TextEncoder = new TextEncoder();
   private decoder: TextDecoder = new TextDecoder();
   private iceList: RTCIceServer[] | null = null;
   private iceIndex = 0;
+  private bufPools: Map<number, Array<ArrayBuffer>> = new Map();
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
@@ -88,8 +91,7 @@ export class NetcodeService {
               const snap = (this.netcode as any).adapter?.saveState?.(m.frame);
               if (snap) {
                 const data = this.compressSnapshot(snap);
-                this.snapshots.set(m.frame | 0, data);
-                // return snapshot to worker to store
+                // In worker mode, let the worker own snapshot storage; don't retain a local copy
                 try { const buf = data.buf; this.worker?.postMessage({ t: 'saved', frame: data.frame, checksum: data.checksum, buf }, [buf]); } catch { this.worker?.postMessage({ t: 'saved', frame: data.frame, checksum: data.checksum }); }
               }
             } catch {}
@@ -270,7 +272,7 @@ export class NetcodeService {
         const has = chars[i]?.currentMove ? 1 : 0;
         if (has) size += 2 /*currentFrame*/ + 1 /*phase*/;
       }
-      const buf = new ArrayBuffer(size);
+      const buf = this.acquireBuffer(size);
       const view = new DataView(buf);
       let off = 0;
       view.setUint32(off, (snap as any).payload?.frame ?? snap.frame, true); off += 4;
@@ -296,10 +298,15 @@ export class NetcodeService {
           view.setInt8(off, this.phaseToCode(c.currentMove.phase)); off += 1;
         }
       }
+      // Track for pruning when not in worker mode
+      if (!this.useWorker) { this.snapshotFrames.push(snap.frame | 0); this.snapshots.set(snap.frame | 0, { frame: snap.frame, checksum: snap.checksum, buf }); this.pruneSnapshots(); }
       return { frame: snap.frame, checksum: snap.checksum, buf };
     } catch {
       const payload = JSON.stringify(snap.payload);
-      const buf = this.encoder.encode(payload).buffer;
+      const u8 = this.encoder.encode(payload);
+      const buf = this.acquireBuffer(u8.byteLength);
+      new Uint8Array(buf).set(u8);
+      if (!this.useWorker) { this.snapshotFrames.push(snap.frame | 0); this.snapshots.set(snap.frame | 0, { frame: snap.frame, checksum: snap.checksum, buf }); this.pruneSnapshots(); }
       return { frame: snap.frame, checksum: snap.checksum, buf };
     }
   }
@@ -351,5 +358,29 @@ export class NetcodeService {
   }
   private phaseToCode(phase: string): number { switch ((phase || '').toLowerCase()) { case 'startup': return 0; case 'active': return 1; case 'recovery': return 2; default: return 0; } }
   private codeToPhase(code: number): 'startup'|'active'|'recovery' { switch (code | 0) { case 0: return 'startup'; case 1: return 'active'; case 2: return 'recovery'; default: return 'startup'; } }
+
+  private nextPow2(n: number): number { let p = 1; while (p < n) p <<= 1; return p; }
+  private acquireBuffer(size: number): ArrayBuffer {
+    const want = this.nextPow2(Math.max(32, size|0));
+    const pool = this.bufPools.get(want) || [];
+    const buf = pool.pop();
+    if (buf) { this.bufPools.set(want, pool); return buf.byteLength >= want ? buf : new ArrayBuffer(want); }
+    return new ArrayBuffer(want);
+  }
+  private releaseBuffer(buf: ArrayBuffer): void {
+    const want = buf.byteLength;
+    const pool = this.bufPools.get(want) || [];
+    if (pool.length < 32) { pool.push(buf); this.bufPools.set(want, pool); }
+  }
+  private pruneSnapshots(): void {
+    try {
+      while (this.snapshotFrames.length > this.maxSnapshots) {
+        const oldFrame = this.snapshotFrames.shift();
+        if (oldFrame == null) break;
+        const old = this.snapshots.get(oldFrame);
+        if (old) { this.releaseBuffer(old.buf); this.snapshots.delete(oldFrame); }
+      }
+    } catch {}
+  }
 }
 
