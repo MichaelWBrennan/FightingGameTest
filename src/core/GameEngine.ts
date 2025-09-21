@@ -61,6 +61,9 @@ import { RoundManager } from './match/RoundManager';
 import { RematchOverlay } from './ui/RematchOverlay';
 import { SpectateService } from './online/SpectateService';
 import { SimService } from './sim/SimService';
+import { ChatOverlay } from './ui/ChatOverlay';
+import { BoxEditorOverlay } from './ui/BoxEditorOverlay';
+import { TtsService } from './utils/TtsService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -116,6 +119,8 @@ export class GameEngine {
   private roundMgr: RoundManager | null = null;
   private rematch: RematchOverlay | null = null;
   private sim: SimService | null = null;
+  private chat: ChatOverlay | null = null;
+  private boxEditor: BoxEditorOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -503,6 +508,9 @@ export class GameEngine {
       try { this.mmService = new MatchmakingService(); this.services.register('matchmakingService', this.mmService); } catch {}
       try { const spectate = new SpectateService(); this.services.register('spectate', spectate); } catch {}
       try { this.sim = new SimService(); this.services.register('sim', this.sim); } catch {}
+      try { this.chat = new ChatOverlay(); } catch {}
+      try { this.boxEditor = new BoxEditorOverlay(); } catch {}
+      try { const tts = new TtsService(); this.services.register('tts', tts); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
         const loader = new ConfigLoader();

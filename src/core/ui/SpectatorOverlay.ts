@@ -9,6 +9,13 @@ export class SpectatorOverlay {
     this.timeline = document.createElement('div'); this.timeline.style.width = '420px'; this.timeline.style.height = '6px'; this.timeline.style.background = 'rgba(255,255,255,0.2)'; this.timeline.style.borderRadius = '3px';
     this.container.appendChild(this.timeline);
     document.body.appendChild(this.container);
+    // Controls: pause/step for spectators
+    const row = document.createElement('div'); row.style.marginTop = '6px';
+    const pause = document.createElement('button'); pause.textContent = 'Pause';
+    const step = document.createElement('button'); step.textContent = 'Step'; step.style.marginLeft = '6px';
+    row.appendChild(pause); row.appendChild(step); this.container.appendChild(row);
+    pause.onclick = () => { try { const svc: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services; svc?.resolve?.('spectate')?.broadcast?.({ ctrl: 'pause' }); } catch {} };
+    step.onclick = () => { try { const svc: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services; svc?.resolve?.('spectate')?.broadcast?.({ ctrl: 'step' }); } catch {} };
     // Listen to remote spectate events (if any)
     try {
       const services: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services;

@@ -74,6 +74,8 @@ export class ReplayService {
     const a = document.createElement('a');
     a.href = url; a.download = `replay_${Date.now()}.json`; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
+    // Share code (local): store and print a short code
+    try { const key = Math.random().toString(36).slice(2, 8); localStorage.setItem('replay:' + key, JSON.stringify(data)); console.log('[replay] share code:', key); } catch {}
   }
 
   importAndPlay(): void {
@@ -91,6 +93,10 @@ export class ReplayService {
     }
     this.fileInput.value = '';
     this.fileInput.click();
+  }
+
+  importByCode(code: string): void {
+    try { const raw = localStorage.getItem('replay:' + code.trim()); if (!raw) return; const data = JSON.parse(raw) as ReplayData; this.play(data); } catch {}
   }
 
   private onKey(e: KeyboardEvent): void {
