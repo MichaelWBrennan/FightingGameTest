@@ -15,8 +15,11 @@
     "import:sf3": "node ./tools/import_sf3_char_data.js && npm run build",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "test": "jest",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "fix": "npx ts-node tools/fix_compilation_errors.ts",
+    "format": "prettier -w .",
+    "format:check": "prettier -c .",
     "convert": "npx ts-node tools/complete_typescript_conversion.ts",
     "serve": "http-server public -p 5000 -c 604800 --cors --gzip --brotli"
   },
@@ -45,16 +48,17 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.12.0",
     "@types/node": "^20.8.0",
     "@types/ws": "^8.5.8",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
     "esbuild": "^0.25.1",
-    "eslint": "^8.51.0",
+    "eslint": "^9.12.0",
     "jest": "^29.7.0",
     "puppeteer": "^24.21.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.8.0",
+    "prettier": "^3.3.3"
   },
   "keywords": [
     "street-fighter",
@@ -66,8 +70,13 @@
   "author": "SF3 Development Team",
   "license": "MIT",
   "engines": {
-    "node": "20.x",
-    "npm": "10.x"
+    "node": ">=20",
+    "npm": ">=10"
   },
+  "browserslist": [
+    "defaults",
+    "not dead",
+    "not op_mini all"
+  ],
   "packageManager": "npm@10.9.2"
 }
