@@ -17,7 +17,7 @@ export class EffectsOverlay {
 
   constructor(app: pc.Application) {
     this.app = app;
-    for (let i = 0; i < 12; i++) this.pool.push(this.createSpark());
+    for (let i = 0; i < 24; i++) this.pool.push(this.createSpark());
     // Afterimage canvas layer (simple trails demo)
     try {
       const canvas = document.createElement('canvas');

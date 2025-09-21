@@ -5,6 +5,7 @@ export class SfxService {
   private busGain: Record<'master'|'sfx'|'ui', number> = { master: 1.0, sfx: 1.0, ui: 1.0 };
   private priorities: Record<string, number> = {};
   private scheduled: Map<string, { frame: number; key: string; bus: 'sfx'|'ui'; prio: number }[]> = new Map();
+  private pool: HTMLAudioElement[] = [];
 
   preload(map: Record<string, string>): void {
     Object.entries(map).forEach(([k, url]) => {
@@ -18,10 +19,11 @@ export class SfxService {
     const a = this.buffers.get(key);
     if (!a) return;
     try {
-      const inst = new Audio(a.src);
+      const inst = this.acquire(a.src);
       const busVol = this.busGain[bus] ?? 1.0;
       inst.volume = Math.max(0, Math.min(1, this.volume * this.duck * busVol));
-      inst.play().catch(()=>{});
+      inst.onended = () => { try { this.release(inst); } catch {} };
+      inst.play().catch(()=>{ try { this.release(inst); } catch {} });
     } catch {}
   }
 
@@ -65,6 +67,18 @@ export class SfxService {
         if (remaining.length > 0) this.scheduled.set(id, remaining); else this.scheduled.delete(id);
       }
     } catch {}
+  }
+
+  private acquire(src: string): HTMLAudioElement {
+    const inst = this.pool.pop() || new Audio();
+    inst.src = src;
+    inst.preload = 'auto';
+    return inst;
+  }
+  private release(a: HTMLAudioElement): void {
+    a.onended = null;
+    a.src = '';
+    if (this.pool.length < 32) this.pool.push(a);
   }
 }
 
