@@ -152,7 +152,7 @@ export class LoginState implements GameState {
 	}
 
 	private attachInput(): void {
-		const keyboard = this.app.keyboard!;
+        const keyboard = this.app.keyboard!;
 		this.keyHandler = (e: any) => {
 			if (this.busy) return;
 			if (e.key === pc.KEY_RETURN || e.key === pc.KEY_NUMPAD_ENTER) {
@@ -173,12 +173,12 @@ export class LoginState implements GameState {
 				}
 			}
 		};
-		keyboard.on(pc.EVENT_KEYDOWN, this.keyHandler, this);
+        (keyboard as any).on(pc.EVENT_KEYDOWN, this.keyHandler, this);
 	}
 
 	private detachInput(): void {
-		if (this.keyHandler) {
-			this.app.keyboard!.off(pc.EVENT_KEYDOWN, this.keyHandler, this);
+        if (this.keyHandler) {
+            (this.app.keyboard as any)!.off(pc.EVENT_KEYDOWN, this.keyHandler, this);
 			this.keyHandler = null;
 		}
 	}

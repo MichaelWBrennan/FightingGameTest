@@ -272,9 +272,9 @@ export class PreloadManager {
 			// Decrypt before integrity check so hash matches manifest of plaintext
 			{
 				const maybeDecrypted = await this.tryDecrypt(text);
-				if (sha256) {
-					const buf = new TextEncoder().encode(maybeDecrypted ?? text);
-					const hash = await toSha256Hex(buf);
+                if (sha256) {
+                    const buf = new TextEncoder().encode(maybeDecrypted ?? text);
+                    const hash = await toSha256Hex(buf);
 					if (hash !== sha256) throw new PreloadError(`Integrity check failed for ${path}`, path);
 				}
 				text = maybeDecrypted ?? text;
@@ -285,9 +285,9 @@ export class PreloadManager {
 			// Decrypt before integrity check so hash matches manifest of plaintext
 			{
 				const maybeDecrypted = await this.tryDecrypt(text);
-				if (sha256) {
-					const buf = new TextEncoder().encode(maybeDecrypted ?? text);
-					const hash = await toSha256Hex(buf);
+                if (sha256) {
+                    const buf = new TextEncoder().encode(maybeDecrypted ?? text);
+                    const hash = await toSha256Hex(buf);
 					if (hash !== sha256) throw new PreloadError(`Integrity check failed for ${path}`, path);
 				}
 				text = maybeDecrypted ?? text;
@@ -312,11 +312,12 @@ export class PreloadManager {
 			bytes = new Uint8Array(arrBuf);
 			onStream?.(bytes.byteLength, bytes.byteLength);
 		}
-		if (sha256) {
-			const hash = await toSha256Hex(bytes.buffer);
+        if (sha256) {
+            const hash = await toSha256Hex(bytes);
 			if (hash !== sha256) throw new PreloadError(`Integrity check failed for ${path}`, path);
 		}
-		const blob = new Blob([bytes]);
+        const ab = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+        const blob = new Blob([ab]);
 		this.blobCache.set(path, blob);
 		return blob;
 	}
@@ -397,8 +398,14 @@ async function streamToUint8Array(stream: ReadableStream<Uint8Array>, onChunk: (
     return out;
 }
 
-async function toSha256Hex(buffer: ArrayBuffer): Promise<string> {
-    const digest = await (window.crypto as any).subtle.digest('SHA-256', buffer);
+async function toSha256Hex(buffer: ArrayBuffer | ArrayBufferView): Promise<string> {
+    const arrayBuffer: ArrayBuffer = (buffer as ArrayBufferView && (buffer as ArrayBufferView).buffer)
+        ? (buffer as ArrayBufferView).buffer.slice(
+              (buffer as ArrayBufferView).byteOffset || 0,
+              ((buffer as ArrayBufferView).byteOffset || 0) + ((buffer as ArrayBufferView).byteLength || 0)
+          ) as ArrayBuffer
+        : (buffer as ArrayBuffer);
+    const digest = await (window.crypto as any).subtle.digest('SHA-256', arrayBuffer);
     const hashArray = Array.from(new Uint8Array(digest));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }

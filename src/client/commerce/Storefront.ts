@@ -316,12 +316,20 @@ export class Storefront extends EventEmitter {
         })
         .filter(Boolean);
 
-      this.config.retentionClient.trackStoreImpression({
-        storeSection: this.currentImpression.section as any,
-        itemsViewed: viewedItems as any,
-        viewDurationMs: duration,
-        clickedItems: this.currentImpression.clickedItems
-      });
+      this.config.retentionClient.trackStoreImpression(
+        this.currentImpression.section as any,
+        {
+          itemsViewed: viewedItems as Array<{
+            itemId: string;
+            price: number;
+            currency: string;
+            onSale?: boolean;
+            returnWindowDays?: number;
+          }>,
+          viewDurationMs: duration,
+          clickedItems: this.currentImpression.clickedItems
+        }
+      );
     }
 
     this.currentImpression = null;
@@ -599,19 +607,18 @@ export class Storefront extends EventEmitter {
 
     const isFirstPurchase = this.isFirstPurchase();
 
-    this.config.retentionClient.trackPurchase({
-      transactionId: result.transactionId!,
-      totalAmount: result.receipt.totalAmount,
-      currency: result.receipt.currency,
-      items: result.receipt.items.map(item => ({
+    this.config.retentionClient.trackPurchase(
+      result.transactionId!,
+      result.receipt.totalAmount,
+      result.receipt.currency,
+      result.receipt.items.map(item => ({
         itemId: item.itemId,
         itemType: this.getItemType(item.itemId),
         price: item.price,
         quantity: 1
       })),
-      taxAmount: result.receipt.taxAmount,
-      firstPurchase: isFirstPurchase
-    });
+      { taxAmount: result.receipt.taxAmount, firstPurchase: isFirstPurchase }
+    );
   }
 
   private updateItemOwnership(itemId: string): void {
