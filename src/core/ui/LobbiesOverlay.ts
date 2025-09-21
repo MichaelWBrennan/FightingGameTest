@@ -27,8 +27,10 @@ export class LobbiesOverlay {
     this.container.style.zIndex = '10003';
     this.container.style.display = 'none';
 
+    const services: any = (window as any).pc?.Application?.getApplication?._services || (window as any)._services;
+    const i18n = services?.resolve?.('i18n');
     this.header = document.createElement('div');
-    this.header.textContent = 'Lobbies & Friends';
+    this.header.textContent = (i18n?.t?.('lobbies_friends') || 'Lobbies & Friends');
     this.header.style.fontWeight = 'bold';
     this.header.style.marginBottom = '6px';
     this.container.appendChild(this.header);
@@ -44,7 +46,7 @@ export class LobbiesOverlay {
     ;['NA','EU','AS','SA','OC','AF'].forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = r; this.regionSel.appendChild(o); });
     profileRow.appendChild(this.nameInput); profileRow.appendChild(this.regionSel);
     this.container.appendChild(profileRow);
-    const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save'; saveBtn.style.margin = '6px 0';
+    const saveBtn = document.createElement('button'); saveBtn.textContent = (i18n?.t?.('save') || 'Save'); saveBtn.style.margin = '6px 0';
     saveBtn.onclick = () => { this.svc.setName(this.nameInput.value || this.svc.getProfile().name); this.svc.setRegion((this.regionSel.value as Region) || 'NA'); this.refresh(); this.track('profile_update'); };
     this.container.appendChild(saveBtn);
 
@@ -52,18 +54,18 @@ export class LobbiesOverlay {
     const createRow = document.createElement('div'); createRow.style.display = 'flex'; createRow.style.gap = '6px'; createRow.style.marginTop = '6px';
     this.createName = document.createElement('input'); this.createName.placeholder = 'Lobby name'; this.createName.style.flex = '1';
     this.createMax = document.createElement('input'); this.createMax.placeholder = 'Max'; this.createMax.type = 'number'; this.createMax.min = '2'; this.createMax.max = '8'; this.createMax.style.width = '56px';
-    const createBtn = document.createElement('button'); createBtn.textContent = 'Create';
+    const createBtn = document.createElement('button'); createBtn.textContent = (i18n?.t?.('create') || 'Create');
     createBtn.onclick = () => { const max = Math.max(2, Math.min(8, parseInt(this.createMax.value || '2', 10))); const l = this.svc.createLobby(this.createName.value || 'Lobby', max); this.track('lobby_create', { id: l.id, max }); this.refresh(); };
     createRow.appendChild(this.createName); createRow.appendChild(this.createMax); createRow.appendChild(createBtn);
     this.container.appendChild(createRow);
 
     // Lobby list
-    const listTitle = document.createElement('div'); listTitle.textContent = 'Lobbies'; listTitle.style.marginTop = '8px'; listTitle.style.opacity = '0.9';
+    const listTitle = document.createElement('div'); listTitle.textContent = (i18n?.t?.('lobbies') || 'Lobbies'); listTitle.style.marginTop = '8px'; listTitle.style.opacity = '0.9';
     this.container.appendChild(listTitle);
     this.listEl = document.createElement('div'); this.listEl.style.display = 'flex'; this.listEl.style.flexDirection = 'column'; this.listEl.style.gap = '4px'; this.container.appendChild(this.listEl);
 
     // Friends
-    const friendsTitle = document.createElement('div'); friendsTitle.textContent = 'Friends'; friendsTitle.style.marginTop = '8px'; friendsTitle.style.opacity = '0.9';
+    const friendsTitle = document.createElement('div'); friendsTitle.textContent = (i18n?.t?.('friends') || 'Friends'); friendsTitle.style.marginTop = '8px'; friendsTitle.style.opacity = '0.9';
     this.container.appendChild(friendsTitle);
     this.friendsEl = document.createElement('div'); this.friendsEl.style.display = 'flex'; this.friendsEl.style.flexDirection = 'column'; this.friendsEl.style.gap = '4px'; this.container.appendChild(this.friendsEl);
     // Invites area
@@ -71,8 +73,8 @@ export class LobbiesOverlay {
     this.container.appendChild(invTitle);
     this.invitesEl = document.createElement('div'); this.invitesEl.style.display = 'flex'; this.invitesEl.style.flexDirection = 'column'; this.invitesEl.style.gap = '4px'; this.container.appendChild(this.invitesEl);
     const addRow = document.createElement('div'); addRow.style.display = 'flex'; addRow.style.gap = '6px';
-    const addId = document.createElement('input'); addId.placeholder = 'Friend id'; addId.style.flex = '1';
-    const addBtn = document.createElement('button'); addBtn.textContent = 'Add'; addBtn.onclick = () => { const id = (addId.value || '').trim(); if (id) { this.svc.addFriend(id); this.track('friend_add'); this.refresh(); } };
+    const addId = document.createElement('input'); addId.placeholder = (i18n?.t?.('friend_id') || 'Friend id'); addId.style.flex = '1';
+    const addBtn = document.createElement('button'); addBtn.textContent = (i18n?.t?.('add') || 'Add'); addBtn.onclick = () => { const id = (addId.value || '').trim(); if (id) { this.svc.addFriend(id); this.track('friend_add'); this.refresh(); } };
     addRow.appendChild(addId); addRow.appendChild(addBtn); this.container.appendChild(addRow);
 
     const toggle = document.createElement('button');

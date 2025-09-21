@@ -10,11 +10,13 @@ export class RankedOverlay {
   constructor() {
     this.bc = new BroadcastChannel('fg-ranked');
     this.bc.onmessage = (e) => this.onMsg(e.data);
+    const services: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services;
+    const i18n = services?.resolve?.('i18n');
     this.container = document.createElement('div');
     this.container.style.position = 'fixed'; this.container.style.right = '8px'; this.container.style.bottom = '120px';
     this.container.style.padding = '8px 10px'; this.container.style.background = 'rgba(0,0,0,0.6)'; this.container.style.color = '#fff'; this.container.style.borderRadius = '6px'; this.container.style.font = '12px system-ui'; this.container.style.zIndex = '10003';
-    const btn = document.createElement('button'); btn.textContent = 'Ranked'; btn.onclick = () => this.toggleQueue(); btn.style.marginRight = '8px';
-    this.status = document.createElement('div'); this.status.textContent = 'Idle'; this.status.style.display = 'inline-block';
+    const btn = document.createElement('button'); btn.textContent = (i18n?.t?.('ranked') || 'Ranked'); btn.onclick = () => this.toggleQueue(); btn.style.marginRight = '8px';
+    this.status = document.createElement('div'); this.status.textContent = (i18n?.t?.('idle') || 'Idle'); this.status.style.display = 'inline-block';
     this.container.appendChild(btn); this.container.appendChild(this.status); document.body.appendChild(this.container);
     try {
       const services: any = (window as any).pc?.Application?.getApplication?._services || (window as any)._services;

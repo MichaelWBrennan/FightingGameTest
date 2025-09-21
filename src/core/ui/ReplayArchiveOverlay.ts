@@ -7,9 +7,11 @@ export class ReplayArchiveOverlay {
     this.container.style.position = 'fixed'; this.container.style.left = '50%'; this.container.style.top = '50%'; this.container.style.transform = 'translate(-50%,-50%)';
     this.container.style.width = '420px'; this.container.style.maxHeight = '60vh'; this.container.style.overflow = 'auto';
     this.container.style.background = 'rgba(0,0,0,0.8)'; this.container.style.color = '#fff'; this.container.style.padding = '10px'; this.container.style.borderRadius = '8px'; this.container.style.zIndex = '10005'; this.container.style.display = 'none';
-    const title = document.createElement('div'); title.textContent = 'Replays'; title.style.fontWeight = 'bold'; title.style.marginBottom = '6px'; this.container.appendChild(title);
+    const services: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services;
+    const i18n = services?.resolve?.('i18n');
+    const title = document.createElement('div'); title.textContent = (i18n?.t?.('replays') || 'Replays'); title.style.fontWeight = 'bold'; title.style.marginBottom = '6px'; this.container.appendChild(title);
     this.list = document.createElement('div'); this.list.style.display = 'flex'; this.list.style.flexDirection = 'column'; this.list.style.gap = '6px'; this.container.appendChild(this.list);
-    const toggle = document.createElement('button'); toggle.textContent = 'Replays (F9)'; toggle.style.position = 'fixed'; toggle.style.left = '8px'; toggle.style.top = '8px'; toggle.style.zIndex = '10004'; toggle.onclick = () => this.toggle();
+    const toggle = document.createElement('button'); toggle.textContent = `${i18n?.t?.('replays') || 'Replays'} (F9)`; toggle.style.position = 'fixed'; toggle.style.left = '8px'; toggle.style.top = '8px'; toggle.style.zIndex = '10004'; toggle.onclick = () => this.toggle();
     document.body.appendChild(toggle); document.body.appendChild(this.container);
     this.refresh();
     window.addEventListener('keydown', (e) => { if (e.key === 'F9') this.toggle(); });
