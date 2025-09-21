@@ -4,7 +4,10 @@ export class AnalyticsService {
   private queue: AnalyticsEvent[] = [];
   private endpoint: string | null = null;
   setEndpoint(url: string): void { this.endpoint = url; }
-  track(name: string, props?: Record<string, any>): void { this.queue.push({ name, ts: Date.now(), props }); }
+  track(name: string, props?: Record<string, any>): void {
+    try { if (typeof localStorage !== 'undefined' && localStorage.getItem('analytics_enabled') === '0') return; } catch {}
+    this.queue.push({ name, ts: Date.now(), props });
+  }
   flush(): void {
     const batch = this.queue.splice(0);
     if (batch.length === 0) return;

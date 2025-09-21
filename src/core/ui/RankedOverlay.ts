@@ -6,6 +6,7 @@ export class RankedOverlay {
   private myId = Math.random().toString(36).slice(2, 8);
   private mmr = 1000;
   private region = 'NA';
+  private stats: HTMLDivElement | null = null;
 
   constructor() {
     this.bc = new BroadcastChannel('fg-ranked');
@@ -17,11 +18,14 @@ export class RankedOverlay {
     this.container.style.padding = '8px 10px'; this.container.style.background = 'rgba(0,0,0,0.6)'; this.container.style.color = '#fff'; this.container.style.borderRadius = '6px'; this.container.style.font = '12px system-ui'; this.container.style.zIndex = '10003';
     const btn = document.createElement('button'); btn.textContent = (i18n?.t?.('ranked') || 'Ranked'); btn.onclick = () => this.toggleQueue(); btn.style.marginRight = '8px';
     this.status = document.createElement('div'); this.status.textContent = (i18n?.t?.('idle') || 'Idle'); this.status.style.display = 'inline-block';
-    this.container.appendChild(btn); this.container.appendChild(this.status); document.body.appendChild(this.container);
+    this.container.appendChild(btn); this.container.appendChild(this.status);
+    this.stats = document.createElement('div'); this.stats.style.marginTop = '6px'; this.container.appendChild(this.stats);
+    document.body.appendChild(this.container);
     try {
       const services: any = (window as any).pc?.Application?.getApplication?._services || (window as any)._services;
       const mms = services?.resolve?.('matchmakingService');
       const p = mms?.getProfile?.(); this.mmr = p?.mmr ?? 1000; this.region = p?.region || 'NA';
+      mms?.on?.((e: any) => { try { if (e?.t === 'mmr' && this.stats) { const bay = e?.bayes; this.stats.textContent = `MMR ${e.mmr}${bay ? `  α:${(bay.alpha||0).toFixed?.(1)} β:${(bay.beta||0).toFixed?.(1)}` : ''}`; } } catch {} });
     } catch {}
   }
 
@@ -48,6 +52,15 @@ export class RankedOverlay {
       try {
         const services: any = (window as any).pc?.Application?.getApplication?._services || (window as any)._services;
         const net = services?.resolve?.('netcode'); services?.resolve?.('analytics')?.track?.('ranked_match', { session: m.session, host: m.host });
+        // Wire victory to Bayesian MMR update with reliability from net stats
+        window.addEventListener('match:victory', ((e: any) => {
+          try {
+            const mms = services?.resolve?.('matchmakingService');
+            const st = net?.getStats?.() || {};
+            const rel = Math.max(0.25, Math.min(2.0, 1.5 - Math.min(1.0, ((st.rtt||0) + (st.jitter||0)) / 500)));
+            mms?.reportMatchBayes?.(true, rel);
+          } catch {}
+        }) as any, { once: true } as any);
         (import('../netcode/BroadcastSignaling')).then(({ BroadcastSignaling }) => { try { const signaling = new BroadcastSignaling(m.session); const ice = [ { urls: ['stun:stun.l.google.com:19302'] } ] as any; net?.enableWebRTC(signaling, m.host, ice); } catch {} }).catch(() => {});
       } catch {}
     }

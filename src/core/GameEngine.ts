@@ -488,6 +488,7 @@ export class GameEngine {
           const mis = det?.getLastMismatchFrame?.() ?? -1;
           this.debugOverlay?.setDeterminism(last, mis < 0 || mis < last);
         } catch {}
+        try { const ac: any = this.services.resolve('anticheat'); ac?.heartbeat?.(); } catch {}
       // Example: KO cinematic trigger
       try {
         const combat: any = this.services.resolve('combat');
