@@ -53,6 +53,9 @@ import { RankedOverlay } from './ui/RankedOverlay';
 import { StreamingOverlay } from './ui/StreamingOverlay';
 import { ReplayArchiveOverlay } from './ui/ReplayArchiveOverlay';
 import { ReconnectOverlay } from './ui/ReconnectOverlay';
+import { CameraCinematics } from './camera/Cinematics';
+import { StoreOverlay } from './ui/StoreOverlay';
+import { SpectatorOverlay } from './ui/SpectatorOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -101,6 +104,9 @@ export class GameEngine {
   private streaming: StreamingOverlay | null = null;
   private replayArchive: ReplayArchiveOverlay | null = null;
   private reconnect: ReconnectOverlay | null = null;
+  private cinematics: CameraCinematics | null = null;
+  private store: StoreOverlay | null = null;
+  private spectator: SpectatorOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -441,6 +447,14 @@ export class GameEngine {
           const mis = det?.getLastMismatchFrame?.() ?? -1;
           this.debugOverlay?.setDeterminism(last, mis < 0 || mis < last);
         } catch {}
+      // Example: KO cinematic trigger
+      try {
+        const combat: any = this.services.resolve('combat');
+        if (combat?.wasRecentKO?.() && !this.cinematics) {
+          this.cinematics = new CameraCinematics(this.app);
+          this.cinematics.koCinematic();
+        }
+      } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
@@ -475,6 +489,8 @@ export class GameEngine {
       try { this.streaming = new StreamingOverlay(this.app.graphicsDevice.canvas as any); } catch {}
       try { this.replayArchive = new ReplayArchiveOverlay(); this.services.register('replayArchive', this.replayArchive); } catch {}
       try { this.reconnect = new ReconnectOverlay(); } catch {}
+      try { this.store = new StoreOverlay(); } catch {}
+      try { this.spectator = new SpectatorOverlay(); } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({
