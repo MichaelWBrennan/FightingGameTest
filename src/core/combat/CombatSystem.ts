@@ -163,6 +163,10 @@ export class CombatSystem {
       } else if (bAtLeft || bAtRight) {
         bPos.x -= dir * push;
         aPos.x -= dir * push;
+      } else {
+        // Prefer moving the attacker slightly more to reduce corner drift
+        const attackerIsA = Math.abs(aPos.x) < Math.abs(bPos.x) ? false : true;
+        if (attackerIsA) aPos.x -= dir * (push * 0.1); else bPos.x += dir * (push * 0.1);
       }
       aPos.x = Math.max(this.stageBounds.left + aw, Math.min(this.stageBounds.right - aw, aPos.x));
       bPos.x = Math.max(this.stageBounds.left + bw, Math.min(this.stageBounds.right - bw, bPos.x));

@@ -20,7 +20,15 @@ export class StoreOverlay {
     document.body.appendChild(toggle); document.body.appendChild(this.container);
     window.addEventListener('keydown', (e) => { if (e.key === 'F10') this.toggle(); });
   }
-  private purchase(id: string): void { try { const services: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services; services?.resolve?.('analytics')?.track?.('purchase_attempt', { sku: id }); alert('Purchased: ' + id); } catch {} }
+  private purchase(id: string): void {
+    try {
+      const services: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services;
+      const ent = services?.resolve?.('entitlement');
+      const ok = ent?.purchase?.(id);
+      services?.resolve?.('analytics')?.track?.('purchase_attempt', { sku: id, ok: !!ok });
+      alert(ok ? ('Purchased: ' + id) : 'Purchase failed');
+    } catch {}
+  }
   private toggle(): void { this.container.style.display = (this.container.style.display === 'none') ? 'block' : 'none'; }
 }
 
