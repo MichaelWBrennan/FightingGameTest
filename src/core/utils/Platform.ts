@@ -33,6 +33,10 @@ export const Platform = {
     } catch {
       return false;
     }
+  },
+
+  sharedArrayBufferAvailable(): boolean {
+    try { return typeof (globalThis as any).SharedArrayBuffer !== 'undefined' && !!(globalThis as any).crossOriginIsolated; } catch { return false; }
   }
 };
 

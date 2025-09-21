@@ -16,6 +16,10 @@ export class RollbackNetcode {
   private predictedRemote: Map<number, number> = new Map();
   private snapshots: Map<number, GameStateSnapshot> = new Map();
   private running = false;
+  private rollbackEvents = 0;
+  private rollbackFrames = 0;
+  private maxRollbackSpan = 0;
+  private maxSnapshots = 180; // ~3 seconds at 60fps
 
   constructor(
     private adapter: DeterministicAdapter,
@@ -34,6 +38,11 @@ export class RollbackNetcode {
     this.running = false;
   }
 
+  setFrameDelay(frames: number): void {
+    const f = Math.max(0, Math.min(10, Math.floor(frames)));
+    (this as any).frameDelay = f;
+  }
+
   pushLocal(bits: number): void {
     const targetFrame = this.currentFrame + this.frameDelay;
     this.localInputs.set(targetFrame, bits);
@@ -50,6 +59,7 @@ export class RollbackNetcode {
     const frame = this.currentFrame;
     // save snapshot BEFORE stepping
     this.snapshots.set(frame, this.adapter.saveState(frame));
+    this.pruneSnapshots();
 
     const local = this.localInputs.get(frame) ?? 0;
     let remote = this.remoteInputs.get(frame);
@@ -85,6 +95,10 @@ export class RollbackNetcode {
   private rollbackTo(frame: number): void {
     const snap = this.snapshots.get(frame);
     if (!snap) return;
+    this.rollbackEvents++;
+    const span = Math.max(0, this.currentFrame - frame);
+    this.rollbackFrames += span;
+    if (span > this.maxRollbackSpan) this.maxRollbackSpan = span;
     this.adapter.loadState(snap);
 
     // re-simulate from frame to currentFrame-1
@@ -97,6 +111,18 @@ export class RollbackNetcode {
       // once confirmed, clear prediction
       if (this.remoteInputs.has(f)) this.predictedRemote.delete(f);
     }
+  }
+
+  public getStats(): { frameDelay: number; rollbacks: number; rbFrames: number; rbMax: number; cur: number; confirmed: number } {
+    return { frameDelay: this.frameDelay, rollbacks: this.rollbackEvents, rbFrames: this.rollbackFrames, rbMax: this.maxRollbackSpan, cur: this.currentFrame, confirmed: this.confirmedRemoteFrame };
+  }
+
+  private pruneSnapshots(): void {
+    if (this.snapshots.size <= this.maxSnapshots) return;
+    // remove oldest
+    const keys = Array.from(this.snapshots.keys()).sort((a,b)=>a-b);
+    const excess = this.snapshots.size - this.maxSnapshots;
+    for (let i = 0; i < excess; i++) this.snapshots.delete(keys[i]);
   }
 }
 

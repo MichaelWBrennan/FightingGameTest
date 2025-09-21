@@ -5,6 +5,7 @@ import { Logger } from '../utils/Logger';
 import { PreloadManager } from '../utils/PreloadManager';
 import { DecompDataService } from '../utils/DecompDataService';
 import { ProceduralFrameGenerator } from '../procgen/ProceduralFrameGenerator';
+import { MoveValidator } from '../utils/MoveValidator';
 
 export class CharacterManager {
   private app: pc.Application;
@@ -14,6 +15,7 @@ export class CharacterManager {
   private preloader: PreloadManager | null = null;
   private frameGen: ProceduralFrameGenerator = new ProceduralFrameGenerator();
   private decomp: DecompDataService | null = null;
+  private validator: MoveValidator = new MoveValidator();
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -86,6 +88,7 @@ export class CharacterManager {
         for (const key of keys) {
           try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] db entry ${key}`, 'debug'); } catch {}
           let cfg = this.normalizeCharacterConfig(db[key] as CharacterConfig);
+          try { this.validateConfig(cfg); } catch {}
           cfg = this.frameGen.generateForCharacter(cfg);
           this.characterConfigs.set(key, cfg);
           processed++;
@@ -111,6 +114,7 @@ export class CharacterManager {
         try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] fetching /data/characters/${name}.json`, 'info'); } catch {}
         const rawConfig: CharacterConfig = await fetchJson(`/data/characters/${name}.json`);
         let config = this.normalizeCharacterConfig(rawConfig);
+        try { this.validateConfig(config); } catch {}
         config = this.frameGen.generateForCharacter(config);
         this.characterConfigs.set(name, config);
         Logger.info(`Loaded character config: ${name}`);
@@ -147,9 +151,13 @@ export class CharacterManager {
       walkSpeed: 150
     } as any;
     const basicMoves: Record<string, any> = {
-      light_punch: { damage: 30, startup: 4, active: 2, recovery: 8, blockAdvantage: -1, hitAdvantage: 1 },
-      heavy_punch: { damage: 90, startup: 10, active: 3, recovery: 16, blockAdvantage: -4, hitAdvantage: 2 },
-      light_kick: { damage: 25, startup: 3, active: 2, recovery: 7, blockAdvantage: 0, hitAdvantage: 1 }
+      light_punch: { damage: 30, startup: 4, active: 2, recovery: 8, blockAdvantage: -1, hitAdvantage: 1, cancels: ['mediumPunch','heavyPunch','hadoken'] },
+      medium_punch: { damage: 50, startup: 7, active: 3, recovery: 12, blockAdvantage: -2, hitAdvantage: 2, cancels: ['heavyPunch','hadoken'] },
+      heavy_punch: { damage: 90, startup: 10, active: 3, recovery: 16, blockAdvantage: -4, hitAdvantage: 2, cancels: ['hadoken'] },
+      light_kick: { damage: 25, startup: 3, active: 2, recovery: 7, blockAdvantage: 0, hitAdvantage: 1, cancels: ['mediumKick','heavyKick','hadoken'] },
+      medium_kick: { damage: 45, startup: 6, active: 2, recovery: 10, blockAdvantage: -1, hitAdvantage: 2, cancels: ['heavyKick','hadoken'] },
+      heavy_kick: { damage: 85, startup: 11, active: 3, recovery: 18, blockAdvantage: -5, hitAdvantage: 1, cancels: ['hadoken'] },
+      hadoken: { damage: 70, startup: 12, active: 1, recovery: 20, blockAdvantage: -8, hitAdvantage: 0, projectile: { speed: 0.22, lifetime: 90, width: 0.6, height: 0.6 } }
     };
     const cfg = {
       characterId,
@@ -166,7 +174,16 @@ export class CharacterManager {
       strengths: ['fundamentals'],
       weaknesses: ['specialization'],
       uniqueMechanics: ['hadoken'],
-      moves: basicMoves
+      moves: {
+        ...basicMoves,
+        // camelCase aliases
+        lightPunch: basicMoves.light_punch,
+        mediumPunch: basicMoves.medium_punch,
+        heavyPunch: basicMoves.heavy_punch,
+        lightKick: basicMoves.light_kick,
+        mediumKick: basicMoves.medium_kick,
+        heavyKick: basicMoves.heavy_kick
+      }
     } as unknown as CharacterConfig;
     return cfg;
   }
@@ -201,6 +218,19 @@ export class CharacterManager {
     } as CharacterConfig as any;
 
     return normalized;
+  }
+
+  private validateConfig(config: CharacterConfig): void {
+    try {
+      const movesObj: any = (config as any).moves || {};
+      const moves = Object.keys(movesObj).map(k => ({ name: k, startup: movesObj[k]?.startup, active: movesObj[k]?.active, recovery: movesObj[k]?.recovery, cancel: movesObj[k]?.cancels }));
+      const res = this.validator.validate(moves);
+      if (!res.ok) {
+        for (const err of res.errors) {
+          Logger.warn(`[move-validate] ${config.characterId || config.name}: ${err}`);
+        }
+      }
+    } catch {}
   }
 
   public createCharacter(characterId: string, position: pc.Vec3): Character | null {
@@ -280,7 +310,9 @@ export class CharacterManager {
         active: 0,
         recovery: 0,
         advantage: 0
-      }
+      },
+      facing: 1,
+      guardMeter: 100
     };
 
     this.characters.set(characterId, character);

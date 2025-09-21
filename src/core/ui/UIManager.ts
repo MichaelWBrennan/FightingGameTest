@@ -9,6 +9,8 @@ export class UIManager {
 	// Runtime-generated font to ensure text renders without Editor font assets
 	private canvasFont: any | null = null;
 	private touchOverlay: HTMLDivElement | null = null;
+	private touchDpad: HTMLDivElement | null = null;
+	private touchButtons: HTMLDivElement | null = null;
 	private domContainer: HTMLDivElement | null = null;
 	private domP1: HTMLDivElement | null = null;
 	private domP2: HTMLDivElement | null = null;
@@ -83,8 +85,104 @@ export class UIManager {
 		}, 0);
 		this.ensureDomFallback();
 		this.ensureTouchControls();
+		this.applySafeAreaInsets();
+		try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); if (i18n) { (this as any)._i18n = i18n; } } catch {}
+		this.bindResizeHandlers();
+		this.updateResponsiveLayout();
 		this.setupEventListeners();
 		try { (await import('./LoadingOverlay')).LoadingOverlay.endTask('ui_init', true); } catch {}
+	}
+	private bindResizeHandlers(): void {
+		try {
+			const handler = () => {
+				try { this.applySafeAreaInsets(); } catch {}
+				try { this.updateResponsiveLayout(); } catch {}
+			};
+			window.addEventListener('resize', handler);
+			window.addEventListener('orientationchange', handler as any);
+		} catch {}
+	}
+
+	private updateResponsiveLayout(): void {
+		try {
+			const w = Math.max(1, window.innerWidth || 1);
+			const h = Math.max(1, window.innerHeight || 1);
+			const portrait = h >= w;
+			// Adjust screen reference if available (helps text scale feel consistent)
+			if (this.root && (this.root as any).screen) {
+				const refW = portrait ? 1080 : 1920;
+				const refH = portrait ? 1920 : 1080;
+				(this.root as any).screen.referenceResolution = new pc.Vec2(refW, refH);
+			}
+			// Apply HUD orientation layout
+			this.applyHudOrientationLayout(portrait);
+			// Resize touch controls for mobile
+			if (this.touchOverlay && Platform.kind() === 'mobile') {
+				const minDim = Math.min(w, h);
+				const dpadSize = Math.round(Math.max(120, Math.min(240, minDim * (portrait ? 0.28 : 0.22))));
+				const buttonSize = Math.round(Math.max(64, Math.min(112, minDim * (portrait ? 0.12 : 0.10))));
+				const gap = Math.round(buttonSize * 0.18);
+				if (this.touchDpad) {
+					this.touchDpad.style.width = `${dpadSize}px`;
+					this.touchDpad.style.height = `${dpadSize}px`;
+				}
+				if (this.touchButtons) {
+					this.touchButtons.style.width = `${buttonSize * 3 + gap * 2}px`;
+					this.touchButtons.style.height = `${buttonSize * 2 + gap}px`;
+					(this.touchButtons.style as any).gap = `${gap}px`;
+					Array.from(this.touchButtons.querySelectorAll('button')).forEach((el: Element) => {
+						const b = el as HTMLButtonElement;
+						b.style.width = `${buttonSize}px`;
+						b.style.height = `${buttonSize}px`;
+					});
+				}
+			}
+		} catch {}
+	}
+
+	private applyHudOrientationLayout(portrait: boolean): void {
+		try {
+			if (!this.hud) return;
+			const set = (e: pc.Entity | null | undefined, a: pc.Vec4) => { try { if (e && (e as any).element) (e as any).element.anchor = a; } catch {} };
+			if (portrait) {
+				// Top: health bars slightly narrower with bigger center gap
+				set(this.p1HealthContainer, new pc.Vec4(0.05, 0.885, 0.48, 0.965));
+				set(this.p2HealthContainer, new pc.Vec4(0.52, 0.885, 0.95, 0.965));
+				// Drive just below
+				set(this.p1DriveContainer, new pc.Vec4(0.05, 0.870, 0.48, 0.885));
+				set(this.p2DriveContainer, new pc.Vec4(0.52, 0.870, 0.95, 0.885));
+				// Timer in center
+				set(this.roundTimerCapsule, new pc.Vec4(0.43, 0.86, 0.57, 0.985));
+				set(this.roundTimerText, new pc.Vec4(0.47, 0.875, 0.53, 0.970));
+				// Pips
+				set(this.p1Pips, new pc.Vec4(0.18, 0.83, 0.32, 0.86));
+				set(this.p2Pips, new pc.Vec4(0.68, 0.83, 0.82, 0.86));
+				// Nameplate containers
+				const p1Plate = (this.p1NameText && (this.p1NameText.parent as pc.Entity)) || null;
+				const p2Plate = (this.p2NameText && (this.p2NameText.parent as pc.Entity)) || null;
+				set(p1Plate, new pc.Vec4(0.05, 0.76, 0.40, 0.82));
+				set(p2Plate, new pc.Vec4(0.60, 0.76, 0.95, 0.82));
+				// Bottom meters a bit wider
+				set(this.p1MeterContainer, new pc.Vec4(0.05, 0.05, 0.45, 0.085));
+				set(this.p2MeterContainer, new pc.Vec4(0.55, 0.05, 0.95, 0.085));
+			} else {
+				// Restore landscape defaults
+				set(this.p1HealthContainer, new pc.Vec4(0.03, 0.90, 0.47, 0.97));
+				set(this.p2HealthContainer, new pc.Vec4(0.53, 0.90, 0.97, 0.97));
+				set(this.p1DriveContainer, new pc.Vec4(0.03, 0.885, 0.47, 0.900));
+				set(this.p2DriveContainer, new pc.Vec4(0.53, 0.885, 0.97, 0.900));
+				set(this.roundTimerCapsule, new pc.Vec4(0.44, 0.86, 0.56, 0.98));
+				set(this.roundTimerText, new pc.Vec4(0.47, 0.885, 0.53, 0.975));
+				set(this.p1Pips, new pc.Vec4(0.25, 0.86, 0.35, 0.89));
+				set(this.p2Pips, new pc.Vec4(0.65, 0.86, 0.75, 0.89));
+				set(this.p1MeterContainer, new pc.Vec4(0.03, 0.05, 0.35, 0.085));
+				set(this.p2MeterContainer, new pc.Vec4(0.65, 0.05, 0.97, 0.085));
+				const p1Plate = (this.p1NameText && (this.p1NameText.parent as pc.Entity)) || null;
+				const p2Plate = (this.p2NameText && (this.p2NameText.parent as pc.Entity)) || null;
+				set(p1Plate, new pc.Vec4(0.03, 0.79, 0.30, 0.85));
+				set(p2Plate, new pc.Vec4(0.70, 0.79, 0.97, 0.85));
+			}
+		} catch {}
 	}
 
 	public showMenu(): void {
@@ -106,7 +204,7 @@ export class UIManager {
 		const title = new pc.Entity('MenuTitle');
 		title.addComponent('element', {
 			type: pc.ELEMENTTYPE_TEXT,
-			text: 'Street Fighter III',
+			text: ((this as any)._i18n?.t?.('title') || 'Street Fighter III'),
 			fontSize: 56,
 			color: new pc.Color(1,1,1,1),
 			anchor: new pc.Vec4(0.5, 0.12, 0.5, 0.12),
@@ -125,7 +223,7 @@ export class UIManager {
 		const startText = new pc.Entity('StartText');
 		startText.addComponent('element', {
 			type: pc.ELEMENTTYPE_TEXT,
-			text: Platform.kind() === 'mobile' ? 'Tap to Start' : 'Press Enter',
+			text: Platform.kind() === 'mobile' ? (((this as any)._i18n?.t?.('tap_to_start')) || 'Tap to Start') : (((this as any)._i18n?.t?.('press_enter')) || 'Press Enter'),
 			fontSize: 28,
 			color: new pc.Color(1,1,1,1),
 			anchor: new pc.Vec4(0,0,1,1),
@@ -162,13 +260,13 @@ export class UIManager {
 
 	public showHUD(): void {
 		this.hideMenu();
-		if (this.hud) { this.hud.enabled = true; this.setDomVisible(true); return; }
+		if (this.hud) { this.hud.enabled = true; this.setDomVisible(false); return; }
 		this.hud = new pc.Entity('MatchHUD');
 		this.hud.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0,0,1,1) });
 		this.root?.addChild(this.hud);
 		// Build textured HUD asynchronously
 		void this.ensureFightingHudBuilt();
-		this.setDomVisible(true);
+		this.setDomVisible(false);
 	}
 
 	public hideHUD(): void {
@@ -234,22 +332,24 @@ export class UIManager {
 			if (this.p2BurnoutOverlay && this.p2BurnoutOverlay.element) this.p2BurnoutOverlay.enabled = (dSegs2 === 0);
 		} catch {}
 
-		// Fallback DOM text (debug/diagnostic)
-		if (this.domP1) this.domP1.textContent = `P1: ${h1}${p1Max ? '/' + Math.floor(p1Max) : ''} | ${m1}%`;
-		if (this.domP2) this.domP2.textContent = `P2: ${h2}${p2Max ? '/' + Math.floor(p2Max) : ''} | ${m2}%`;
+		// Fallback DOM text (debug/diagnostic) is disabled for production HUD
+		if (false) {
+			if (this.domP1) this.domP1.textContent = `P1: ${h1}${p1Max ? '/' + Math.floor(p1Max) : ''} | ${m1}%`;
+			if (this.domP2) this.domP2.textContent = `P2: ${h2}${p2Max ? '/' + Math.floor(p2Max) : ''} | ${m2}%`;
+		}
 	}
 
 	public setNameplates(p1Name: string, p2Name: string, p1PortraitId?: string, p2PortraitId?: string): void {
 		// Create if missing
 		if (!this.hud) return;
 		if (!this.p1NameText || !this.p2NameText) {
-			const left = this.createNameplate(new pc.Vec4(0.03, 0.82, 0.30, 0.88), false);
-			const right = this.createNameplate(new pc.Vec4(0.70, 0.82, 0.97, 0.88), true);
+			const left = this.createNameplate(new pc.Vec4(0.03, 0.79, 0.30, 0.85), false);
+			const right = this.createNameplate(new pc.Vec4(0.70, 0.79, 0.97, 0.85), true);
 			this.p1NameText = left.text; this.p1Portrait = left.portrait;
 			this.p2NameText = right.text; this.p2Portrait = right.portrait;
 		}
-		if (this.p1NameText?.element) this.p1NameText.element.text = (p1Name || 'PLAYER 1').toUpperCase();
-		if (this.p2NameText?.element) this.p2NameText.element.text = (p2Name || 'PLAYER 2').toUpperCase();
+		if (this.p1NameText?.element) this.p1NameText.element.text = `PLAYER 1: ${(p1Name || 'PLAYER 1').toUpperCase()}`;
+		if (this.p2NameText?.element) this.p2NameText.element.text = `PLAYER 2: ${(p2Name || 'PLAYER 2').toUpperCase()}`;
 		// Try to load portraits from conventional path; fall back to solid
 		if (p1PortraitId) this.setPortraitTexture(this.p1Portrait!, `/assets/portraits/${p1PortraitId}.png`, new pc.Color(0.12,0.12,0.12,1));
 		if (p2PortraitId) this.setPortraitTexture(this.p2Portrait!, `/assets/portraits/${p2PortraitId}.png`, new pc.Color(0.12,0.12,0.12,1));
@@ -384,6 +484,10 @@ export class UIManager {
 			overlay.appendChild(buttons);
 			document.body.appendChild(overlay);
 			this.touchOverlay = overlay;
+			this.touchDpad = dpad;
+			this.touchButtons = buttons;
+			// Initial responsive sizing
+			this.updateResponsiveLayout();
 
 			// Wire events to InputManager touch API
 			const services: any = (this.app as any)._services;
@@ -722,7 +826,9 @@ export class UIManager {
 			text: '99',
 			fontSize: 64,
 			color: new pc.Color(0.96, 0.98, 1),
-			anchor: new pc.Vec4(0.5, 0.88, 0.5, 0.96),
+			// Give the timer a non-zero width so text is visible
+			anchor: new pc.Vec4(0.47, 0.885, 0.53, 0.975),
+			alignment: new pc.Vec2(0.5, 0.5),
 			pivot: new pc.Vec2(0.5, 0.5)
 		} as any);
 		this.applyTextFont(this.roundTimerText);
@@ -732,9 +838,9 @@ export class UIManager {
 		this.p1Pips = this.createRoundPips('P1Pips', new pc.Vec4(0.25, 0.86, 0.35, 0.89), false);
 		this.p2Pips = this.createRoundPips('P2Pips', new pc.Vec4(0.65, 0.86, 0.75, 0.89), true);
 
-		// Nameplates & portraits
-		const left = this.createNameplate(new pc.Vec4(0.03, 0.82, 0.30, 0.88), false);
-		const right = this.createNameplate(new pc.Vec4(0.70, 0.82, 0.97, 0.88), true);
+		// Nameplates & portraits (lowered slightly to avoid overlapping health/drive bars)
+		const left = this.createNameplate(new pc.Vec4(0.03, 0.79, 0.30, 0.85), false);
+		const right = this.createNameplate(new pc.Vec4(0.70, 0.79, 0.97, 0.85), true);
 		this.p1NameText = left.text; this.p1Portrait = left.portrait;
 		this.p2NameText = right.text; this.p2Portrait = right.portrait;
 
@@ -1033,20 +1139,61 @@ export class UIManager {
 			try {
 				const side = (data?.playerId === 'player2') ? this.comboP2 : this.comboP1;
 				if (!side) return;
-				if (side.hits.element) side.hits.element.text = `${Math.max(1, Number(data?.hits || 1))} HITS`;
+				if (side.hits.element) side.hits.element.text = `${Math.max(1, Number(data?.hits || 1))} ${((this as any)._i18n?.t?.('hits_suffix')) || 'HITS'}`;
 				if (side.dmg.element) {
 					const dmg = Math.max(0, Math.floor(Number(data?.damage || 0)));
-					side.dmg.element.text = dmg > 0 ? `${dmg} dmg` : '';
+					side.dmg.element.text = dmg > 0 ? `${dmg} ${((this as any)._i18n?.t?.('damage_suffix')) || 'dmg'}` : '';
 				}
 				side.container.enabled = true;
 				// Auto-hide after a short delay
 				setTimeout(() => { try { side.container.enabled = false; } catch {} }, 1200);
 			} catch {}
 		});
-		// Victory banner
+		// Victory banner + rounds/rematch flow
 		(this.app as any).on?.('match:victory', (_winnerId: string) => {
-			this.showBanner('KO!');
+			const koText = ((this as any)._i18n?.t?.('ko')) || 'KO!';
+			this.showBanner(koText);
+			try {
+				const on = (this as any);
+				on._roundWins = on._roundWins || { p1: 0, p2: 0 };
+				const isP1 = _winnerId === (this.app as any)._services?.resolve?.('characters')?.getActiveCharacters?.()[0]?.id;
+				if (isP1) on._roundWins.p1++; else on._roundWins.p2++;
+				(this.app as any).fire?.('ui:roundwins', isP1 ? 'player1' : 'player2', isP1 ? on._roundWins.p1 : on._roundWins.p2);
+				setTimeout(() => { try { this.showRematchPrompt(); } catch {} }, 1200);
+			} catch {}
 		});
+		// Update static texts when locale changes
+		try {
+			window.addEventListener('i18n:changed', () => {
+				try {
+					const t = this.app.root.findByName('MenuTitle') as any;
+					if (t?.element) t.element.text = ((this as any)._i18n?.t?.('title')) || 'Street Fighter III';
+				} catch {}
+				try {
+					const s = this.app.root.findByName('StartText') as any;
+					if (s?.element) s.element.text = Platform.kind() === 'mobile' ? (((this as any)._i18n?.t?.('tap_to_start')) || 'Tap to Start') : (((this as any)._i18n?.t?.('press_enter')) || 'Press Enter');
+				} catch {}
+			});
+		} catch {}
+		// Anti-cheat penalty prompt
+		setInterval(() => {
+			try {
+				const ac: any = (this.app as any)._services?.resolve?.('anticheat');
+				const reports = ac?.getReports?.() || [];
+				const severe = reports.find((r: any) => r?.type === 'excessive_rollbacks' || r?.type === 'large_prediction_gap');
+				if (severe) this.showPenaltyNotice();
+			} catch {}
+		}, 3000);
+		// Training overlay toggles
+		try {
+			const onKey = (e: KeyboardEvent) => {
+				if (e.key === 'F1') {
+					const b = this.bannerText;
+					if (b) { b.enabled = !b.enabled; if (b.element) b.element.text = b.enabled ? 'TRAINING' : ''; }
+				}
+			};
+			window.addEventListener('keydown', onKey);
+		} catch {}
 	}
 
 	private showBanner(text: string): void {
@@ -1056,6 +1203,60 @@ export class UIManager {
 		try {
 			// Fade out
 			setTimeout(() => { try { if (this.bannerText) this.bannerText.enabled = false; } catch {} }, 1400);
+		} catch {}
+	}
+
+	private showRematchPrompt(): void {
+		try {
+			const container = new pc.Entity('RematchPrompt');
+			container.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0.35, 0.42, 0.65, 0.58) });
+			const bg = new pc.Entity('BG');
+			bg.addComponent('element', { type: pc.ELEMENTTYPE_IMAGE, texture: this.capsuleTex as any, anchor: new pc.Vec4(0,0,1,1), color: new pc.Color(1,1,1,0.95) } as any);
+			container.addChild(bg);
+			const text = new pc.Entity('Text');
+			text.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: (((this as any)._i18n?.t?.('rematch_yes')) || 'Rematch?  [Enter] Yes   [Esc] No'), fontSize: 28, color: new pc.Color(1,1,1,1), anchor: new pc.Vec4(0,0,1,1), pivot: new pc.Vec2(0.5,0.5), alignment: new pc.Vec2(0.5,0.5) } as any);
+			this.applyTextFont(text);
+			container.addChild(text);
+			this.hud?.addChild(container);
+			const onKey = (e: KeyboardEvent) => {
+				if (e.key === 'Enter') { this.requestRematch(true); cleanup(); }
+				if (e.key === 'Escape') { this.requestRematch(false); cleanup(); }
+			};
+			const cleanup = () => { try { window.removeEventListener('keydown', onKey); container.destroy(); } catch {} };
+			window.addEventListener('keydown', onKey);
+		} catch {}
+	}
+
+	private showPenaltyNotice(): void {
+		try {
+			if (!this.hud) return;
+			const box = new pc.Entity('PenaltyNotice');
+			box.addComponent('element', { type: pc.ELEMENTTYPE_GROUP, anchor: new pc.Vec4(0.28, 0.12, 0.72, 0.24) });
+			const bg = new pc.Entity('BG');
+			bg.addComponent('element', { type: pc.ELEMENTTYPE_IMAGE, texture: this.capsuleTex as any, anchor: new pc.Vec4(0,0,1,1), color: new pc.Color(1,0.85,0.85,0.98) } as any);
+			box.addChild(bg);
+			const text = new pc.Entity('Text');
+			text.addComponent('element', { type: pc.ELEMENTTYPE_TEXT, text: ((this as any)._i18n?.t?.('penalty_notice') || 'Connection instability detected. Penalties may apply.'), fontSize: 24, color: new pc.Color(0.2,0,0,1), anchor: new pc.Vec4(0,0,1,1), pivot: new pc.Vec2(0.5,0.5), alignment: new pc.Vec2(0.5,0.5) } as any);
+			this.applyTextFont(text);
+			box.addChild(text);
+			this.hud.addChild(box);
+			setTimeout(() => { try { box.destroy(); } catch {} }, 3000);
+		} catch {}
+	}
+
+	private requestRematch(yes: boolean): void {
+		try {
+			(this.app as any).fire?.('match:rematch', { accept: yes });
+			if (yes) {
+				// Reset health and positions
+				const chars: any = (this.app as any)._services?.resolve?.('characters');
+				const list = chars?.getActiveCharacters?.() || [];
+				if (list[0] && list[1]) {
+					list[0].health = list[0].maxHealth || 1000; list[1].health = list[1].maxHealth || 1000;
+					const a = list[0].entity.getPosition().clone(); const b = list[1].entity.getPosition().clone(); a.x = -1.2; b.x = 1.2; a.y = b.y = 0; list[0].entity.setPosition(a); list[1].entity.setPosition(b);
+					list[0].state = list[1].state = 'idle'; list[0].currentMove = list[1].currentMove = null;
+				}
+			}
 		} catch {}
 	}
 }

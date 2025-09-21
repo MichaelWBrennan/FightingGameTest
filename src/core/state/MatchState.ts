@@ -35,6 +35,8 @@ export class MatchState implements GameState {
 
 	update(dt: number): void {}
 
+	// Training helpers could be added here later (pause/step hooks)
+
 	private spawnCharactersFromSelection(): void {
 		if (this.spawned) return;
 		this.spawned = true;

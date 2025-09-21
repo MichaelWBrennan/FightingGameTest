@@ -33,6 +33,43 @@ import { NetcodeService } from './netcode/NetcodeService';
 import { ConfigService } from './utils/ConfigService';
 import { LoadingOverlay } from './ui/LoadingOverlay';
 import { Platform } from './utils/Platform';
+import { TrainingOverlay } from './ui/TrainingOverlay';
+import { NetplayOverlay } from './ui/NetplayOverlay';
+import { ReplayService } from './utils/ReplayService';
+import { MatchmakingOverlay } from './ui/MatchmakingOverlay';
+import { EffectsOverlay } from './graphics/EffectsOverlay';
+import { SfxService } from './utils/SfxService';
+import { DeterminismService } from './utils/DeterminismService';
+import { InputRemapOverlay } from './ui/InputRemapOverlay';
+import { TuningOverlay } from './ui/TuningOverlay';
+import { ConfigLoader } from './utils/ConfigLoader';
+import { I18nService } from './utils/I18n';
+import { CommandListOverlay } from './ui/CommandListOverlay';
+import { OptionsOverlay } from './ui/OptionsOverlay';
+import { MatchmakingService } from './online/MatchmakingService';
+import { AnalyticsService } from './utils/AnalyticsService';
+import { LobbiesOverlay } from './ui/LobbiesOverlay';
+import { RankedOverlay } from './ui/RankedOverlay';
+import { StreamingOverlay } from './ui/StreamingOverlay';
+import { ReplayArchiveOverlay } from './ui/ReplayArchiveOverlay';
+import { ReconnectOverlay } from './ui/ReconnectOverlay';
+import { CameraCinematics } from './camera/Cinematics';
+import { StoreOverlay } from './ui/StoreOverlay';
+import { SpectatorOverlay } from './ui/SpectatorOverlay';
+import { CancelTableOverlay } from './ui/CancelTableOverlay';
+import { RoundManager } from './match/RoundManager';
+import { RematchOverlay } from './ui/RematchOverlay';
+import { SpectateService } from './online/SpectateService';
+import { SimService } from './sim/SimService';
+import { ChatOverlay } from './ui/ChatOverlay';
+import { BoxEditorOverlay } from './ui/BoxEditorOverlay';
+import { TtsService } from './utils/TtsService';
+import { PrivacyOverlay } from './ui/PrivacyOverlay';
+import { PartyOverlay } from './ui/PartyOverlay';
+import { TournamentOverlay } from './ui/TournamentOverlay';
+import { BalanceVersionService } from './utils/BalanceVersionService';
+import { PartyService } from './online/PartyService';
+import { TournamentService } from './online/TournamentService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -64,6 +101,36 @@ export class GameEngine {
   // private assetManager: any;
   private isInitialized = false;
   private updateHandler: ((dt: number) => void) | null = null;
+  private trainingOverlay: TrainingOverlay | null = null;
+  private netplayOverlay: NetplayOverlay | null = null;
+  private replay: ReplayService | null = null;
+  private matchmaking: MatchmakingOverlay | null = null;
+  private effects: EffectsOverlay | null = null;
+  private sfx: SfxService | null = null;
+  private det: DeterminismService | null = null;
+  private i18n: I18nService | null = null;
+  private cmdList: CommandListOverlay | null = null;
+  private options: OptionsOverlay | null = null;
+  private mmService: MatchmakingService | null = null;
+  private analytics: AnalyticsService | null = null;
+  private lobbies: LobbiesOverlay | null = null;
+  private ranked: RankedOverlay | null = null;
+  private streaming: StreamingOverlay | null = null;
+  private replayArchive: ReplayArchiveOverlay | null = null;
+  private reconnect: ReconnectOverlay | null = null;
+  private cinematics: CameraCinematics | null = null;
+  private store: StoreOverlay | null = null;
+  private spectator: SpectatorOverlay | null = null;
+  private cancelTable: CancelTableOverlay | null = null;
+  private roundMgr: RoundManager | null = null;
+  private rematch: RematchOverlay | null = null;
+  private sim: SimService | null = null;
+  private chat: ChatOverlay | null = null;
+  private boxEditor: BoxEditorOverlay | null = null;
+  private _specBound: boolean = false;
+  private partyOverlay: PartyOverlay | null = null;
+  private tournamentOverlay: TournamentOverlay | null = null;
+  private privacy: PrivacyOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -105,6 +172,7 @@ export class GameEngine {
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
     this.services.register('input', this.inputManager);
+    this.services.register('ui', this.uiManager);
     // Config service will be registered during initialize()
     this.preloader = new PreloadManager();
     this.aiManager = new AIManager(this.app);
@@ -134,6 +202,9 @@ export class GameEngine {
     this.services.register('netcode', this.netcode);
     this.services.register('characters', this.characterManager);
     this.services.register('stages', this.stageManager);
+    this.services.register('combat', this.combatSystem);
+    this.services.register('anticheat', this.antiCheat);
+    this.services.register('effects', null as any);
     // expose services for legacy components that pull from app
     (this.app as any)._services = this.services;
 
@@ -362,8 +433,13 @@ export class GameEngine {
       this.updateHandler = (dt: number) => {
         // Ensure input is updated first for deterministic reads
         try { this.inputManager.update(); } catch {}
-        this.pipeline.update(dt);
-        this.stateStack.update(dt);
+        // Pause gating for training
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
+          this.pipeline.update(dt);
+        }
+        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
+          this.stateStack.update(dt);
+        }
         if (!this.debugOverlay && typeof window !== 'undefined') {
           import('./debug/DebugOverlay').then(({ DebugOverlay }) => {
             if (!this.debugOverlay) this.debugOverlay = new DebugOverlay();
@@ -371,6 +447,70 @@ export class GameEngine {
         }
         this.debugOverlay?.update();
         this.debugOverlay?.setTimings(this.pipeline.getTimings());
+        // Netcode
+        try {
+          const net: any = this.services.resolve('netcode');
+          // advance netcode each frame to drive rollback sim when enabled
+          net?.step?.();
+          if (net?.isEnabled?.() && net?.getStats) {
+            this.debugOverlay?.setNetcodeInfo(net.getStats());
+            // Update connection quality badge
+            try {
+              const st = net.getStats();
+              const rtt = st?.rtt ?? 0; const jitter = st?.jitter ?? 0; const loss = st?.loss ?? 0;
+              let grade = 'A';
+              if (rtt > 120 || jitter > 30 || (loss|0) > 5) grade = 'C';
+              if (rtt > 200 || jitter > 50 || (loss|0) > 10) grade = 'D';
+              if (rtt > 280 || jitter > 80 || (loss|0) > 15) grade = 'F';
+              let el = document.getElementById('net-quality');
+              if (!el) {
+                el = document.createElement('div'); el.id = 'net-quality'; el.style.position = 'fixed'; el.style.right = '8px'; el.style.top = '8px'; el.style.zIndex = '10001'; el.style.padding = '4px 6px'; el.style.borderRadius = '4px'; el.style.font = '12px system-ui'; document.body.appendChild(el);
+              }
+              (el as any).textContent = `Link: ${grade}`;
+              (el as any).style.background = grade === 'A' ? 'rgba(40,180,80,0.8)' : grade === 'C' ? 'rgba(180,150,40,0.8)' : grade === 'D' ? 'rgba(200,100,40,0.8)' : 'rgba(200,60,60,0.8)';
+              (el as any).style.color = '#fff';
+            } catch {}
+          }
+        } catch {}
+        // Deterministic SFX flush
+        try { (this.sfx as any)?.flushScheduled?.(this.combatSystem.getCurrentFrame()); } catch {}
+        // Replay
+        try { this.replay?.update(); } catch {}
+        // Anti-cheat monitor surface
+        try {
+          const ac: any = this.services.resolve('anticheat');
+          this.debugOverlay?.setCheatAlerts(ac?.getReports?.() || []);
+        } catch {}
+        // Determinism status surface
+        try {
+          const det: any = this.services.resolve('det');
+          const last = det?.getLastValidatedFrame?.() ?? -1;
+          const mis = det?.getLastMismatchFrame?.() ?? -1;
+          this.debugOverlay?.setDeterminism(last, mis < 0 || mis < last);
+        } catch {}
+        try { const ac: any = this.services.resolve('anticheat'); ac?.heartbeat?.(); } catch {}
+      // Example: KO cinematic trigger
+      try {
+        const combat: any = this.services.resolve('combat');
+        if (combat?.wasRecentKO?.() && !this.cinematics) {
+          this.cinematics = new CameraCinematics(this.app);
+          this.cinematics.koCinematic();
+        }
+      } catch {}
+      // Spectator controls
+      try {
+        const spec: any = this.services.resolve('spectate');
+        if (!this._specBound) {
+          spec?.on?.((e: any) => {
+            try {
+              const tr: any = (this.app as any)._training;
+              if (e?.ctrl === 'pause') tr?.setPaused?.(true);
+              if (e?.ctrl === 'step') tr?.stepOnce?.();
+            } catch {}
+          });
+          (this as any)._specBound = true;
+        }
+      } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
@@ -379,6 +519,83 @@ export class GameEngine {
       // Safety: ensure loading overlay is hidden even if caller forgets
       try { LoadingOverlay.complete(); } catch {}
       try { setTimeout(() => { try { LoadingOverlay.complete(true); } catch {} }, 1000); } catch {}
+
+      // Initialize overlays/services
+      try { this.trainingOverlay = new TrainingOverlay(this.app); (this.app as any)._training = this.trainingOverlay; } catch {}
+      try { this.netplayOverlay = new NetplayOverlay(this.app); } catch {}
+      try { this.replay = new ReplayService(this.inputManager, this.combatSystem); this.services.register('replay', this.replay); } catch {}
+      try { this.matchmaking = new MatchmakingOverlay(); } catch {}
+      try { this.effects = new EffectsOverlay(this.app); } catch {}
+      try { if (this.effects) this.services.register('effects', this.effects); } catch {}
+      try { this.sfx = new SfxService(); this.sfx.preload({ hadoken: '/sfx/hadoken.mp3', hit: '/sfx/hit.mp3', block: '/sfx/block.mp3', parry: '/sfx/parry.mp3', throw: '/sfx/throw.mp3' }); this.services.register('sfx', this.sfx); } catch {}
+      try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
+      try { this.analytics = new AnalyticsService(); this.analytics.setEndpoint(''); this.analytics.startAutoFlush(4000); this.services.register('analytics', this.analytics); } catch {}
+      try { this.mmService = new MatchmakingService(); this.services.register('matchmakingService', this.mmService); } catch {}
+      try { const spectate = new SpectateService(); this.services.register('spectate', spectate); } catch {}
+      try { this.sim = new SimService(); this.services.register('sim', this.sim); } catch {}
+      try { this.chat = new ChatOverlay(); } catch {}
+      try { this.boxEditor = new BoxEditorOverlay(); } catch {}
+      try { const tts = new TtsService(); this.services.register('tts', tts); } catch {}
+      try { this.privacy = new PrivacyOverlay(this.services); } catch {}
+      try { this.services.register('balance', new BalanceVersionService()); } catch {}
+      try { this.services.register('party', new PartyService()); } catch {}
+      try { this.services.register('tournament', new TournamentService()); } catch {}
+      try { const party = this.services.resolve('party'); this.partyOverlay = new PartyOverlay(party); } catch {}
+      try { const tour = this.services.resolve('tournament'); this.tournamentOverlay = new TournamentOverlay(tour); } catch {}
+      try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
+      try {
+        const loader = new ConfigLoader();
+        loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
+        loader.loadJson<any>('/assets/config/projectiles.json').then(cfg => { /* hook for global projectile mods */ }).catch(()=>{});
+      } catch {}
+      try { this.i18n = new I18nService(); const saved = (typeof localStorage !== 'undefined' && localStorage.getItem('locale')) || 'en'; await this.i18n.load(saved); this.services.register('i18n', this.i18n); } catch {}
+      try { this.cmdList = new CommandListOverlay(); this.cmdList.setCommands([{ name: 'Hadoken', input: 'QCF + P' }, { name: 'Shoryuken', input: 'DP + P' }, { name: 'Tatsumaki', input: 'QCB + K' }, { name: 'Sonic Boom', input: 'Charge back, forward + P' }, { name: 'Flash Kick', input: 'Charge down, up + K' }, { name: 'Command Grab', input: '360 + P' }]); } catch {}
+      try { this.options = new OptionsOverlay(this.services); } catch {}
+      try { if (this.mmService) { this.lobbies = new LobbiesOverlay(this.mmService); } } catch {}
+      try { this.ranked = new RankedOverlay(); } catch {}
+      try { this.streaming = new StreamingOverlay(this.app.graphicsDevice.canvas as any); } catch {}
+      try { this.replayArchive = new ReplayArchiveOverlay(); this.services.register('replayArchive', this.replayArchive); } catch {}
+      try { this.reconnect = new ReconnectOverlay(); } catch {}
+      try { this.store = new StoreOverlay(); } catch {}
+      try { this.spectator = new SpectatorOverlay(); } catch {}
+      try { this.cancelTable = new CancelTableOverlay(); } catch {}
+      try {
+        this.roundMgr = new RoundManager(3);
+        // Listen for match victory from combat
+        this.app.on('match:victory', (winnerId: string) => {
+          const res = this.roundMgr!.onVictory(winnerId);
+          if (res.setWon) {
+            // Show rematch UI
+            if (!this.rematch) {
+              const i18n: any = this.services.resolve('i18n');
+              this.rematch = new RematchOverlay(() => this.resetMatch(), () => this.eventBus.emit('state:goto', { state: 'menu' }), i18n || undefined);
+            }
+            this.rematch.show();
+          } else {
+            // Reset round only
+            this.resetRound();
+          }
+        });
+      } catch {}
+      try {
+        const net: any = this.services.resolve('netcode');
+        new TuningOverlay({
+          setLeniency: (ms) => this.inputManager.setMotionLeniency(ms),
+          setVol: (vol) => this.sfx?.setVolume?.(vol),
+          setSocd: (p) => this.inputManager.setSocdPolicy(p),
+          setNegEdge: (ms) => this.inputManager.setNegativeEdgeWindow(ms),
+          setJitterBuffer: (f) => { net?.setJitterBuffer?.(f); net?.applyTransportJitterWindow?.(); },
+          setLocale: async (locale) => { try { await this.i18n?.load(locale); if (typeof localStorage !== 'undefined') localStorage.setItem('locale', locale); } catch {} }
+        });
+      } catch {}
+      // Wire anti-cheat monitors
+      try {
+        const ac: any = this.antiCheat;
+        ac?.monitorInputRate?.(() => this.inputManager.getPressCount());
+        ac?.monitorPhysicsDivergence?.(() => this.combatSystem.getCurrentFrame());
+        const net: any = this.services.resolve('netcode');
+        ac?.monitorRemoteStateSanity?.(() => net?.getStats?.());
+      } catch {}
     } catch (error) {
       Logger.error('Failed to initialize game engine:', error);
       throw error;
@@ -411,5 +628,26 @@ export class GameEngine {
       }
     } catch {}
     Logger.info('Game engine destroyed');
+  }
+  
+  private resetRound(): void {
+    try {
+      const chars: any = this.services.resolve('characters');
+      const list = chars?.getActiveCharacters?.() || [];
+      if (list[0] && list[1]) {
+        const left = new pc.Vec3(-1.2, 0, 0);
+        const right = new pc.Vec3(1.2, 0, 0);
+        list[0].entity.setPosition(left); list[1].entity.setPosition(right);
+        list[0].health = list[0].maxHealth; list[1].health = list[1].maxHealth;
+        list[0].state = 'idle'; list[1].state = 'idle'; list[0].currentMove = list[1].currentMove = null;
+      }
+    } catch {}
+  }
+  
+  private resetMatch(): void {
+    try {
+      this.resetRound();
+      if (this.roundMgr) this.roundMgr.resetRounds();
+    } catch {}
   }
 }

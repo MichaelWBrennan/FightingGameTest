@@ -5,6 +5,8 @@ export interface CheatReport {
 
 export class AntiCheat {
   private reports: CheatReport[] = [];
+  private lastRemoteDesyncFrame: number = -1;
+  private lastHeartbeatAt = 0;
 
   monitorInputRate(getInputCount: () => number): void {
     let lastCount = getInputCount();
@@ -28,6 +30,45 @@ export class AntiCheat {
     }, 2000);
   }
 
+  monitorRemoteStateSanity(getStats: () => { delay?: number; rollbacks?: number; cur?: number; confirmed?: number } | undefined): void {
+    setInterval(() => {
+      try {
+        const st = getStats?.();
+        if (!st) return;
+        if ((st.rollbacks ?? 0) > 120) this.reports.push({ type: 'excessive_rollbacks', details: { rollbacks: st.rollbacks } });
+        if ((st.delay ?? 0) > 8) this.reports.push({ type: 'high_input_delay', details: { delay: st.delay } });
+        if ((st.cur ?? 0) - (st.confirmed ?? 0) > 15) this.reports.push({ type: 'large_prediction_gap', details: { cur: st.cur, confirmed: st.confirmed } });
+      } catch {}
+    }, 1500);
+  }
+
   getReports(): CheatReport[] { return [...this.reports]; }
+  clearReports(): void { this.reports = []; }
+
+  // Tamper/devtools detection (heuristic)
+  monitorDevtools(): void {
+    try {
+      setInterval(() => {
+        const threshold = 160; // ms when devtools throttles timers
+        const start = performance.now(); debugger; const elapsed = performance.now() - start;
+        if (elapsed > threshold) this.reports.push({ type: 'devtools_detected', details: { elapsed } });
+      }, 5000);
+    } catch {}
+  }
+
+  heartbeat(): void {
+    try {
+      const now = Date.now();
+      if (now - this.lastHeartbeatAt < 1000) return;
+      this.lastHeartbeatAt = now;
+      // entropy: userAgent/timezone/platform
+      const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      const plat = typeof navigator !== 'undefined' ? (navigator as any).platform : '';
+      // Fake signature (placeholder); in prod, sign with server
+      const sig = btoa([ua, tz, plat, now].join('|')).slice(0, 24);
+      this.reports.push({ type: 'heartbeat', details: { t: now, sig } });
+    } catch {}
+  }
 }
 

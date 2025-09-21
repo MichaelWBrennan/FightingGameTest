@@ -115,6 +115,17 @@ export interface AttackData {
   properties?: AttackProperties;
   ex?: boolean;
   meterCost?: number;
+  cancels?: string[];
+  projectile?: { speed: number; lifetime: number; width?: number; height?: number };
+  // Juggle rules (optional)
+  juggleStart?: number; // points added on first launch
+  juggleAdd?: number;   // points added on subsequent hits
+  juggleLimit?: number; // max juggle points allowed before scaling/whiff
+  bounce?: {
+    type: 'wall' | 'ground' | 'both';
+    strength: number; // 0..1 multiplier for bounce velocity
+  };
+  juggleScaling?: number[]; // optional per-juggle scaling factors, e.g., [1,0.8,0.6,0.4]
 }
 
 export interface AttackProperties {
@@ -179,9 +190,11 @@ export interface Character {
   health: number;
   maxHealth?: number;
   meter: number;
-  state: 'idle' | 'walking' | 'attacking' | 'ko';
+  state: 'idle' | 'walking' | 'attacking' | 'hitstun' | 'blockstun' | 'ko';
   currentMove: null | { name: string; data: AttackData; currentFrame: number; phase: 'startup' | 'active' | 'recovery' };
   frameData: { startup: number; active: number; recovery: number; advantage: number };
+  facing: 1 | -1;
+  guardMeter?: number;
 }
 
 export interface CharacterConfig extends CharacterData {}
