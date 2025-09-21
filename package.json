@@ -12,6 +12,7 @@
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
     "preview": "node -e \"require('ts-node/register');require('./tools/dev_server.ts')\"",
+    "ci:check": "npm run lint && npm run typecheck && npm run build",
     "import:sf3": "node ./tools/import_sf3_char_data.js && npm run build",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "test": "jest",
