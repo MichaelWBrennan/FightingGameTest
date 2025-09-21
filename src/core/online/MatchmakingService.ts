@@ -7,7 +7,9 @@ export class MatchmakingService {
   private profile: PlayerProfile;
   private lobbies: Map<string, Lobby> = new Map();
   private listeners: Array<(e: any) => void> = [];
-  private placementsRemaining = 5;
+  // Bayesian (Beta) rating: alpha/beta represent wins/losses with priors
+  private ratingAlpha = 1;
+  private ratingBeta = 1;
 
   constructor() {
     const id = (Math.random().toString(36).slice(2, 10));
@@ -44,17 +46,25 @@ export class MatchmakingService {
   // MMR updates (stub)
   reportMatch(won: boolean): void { const delta = won ? 15 : -10; this.profile.mmr = Math.max(0, this.profile.mmr + delta); this.emit({ t: 'mmr', mmr: this.profile.mmr }); }
 
-  // Simple Elo update with optional opponent mmr; placement matches have larger K
-  reportMatchVs(opponentMmr: number, won: boolean): void {
+  // Bayesian updates (Beta): alpha/beta accumulate outcomes; opponent can weight via reliability
+  reportMatchBayes(won: boolean, opponentReliability: number = 1): void {
+    const w = Math.max(0.25, Math.min(2.0, opponentReliability));
+    if (won) this.ratingAlpha += w; else this.ratingBeta += w;
+    this.updateMmrFromBayes();
+  }
+  reportMatchVs(opponentMmr: number, won: boolean, opponentReliability: number = 1): void {
+    // Map opponent mmr to a reliability heuristic (closer to our mmr => higher info)
     const my = this.profile.mmr || 1000;
-    const opp = Math.max(1, opponentMmr | 0);
-    const expected = 1 / (1 + Math.pow(10, (opp - my) / 400));
-    const score = won ? 1 : 0;
-    const K = this.placementsRemaining > 0 ? 64 : 24;
-    const next = Math.round(my + K * (score - expected));
-    this.profile.mmr = Math.max(0, next);
-    if (this.placementsRemaining > 0) this.placementsRemaining--;
-    this.emit({ t: 'mmr', mmr: this.profile.mmr, placements: this.placementsRemaining });
+    const gap = Math.abs(opponentMmr - my);
+    const rel = Math.max(0.25, Math.min(2.0, 1.5 - Math.min(1.0, gap / 600)));
+    this.reportMatchBayes(won, (opponentReliability || 1) * rel);
+  }
+  private updateMmrFromBayes(): void {
+    const a = Math.max(1e-6, this.ratingAlpha);
+    const b = Math.max(1e-6, this.ratingBeta);
+    const mean = a / (a + b); // expected win probability
+    this.profile.mmr = Math.round(1000 * mean);
+    this.emit({ t: 'mmr', mmr: this.profile.mmr, bayes: { alpha: a, beta: b } });
   }
 }
 
