@@ -5,6 +5,7 @@ import { Logger } from '../utils/Logger';
 import { PreloadManager } from '../utils/PreloadManager';
 import { DecompDataService } from '../utils/DecompDataService';
 import { ProceduralFrameGenerator } from '../procgen/ProceduralFrameGenerator';
+import { MoveValidator } from '../utils/MoveValidator';
 
 export class CharacterManager {
   private app: pc.Application;
@@ -14,6 +15,7 @@ export class CharacterManager {
   private preloader: PreloadManager | null = null;
   private frameGen: ProceduralFrameGenerator = new ProceduralFrameGenerator();
   private decomp: DecompDataService | null = null;
+  private validator: MoveValidator = new MoveValidator();
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -86,6 +88,7 @@ export class CharacterManager {
         for (const key of keys) {
           try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] db entry ${key}`, 'debug'); } catch {}
           let cfg = this.normalizeCharacterConfig(db[key] as CharacterConfig);
+          try { this.validateConfig(cfg); } catch {}
           cfg = this.frameGen.generateForCharacter(cfg);
           this.characterConfigs.set(key, cfg);
           processed++;
@@ -111,6 +114,7 @@ export class CharacterManager {
         try { (await import('../ui/LoadingOverlay')).LoadingOverlay.log(`[characters] fetching /data/characters/${name}.json`, 'info'); } catch {}
         const rawConfig: CharacterConfig = await fetchJson(`/data/characters/${name}.json`);
         let config = this.normalizeCharacterConfig(rawConfig);
+        try { this.validateConfig(config); } catch {}
         config = this.frameGen.generateForCharacter(config);
         this.characterConfigs.set(name, config);
         Logger.info(`Loaded character config: ${name}`);
@@ -214,6 +218,19 @@ export class CharacterManager {
     } as CharacterConfig as any;
 
     return normalized;
+  }
+
+  private validateConfig(config: CharacterConfig): void {
+    try {
+      const movesObj: any = (config as any).moves || {};
+      const moves = Object.keys(movesObj).map(k => ({ name: k, startup: movesObj[k]?.startup, active: movesObj[k]?.active, recovery: movesObj[k]?.recovery, cancel: movesObj[k]?.cancels }));
+      const res = this.validator.validate(moves);
+      if (!res.ok) {
+        for (const err of res.errors) {
+          Logger.warn(`[move-validate] ${config.characterId || config.name}: ${err}`);
+        }
+      }
+    } catch {}
   }
 
   public createCharacter(characterId: string, position: pc.Vec3): Character | null {

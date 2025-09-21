@@ -5,6 +5,7 @@ export class TrainingOverlay {
   private container: HTMLDivElement;
   private inputLabel: HTMLDivElement;
   private statsLabel: HTMLDivElement | null = null;
+  private frameDataLabel: HTMLDivElement | null = null;
   private hitboxToggle = false;
   private paused = false;
   private hitboxLayer: HTMLCanvasElement | null = null;
@@ -32,6 +33,7 @@ export class TrainingOverlay {
     this.container.appendChild(this.inputLabel);
     this.statsLabel = document.createElement('div');
     this.container.appendChild(this.statsLabel);
+    this.frameDataLabel = document.createElement('div'); this.container.appendChild(this.frameDataLabel);
     this.modeLabel = document.createElement('div');
     this.modeLabel.textContent = 'Dummy: idle';
     this.container.appendChild(this.modeLabel);
@@ -90,6 +92,11 @@ export class TrainingOverlay {
       const p1 = p[0], p2 = p[1];
       const hs = combat?.isInHistop?.() ? 'H' : '';
       this.statsLabel.textContent = `F:${frame}${hs}  P1:${p1?.health ?? '?'}  P2:${p2?.health ?? '?'}`;
+      if (this.frameDataLabel && p1) {
+        const move = p1.currentMove; const name = move?.name || 'idle';
+        const fd = p1.frameData || { startup: 0, active: 0, recovery: 0, advantage: 0 };
+        this.frameDataLabel.textContent = `P1 Move: ${name}  S:${fd.startup} A:${fd.active} R:${fd.recovery} Adv:${fd.advantage}`;
+      }
     } catch {}
   }
 
