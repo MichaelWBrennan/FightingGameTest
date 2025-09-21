@@ -36,6 +36,10 @@ export class OptionsOverlay {
     scale.oninput = () => { try { document.documentElement.style.setProperty('--ui-scale', (parseInt(scale.value,10)/100).toString()); } catch {} };
     row('UI scale', scale);
 
+    // High contrast
+    const hc = document.createElement('input'); hc.type = 'checkbox'; hc.onchange = () => { try { document.body.classList.toggle('hc', hc.checked); } catch {} };
+    row('High contrast', hc);
+
     const btn = document.createElement('button'); btn.textContent = 'Options (F2)'; btn.style.position = 'fixed'; btn.style.left = '8px'; btn.style.bottom = '8px'; btn.style.zIndex = '10004'; btn.onclick = () => this.toggle(); document.body.appendChild(btn);
     document.body.appendChild(this.container);
     window.addEventListener('keydown', (e) => { if (e.key === 'F2') this.toggle(); });

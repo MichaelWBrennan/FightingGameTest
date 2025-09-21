@@ -65,6 +65,9 @@ import { ChatOverlay } from './ui/ChatOverlay';
 import { BoxEditorOverlay } from './ui/BoxEditorOverlay';
 import { TtsService } from './utils/TtsService';
 import { PrivacyOverlay } from './ui/PrivacyOverlay';
+import { BalanceVersionService } from './utils/BalanceVersionService';
+import { PartyService } from './online/PartyService';
+import { TournamentService } from './online/TournamentService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -529,6 +532,9 @@ export class GameEngine {
       try { this.boxEditor = new BoxEditorOverlay(); } catch {}
       try { const tts = new TtsService(); this.services.register('tts', tts); } catch {}
       try { this.privacy = new PrivacyOverlay(this.services); } catch {}
+      try { this.services.register('balance', new BalanceVersionService()); } catch {}
+      try { this.services.register('party', new PartyService()); } catch {}
+      try { this.services.register('tournament', new TournamentService()); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
         const loader = new ConfigLoader();

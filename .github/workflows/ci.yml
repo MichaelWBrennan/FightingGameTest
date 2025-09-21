@@ -21,6 +21,14 @@ jobs:
         run: |
           echo "Determinism test stubs"
           node -e "console.log('determinism ok')"
+      - name: Simple Node determinism script
+        run: |
+          node - << 'EOF'
+          const frames = 120, seed = 42; let s = 0; function rnd(){ const x = Math.sin(seed + s++) * 10000; return x - Math.floor(x) }
+          let checksum = 0; for (let i=0;i<frames;i++){ const a = Math.floor(rnd()*1000); const b = Math.floor(rnd()*1000); checksum = (checksum + ((a*31) ^ (b*17))) >>> 0 }
+          console.log('checksum', checksum)
+          process.exit(0)
+          EOF
       - name: Rollback regression stubs
         run: |
           echo "Rollback regression stubs"
