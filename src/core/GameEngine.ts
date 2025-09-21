@@ -157,6 +157,7 @@ export class GameEngine {
     this.services.register('events', this.eventBus);
     this.services.register('flags', this.featureFlags);
     this.services.register('input', this.inputManager);
+    this.services.register('ui', this.uiManager);
     // Config service will be registered during initialize()
     this.preloader = new PreloadManager();
     this.aiManager = new AIManager(this.app);
@@ -438,6 +439,22 @@ export class GameEngine {
           net?.step?.();
           if (net?.isEnabled?.() && net?.getStats) {
             this.debugOverlay?.setNetcodeInfo(net.getStats());
+            // Update connection quality badge
+            try {
+              const st = net.getStats();
+              const rtt = st?.rtt ?? 0; const jitter = st?.jitter ?? 0; const loss = st?.loss ?? 0;
+              let grade = 'A';
+              if (rtt > 120 || jitter > 30 || (loss|0) > 5) grade = 'C';
+              if (rtt > 200 || jitter > 50 || (loss|0) > 10) grade = 'D';
+              if (rtt > 280 || jitter > 80 || (loss|0) > 15) grade = 'F';
+              let el = document.getElementById('net-quality');
+              if (!el) {
+                el = document.createElement('div'); el.id = 'net-quality'; el.style.position = 'fixed'; el.style.right = '8px'; el.style.top = '8px'; el.style.zIndex = '10001'; el.style.padding = '4px 6px'; el.style.borderRadius = '4px'; el.style.font = '12px system-ui'; document.body.appendChild(el);
+              }
+              (el as any).textContent = `Link: ${grade}`;
+              (el as any).style.background = grade === 'A' ? 'rgba(40,180,80,0.8)' : grade === 'C' ? 'rgba(180,150,40,0.8)' : grade === 'D' ? 'rgba(200,100,40,0.8)' : 'rgba(200,60,60,0.8)';
+              (el as any).style.color = '#fff';
+            } catch {}
           }
         } catch {}
         // Deterministic SFX flush
