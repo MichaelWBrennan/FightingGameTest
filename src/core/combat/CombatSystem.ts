@@ -92,42 +92,42 @@ export class CombatSystem {
 
   private updateAirbornePhysics(): void {
     const list = this.characterManager.getActiveCharacters();
-    const gravity = this.gravity;
-    const bounce = this.bounceFactor;
-    for (const ch of list) {
-      const airborne = (ch as any)._airborne === true;
-      if (!airborne) continue;
-      const velY = (ch as any)._velY ?? 0;
-      const velX = (ch as any)._velX ?? 0;
-      let vy = velY - gravity;
-      let vx = velX * this.airFriction;
-      const pos = ch.entity.getPosition().clone();
-      pos.y += vy;
-      pos.x += vx;
-      if (pos.x + this.pushboxHalfWidth >= this.stageBounds.right) {
-        pos.x = this.stageBounds.right - this.pushboxHalfWidth;
-        vx = -Math.abs(vx) * bounce;
-        this.pulseCamera(120, 0.92);
-      } else if (pos.x - this.pushboxHalfWidth <= this.stageBounds.left) {
-        pos.x = this.stageBounds.left + this.pushboxHalfWidth;
-        vx = Math.abs(vx) * bounce;
-        this.pulseCamera(120, 0.92);
+    const airborneEntries: Array<{ idx: number; x: number; y: number; vx: number; vy: number }> = [];
+    for (let i = 0; i < list.length; i++) {
+      const ch = list[i];
+      if ((ch as any)._airborne === true) {
+        const pos = ch.entity.getPosition();
+        airborneEntries.push({ idx: i, x: pos.x, y: pos.y, vx: (ch as any)._velX ?? 0, vy: (ch as any)._velY ?? 0 });
       }
-      if (pos.y <= 0) {
-        pos.y = 0;
-        if (Math.abs(vy) > 0.08) {
-          vy = -vy * bounce;
-          this.pulseCamera(120, 0.94);
-        } else {
-          vy = 0;
-          (ch as any)._airborne = false;
-          (ch as any)._jugglePoints = Math.max(0, ((ch as any)._jugglePoints || 0) - 2);
-          ch.state = 'idle';
+    }
+    try {
+      const sim: any = (this.app as any)._services?.resolve?.('sim');
+      if (sim && airborneEntries.length) {
+        const res = sim.computeAirborne(airborneEntries.map(e => ({ x: e.x, y: e.y, vx: e.vx, vy: e.vy })));
+        for (let j = 0; j < res.length; j++) {
+          const out = res[j]; const idx = airborneEntries[j].idx; const ch = list[idx];
+          const p = ch.entity.getPosition().clone(); p.x = out.x; p.y = out.y; ch.entity.setPosition(p);
+          (ch as any)._velX = out.vx; (ch as any)._velY = out.vy;
+          if (out.grounded) {
+            (ch as any)._airborne = false;
+            (ch as any)._jugglePoints = Math.max(0, ((ch as any)._jugglePoints || 0) - 2);
+            ch.state = 'idle';
+          }
         }
+        return;
       }
-      (ch as any)._velY = vy;
-      (ch as any)._velX = vx;
-      ch.entity.setPosition(pos);
+    } catch {}
+    // Fallback local integration
+    const gravity = this.gravity; const bounce = this.bounceFactor;
+    for (const ch of list) {
+      if ((ch as any)._airborne !== true) continue;
+      const velY = (ch as any)._velY ?? 0; const velX = (ch as any)._velX ?? 0;
+      let vy = velY - gravity; let vx = velX * this.airFriction;
+      const pos = ch.entity.getPosition().clone(); pos.y += vy; pos.x += vx;
+      if (pos.x + this.pushboxHalfWidth >= this.stageBounds.right) { pos.x = this.stageBounds.right - this.pushboxHalfWidth; vx = -Math.abs(vx) * bounce; this.pulseCamera(120, 0.92); }
+      else if (pos.x - this.pushboxHalfWidth <= this.stageBounds.left) { pos.x = this.stageBounds.left + this.pushboxHalfWidth; vx = Math.abs(vx) * bounce; this.pulseCamera(120, 0.92); }
+      if (pos.y <= 0) { pos.y = 0; if (Math.abs(vy) > 0.08) { vy = -vy * bounce; this.pulseCamera(120, 0.94); } else { vy = 0; (ch as any)._airborne = false; (ch as any)._jugglePoints = Math.max(0, ((ch as any)._jugglePoints || 0) - 2); ch.state = 'idle'; } }
+      (ch as any)._velY = vy; (ch as any)._velX = vx; ch.entity.setPosition(pos);
     }
   }
 

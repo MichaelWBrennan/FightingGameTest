@@ -19,3 +19,9 @@ jobs:
       - name: Determinism tests
         run: |
           echo "Determinism test stubs"
+      - name: Rollback regression stubs
+        run: |
+          echo "Rollback regression stubs"
+      - name: Fuzz harness stubs
+        run: |
+          echo "Latency/jitter fuzz harness stubs"
