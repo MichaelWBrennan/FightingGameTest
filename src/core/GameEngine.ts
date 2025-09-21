@@ -60,6 +60,7 @@ import { CancelTableOverlay } from './ui/CancelTableOverlay';
 import { RoundManager } from './match/RoundManager';
 import { RematchOverlay } from './ui/RematchOverlay';
 import { SpectateService } from './online/SpectateService';
+import { SimService } from './sim/SimService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -114,6 +115,7 @@ export class GameEngine {
   private cancelTable: CancelTableOverlay | null = null;
   private roundMgr: RoundManager | null = null;
   private rematch: RematchOverlay | null = null;
+  private sim: SimService | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -483,6 +485,7 @@ export class GameEngine {
       try { this.analytics = new AnalyticsService(); this.analytics.setEndpoint(''); this.analytics.startAutoFlush(4000); this.services.register('analytics', this.analytics); } catch {}
       try { this.mmService = new MatchmakingService(); this.services.register('matchmakingService', this.mmService); } catch {}
       try { const spectate = new SpectateService(); this.services.register('spectate', spectate); } catch {}
+      try { this.sim = new SimService(); this.services.register('sim', this.sim); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
         const loader = new ConfigLoader();

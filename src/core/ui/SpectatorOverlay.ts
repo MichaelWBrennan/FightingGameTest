@@ -9,6 +9,18 @@ export class SpectatorOverlay {
     this.timeline = document.createElement('div'); this.timeline.style.width = '420px'; this.timeline.style.height = '6px'; this.timeline.style.background = 'rgba(255,255,255,0.2)'; this.timeline.style.borderRadius = '3px';
     this.container.appendChild(this.timeline);
     document.body.appendChild(this.container);
+    // Listen to remote spectate events (if any)
+    try {
+      const services: any = (window as any)._services || (window as any).pc?.Application?.getApplication?._services;
+      const spectate = services?.resolve?.('spectate');
+      spectate?.on?.((e: any) => {
+        if (!e || typeof e !== 'object') return;
+        if (typeof e.t === 'number' && e.kind) {
+          const total = Math.max(1, e.t);
+          this.setMarkers([{ t: 1, kind: e.kind }]);
+        }
+      });
+    } catch {}
     setInterval(() => this.pull(), 500);
   }
   setMarkers(events: Array<{ t: number; kind: string }>): void {
