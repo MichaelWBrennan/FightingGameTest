@@ -57,6 +57,8 @@ import { CameraCinematics } from './camera/Cinematics';
 import { StoreOverlay } from './ui/StoreOverlay';
 import { SpectatorOverlay } from './ui/SpectatorOverlay';
 import { CancelTableOverlay } from './ui/CancelTableOverlay';
+import { RoundManager } from './match/RoundManager';
+import { RematchOverlay } from './ui/RematchOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -109,6 +111,8 @@ export class GameEngine {
   private store: StoreOverlay | null = null;
   private spectator: SpectatorOverlay | null = null;
   private cancelTable: CancelTableOverlay | null = null;
+  private roundMgr: RoundManager | null = null;
+  private rematch: RematchOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -495,6 +499,21 @@ export class GameEngine {
       try { this.spectator = new SpectatorOverlay(); } catch {}
       try { this.cancelTable = new CancelTableOverlay(); } catch {}
       try {
+        this.roundMgr = new RoundManager(3);
+        // Listen for match victory from combat
+        this.app.on('match:victory', (winnerId: string) => {
+          const res = this.roundMgr!.onVictory(winnerId);
+          if (res.setWon) {
+            // Show rematch UI
+            if (!this.rematch) this.rematch = new RematchOverlay(() => this.resetMatch(), () => this.eventBus.emit('state:goto', { state: 'menu' }));
+            this.rematch.show();
+          } else {
+            // Reset round only
+            this.resetRound();
+          }
+        });
+      } catch {}
+      try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({
           setLeniency: (ms) => this.inputManager.setMotionLeniency(ms),
@@ -545,5 +564,26 @@ export class GameEngine {
       }
     } catch {}
     Logger.info('Game engine destroyed');
+  }
+  
+  private resetRound(): void {
+    try {
+      const chars: any = this.services.resolve('characters');
+      const list = chars?.getActiveCharacters?.() || [];
+      if (list[0] && list[1]) {
+        const left = new pc.Vec3(-1.2, 0, 0);
+        const right = new pc.Vec3(1.2, 0, 0);
+        list[0].entity.setPosition(left); list[1].entity.setPosition(right);
+        list[0].health = list[0].maxHealth; list[1].health = list[1].maxHealth;
+        list[0].state = 'idle'; list[1].state = 'idle'; list[0].currentMove = list[1].currentMove = null;
+      }
+    } catch {}
+  }
+  
+  private resetMatch(): void {
+    try {
+      this.resetRound();
+      if (this.roundMgr) this.roundMgr.resetRounds();
+    } catch {}
   }
 }
