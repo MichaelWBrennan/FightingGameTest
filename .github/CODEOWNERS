@@ -1,0 +1,11 @@
+# Default owners
+* @your-org/game-core-team
+
+# Backend services
+/src/backend/ @your-org/backend-team
+
+# Client SDK
+/src/client/ @your-org/client-sdk-team
+
+# Core runtime
+/src/core/ @your-org/game-core-team
