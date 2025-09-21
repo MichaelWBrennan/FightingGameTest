@@ -507,7 +507,10 @@ export class GameEngine {
           const res = this.roundMgr!.onVictory(winnerId);
           if (res.setWon) {
             // Show rematch UI
-            if (!this.rematch) this.rematch = new RematchOverlay(() => this.resetMatch(), () => this.eventBus.emit('state:goto', { state: 'menu' }));
+            if (!this.rematch) {
+              const i18n: any = this.services.resolve('i18n');
+              this.rematch = new RematchOverlay(() => this.resetMatch(), () => this.eventBus.emit('state:goto', { state: 'menu' }), i18n || undefined);
+            }
             this.rematch.show();
           } else {
             // Reset round only

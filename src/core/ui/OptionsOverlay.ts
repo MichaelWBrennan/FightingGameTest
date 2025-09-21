@@ -31,6 +31,11 @@ export class OptionsOverlay {
     const badge = document.createElement('input'); badge.type = 'checkbox'; badge.checked = true; badge.onchange = () => { const el = document.getElementById('net-quality'); if (el) el.style.display = badge.checked ? 'block' : 'none'; };
     row(i18n?.t?.('show_connection_badge') || 'Show connection badge', badge);
 
+    // UI scale / text size
+    const scale = document.createElement('input'); scale.type = 'range'; scale.min = '80'; scale.max = '130'; scale.value = '100';
+    scale.oninput = () => { try { document.documentElement.style.setProperty('--ui-scale', (parseInt(scale.value,10)/100).toString()); } catch {} };
+    row('UI scale', scale);
+
     const btn = document.createElement('button'); btn.textContent = 'Options (F2)'; btn.style.position = 'fixed'; btn.style.left = '8px'; btn.style.bottom = '8px'; btn.style.zIndex = '10004'; btn.onclick = () => this.toggle(); document.body.appendChild(btn);
     document.body.appendChild(this.container);
     window.addEventListener('keydown', (e) => { if (e.key === 'F2') this.toggle(); });
