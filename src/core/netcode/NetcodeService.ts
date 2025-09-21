@@ -22,6 +22,8 @@ export class NetcodeService {
   private snapshots: Map<number, { frame: number; checksum: number; buf: ArrayBuffer }> = new Map();
   private encoder: TextEncoder = new TextEncoder();
   private decoder: TextDecoder = new TextDecoder();
+  private iceList: RTCIceServer[] | null = null;
+  private iceIndex = 0;
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
@@ -36,7 +38,8 @@ export class NetcodeService {
 
   enableWebRTC(signaling: { send(s: any): void; on(cb: (s: any) => void): void }, isOfferer: boolean, ice?: RTCIceServer[], psk?: string): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
-    const rtc = new WebRTCTransport(isOfferer, signaling, ice);
+    if (ice && ice.length) { this.iceList = ice.slice(); this.iceIndex = 0; }
+    const rtc = new WebRTCTransport(isOfferer, signaling, (this.iceList && this.iceList.length) ? [this.iceList[this.iceIndex]] : ice);
     try { if (psk) (rtc as any).setPreSharedKey?.(psk); } catch {}
     this.netcode = new RollbackNetcode(adapter, rtc, 2, 12);
     this.enabled = true;
@@ -49,7 +52,13 @@ export class NetcodeService {
           let attempts = 0;
           const tick = () => {
             attempts++;
-            try { (rtc as any).restartIce?.(); } catch {}
+            try {
+              // rotate TURN config
+              if (this.iceList && this.iceList.length) {
+                this.iceIndex = (this.iceIndex + 1) % this.iceList.length;
+              }
+              (rtc as any).restartIce?.();
+            } catch {}
             if (attempts < 5) setTimeout(tick, Math.min(5000, 500 * attempts));
           };
           setTimeout(tick, 300);

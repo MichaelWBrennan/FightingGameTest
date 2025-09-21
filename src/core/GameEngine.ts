@@ -59,6 +59,7 @@ import { SpectatorOverlay } from './ui/SpectatorOverlay';
 import { CancelTableOverlay } from './ui/CancelTableOverlay';
 import { RoundManager } from './match/RoundManager';
 import { RematchOverlay } from './ui/RematchOverlay';
+import { SpectateService } from './online/SpectateService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -481,6 +482,7 @@ export class GameEngine {
       try { this.det = new DeterminismService(); this.services.register('det', this.det); } catch {}
       try { this.analytics = new AnalyticsService(); this.analytics.setEndpoint(''); this.analytics.startAutoFlush(4000); this.services.register('analytics', this.analytics); } catch {}
       try { this.mmService = new MatchmakingService(); this.services.register('matchmakingService', this.mmService); } catch {}
+      try { const spectate = new SpectateService(); this.services.register('spectate', spectate); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
         const loader = new ConfigLoader();

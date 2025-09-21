@@ -525,6 +525,8 @@ export class CombatSystem {
       const frame = this.getCurrentFrame();
       if (sfx?.playDeterministic) sfx.playDeterministic(`hit_${attacker.id}_${defender.id}`, frame, 'hit'); else sfx?.play?.('hit');
       sfx?.vibrate?.(25);
+      // Broadcast spectator event
+      try { const spec: any = (this.app as any)._services?.resolve?.('spectate'); spec?.broadcast?.({ t: frame, kind: 'hit' }); } catch {}
     } catch {}
 
     // Increment juggle points based on move data and decay later
@@ -672,6 +674,7 @@ export class CombatSystem {
     this.app.fire('match:victory', winner.id);
     try { this.timeline.push({ t: this.frameCounter, kind: 'ko', data: { a: winner.id, d: ko.id } }); } catch {}
     this.recentKOFlag = true;
+    try { const spec: any = (this.app as any)._services?.resolve?.('spectate'); spec?.broadcast?.({ t: this.frameCounter, kind: 'ko' }); } catch {}
   }
 
   public getCurrentFrame(): number {
