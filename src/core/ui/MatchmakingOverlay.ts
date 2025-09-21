@@ -63,6 +63,10 @@ export class MatchmakingOverlay {
             const signaling = new BroadcastSignaling(m.session);
             const ice = [ { urls: ['stun:stun.l.google.com:19302'] } ] as any;
             net?.enableWebRTC(signaling, m.host, ice);
+            // Hook victory to MMR update
+            window.addEventListener('match:victory', ((e: any) => {
+              try { const mms = services?.resolve?.('matchmakingService'); const me = m.host ? 'host' : 'join'; const won = true; mms?.reportMatch?.(won); } catch {}
+            }) as any, { once: true } as any);
           } catch {}
         }).catch(() => {});
       } catch {}

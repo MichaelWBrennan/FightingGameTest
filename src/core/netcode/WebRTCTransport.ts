@@ -25,6 +25,7 @@ export class WebRTCTransport implements Transport {
 
   public onRemoteInput?: (frame: number, bits: number) => void;
   public onCtrlMessage?: (msg: any) => void;
+  public onConnectionStateChange?: (state: string) => void;
   private key?: CryptoKey;
   private outQueue: RTCMsg[] = [];
   private drainTimer?: any;
@@ -38,6 +39,7 @@ export class WebRTCTransport implements Transport {
     this.pc.onicecandidate = (e) => { if (e.candidate) this.signaling.send({ ice: e.candidate }); };
     this.pc.oniceconnectionstatechange = () => {
       const st = this.pc.iceConnectionState;
+      this.onConnectionStateChange?.(st);
       if (st === 'failed' || st === 'disconnected') {
         this.tryReconnect();
       }
@@ -308,7 +310,7 @@ export class WebRTCTransport implements Transport {
   }
 
   connect(): void {}
-  disconnect(): void { try { this.closed = true; if (this.pingTimer) clearInterval(this.pingTimer); this.dc?.close(); this.pc.close(); } catch {} }
+  disconnect(): void { try { this.closed = true; if (this.pingTimer) clearInterval(this.pingTimer); this.dc?.close(); this.reliable?.close(); this.pc.close(); } catch {} }
   sendLocalInput(frame: number, bits: number): void { this.send({ t: 'i', f: frame, b: bits }); }
   getRttMs(): number { return this.rttMs; }
   getJitterMs(): number { return this.jitterMs; }

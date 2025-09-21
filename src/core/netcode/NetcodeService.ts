@@ -43,6 +43,20 @@ export class NetcodeService {
     this.netcode.start();
     try { (rtc as any).sendClockProbe?.(); } catch {}
     try {
+      (rtc as any).onConnectionStateChange = (st: string) => {
+        // Backoff/restart strategy
+        if (st === 'failed' || st === 'disconnected') {
+          let attempts = 0;
+          const tick = () => {
+            attempts++;
+            try { (rtc as any).restartIce?.(); } catch {}
+            if (attempts < 5) setTimeout(tick, Math.min(5000, 500 * attempts));
+          };
+          setTimeout(tick, 300);
+        }
+      };
+    } catch {}
+    try {
       (rtc as any).onCtrlMessage = (m: any) => {
         if (!m || typeof m !== 'object') return;
         if (m.t === 'resync_req') {

@@ -84,7 +84,11 @@ export class LobbiesOverlay {
 
     // Listen to service events
     this.svc.on(() => this.refresh());
-    try { (window as any).addEventListener('message', (e: MessageEvent) => { const m = e.data; if (m?.t === 'lobby_invite' && this.invitesEl) this.renderInvite(m); }); } catch {}
+    try {
+      (import('../online/InvitesService')).then(({ InvitesService }) => {
+        try { const inv = new InvitesService(); inv.on((m: any) => { if (m?.t === 'invite' && this.invitesEl) this.renderInvite({ from: m.from, lobby: m.lobby }); }); (this as any)._invites = inv; } catch {}
+      }).catch(()=>{});
+    } catch {}
     window.addEventListener('keydown', (e) => { if (e.key === 'F7') this.toggle(); });
 
     this.refresh();
@@ -130,9 +134,10 @@ export class LobbiesOverlay {
 
   private sendInvite(friendId: string): void {
     try {
-      // Local broadcast as a stub for invites
       const p = this.svc.getProfile();
-      window.postMessage({ t: 'lobby_invite', from: p.id, to: friendId, lobby: (this.svc.listLobbies(p.region)[0]?.id || null) }, '*');
+      const lobbyId = (this.svc.listLobbies(p.region)[0]?.id || null);
+      const inv: any = (this as any)._invites;
+      inv?.sendInvite(friendId, p.id, lobbyId);
       this.track('invite_send', { to: friendId });
     } catch {}
   }

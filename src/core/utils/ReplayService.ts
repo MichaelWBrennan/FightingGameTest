@@ -35,10 +35,13 @@ export class ReplayService {
   }
 
   play(data: ReplayData): void {
-    this.playing = true;
-    this.recording = false;
-    this.buffer = data.frames || [];
-    this.playIndex = 0;
+    // Deterministic validation: frame sequence must be increasing by 1
+    try {
+      for (let i = 1; i < data.frames.length; i++) {
+        if (data.frames[i].f !== data.frames[i-1].f + 1) { console.warn('[replay] non-sequential frame', data.frames[i-1].f, '->', data.frames[i].f); break; }
+      }
+    } catch {}
+    this.playing = true; this.recording = false; this.buffer = data.frames || []; this.playIndex = 0;
   }
 
   stopPlayback(): void { this.playing = false; }
