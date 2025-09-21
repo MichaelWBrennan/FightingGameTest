@@ -30,6 +30,8 @@ export class CombatSystem {
   private airFriction = 0.98;
   private projectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
   private freeProjectiles: Array<{ x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number }> = [];
+  private timeline: Array<{ t: number; kind: string; data?: any }> = [];
+  private recentKOFlag = false;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -404,6 +406,7 @@ export class CombatSystem {
         this.hitstop = Math.max(this.hitstop, 4);
       } else {
         this.processHit(attacker, defender);
+        try { this.timeline.push({ t: this.frameCounter, kind: 'hit', data: { a: attacker.id, d: defender.id, move: attacker.currentMove?.name } }); } catch {}
       }
     }
   }
@@ -667,6 +670,8 @@ export class CombatSystem {
     
     // Trigger victory sequence
     this.app.fire('match:victory', winner.id);
+    try { this.timeline.push({ t: this.frameCounter, kind: 'ko', data: { a: winner.id, d: ko.id } }); } catch {}
+    this.recentKOFlag = true;
   }
 
   public getCurrentFrame(): number {
@@ -693,4 +698,6 @@ export class CombatSystem {
       requestAnimationFrame(tick);
     } catch {}
   }
+  public consumeTimeline(): Array<{ t: number; kind: string; data?: any }> { const out = this.timeline.slice(); this.timeline = []; return out; }
+  public wasRecentKO(): boolean { const f = this.recentKOFlag; this.recentKOFlag = false; return f; }
 }

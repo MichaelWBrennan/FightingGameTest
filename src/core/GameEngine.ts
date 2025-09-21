@@ -56,6 +56,7 @@ import { ReconnectOverlay } from './ui/ReconnectOverlay';
 import { CameraCinematics } from './camera/Cinematics';
 import { StoreOverlay } from './ui/StoreOverlay';
 import { SpectatorOverlay } from './ui/SpectatorOverlay';
+import { CancelTableOverlay } from './ui/CancelTableOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -107,6 +108,7 @@ export class GameEngine {
   private cinematics: CameraCinematics | null = null;
   private store: StoreOverlay | null = null;
   private spectator: SpectatorOverlay | null = null;
+  private cancelTable: CancelTableOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -491,6 +493,7 @@ export class GameEngine {
       try { this.reconnect = new ReconnectOverlay(); } catch {}
       try { this.store = new StoreOverlay(); } catch {}
       try { this.spectator = new SpectatorOverlay(); } catch {}
+      try { this.cancelTable = new CancelTableOverlay(); } catch {}
       try {
         const net: any = this.services.resolve('netcode');
         new TuningOverlay({
