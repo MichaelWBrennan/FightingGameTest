@@ -679,6 +679,7 @@ export class CombatSystem {
     try { this.timeline.push({ t: this.frameCounter, kind: 'ko', data: { a: winner.id, d: ko.id } }); } catch {}
     this.recentKOFlag = true;
     try { const spec: any = (this.app as any)._services?.resolve?.('spectate'); spec?.broadcast?.({ t: this.frameCounter, kind: 'ko' }); } catch {}
+    try { const tts: any = (this.app as any)._services?.resolve?.('tts'); const i18n: any = (this.app as any)._services?.resolve?.('i18n'); tts?.speak?.(i18n?.t?.('ko') || 'KO!'); } catch {}
   }
 
   public getCurrentFrame(): number {

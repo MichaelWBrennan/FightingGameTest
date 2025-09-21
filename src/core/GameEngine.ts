@@ -65,6 +65,8 @@ import { ChatOverlay } from './ui/ChatOverlay';
 import { BoxEditorOverlay } from './ui/BoxEditorOverlay';
 import { TtsService } from './utils/TtsService';
 import { PrivacyOverlay } from './ui/PrivacyOverlay';
+import { PartyOverlay } from './ui/PartyOverlay';
+import { TournamentOverlay } from './ui/TournamentOverlay';
 import { BalanceVersionService } from './utils/BalanceVersionService';
 import { PartyService } from './online/PartyService';
 import { TournamentService } from './online/TournamentService';
@@ -126,6 +128,8 @@ export class GameEngine {
   private chat: ChatOverlay | null = null;
   private boxEditor: BoxEditorOverlay | null = null;
   private _specBound: boolean = false;
+  private partyOverlay: PartyOverlay | null = null;
+  private tournamentOverlay: TournamentOverlay | null = null;
   private privacy: PrivacyOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -535,6 +539,8 @@ export class GameEngine {
       try { this.services.register('balance', new BalanceVersionService()); } catch {}
       try { this.services.register('party', new PartyService()); } catch {}
       try { this.services.register('tournament', new TournamentService()); } catch {}
+      try { const party = this.services.resolve('party'); this.partyOverlay = new PartyOverlay(party); } catch {}
+      try { const tour = this.services.resolve('tournament'); this.tournamentOverlay = new TournamentOverlay(tour); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
         const loader = new ConfigLoader();
