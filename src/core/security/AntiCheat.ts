@@ -6,6 +6,7 @@ export interface CheatReport {
 export class AntiCheat {
   private reports: CheatReport[] = [];
   private lastRemoteDesyncFrame: number = -1;
+  private lastHeartbeatAt = 0;
 
   monitorInputRate(getInputCount: () => number): void {
     let lastCount = getInputCount();
@@ -52,6 +53,21 @@ export class AntiCheat {
         const start = performance.now(); debugger; const elapsed = performance.now() - start;
         if (elapsed > threshold) this.reports.push({ type: 'devtools_detected', details: { elapsed } });
       }, 5000);
+    } catch {}
+  }
+
+  heartbeat(): void {
+    try {
+      const now = Date.now();
+      if (now - this.lastHeartbeatAt < 1000) return;
+      this.lastHeartbeatAt = now;
+      // entropy: userAgent/timezone/platform
+      const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      const plat = typeof navigator !== 'undefined' ? (navigator as any).platform : '';
+      // Fake signature (placeholder); in prod, sign with server
+      const sig = btoa([ua, tz, plat, now].join('|')).slice(0, 24);
+      this.reports.push({ type: 'heartbeat', details: { t: now, sig } });
     } catch {}
   }
 }

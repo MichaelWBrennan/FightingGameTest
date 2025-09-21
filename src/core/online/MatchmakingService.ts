@@ -7,6 +7,7 @@ export class MatchmakingService {
   private profile: PlayerProfile;
   private lobbies: Map<string, Lobby> = new Map();
   private listeners: Array<(e: any) => void> = [];
+  private placementsRemaining = 5;
 
   constructor() {
     const id = (Math.random().toString(36).slice(2, 10));
@@ -42,5 +43,18 @@ export class MatchmakingService {
 
   // MMR updates (stub)
   reportMatch(won: boolean): void { const delta = won ? 15 : -10; this.profile.mmr = Math.max(0, this.profile.mmr + delta); this.emit({ t: 'mmr', mmr: this.profile.mmr }); }
+
+  // Simple Elo update with optional opponent mmr; placement matches have larger K
+  reportMatchVs(opponentMmr: number, won: boolean): void {
+    const my = this.profile.mmr || 1000;
+    const opp = Math.max(1, opponentMmr | 0);
+    const expected = 1 / (1 + Math.pow(10, (opp - my) / 400));
+    const score = won ? 1 : 0;
+    const K = this.placementsRemaining > 0 ? 64 : 24;
+    const next = Math.round(my + K * (score - expected));
+    this.profile.mmr = Math.max(0, next);
+    if (this.placementsRemaining > 0) this.placementsRemaining--;
+    this.emit({ t: 'mmr', mmr: this.profile.mmr, placements: this.placementsRemaining });
+  }
 }
 

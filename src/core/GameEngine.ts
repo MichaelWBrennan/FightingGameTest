@@ -64,6 +64,7 @@ import { SimService } from './sim/SimService';
 import { ChatOverlay } from './ui/ChatOverlay';
 import { BoxEditorOverlay } from './ui/BoxEditorOverlay';
 import { TtsService } from './utils/TtsService';
+import { PrivacyOverlay } from './ui/PrivacyOverlay';
 
 export class GameEngine {
   private app: pc.Application;
@@ -121,6 +122,7 @@ export class GameEngine {
   private sim: SimService | null = null;
   private chat: ChatOverlay | null = null;
   private boxEditor: BoxEditorOverlay | null = null;
+  private privacy: PrivacyOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -511,6 +513,7 @@ export class GameEngine {
       try { this.chat = new ChatOverlay(); } catch {}
       try { this.boxEditor = new BoxEditorOverlay(); } catch {}
       try { const tts = new TtsService(); this.services.register('tts', tts); } catch {}
+      try { this.privacy = new PrivacyOverlay(this.services); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
       try {
         const loader = new ConfigLoader();
