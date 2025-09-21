@@ -122,6 +122,7 @@ export class GameEngine {
   private sim: SimService | null = null;
   private chat: ChatOverlay | null = null;
   private boxEditor: BoxEditorOverlay | null = null;
+  private _specBound: boolean = false;
   private privacy: PrivacyOverlay | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -486,6 +487,20 @@ export class GameEngine {
         if (combat?.wasRecentKO?.() && !this.cinematics) {
           this.cinematics = new CameraCinematics(this.app);
           this.cinematics.koCinematic();
+        }
+      } catch {}
+      // Spectator controls
+      try {
+        const spec: any = this.services.resolve('spectate');
+        if (!this._specBound) {
+          spec?.on?.((e: any) => {
+            try {
+              const tr: any = (this.app as any)._training;
+              if (e?.ctrl === 'pause') tr?.setPaused?.(true);
+              if (e?.ctrl === 'step') tr?.stepOnce?.();
+            } catch {}
+          });
+          (this as any)._specBound = true;
         }
       } catch {}
       };

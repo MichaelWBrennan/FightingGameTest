@@ -66,13 +66,17 @@ export class NetplayOverlay {
     actions.appendChild(joinBtn);
     this.container.appendChild(actions);
 
-    // TURN/PSK inputs
+    // TURN/PSK inputs and WS signaling
     const turnRow = document.createElement('div'); turnRow.style.display = 'flex'; turnRow.style.gap = '6px'; turnRow.style.marginTop = '6px';
     const turn = document.createElement('input'); turn.placeholder = 'TURN url'; turn.style.flex = '1'; turnRow.appendChild(turn);
     const turnUser = document.createElement('input'); turnUser.placeholder = 'TURN user'; turnUser.style.flex = '1'; turnRow.appendChild(turnUser);
     const turnPass = document.createElement('input'); turnPass.placeholder = 'TURN pass'; turnPass.type = 'password'; turnPass.style.flex = '1'; turnRow.appendChild(turnPass);
     const psk = document.createElement('input'); psk.placeholder = 'PSK (optional)'; psk.style.flex = '1'; turnRow.appendChild(psk);
     this.container.appendChild(turnRow);
+    const wsRow = document.createElement('div'); wsRow.style.display = 'flex'; wsRow.style.gap = '6px'; wsRow.style.marginTop = '6px';
+    const wsUrl = document.createElement('input'); wsUrl.placeholder = 'WS signaling url'; wsUrl.style.flex = '2'; wsRow.appendChild(wsUrl);
+    const wsTok = document.createElement('input'); wsTok.placeholder = 'Token'; wsTok.style.flex = '1'; wsRow.appendChild(wsTok);
+    this.container.appendChild(wsRow);
 
     this.statusEl = document.createElement('div');
     this.statusEl.style.marginTop = '8px';
@@ -105,8 +109,8 @@ export class NetplayOverlay {
     document.body.appendChild(toggleBtn);
     document.body.appendChild(this.container);
 
-    hostBtn.onclick = () => this.start(true, turn.value, psk.value);
-    joinBtn.onclick = () => this.start(false, turn.value, psk.value);
+    hostBtn.onclick = () => this.start(true, turn.value, psk.value, wsUrl.value, wsTok.value);
+    joinBtn.onclick = () => this.start(false, turn.value, psk.value, wsUrl.value, wsTok.value);
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'F6') this.toggle();
@@ -118,7 +122,7 @@ export class NetplayOverlay {
     this.container.style.display = this.visible ? 'block' : 'none';
   }
 
-  private start(isOfferer: boolean, turnUrl?: string, psk?: string): void {
+  private async start(isOfferer: boolean, turnUrl?: string, psk?: string, ws?: string, tok?: string): Promise<void> {
     const session = (this.sessionInput.value || '').trim();
     if (!session) { try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(i18n?.t?.('enter_session') || 'Enter a session code'); } catch { this.setStatus('Enter a session code'); } return; }
     localStorage.setItem('netplay_session', session);
@@ -126,7 +130,8 @@ export class NetplayOverlay {
       const services: any = (this.app as any)._services;
       const net = services?.resolve?.('netcode');
       if (!net) { try { const i18n: any = (this.app as any)._services?.resolve?.('i18n'); this.setStatus(i18n?.t?.('netcode_unavailable') || 'Netcode service not available'); } catch { this.setStatus('Netcode service not available'); } return; }
-      const signaling = new BroadcastSignaling(session);
+      let signaling: any = new BroadcastSignaling(session);
+      try { if ((ws || '').trim()) { const mod = await import('../netcode/WsSignaling'); signaling = new mod.WsSignaling(ws!, tok || undefined); } } catch {}
       // Read TURN fields directly from DOM
       const form = this.container.querySelectorAll('input');
       const tu = (form?.[1] as HTMLInputElement | undefined)?.value || undefined;

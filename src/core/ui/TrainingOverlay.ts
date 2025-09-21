@@ -166,6 +166,8 @@ export class TrainingOverlay {
   }
 
   consumeStep(): boolean { const s = this.stepRequested; this.stepRequested = false; return s; }
+  public setPaused(p: boolean): void { this.paused = !!p; }
+  public stepOnce(): void { this.stepRequested = true; }
 
   get showHitboxes(): boolean { return this.hitboxToggle; }
   get isPaused(): boolean { return this.paused; }
