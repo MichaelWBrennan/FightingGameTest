@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate",
-    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate",
+    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate --minify --sourcemap=false --legal-comments=none --tree-shaking=true --drop:console --drop:debugger",
     "build": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client",
     "build:prod": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client:prod",
     "postbuild": "mkdir -p public/data public/assets && node -e \"require('ts-node/register');require('./tools/encrypt_assets.ts')\" && node -e \"require('ts-node/register');require('./tools/generate_manifest.ts')\"",
@@ -21,7 +21,8 @@
     "format": "prettier -w .",
     "format:check": "prettier -c .",
     "convert": "npx ts-node tools/complete_typescript_conversion.ts",
-    "serve": "http-server public -p 5000 -c 604800 --cors --gzip --brotli"
+    "serve": "http-server public -p 5000 -c 604800 --cors --gzip --brotli",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
@@ -53,6 +54,8 @@
     "@types/ws": "^8.5.8",
     "esbuild": "^0.25.1",
     "eslint": "^9.12.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "jest": "^29.7.0",
     "puppeteer": "^24.21.0",
     "ts-node": "^10.9.2",
@@ -78,5 +81,13 @@
     "not dead",
     "not op_mini all"
   ],
+  "lint-staged": {
+    "**/*.{ts,tsx,js}": [
+      "eslint --fix"
+    ],
+    "**/*.{json,md,yml,yaml,css}": [
+      "prettier -w"
+    ]
+  },
   "packageManager": "npm@10.9.2"
 }
