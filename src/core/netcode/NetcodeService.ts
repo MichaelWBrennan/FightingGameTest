@@ -27,6 +27,7 @@ export class NetcodeService {
   private iceList: RTCIceServer[] | null = null;
   private iceIndex = 0;
   private bufPools: Map<number, Array<ArrayBuffer>> = new Map();
+  private useCompression = true;
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
@@ -298,6 +299,7 @@ export class NetcodeService {
           view.setInt8(off, this.phaseToCode(c.currentMove.phase)); off += 1;
         }
       }
+      // Optionally compress (placeholder: no-op; wire to zlib in future)
       // Track for pruning when not in worker mode
       if (!this.useWorker) { this.snapshotFrames.push(snap.frame | 0); this.snapshots.set(snap.frame | 0, { frame: snap.frame, checksum: snap.checksum, buf }); this.pruneSnapshots(); }
       return { frame: snap.frame, checksum: snap.checksum, buf };
