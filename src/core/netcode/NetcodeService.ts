@@ -273,8 +273,8 @@ export class NetcodeService {
         const has = chars[i]?.currentMove ? 1 : 0;
         if (has) size += 2 /*currentFrame*/ + 1 /*phase*/;
       }
-      const buf = this.acquireBuffer(size);
-      const view = new DataView(buf);
+      const raw = this.acquireBuffer(size);
+      const view = new DataView(raw);
       let off = 0;
       view.setUint32(off, (snap as any).payload?.frame ?? snap.frame, true); off += 4;
       view.setUint16(off, ((snap as any).payload?.hitstop ?? 0) & 0xffff, true); off += 2;
@@ -301,20 +301,65 @@ export class NetcodeService {
       }
       // Optionally compress (placeholder: no-op; wire to zlib in future)
       // Track for pruning when not in worker mode
-      if (!this.useWorker) { this.snapshotFrames.push(snap.frame | 0); this.snapshots.set(snap.frame | 0, { frame: snap.frame, checksum: snap.checksum, buf }); this.pruneSnapshots(); }
-      return { frame: snap.frame, checksum: snap.checksum, buf };
+      let finalBuf: ArrayBuffer = raw;
+      if (this.useCompression) {
+        try {
+          const inU8 = new Uint8Array(raw);
+          const outU8 = new Uint8Array(inU8.byteLength + Math.max(64, (inU8.byteLength * 0.1) | 0));
+          const destLen = { value: outU8.byteLength } as any;
+          // dynamic import via globalThis
+          const modAny: any = (globalThis as any);
+          const compress = modAny.__zlib_compress || null;
+          if (compress) {
+            const err = compress(outU8, destLen, inU8, inU8.byteLength);
+            if (err === 0 && destLen.value > 0) {
+              finalBuf = outU8.slice(0, destLen.value).buffer;
+              this.releaseBuffer(raw);
+            }
+          }
+        } catch {}
+      }
+      if (!this.useWorker) { this.snapshotFrames.push(snap.frame | 0); this.snapshots.set(snap.frame | 0, { frame: snap.frame, checksum: snap.checksum, buf: finalBuf }); this.pruneSnapshots(); }
+      return { frame: snap.frame, checksum: snap.checksum, buf: finalBuf };
     } catch {
       const payload = JSON.stringify(snap.payload);
       const u8 = this.encoder.encode(payload);
-      const buf = this.acquireBuffer(u8.byteLength);
-      new Uint8Array(buf).set(u8);
-      if (!this.useWorker) { this.snapshotFrames.push(snap.frame | 0); this.snapshots.set(snap.frame | 0, { frame: snap.frame, checksum: snap.checksum, buf }); this.pruneSnapshots(); }
-      return { frame: snap.frame, checksum: snap.checksum, buf };
+      let finalBuf: ArrayBuffer = u8.buffer;
+      if (this.useCompression) {
+        try {
+          const outU8 = new Uint8Array(u8.byteLength + Math.max(64, (u8.byteLength * 0.1) | 0));
+          const destLen = { value: outU8.byteLength } as any;
+          const modAny: any = (globalThis as any);
+          const compress = modAny.__zlib_compress || null;
+          if (compress) {
+            const err = compress(outU8, destLen, u8, u8.byteLength);
+            if (err === 0 && destLen.value > 0) finalBuf = outU8.slice(0, destLen.value).buffer;
+          }
+        } catch {}
+      }
+      if (!this.useWorker) { this.snapshotFrames.push(snap.frame | 0); this.snapshots.set(snap.frame | 0, { frame: snap.frame, checksum: snap.checksum, buf: finalBuf }); this.pruneSnapshots(); }
+      return { frame: snap.frame, checksum: snap.checksum, buf: finalBuf };
     }
   }
   private decompressSnapshot(cs: { frame: number; checksum: number; buf: ArrayBuffer }): GameStateSnapshot {
     try {
-      const view = new DataView(cs.buf);
+      // Attempt to detect compressed buffer (simple heuristic: if first byte is 0x78 (zlib header))
+      let buf = cs.buf;
+      const u8in = new Uint8Array(buf);
+      if (this.useCompression && u8in.byteLength > 2 && (u8in[0] === 0x78)) {
+        try {
+          const modAny: any = (globalThis as any);
+          const uncompress = modAny.__zlib_uncompress || null;
+          if (uncompress) {
+            const guess = Math.max(u8in.byteLength * 4, 256);
+            let out = new Uint8Array(guess);
+            const destLen = { value: out.byteLength } as any;
+            let err = uncompress(out, destLen, u8in, u8in.byteLength);
+            if (err === 0) buf = out.slice(0, destLen.value).buffer;
+          }
+        } catch {}
+      }
+      const view = new DataView(buf);
       let off = 0;
       const frame = view.getUint32(off, true); off += 4;
       const hitstop = view.getUint16(off, true); off += 2;
