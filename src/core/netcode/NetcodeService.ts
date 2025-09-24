@@ -28,6 +28,7 @@ export class NetcodeService {
   private iceIndex = 0;
   private bufPools: Map<number, Array<ArrayBuffer>> = new Map();
   private useCompression = true;
+  private matchSeed: number = 0xC0FFEE;
 
   enableLocalP2(): void {
     const adapter = new CombatDeterministicAdapter(this.combat, this.chars);
@@ -49,6 +50,16 @@ export class NetcodeService {
     this.enabled = true;
     this.netcode.start();
     try { (rtc as any).sendClockProbe?.(); } catch {}
+    // Exchange match seed via control channel (host picks)
+    try {
+      if (isOfferer) {
+        // host chooses seed based on time hash for now
+        const t = (performance?.now?.() || Date.now()) >>> 0;
+        this.matchSeed = ((t ^ 0x9e3779b9) >>> 0);
+        (rtc as any).sendControl?.({ t: 'match_seed', seed: this.matchSeed >>> 0 });
+        this.applyMatchSeed(this.matchSeed);
+      }
+    } catch {}
     try {
       (rtc as any).onConnectionStateChange = (st: string) => {
         // Backoff/restart strategy
@@ -77,6 +88,9 @@ export class NetcodeService {
           try { if ((rtc as any).getIsOfferer?.()) this.sendResyncSnapshot(); } catch {}
         } else if (m.t === 'resync_snap' && m.frame != null && m.payload) {
           this.applyResyncSnapshot(m.frame|0, m.checksum|0, this.fromBase64(m.payload));
+        } else if (m.t === 'match_seed' && m.seed != null) {
+          this.matchSeed = (m.seed >>> 0);
+          this.applyMatchSeed(this.matchSeed);
         }
       };
     } catch {}
@@ -116,6 +130,18 @@ export class NetcodeService {
     if (this.useWorker) {
       try { const tr: any = (this.netcode as any).transport; if (tr) tr.onRemoteInput = (f: number, b: number) => { try { this.worker?.postMessage({ t: 'remote', frame: f|0, bits: b>>>0 }); } catch {} }; } catch {}
     }
+  }
+
+  private applyMatchSeed(seed: number): void {
+    try {
+      // Seed RNG service
+      const services: any = (this.combat as any).app?._services || (window as any)._services;
+      const rng: any = services?.resolve?.('rng'); rng?.reseed?.(seed >>> 0);
+    } catch {}
+    try {
+      // Surface in debug overlay via netcode stats path
+      (this as any)._matchSeed = seed >>> 0;
+    } catch {}
   }
 
   disable(): void { this.enabled = false; this.netcode?.stop(); }

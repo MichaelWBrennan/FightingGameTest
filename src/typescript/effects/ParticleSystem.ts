@@ -1,10 +1,13 @@
+/// <reference path="../../../types/playcanvas-ambient.d.ts" />
 
 /**
  * Particle System - TypeScript conversion from various EFF*.c files
  * Handles visual effects like sparks, dust, energy, etc.
  */
 
-import * as pc from 'playcanvas';
+// Value-level access to PlayCanvas global; types are provided by ambient d.ts in types/
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+declare const pc: any;
 
 export interface ParticleConfig {
   maxParticles: number;
@@ -104,10 +107,19 @@ export class ParticleEmitter {
     particle.lifetime = 0;
     particle.maxLifetime = this.config.lifetime;
 
-    // Add some randomness
-    particle.velocity.x += (Math.random() - 0.5) * 2;
-    particle.velocity.y += (Math.random() - 0.5) * 2;
-    particle.velocity.z += (Math.random() - 0.5) * 2;
+    // Add deterministic randomness via RNG service if available
+    try {
+      const services: any = (globalThis as any).pc?.Application?.getApplication?._services || (window as any)._services;
+      const rng: any = services?.resolve?.('rng');
+      const r = () => (rng ? (rng.nextFloat() - 0.5) : (Math.random() - 0.5));
+      particle.velocity.x += r() * 2;
+      particle.velocity.y += r() * 2;
+      particle.velocity.z += r() * 2;
+    } catch {
+      particle.velocity.x += (Math.random() - 0.5) * 2;
+      particle.velocity.y += (Math.random() - 0.5) * 2;
+      particle.velocity.z += (Math.random() - 0.5) * 2;
+    }
   }
 
   /**

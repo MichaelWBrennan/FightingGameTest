@@ -70,6 +70,8 @@ import { TournamentOverlay } from './ui/TournamentOverlay';
 import { BalanceVersionService } from './utils/BalanceVersionService';
 import { PartyService } from './online/PartyService';
 import { TournamentService } from './online/TournamentService';
+import { FixedClock } from './utils/Clock';
+import { RngService } from './utils/RngService';
 
 export class GameEngine {
   private app: pc.Application;
@@ -131,6 +133,8 @@ export class GameEngine {
   private partyOverlay: PartyOverlay | null = null;
   private tournamentOverlay: TournamentOverlay | null = null;
   private privacy: PrivacyOverlay | null = null;
+  private clock: FixedClock = new FixedClock(60);
+  private rng: RngService = new RngService(0xC0FFEE);
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -200,6 +204,8 @@ export class GameEngine {
     this.services.register('configRemote', this.remoteConfig);
     this.services.register('liveops', this.liveOps);
     this.services.register('netcode', this.netcode);
+    this.services.register('clock', this.clock);
+    this.services.register('rng', this.rng);
     this.services.register('characters', this.characterManager);
     this.services.register('stages', this.stageManager);
     this.services.register('combat', this.combatSystem);
@@ -430,15 +436,82 @@ export class GameEngine {
       LoadingOverlay.beginTask('finalize', 'Finalizing', 1);
 
       // Wire main update loop
-      this.updateHandler = (dt: number) => {
-        // Ensure input is updated first for deterministic reads
-        try { this.inputManager.update(); } catch {}
-        // Pause gating for training
-        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
-          this.pipeline.update(dt);
-        }
-        if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
-          this.stateStack.update(dt);
+      this.updateHandler = (_dt: number) => {
+        const steps = this.clock.tick();
+        for (let i = 0; i < steps; i++) {
+          // Ensure input is updated first for deterministic reads
+          try { this.inputManager.update(); } catch {}
+          // Pause gating for training
+          if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
+            this.pipeline.update(this.clock.stepSec);
+          }
+          if (!this.trainingOverlay || !this.trainingOverlay.isPaused || this.trainingOverlay.consumeStep?.()) {
+            this.stateStack.update(this.clock.stepSec);
+          }
+          // Netcode
+          try {
+            const net: any = this.services.resolve('netcode');
+            // advance netcode each frame to drive rollback sim when enabled
+            net?.step?.();
+            if (net?.isEnabled?.() && net?.getStats) {
+              this.debugOverlay?.setNetcodeInfo(net.getStats());
+              // Update connection quality badge
+              try {
+                const st = net.getStats();
+                const rtt = st?.rtt ?? 0; const jitter = st?.jitter ?? 0; const loss = st?.loss ?? 0;
+                let grade = 'A';
+                if (rtt > 120 || jitter > 30 || (loss|0) > 5) grade = 'C';
+                if (rtt > 200 || jitter > 50 || (loss|0) > 10) grade = 'D';
+                if (rtt > 280 || jitter > 80 || (loss|0) > 15) grade = 'F';
+                let el = document.getElementById('net-quality');
+                if (!el) {
+                  el = document.createElement('div'); el.id = 'net-quality'; el.style.position = 'fixed'; el.style.right = '8px'; el.style.top = '8px'; el.style.zIndex = '10001'; el.style.padding = '4px 6px'; el.style.borderRadius = '4px'; el.style.font = '12px system-ui'; document.body.appendChild(el);
+                }
+                (el as any).textContent = `Link: ${grade}`;
+                (el as any).style.background = grade === 'A' ? 'rgba(40,180,80,0.8)' : grade === 'C' ? 'rgba(180,150,40,0.8)' : grade === 'D' ? 'rgba(200,100,40,0.8)' : 'rgba(200,60,60,0.8)';
+                (el as any).style.color = '#fff';
+              } catch {}
+            }
+          } catch {}
+          // Deterministic SFX flush
+          try { (this.sfx as any)?.flushScheduled?.(this.combatSystem.getCurrentFrame()); } catch {}
+          // Replay
+          try { this.replay?.update(); } catch {}
+          // Anti-cheat monitor surface
+          try {
+            const ac: any = this.services.resolve('anticheat');
+            this.debugOverlay?.setCheatAlerts(ac?.getReports?.() || []);
+          } catch {}
+          // Determinism status surface
+          try {
+            const det: any = this.services.resolve('det');
+            const last = det?.getLastValidatedFrame?.() ?? -1;
+            const mis = det?.getLastMismatchFrame?.() ?? -1;
+            this.debugOverlay?.setDeterminism(last, mis < 0 || mis < last);
+          } catch {}
+          try { const ac: any = this.services.resolve('anticheat'); ac?.heartbeat?.(); } catch {}
+          // Example: KO cinematic trigger
+          try {
+            const combat: any = this.services.resolve('combat');
+            if (combat?.wasRecentKO?.() && !this.cinematics) {
+              this.cinematics = new CameraCinematics(this.app);
+              this.cinematics.koCinematic();
+            }
+          } catch {}
+          // Spectator controls
+          try {
+            const spec: any = this.services.resolve('spectate');
+            if (!this._specBound) {
+              spec?.on?.((e: any) => {
+                try {
+                  const tr: any = (this.app as any)._training;
+                  if (e?.ctrl === 'pause') tr?.setPaused?.(true);
+                  if (e?.ctrl === 'step') tr?.stepOnce?.();
+                } catch {}
+              });
+              (this as any)._specBound = true;
+            }
+          } catch {}
         }
         if (!this.debugOverlay && typeof window !== 'undefined') {
           import('./debug/DebugOverlay').then(({ DebugOverlay }) => {
@@ -447,70 +520,6 @@ export class GameEngine {
         }
         this.debugOverlay?.update();
         this.debugOverlay?.setTimings(this.pipeline.getTimings());
-        // Netcode
-        try {
-          const net: any = this.services.resolve('netcode');
-          // advance netcode each frame to drive rollback sim when enabled
-          net?.step?.();
-          if (net?.isEnabled?.() && net?.getStats) {
-            this.debugOverlay?.setNetcodeInfo(net.getStats());
-            // Update connection quality badge
-            try {
-              const st = net.getStats();
-              const rtt = st?.rtt ?? 0; const jitter = st?.jitter ?? 0; const loss = st?.loss ?? 0;
-              let grade = 'A';
-              if (rtt > 120 || jitter > 30 || (loss|0) > 5) grade = 'C';
-              if (rtt > 200 || jitter > 50 || (loss|0) > 10) grade = 'D';
-              if (rtt > 280 || jitter > 80 || (loss|0) > 15) grade = 'F';
-              let el = document.getElementById('net-quality');
-              if (!el) {
-                el = document.createElement('div'); el.id = 'net-quality'; el.style.position = 'fixed'; el.style.right = '8px'; el.style.top = '8px'; el.style.zIndex = '10001'; el.style.padding = '4px 6px'; el.style.borderRadius = '4px'; el.style.font = '12px system-ui'; document.body.appendChild(el);
-              }
-              (el as any).textContent = `Link: ${grade}`;
-              (el as any).style.background = grade === 'A' ? 'rgba(40,180,80,0.8)' : grade === 'C' ? 'rgba(180,150,40,0.8)' : grade === 'D' ? 'rgba(200,100,40,0.8)' : 'rgba(200,60,60,0.8)';
-              (el as any).style.color = '#fff';
-            } catch {}
-          }
-        } catch {}
-        // Deterministic SFX flush
-        try { (this.sfx as any)?.flushScheduled?.(this.combatSystem.getCurrentFrame()); } catch {}
-        // Replay
-        try { this.replay?.update(); } catch {}
-        // Anti-cheat monitor surface
-        try {
-          const ac: any = this.services.resolve('anticheat');
-          this.debugOverlay?.setCheatAlerts(ac?.getReports?.() || []);
-        } catch {}
-        // Determinism status surface
-        try {
-          const det: any = this.services.resolve('det');
-          const last = det?.getLastValidatedFrame?.() ?? -1;
-          const mis = det?.getLastMismatchFrame?.() ?? -1;
-          this.debugOverlay?.setDeterminism(last, mis < 0 || mis < last);
-        } catch {}
-        try { const ac: any = this.services.resolve('anticheat'); ac?.heartbeat?.(); } catch {}
-      // Example: KO cinematic trigger
-      try {
-        const combat: any = this.services.resolve('combat');
-        if (combat?.wasRecentKO?.() && !this.cinematics) {
-          this.cinematics = new CameraCinematics(this.app);
-          this.cinematics.koCinematic();
-        }
-      } catch {}
-      // Spectator controls
-      try {
-        const spec: any = this.services.resolve('spectate');
-        if (!this._specBound) {
-          spec?.on?.((e: any) => {
-            try {
-              const tr: any = (this.app as any)._training;
-              if (e?.ctrl === 'pause') tr?.setPaused?.(true);
-              if (e?.ctrl === 'step') tr?.stepOnce?.();
-            } catch {}
-          });
-          (this as any)._specBound = true;
-        }
-      } catch {}
       };
       this.app.on('update', this.updateHandler);
       LoadingOverlay.endTask('finalize', true);
