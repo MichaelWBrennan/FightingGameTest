@@ -58,6 +58,7 @@ export class InputManager {
   private lastChargeBackTs = 0;
   private lastChargeDownTs = 0;
   private facingRight = true;
+  private simNowMs = 0;
 
   constructor(app: pc.Application) {
     this.app = app;
@@ -75,6 +76,14 @@ export class InputManager {
     this.lastTapTs = [ { left: 0, right: 0, up: 0, down: 0 }, { left: 0, right: 0, up: 0, down: 0 } ];
 
     this.setupKeyboardBindings();
+  }
+
+  private now(): number {
+    try {
+      const clock: any = (this.app as any)._services?.resolve?.('clock');
+      if (clock && typeof clock.stepSec === 'number') return this.simNowMs;
+    } catch {}
+    return (typeof performance !== 'undefined' ? performance.now() : Date.now());
   }
 
   private createEmptyInputs(): PlayerInputs {
@@ -101,7 +110,7 @@ export class InputManager {
       const code = e.event?.code || e.code;
       if (!code) return;
       const map = this.keyMap;
-      const now = performance.now();
+      const now = this.now();
       if (code === map.up) { this.keyboardInputs.up = true; this.inputPressCount++; this.keyDownTimestamps['up'] = now; }
       if (code === map.down) { this.keyboardInputs.down = true; this.inputPressCount++; this.keyDownTimestamps['down'] = now; }
       if (code === map.left) { this.keyboardInputs.left = true; this.inputPressCount++; this.keyDownTimestamps['left'] = now; }
@@ -118,7 +127,7 @@ export class InputManager {
       const code = e.event?.code || e.code;
       if (!code) return;
       const map = this.keyMap;
-      const now = performance.now();
+      const now = this.now();
       if (code === map.up) { this.keyboardInputs.up = false; this.keyUpTimestamps['up'] = now; }
       if (code === map.down) { this.keyboardInputs.down = false; this.keyUpTimestamps['down'] = now; }
       if (code === map.left) { this.keyboardInputs.left = false; this.keyUpTimestamps['left'] = now; }
@@ -145,6 +154,8 @@ export class InputManager {
   }
 
   public update(): void {
+    // Advance simulated clock for deterministic timing
+    try { const clock: any = (this.app as any)._services?.resolve?.('clock'); const stepMs = Math.max(0, ((clock?.stepSec ?? (1/60)) * 1000)); this.simNowMs += stepMs; } catch { this.simNowMs += 16.6667; }
     // Update gamepad inputs if connected
     this.updateGamepadInputs();
 
@@ -156,7 +167,7 @@ export class InputManager {
     this.player1Inputs = nextP1;
 
     // Record motion history for leniency and specials
-    const now = performance.now();
+    const now = this.now();
     this.lastUpdateTs = now;
     this.pushHistory(now, this.player1Inputs);
     this.pruneHistory(now);

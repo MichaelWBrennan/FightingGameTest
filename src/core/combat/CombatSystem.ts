@@ -20,6 +20,9 @@ export class CombatSystem {
   private inputManager!: InputManager;
   private frameCounter = 0;
   private hitstop = 0;
+  private guardRegenFrames: Map<string, number> = new Map();
+  private juggleResetFrames: Map<string, number> = new Map();
+  private comboResetFrames: Map<string, number> = new Map();
   private comboScalingStart = 0.8; // 80% after first hit
   private comboScalingStep = 0.9;  // multiply per subsequent hit
   private projectileManager: ProjectileManager | null = null;
@@ -37,6 +40,45 @@ export class CombatSystem {
     this.app = app;
   }
 
+  private updateDeferredTimers(): void {
+    try {
+      if (this.guardRegenFrames.size) {
+        for (const [id, until] of Array.from(this.guardRegenFrames.entries())) {
+          if (this.frameCounter >= until) {
+            const list = this.characterManager.getActiveCharacters();
+            const ch = list.find(c => c.id === id);
+            if (ch) ch.guardMeter = Math.min(100, (ch.guardMeter ?? 0) + 5);
+            this.guardRegenFrames.delete(id);
+          }
+        }
+      }
+    } catch {}
+    try {
+      if (this.juggleResetFrames.size) {
+        for (const [id, until] of Array.from(this.juggleResetFrames.entries())) {
+          if (this.frameCounter >= until) {
+            const list = this.characterManager.getActiveCharacters();
+            const ch = list.find(c => c.id === id) as any;
+            if (ch) ch._jugglePoints = 0;
+            this.juggleResetFrames.delete(id);
+          }
+        }
+      }
+    } catch {}
+    try {
+      if (this.comboResetFrames.size) {
+        for (const [id, until] of Array.from(this.comboResetFrames.entries())) {
+          if (this.frameCounter >= until) {
+            const list = this.characterManager.getActiveCharacters();
+            const ch = list.find(c => c.id === id) as any;
+            if (ch) { ch._comboHits = 0; ch._comboDmg = 0; }
+            this.comboResetFrames.delete(id);
+          }
+        }
+      }
+    } catch {}
+  }
+
   public initialize(characterManager: CharacterManager, inputManager: InputManager): void {
     this.characterManager = characterManager;
     this.inputManager = inputManager;
@@ -51,6 +93,7 @@ export class CombatSystem {
     }
 
     this.frameCounter++;
+    this.updateDeferredTimers();
     this.processInputs();
     this.updateFacing();
     this.updateAirbornePhysics();
@@ -539,7 +582,8 @@ export class CombatSystem {
       const start = (attacker.currentMove?.data as any)?.juggleStart ?? 0;
       const jp = (defender as any)._jugglePoints || 0;
       (defender as any)._jugglePoints = jp > 0 ? (jp + add) : (jp + Math.max(add, start));
-      setTimeout(() => { try { (defender as any)._jugglePoints = 0; } catch {} }, 1500);
+      // schedule ~1500ms (90 frames) juggle reset
+      this.juggleResetFrames.set(defender.id, this.frameCounter + 90);
     } catch {}
 
     // Emit combo-like UI event (simplified)
@@ -548,8 +592,8 @@ export class CombatSystem {
       const hits = (attacker as any)._comboHits = ((attacker as any)._comboHits || 0) + 1;
       const dmgAcc = (attacker as any)._comboDmg = ((attacker as any)._comboDmg || 0) + damage;
       ui?.['app']?.fire?.('ui:combo', { playerId: attacker.id === this.characterManager.getActiveCharacters()[0]?.id ? 'player1' : 'player2', hits, damage: dmgAcc });
-      // Clear combo after brief delay
-      setTimeout(() => { try { (attacker as any)._comboHits = 0; (attacker as any)._comboDmg = 0; } catch {} }, 1200);
+      // Clear combo after ~1200ms -> ~72 frames
+      this.comboResetFrames.set(attacker.id, this.frameCounter + 72);
     } catch {}
     
     // Pushback (corner stronger)
@@ -624,8 +668,8 @@ export class CombatSystem {
     } catch {}
     // brief hitstop on block too
     this.hitstop = Math.max(this.hitstop, 3);
-    // Guard meter regen after short delay
-    setTimeout(() => { try { defender.guardMeter = Math.min(100, (defender.guardMeter ?? 0) + 5); } catch {} }, 400);
+    // Guard meter regen after ~400ms (frame-based)
+    try { this.guardRegenFrames.set(defender.id, this.frameCounter + 24); } catch {}
     try {
       const effects: any = (this.app as any)._services?.resolve?.('effects');
       const sfx: any = (this.app as any)._services?.resolve?.('sfx');

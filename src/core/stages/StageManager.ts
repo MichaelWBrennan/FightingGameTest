@@ -66,7 +66,10 @@ export class StageManager {
     const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
     const seedParam = params.get('seed');
     const themeParam = params.get('theme') as 'training' | 'gothic' | 'urban' | null;
-    const seed = seedParam ? parseInt(seedParam, 10) : Date.now();
+    // Prefer match-seeded RNG from services; fallback to URL param; final fallback: 1
+    let seed = 1;
+    try { const net: any = (this.app as any)._services?.resolve?.('netcode'); const st = net?.getStats?.(); if (st && typeof (st as any).cur === 'number') seed = (st as any).cur | 0; } catch {}
+    if (seedParam) { const s = parseInt(seedParam, 10); if (isFinite(s)) seed = s; }
     const theme = (themeParam || 'training') as EnvironmentTheme;
 
     // Build 3D environment first to replace generic gray
@@ -87,7 +90,7 @@ export class StageManager {
       window.addEventListener('keydown', (e: KeyboardEvent) => {
         if (!this.parallax) return;
         if (e.key === 'r' || e.key === 'R') {
-          const newSeed = Date.now();
+          const newSeed = (seed * 1664525 + 1013904223) >>> 0;
           const g = new ProceduralStageGenerator(newSeed);
           const d = g.generate({ theme });
           this.parallax!.loadStageData(d);
