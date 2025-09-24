@@ -1,3 +1,5 @@
+* text=auto eol=lf
+
 public/bundle.js linguist-generated
 public/bundle.js.map linguist-generated
 public/assets/** linguist-generated

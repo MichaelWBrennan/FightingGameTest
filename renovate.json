@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits", ":disablePeerDependencies"],
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "major": { "automerge": false },
+      "schedule": ["on the first day of the month"]
+    }
+  ]
+}

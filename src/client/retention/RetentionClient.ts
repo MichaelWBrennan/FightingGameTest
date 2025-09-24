@@ -228,7 +228,15 @@ export class RetentionClient extends EventEmitter {
       ts: Math.floor(Date.now() / 1000),
       userId: this.config.userId,
       sessionHash: this.sessionHash,
-      ...matchData
+      // Provide defaults to satisfy required fields at call sites that send partials
+      matchId: (matchData as any).matchId ?? `m_${uuidv4().slice(0,8)}`,
+      ranked: (matchData as any).ranked ?? false,
+      characterId: (matchData as any).characterId ?? 'unknown',
+      opponentId: (matchData as any).opponentId ?? 'unknown',
+      roundsWon: (matchData as any).roundsWon ?? 0,
+      roundsLost: (matchData as any).roundsLost ?? 0,
+      disconnect: (matchData as any).disconnect ?? false,
+      ...(matchData as any)
     };
 
     this.trackEvent(event);
