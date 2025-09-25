@@ -1,0 +1,491 @@
+{
+  "characterId": "akuma",
+  "name": "Akuma",
+  "displayName": "Akuma",
+  "description": "A master of the Satsui no Hado, seeking worthy opponents to test his ultimate techniques.",
+  "archetype": "shoto",
+  "complexity": "hard",
+  "counterplayTags": [
+    "rushdown",
+    "mixup",
+    "high_damage"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter",
+    "demon_mode"
+  ],
+  "uniqueMechanics": [
+    "demon_mode",
+    "teleport",
+    "fireball_variants"
+  ],
+  "health": 850,
+  "meter": 100,
+  "walkSpeed": 160,
+  "runSpeed": 280,
+  "jumpHeight": 320,
+  "airDashSpeed": 250,
+  "dashDistance": 140,
+  "maxAirDashes": 2,
+  "weight": 90,
+  "dlcCharacter": false,
+  "releaseDate": "2024-08-05",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "akuma_idle",
+    "walkForward": "akuma_walk_forward",
+    "walkBackward": "akuma_walk_backward",
+    "jump": "akuma_jump",
+    "crouch": "akuma_crouch",
+    "block": "akuma_block",
+    "crouchBlock": "akuma_crouch_block",
+    "hit": "akuma_hit",
+    "knockdown": "akuma_knockdown",
+    "dash": "akuma_dash",
+    "airDash": "akuma_air_dash",
+    "wakeup": "akuma_wakeup",
+    "demonMode": "akuma_demon_mode"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Jab",
+        "damage": 45,
+        "startupFrames": 3,
+        "activeFrames": 2,
+        "recoveryFrames": 5,
+        "blockAdvantage": 2,
+        "hitAdvantage": 5,
+        "comboType": "opener",
+        "properties": [
+          "cancelable",
+          "dash_cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 3,
+            "endFrame": 4,
+            "position": [55, 0],
+            "size": [35, 25],
+            "damage": 45,
+            "hitstun": 10,
+            "blockstun": 6
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Cross",
+        "damage": 75,
+        "startupFrames": 5,
+        "activeFrames": 3,
+        "recoveryFrames": 7,
+        "blockAdvantage": -1,
+        "hitAdvantage": 4,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 7,
+            "position": [65, 0],
+            "size": [45, 30],
+            "damage": 75,
+            "hitstun": 13,
+            "blockstun": 9
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Hook",
+        "damage": 110,
+        "startupFrames": 8,
+        "activeFrames": 4,
+        "recoveryFrames": 12,
+        "blockAdvantage": -4,
+        "hitAdvantage": 1,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 11,
+            "position": [75, -5],
+            "size": [55, 35],
+            "damage": 110,
+            "hitstun": 18,
+            "blockstun": 11,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Low Kick",
+        "damage": 55,
+        "startupFrames": 4,
+        "activeFrames": 2,
+        "recoveryFrames": 6,
+        "blockAdvantage": 1,
+        "hitAdvantage": 4,
+        "comboType": "opener",
+        "properties": [
+          "low",
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 5,
+            "position": [45, 35],
+            "size": [40, 20],
+            "damage": 55,
+            "hitstun": 11,
+            "blockstun": 7
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "Mid Kick",
+        "damage": 85,
+        "startupFrames": 7,
+        "activeFrames": 3,
+        "recoveryFrames": 9,
+        "blockAdvantage": -2,
+        "hitAdvantage": 3,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 7,
+            "endFrame": 9,
+            "position": [70, 0],
+            "size": [50, 35],
+            "damage": 85,
+            "hitstun": 14,
+            "blockstun": 10
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Roundhouse",
+        "damage": 130,
+        "startupFrames": 10,
+        "activeFrames": 5,
+        "recoveryFrames": 15,
+        "blockAdvantage": -7,
+        "hitAdvantage": -1,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 10,
+            "endFrame": 14,
+            "position": [85, -3],
+            "size": [65, 40],
+            "damage": 130,
+            "hitstun": 22,
+            "blockstun": 14,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "hadoken": {
+        "name": "Gohadoken",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch",
+        "damage": 90,
+        "startupFrames": 10,
+        "activeFrames": 0,
+        "recoveryFrames": 22,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 320,
+          "lifetime": 100,
+          "size": [35, 18],
+          "damage": 90,
+          "hitstun": 16,
+          "blockstun": 10
+        }
+      },
+      "shoryuken": {
+        "name": "Goshoryuken",
+        "input": "623P",
+        "description": "Dragon punch motion + Punch",
+        "damage": 150,
+        "startupFrames": 2,
+        "activeFrames": 6,
+        "recoveryFrames": 28,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "invincible",
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 2,
+            "endFrame": 7,
+            "position": [35, -25],
+            "size": [45, 70],
+            "damage": 150,
+            "hitstun": 28,
+            "blockstun": 18,
+            "knockdown": true
+          }
+        ]
+      },
+      "tatsumaki": {
+        "name": "Tatsumaki Zankukyaku",
+        "input": "214K",
+        "description": "Quarter-circle back + Kick",
+        "damage": 120,
+        "startupFrames": 8,
+        "activeFrames": 12,
+        "recoveryFrames": 20,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "launcher",
+          "air_ok"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 19,
+            "position": [60, 0],
+            "size": [70, 30],
+            "damage": 120,
+            "hitstun": 20,
+            "blockstun": 12,
+            "knockdown": true
+          }
+        ]
+      },
+      "teleport": {
+        "name": "Ashura Senku",
+        "input": "214P",
+        "description": "Quarter-circle back + Punch",
+        "damage": 0,
+        "startupFrames": 15,
+        "activeFrames": 0,
+        "recoveryFrames": 10,
+        "meterCost": 0,
+        "comboType": "utility",
+        "properties": [
+          "teleport",
+          "invincible"
+        ],
+        "teleport": {
+          "distance": 200,
+          "invulnFrames": 15
+        }
+      }
+    },
+    "supers": {
+      "messatsu_gohadoken": {
+        "name": "Messatsu Gohadoken",
+        "input": "236236P",
+        "description": "Quarter-circle forward x2 + Punch",
+        "damage": 280,
+        "startupFrames": 6,
+        "activeFrames": 0,
+        "recoveryFrames": 40,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": [
+          "super",
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 450,
+          "lifetime": 150,
+          "size": [100, 50],
+          "damage": 280,
+          "hitstun": 35,
+          "blockstun": 20,
+          "hits": 3
+        }
+      },
+      "messatsu_goshoryuken": {
+        "name": "Messatsu Goshoryuken",
+        "input": "623623P",
+        "description": "Dragon punch motion x2 + Punch",
+        "damage": 350,
+        "startupFrames": 4,
+        "activeFrames": 8,
+        "recoveryFrames": 45,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": [
+          "super",
+          "invincible",
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 11,
+            "position": [40, -30],
+            "size": [60, 90],
+            "damage": 350,
+            "hitstun": 40,
+            "blockstun": 25,
+            "knockdown": true
+          }
+        ]
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Combo",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "hadoken"
+      ],
+      "damage": 210,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Teleport Mixup",
+      "inputs": [
+        "teleport",
+        "heavyPunch",
+        "shoryuken"
+      ],
+      "damage": 260,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Demon Combo",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "tatsumaki",
+        "messatsu_goshoryuken"
+      ],
+      "damage": 565,
+      "difficulty": "hard"
+    }
+  ],
+  "subArchetypes": [
+    {
+      "subArchetypeId": "traditional",
+      "name": "Traditional Akuma",
+      "description": "Classic Akuma with balanced offense and defense.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {}
+    },
+    {
+      "subArchetypeId": "demon_mode",
+      "name": "Demon Mode",
+      "description": "Enhanced abilities at the cost of health drain.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.8,
+        "walkSpeedMultiplier": 1.2,
+        "runSpeedMultiplier": 1.3,
+        "jumpHeightMultiplier": 1.1,
+        "weightMultiplier": 0.9
+      },
+      "moveModifiers": {
+        "hadoken": {
+          "damageMultiplier": 1.3,
+          "speedMultiplier": 1.2,
+          "addedProperties": ["enhanced_speed"]
+        },
+        "shoryuken": {
+          "damageMultiplier": 1.2,
+          "startupFrameBonus": -1,
+          "addedProperties": ["enhanced_damage"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+health_drain",
+        "+enhanced_mobility",
+        "+damage_boost"
+      ],
+      "additionalMoves": {
+        "demon_fireball": {
+          "name": "Demon Gohadoken",
+          "input": "236P",
+          "description": "Enhanced fireball in demon mode",
+          "damage": 120,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 18,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "projectile",
+            "enhanced"
+          ],
+          "projectile": {
+            "speed": 400,
+            "lifetime": 120,
+            "size": [45, 25],
+            "damage": 120,
+            "hitstun": 20,
+            "blockstun": 12
+          }
+        }
+      }
+    }
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Akuma - Character Sprites",
+        "file_name": "street_fighter_6_akuma_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/akuma/",
+        "is_hd": true,
+        "file_size": 1200000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Akuma - Portrait",
+        "file_name": "street_fighter_6_akuma_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/akuma/",
+        "is_hd": true,
+        "file_size": 1200000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Akuma - Character Select Icon",
+        "file_name": "street_fighter_6_akuma_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/akuma/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
+}
