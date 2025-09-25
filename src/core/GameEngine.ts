@@ -84,6 +84,8 @@ import { AdvancedAudioSystem } from './audio/AdvancedAudioSystem';
 import { QuantumRollbackNetcode } from './netcode/QuantumRollbackNetcode';
 import { AdvancedAntiCheatSystem } from './security/AdvancedAntiCheatSystem';
 import { AdvancedMobileOptimizer } from './mobile/AdvancedMobileOptimizer';
+import { AdvancedEsportsPlatform } from './esports/AdvancedEsportsPlatform';
+import { NeuralInterfaceSystem } from './neural/NeuralInterfaceSystem';
 
 export class GameEngine {
   private app: pc.Application;
@@ -159,6 +161,8 @@ export class GameEngine {
   private quantumNetcode: QuantumRollbackNetcode | null = null;
   private advancedAntiCheat: AdvancedAntiCheatSystem | null = null;
   private advancedMobileOptimizer: AdvancedMobileOptimizer | null = null;
+  private advancedEsportsPlatform: AdvancedEsportsPlatform | null = null;
+  private neuralInterfaceSystem: NeuralInterfaceSystem | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -625,6 +629,14 @@ export class GameEngine {
       try { 
         this.advancedMobileOptimizer = new AdvancedMobileOptimizer(this.app);
         this.services.register('advancedMobileOptimizer', this.advancedMobileOptimizer);
+      } catch {}
+      try { 
+        this.advancedEsportsPlatform = new AdvancedEsportsPlatform(this.app);
+        this.services.register('advancedEsportsPlatform', this.advancedEsportsPlatform);
+      } catch {}
+      try { 
+        this.neuralInterfaceSystem = new NeuralInterfaceSystem(this.app);
+        this.services.register('neuralInterfaceSystem', this.neuralInterfaceSystem);
       } catch {}
       try {
         const loader = new ConfigLoader();
