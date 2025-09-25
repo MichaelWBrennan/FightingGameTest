@@ -596,6 +596,97 @@
       "difficulty": "medium",
       "strengths": ["oki", "setups", "pressure"],
       "weaknesses": ["neutral", "defense"]
+    },
+    {
+      "variantId": "vortex",
+      "name": "Vortex Ryu",
+      "description": "A heavy mix-up variant focused on overwhelming vortex pressure. Multiple mix-up options and unpredictable offense.",
+      "isDefault": false,
+      "archetype": "vortex",
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.2,
+        "jumpHeightMultiplier": 1.15,
+        "weightMultiplier": 0.9,
+        "damageMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "addedProperties": ["vortex_setup"]
+        },
+        "mediumPunch": {
+          "addedProperties": ["vortex_setup"]
+        },
+        "hadoken": {
+          "addedProperties": ["vortex_pressure"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+vortex_pressure",
+        "+mixup_options",
+        "+unpredictable_offense"
+      ],
+      "additionalMoves": {
+        "vortex_attack": {
+          "name": "Vortex Attack",
+          "input": "236K",
+          "description": "Multi-directional attack for mix-up",
+          "damage": 90,
+          "startupFrames": 8,
+          "activeFrames": 6,
+          "recoveryFrames": 12,
+          "meterCost": 0,
+          "comboType": "mixup",
+          "properties": [
+            "vortex",
+            "mixup"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 8,
+              "endFrame": 13,
+              "position": [60, 0],
+              "size": [50, 35],
+              "damage": 90,
+              "hitstun": 16,
+              "blockstun": 11,
+              "knockdown": false
+            }
+          ]
+        },
+        "vortex_pressure": {
+          "name": "Vortex Pressure",
+          "input": "214K",
+          "description": "Pressure tool for vortex",
+          "damage": 70,
+          "startupFrames": 6,
+          "activeFrames": 4,
+          "recoveryFrames": 10,
+          "meterCost": 0,
+          "comboType": "pressure",
+          "properties": [
+            "vortex",
+            "pressure"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 6,
+              "endFrame": 9,
+              "position": [55, 0],
+              "size": [45, 30],
+              "damage": 70,
+              "hitstun": 14,
+              "blockstun": 9,
+              "knockdown": false
+            }
+          ]
+        }
+      },
+      "playstyle": "vortex",
+      "difficulty": "hard",
+      "strengths": ["mixup", "pressure", "unpredictable"],
+      "weaknesses": ["health", "defense"]
     }
   ],
   "sprites": {

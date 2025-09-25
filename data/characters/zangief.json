@@ -619,6 +619,88 @@
       "difficulty": "hard",
       "strengths": ["assist", "pressure", "mixup"],
       "weaknesses": ["complexity", "resource_management"]
+    },
+    {
+      "variantId": "turtle",
+      "name": "Turtle Zangief",
+      "description": "An extremely defensive variant focused on patient, reactive gameplay. Strong anti-airs and reversals.",
+      "isDefault": false,
+      "archetype": "turtle",
+      "statModifiers": {
+        "healthMultiplier": 1.2,
+        "walkSpeedMultiplier": 0.7,
+        "runSpeedMultiplier": 0.6,
+        "jumpHeightMultiplier": 0.8,
+        "weightMultiplier": 1.3,
+        "damageMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "spinning_piledriver": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["anti_air"]
+        },
+        "lariat": {
+          "damageMultiplier": 1.1,
+          "addedProperties": ["anti_air", "reversal"]
+        },
+        "heavyPunch": {
+          "damageMultiplier": 1.1,
+          "addedProperties": ["anti_air"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+defensive_focus",
+        "+anti_air_tools",
+        "+reversal_options"
+      ],
+      "additionalMoves": {
+        "defensive_stance": {
+          "name": "Defensive Stance",
+          "input": "214P",
+          "description": "Defensive stance with enhanced blocking",
+          "damage": 0,
+          "startupFrames": 3,
+          "activeFrames": 60,
+          "recoveryFrames": 10,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": [
+            "defensive",
+            "enhanced_blocking"
+          ]
+        },
+        "reversal_attack": {
+          "name": "Reversal Attack",
+          "input": "623P",
+          "description": "Reversal attack with invincibility",
+          "damage": 140,
+          "startupFrames": 2,
+          "activeFrames": 6,
+          "recoveryFrames": 25,
+          "meterCost": 0,
+          "comboType": "reversal",
+          "properties": [
+            "reversal",
+            "invincible"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 2,
+              "endFrame": 7,
+              "position": [40, -20],
+              "size": [50, 60],
+              "damage": 140,
+              "hitstun": 25,
+              "blockstun": 15,
+              "knockdown": true
+            }
+          ]
+        }
+      },
+      "playstyle": "turtle",
+      "difficulty": "easy",
+      "strengths": ["defense", "anti_air", "reversal"],
+      "weaknesses": ["offense", "mobility"]
     }
   ],
   "sprites": {
