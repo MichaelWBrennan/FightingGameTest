@@ -1,0 +1,554 @@
+{
+  "characterId": "cammy",
+  "name": "Cammy",
+  "displayName": "Cammy",
+  "description": "A former Shadaloo assassin turned Delta Red operative with incredible speed and agility for aggressive rushdown combat.",
+  "archetype": "rushdown",
+  "complexity": "medium",
+  "counterplayTags": [
+    "rushdown",
+    "mixup",
+    "mobility"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter"
+  ],
+  "uniqueMechanics": [
+    "cannon_spike",
+    "spiral_arrow",
+    "hooligan_combination"
+  ],
+  "health": 900,
+  "meter": 100,
+  "walkSpeed": 170,
+  "runSpeed": 300,
+  "jumpHeight": 350,
+  "airDashSpeed": 280,
+  "dashDistance": 160,
+  "maxAirDashes": 2,
+  "weight": 85,
+  "dlcCharacter": false,
+  "releaseDate": "2024-08-05",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "cammy_idle",
+    "walkForward": "cammy_walk_forward",
+    "walkBackward": "cammy_walk_backward",
+    "jump": "cammy_jump",
+    "crouch": "cammy_crouch",
+    "block": "cammy_block",
+    "crouchBlock": "cammy_crouch_block",
+    "hit": "cammy_hit",
+    "knockdown": "cammy_knockdown",
+    "dash": "cammy_dash",
+    "airDash": "cammy_air_dash",
+    "wakeup": "cammy_wakeup"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Jab",
+        "damage": 40,
+        "startupFrames": 3,
+        "activeFrames": 2,
+        "recoveryFrames": 4,
+        "blockAdvantage": 3,
+        "hitAdvantage": 6,
+        "comboType": "opener",
+        "properties": [
+          "cancelable",
+          "dash_cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 3,
+            "endFrame": 4,
+            "position": [50, 0],
+            "size": [30, 20],
+            "damage": 40,
+            "hitstun": 8,
+            "blockstun": 5
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Cross",
+        "damage": 70,
+        "startupFrames": 4,
+        "activeFrames": 3,
+        "recoveryFrames": 6,
+        "blockAdvantage": 0,
+        "hitAdvantage": 5,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 6,
+            "position": [60, 0],
+            "size": [40, 25],
+            "damage": 70,
+            "hitstun": 12,
+            "blockstun": 8
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Hook",
+        "damage": 100,
+        "startupFrames": 7,
+        "activeFrames": 4,
+        "recoveryFrames": 10,
+        "blockAdvantage": -3,
+        "hitAdvantage": 2,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 7,
+            "endFrame": 10,
+            "position": [70, -5],
+            "size": [50, 30],
+            "damage": 100,
+            "hitstun": 16,
+            "blockstun": 10,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Low Kick",
+        "damage": 50,
+        "startupFrames": 3,
+        "activeFrames": 2,
+        "recoveryFrames": 5,
+        "blockAdvantage": 2,
+        "hitAdvantage": 5,
+        "comboType": "opener",
+        "properties": [
+          "low",
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 3,
+            "endFrame": 4,
+            "position": [40, 30],
+            "size": [35, 15],
+            "damage": 50,
+            "hitstun": 9,
+            "blockstun": 6
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "Mid Kick",
+        "damage": 80,
+        "startupFrames": 6,
+        "activeFrames": 3,
+        "recoveryFrames": 8,
+        "blockAdvantage": -1,
+        "hitAdvantage": 4,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 6,
+            "endFrame": 8,
+            "position": [65, 0],
+            "size": [45, 30],
+            "damage": 80,
+            "hitstun": 13,
+            "blockstun": 9
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Roundhouse",
+        "damage": 120,
+        "startupFrames": 9,
+        "activeFrames": 5,
+        "recoveryFrames": 13,
+        "blockAdvantage": -6,
+        "hitAdvantage": 0,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 9,
+            "endFrame": 13,
+            "position": [80, -3],
+            "size": [60, 35],
+            "damage": 120,
+            "hitstun": 20,
+            "blockstun": 12,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "spiral_arrow": {
+        "name": "Spiral Arrow",
+        "input": "236K",
+        "description": "Quarter-circle forward + Kick",
+        "damage": 110,
+        "startupFrames": 8,
+        "activeFrames": 8,
+        "recoveryFrames": 15,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "launcher",
+          "air_ok"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 15,
+            "position": [70, 0],
+            "size": [80, 25],
+            "damage": 110,
+            "hitstun": 18,
+            "blockstun": 11,
+            "knockdown": true
+          }
+        ]
+      },
+      "cannon_spike": {
+        "name": "Cannon Spike",
+        "input": "623K",
+        "description": "Dragon punch motion + Kick",
+        "damage": 140,
+        "startupFrames": 4,
+        "activeFrames": 6,
+        "recoveryFrames": 25,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "invincible",
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 9,
+            "position": [30, -20],
+            "size": [40, 60],
+            "damage": 140,
+            "hitstun": 25,
+            "blockstun": 15,
+            "knockdown": true
+          }
+        ]
+      },
+      "hooligan_combination": {
+        "name": "Hooligan Combination",
+        "input": "214P",
+        "description": "Quarter-circle back + Punch",
+        "damage": 0,
+        "startupFrames": 12,
+        "activeFrames": 0,
+        "recoveryFrames": 8,
+        "meterCost": 0,
+        "comboType": "utility",
+        "properties": [
+          "overhead",
+          "grab"
+        ],
+        "grab": {
+          "range": 80,
+          "damage": 100,
+          "knockdown": true
+        }
+      }
+    },
+    "supers": {
+      "killer_bee_arrow": {
+        "name": "Killer Bee Arrow",
+        "input": "236236K",
+        "description": "Quarter-circle forward x2 + Kick",
+        "damage": 300,
+        "startupFrames": 5,
+        "activeFrames": 0,
+        "recoveryFrames": 35,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": [
+          "super",
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 500,
+          "lifetime": 120,
+          "size": [60, 30],
+          "damage": 300,
+          "hitstun": 30,
+          "blockstun": 18,
+          "hits": 2
+        }
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Combo",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "spiral_arrow"
+      ],
+      "damage": 220,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Hooligan Mixup",
+      "inputs": [
+        "hooligan_combination",
+        "cannon_spike"
+      ],
+      "damage": 240,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Air Combo",
+      "inputs": [
+        "jump",
+        "mediumKick",
+        "spiral_arrow"
+      ],
+      "damage": 190,
+      "difficulty": "hard"
+    }
+  ],
+  "variants": [
+    {
+      "variantId": "rushdown",
+      "name": "Rushdown Cammy",
+      "description": "Classic rushdown with balanced offense and mobility. Good mix of speed and power with solid fundamentals.",
+      "isDefault": true,
+      "archetype": "rushdown",
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {},
+      "playstyle": "rushdown",
+      "difficulty": "medium",
+      "strengths": ["mobility", "mixup", "pressure"],
+      "weaknesses": ["range", "health"]
+    },
+    {
+      "variantId": "mixup",
+      "name": "Mix-up Cammy",
+      "description": "A tricky mix-up variant focused on deception and unpredictable attacks. Enhanced mobility and tricky movement options.",
+      "isDefault": false,
+      "archetype": "mixup",
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.2,
+        "jumpHeightMultiplier": 1.15,
+        "weightMultiplier": 0.9,
+        "damageMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "hooligan_combination": {
+          "startupFrameBonus": -3,
+          "recoveryFrameBonus": -2,
+          "addedProperties": ["enhanced_mixup"]
+        },
+        "spiral_arrow": {
+          "startupFrameBonus": -1,
+          "addedProperties": ["tricky_angle"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+enhanced_mixup",
+        "+tricky_movement",
+        "+deception_tools"
+      ],
+      "additionalMoves": {
+        "ninja_strike": {
+          "name": "Ninja Strike",
+          "input": "236K",
+          "description": "Tricky overhead attack for mix-up",
+          "damage": 80,
+          "startupFrames": 6,
+          "activeFrames": 3,
+          "recoveryFrames": 8,
+          "meterCost": 0,
+          "comboType": "opener",
+          "properties": [
+            "overhead",
+            "air_ok",
+            "tricky"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 6,
+              "endFrame": 8,
+              "position": [55, -10],
+              "size": [40, 20],
+              "damage": 80,
+              "hitstun": 14,
+              "blockstun": 9,
+              "knockdown": false
+            }
+          ]
+        },
+        "deception_teleport": {
+          "name": "Deception Teleport",
+          "input": "214K",
+          "description": "Tricky teleport for mix-up",
+          "damage": 0,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": [
+            "teleport",
+            "tricky"
+          ]
+        }
+      },
+      "playstyle": "mixup",
+      "difficulty": "hard",
+      "strengths": ["mixup", "tricky", "mobility"],
+      "weaknesses": ["health", "execution"]
+    },
+    {
+      "variantId": "shoto",
+      "name": "Shoto Cammy",
+      "description": "A balanced shoto variant with fireballs, dragon punches, and tatsumaki. Well-rounded fundamentals with no major weaknesses.",
+      "isDefault": false,
+      "archetype": "shoto",
+      "statModifiers": {
+        "healthMultiplier": 1.1,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.85,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05,
+        "damageMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "spiral_arrow": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["projectile_like"]
+        },
+        "cannon_spike": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["dragon_punch_like"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+shoto_fundamentals",
+        "+balanced_approach",
+        "+versatile_tools"
+      ],
+      "additionalMoves": {
+        "delta_fireball": {
+          "name": "Delta Fireball",
+          "input": "236P",
+          "description": "Shoto-style fireball for zoning",
+          "damage": 100,
+          "startupFrames": 12,
+          "activeFrames": 0,
+          "recoveryFrames": 25,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "projectile"
+          ],
+          "projectile": {
+            "speed": 300,
+            "lifetime": 120,
+            "size": [40, 20],
+            "damage": 100,
+            "hitstun": 18,
+            "blockstun": 12
+          }
+        },
+        "delta_dragon": {
+          "name": "Delta Dragon Punch",
+          "input": "623P",
+          "description": "Shoto-style dragon punch",
+          "damage": 150,
+          "startupFrames": 3,
+          "activeFrames": 8,
+          "recoveryFrames": 30,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "invincible",
+            "launcher"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 3,
+              "endFrame": 10,
+              "position": [40, -30],
+              "size": [50, 80],
+              "damage": 150,
+              "hitstun": 30,
+              "blockstun": 20,
+              "knockdown": true
+            }
+          ]
+        }
+      },
+      "playstyle": "shoto",
+      "difficulty": "medium",
+      "strengths": ["versatile", "fundamentals", "balanced"],
+      "weaknesses": ["no_gimmicks", "slow_movement"]
+    }
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Cammy - Character Sprites",
+        "file_name": "street_fighter_6_cammy_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+        "is_hd": true,
+        "file_size": 1100000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Cammy - Portrait",
+        "file_name": "street_fighter_6_cammy_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+        "is_hd": true,
+        "file_size": 1100000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Cammy - Character Select Icon",
+        "file_name": "street_fighter_6_cammy_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/cammy/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
+}

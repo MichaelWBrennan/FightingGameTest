@@ -1,0 +1,529 @@
+{
+  "characterId": "dhalsim",
+  "name": "Dhalsim",
+  "displayName": "Dhalsim",
+  "description": "The yoga master who controls space with long-range attacks and teleportation. Master of zoning and keepaway tactics.",
+  "archetype": "zoner",
+  "complexity": "hard",
+  "counterplayTags": [
+    "zoner",
+    "long_range",
+    "teleport"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter"
+  ],
+  "uniqueMechanics": [
+    "yoga_fire",
+    "yoga_flame",
+    "yoga_teleport"
+  ],
+  "health": 950,
+  "meter": 100,
+  "walkSpeed": 120,
+  "runSpeed": 200,
+  "jumpHeight": 400,
+  "airDashSpeed": 250,
+  "dashDistance": 200,
+  "maxAirDashes": 1,
+  "weight": 90,
+  "dlcCharacter": false,
+  "releaseDate": "2024-08-05",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "dhalsim_idle",
+    "walkForward": "dhalsim_walk_forward",
+    "walkBackward": "dhalsim_walk_backward",
+    "jump": "dhalsim_jump",
+    "crouch": "dhalsim_crouch",
+    "block": "dhalsim_block",
+    "crouchBlock": "dhalsim_crouch_block",
+    "hit": "dhalsim_hit",
+    "knockdown": "dhalsim_knockdown",
+    "dash": "dhalsim_dash",
+    "airDash": "dhalsim_air_dash",
+    "wakeup": "dhalsim_wakeup"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Jab",
+        "damage": 45,
+        "startupFrames": 6,
+        "activeFrames": 3,
+        "recoveryFrames": 8,
+        "blockAdvantage": -1,
+        "hitAdvantage": 2,
+        "comboType": "opener",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 6,
+            "endFrame": 8,
+            "position": [80, 0],
+            "size": [40, 25],
+            "damage": 45,
+            "hitstun": 10,
+            "blockstun": 7
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Cross",
+        "damage": 75,
+        "startupFrames": 10,
+        "activeFrames": 4,
+        "recoveryFrames": 12,
+        "blockAdvantage": -3,
+        "hitAdvantage": 0,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 10,
+            "endFrame": 13,
+            "position": [100, 0],
+            "size": [50, 30],
+            "damage": 75,
+            "hitstun": 14,
+            "blockstun": 10
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Hook",
+        "damage": 110,
+        "startupFrames": 14,
+        "activeFrames": 6,
+        "recoveryFrames": 18,
+        "blockAdvantage": -6,
+        "hitAdvantage": -2,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 14,
+            "endFrame": 19,
+            "position": [120, -5],
+            "size": [60, 35],
+            "damage": 110,
+            "hitstun": 18,
+            "blockstun": 12,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Low Kick",
+        "damage": 55,
+        "startupFrames": 7,
+        "activeFrames": 3,
+        "recoveryFrames": 9,
+        "blockAdvantage": -2,
+        "hitAdvantage": 1,
+        "comboType": "opener",
+        "properties": [
+          "low",
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 7,
+            "endFrame": 9,
+            "position": [70, 40],
+            "size": [45, 20],
+            "damage": 55,
+            "hitstun": 11,
+            "blockstun": 8
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "Mid Kick",
+        "damage": 85,
+        "startupFrames": 11,
+        "activeFrames": 4,
+        "recoveryFrames": 13,
+        "blockAdvantage": -4,
+        "hitAdvantage": -1,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 11,
+            "endFrame": 14,
+            "position": [90, 0],
+            "size": [55, 35],
+            "damage": 85,
+            "hitstun": 15,
+            "blockstun": 11
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Roundhouse",
+        "damage": 130,
+        "startupFrames": 16,
+        "activeFrames": 8,
+        "recoveryFrames": 22,
+        "blockAdvantage": -9,
+        "hitAdvantage": -4,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 16,
+            "endFrame": 23,
+            "position": [110, -3],
+            "size": [70, 40],
+            "damage": 130,
+            "hitstun": 22,
+            "blockstun": 15,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "yoga_fire": {
+        "name": "Yoga Fire",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch",
+        "damage": 90,
+        "startupFrames": 15,
+        "activeFrames": 0,
+        "recoveryFrames": 30,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 200,
+          "lifetime": 180,
+          "size": [50, 30],
+          "damage": 90,
+          "hitstun": 20,
+          "blockstun": 12
+        }
+      },
+      "yoga_flame": {
+        "name": "Yoga Flame",
+        "input": "214P",
+        "description": "Quarter-circle back + Punch",
+        "damage": 120,
+        "startupFrames": 12,
+        "activeFrames": 8,
+        "recoveryFrames": 25,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 0,
+          "lifetime": 60,
+          "size": [80, 60],
+          "damage": 120,
+          "hitstun": 25,
+          "blockstun": 15
+        }
+      },
+      "yoga_teleport": {
+        "name": "Yoga Teleport",
+        "input": "214K",
+        "description": "Quarter-circle back + Kick",
+        "damage": 0,
+        "startupFrames": 8,
+        "activeFrames": 0,
+        "recoveryFrames": 15,
+        "meterCost": 0,
+        "comboType": "utility",
+        "properties": [
+          "teleport"
+        ]
+      }
+    },
+    "supers": {
+      "yoga_inferno": {
+        "name": "Yoga Inferno",
+        "input": "236236P",
+        "description": "Quarter-circle forward x2 + Punch",
+        "damage": 350,
+        "startupFrames": 10,
+        "activeFrames": 0,
+        "recoveryFrames": 50,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": [
+          "super",
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 300,
+          "lifetime": 240,
+          "size": [100, 60],
+          "damage": 350,
+          "hitstun": 40,
+          "blockstun": 25,
+          "hits": 3
+        }
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Combo",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "yoga_fire"
+      ],
+      "damage": 210,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Teleport Mixup",
+      "inputs": [
+        "yoga_teleport",
+        "heavyPunch"
+      ],
+      "damage": 110,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Super Combo",
+      "inputs": [
+        "yoga_flame",
+        "yoga_inferno"
+      ],
+      "damage": 470,
+      "difficulty": "hard"
+    }
+  ],
+  "variants": [
+    {
+      "variantId": "zoner",
+      "name": "Zoner Dhalsim",
+      "description": "Classic zoning with long-range projectiles and keepaway tactics. Controls space with fireballs and teleportation.",
+      "isDefault": true,
+      "archetype": "zoner",
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {},
+      "playstyle": "zoner",
+      "difficulty": "hard",
+      "strengths": ["range", "projectiles", "teleport"],
+      "weaknesses": ["close_range", "health"]
+    },
+    {
+      "variantId": "technical",
+      "name": "Technical Dhalsim",
+      "description": "Complex execution with advanced zoning techniques. Higher damage potential for skilled players with precise positioning.",
+      "isDefault": false,
+      "archetype": "technical",
+      "statModifiers": {
+        "healthMultiplier": 1.1,
+        "walkSpeedMultiplier": 0.8,
+        "runSpeedMultiplier": 0.7,
+        "jumpHeightMultiplier": 0.9,
+        "weightMultiplier": 1.1,
+        "damageMultiplier": 1.3
+      },
+      "moveModifiers": {
+        "yoga_fire": {
+          "damageMultiplier": 1.4,
+          "addedProperties": ["technical_input"]
+        },
+        "yoga_inferno": {
+          "damageMultiplier": 1.5,
+          "addedProperties": ["technical_input"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+advanced_positioning",
+        "+technical_execution",
+        "+enhanced_damage"
+      ],
+      "additionalMoves": {
+        "yoga_catastrophe": {
+          "name": "Yoga Catastrophe",
+          "input": "236236K",
+          "description": "Technical multi-hit super",
+          "damage": 400,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 60,
+          "meterCost": 100,
+          "comboType": "ender",
+          "properties": [
+            "super",
+            "projectile",
+            "technical"
+          ],
+          "projectile": {
+            "speed": 250,
+            "lifetime": 300,
+            "size": [120, 80],
+            "damage": 400,
+            "hitstun": 45,
+            "blockstun": 30,
+            "hits": 5
+          }
+        },
+        "yoga_mastery": {
+          "name": "Yoga Mastery",
+          "input": "214214P",
+          "description": "Technical teleport with follow-up",
+          "damage": 150,
+          "startupFrames": 5,
+          "activeFrames": 0,
+          "recoveryFrames": 20,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "teleport",
+            "technical"
+          ]
+        }
+      },
+      "playstyle": "technical",
+      "difficulty": "expert",
+      "strengths": ["high_damage", "advanced_tech", "positioning"],
+      "weaknesses": ["execution", "slow_movement"]
+    },
+    {
+      "variantId": "defensive",
+      "name": "Defensive Dhalsim",
+      "description": "A tank-like defensive variant with enhanced armor, health, and defensive options. Slower but extremely durable.",
+      "isDefault": false,
+      "archetype": "defensive",
+      "statModifiers": {
+        "healthMultiplier": 1.4,
+        "walkSpeedMultiplier": 0.7,
+        "runSpeedMultiplier": 0.6,
+        "jumpHeightMultiplier": 0.8,
+        "weightMultiplier": 1.3,
+        "damageMultiplier": 1.2
+      },
+      "moveModifiers": {
+        "yoga_fire": {
+          "damageMultiplier": 1.3,
+          "addedProperties": ["armor_break"]
+        },
+        "yoga_flame": {
+          "damageMultiplier": 1.4,
+          "addedProperties": ["enhanced_armor"]
+        },
+        "heavyPunch": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["armor"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+enhanced_armor",
+        "+damage_reduction",
+        "+defensive_options"
+      ],
+      "additionalMoves": {
+        "yoga_armor": {
+          "name": "Yoga Armor",
+          "input": "214P",
+          "description": "Defensive stance with damage reduction and armor",
+          "damage": 0,
+          "startupFrames": 5,
+          "activeFrames": 45,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": [
+            "super_armor",
+            "damage_reduction"
+          ]
+        },
+        "yoga_counter": {
+          "name": "Yoga Counter",
+          "input": "214K",
+          "description": "Counter-attack with armor",
+          "damage": 180,
+          "startupFrames": 3,
+          "activeFrames": 4,
+          "recoveryFrames": 25,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "counter",
+            "armor"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 3,
+              "endFrame": 6,
+              "position": [80, 0],
+              "size": [60, 40],
+              "damage": 180,
+              "hitstun": 25,
+              "blockstun": 15,
+              "knockdown": true
+            }
+          ]
+        }
+      },
+      "playstyle": "defensive",
+      "difficulty": "easy",
+      "strengths": ["high_health", "armor", "defense"],
+      "weaknesses": ["very_slow", "mobility"]
+    }
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Dhalsim - Character Sprites",
+        "file_name": "street_fighter_6_dhalsim_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dhalsim/",
+        "is_hd": true,
+        "file_size": 1000000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Dhalsim - Portrait",
+        "file_name": "street_fighter_6_dhalsim_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dhalsim/",
+        "is_hd": true,
+        "file_size": 1000000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Dhalsim - Character Select Icon",
+        "file_name": "street_fighter_6_dhalsim_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/dhalsim/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
+}

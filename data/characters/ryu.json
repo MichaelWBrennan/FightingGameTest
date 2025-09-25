@@ -1,13 +1,14 @@
 {
   "characterId": "ryu",
-  "name": "FighterA",
-  "displayName": "FighterA",
-  "description": "A wandering warrior who trains constantly to become a true martial artist.",
+  "name": "Ryu",
+  "displayName": "Ryu",
+  "description": "The wandering warrior seeking to perfect his martial arts through endless training.",
   "archetype": "shoto",
-  "complexity": "easy",
+  "complexity": "medium",
   "counterplayTags": [
     "fundamentals",
-    "neutral"
+    "neutral",
+    "balanced"
   ],
   "meterInteractions": [
     "ex_specials",
@@ -15,7 +16,8 @@
   ],
   "uniqueMechanics": [
     "fireball",
-    "shoryuken"
+    "dragon_punch",
+    "tatsumaki"
   ],
   "health": 1000,
   "meter": 100,
@@ -62,14 +64,8 @@
           {
             "startFrame": 4,
             "endFrame": 6,
-            "position": [
-              60,
-              0
-            ],
-            "size": [
-              40,
-              30
-            ],
+            "position": [60, 0],
+            "size": [40, 30],
             "damage": 50,
             "hitstun": 12,
             "blockstun": 8
@@ -92,14 +88,8 @@
           {
             "startFrame": 6,
             "endFrame": 9,
-            "position": [
-              70,
-              0
-            ],
-            "size": [
-              50,
-              35
-            ],
+            "position": [70, 0],
+            "size": [50, 35],
             "damage": 80,
             "hitstun": 15,
             "blockstun": 10
@@ -122,14 +112,8 @@
           {
             "startFrame": 10,
             "endFrame": 14,
-            "position": [
-              80,
-              -10
-            ],
-            "size": [
-              60,
-              40
-            ],
+            "position": [80, -10],
+            "size": [60, 40],
             "damage": 120,
             "hitstun": 20,
             "blockstun": 12,
@@ -154,14 +138,8 @@
           {
             "startFrame": 5,
             "endFrame": 7,
-            "position": [
-              50,
-              40
-            ],
-            "size": [
-              45,
-              25
-            ],
+            "position": [50, 40],
+            "size": [45, 25],
             "damage": 60,
             "hitstun": 13,
             "blockstun": 9
@@ -184,14 +162,8 @@
           {
             "startFrame": 8,
             "endFrame": 11,
-            "position": [
-              75,
-              0
-            ],
-            "size": [
-              55,
-              40
-            ],
+            "position": [75, 0],
+            "size": [55, 40],
             "damage": 90,
             "hitstun": 16,
             "blockstun": 11
@@ -214,14 +186,8 @@
           {
             "startFrame": 12,
             "endFrame": 17,
-            "position": [
-              90,
-              -5
-            ],
-            "size": [
-              70,
-              45
-            ],
+            "position": [90, -5],
+            "size": [70, 45],
             "damage": 140,
             "hitstun": 25,
             "blockstun": 15,
@@ -247,10 +213,7 @@
         "projectile": {
           "speed": 300,
           "lifetime": 120,
-          "size": [
-            40,
-            20
-          ],
+          "size": [40, 20],
           "damage": 100,
           "hitstun": 18,
           "blockstun": 12
@@ -274,17 +237,38 @@
           {
             "startFrame": 3,
             "endFrame": 10,
-            "position": [
-              40,
-              -30
-            ],
-            "size": [
-              50,
-              80
-            ],
+            "position": [40, -30],
+            "size": [50, 80],
             "damage": 160,
             "hitstun": 30,
             "blockstun": 20,
+            "knockdown": true
+          }
+        ]
+      },
+      "tatsumaki": {
+        "name": "Tatsumaki Senpukyaku",
+        "input": "214K",
+        "description": "Quarter-circle back + Kick",
+        "damage": 120,
+        "startupFrames": 8,
+        "activeFrames": 12,
+        "recoveryFrames": 20,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "launcher",
+          "air_ok"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 19,
+            "position": [60, 0],
+            "size": [70, 30],
+            "damage": 120,
+            "hitstun": 20,
+            "blockstun": 12,
             "knockdown": true
           }
         ]
@@ -308,10 +292,7 @@
         "projectile": {
           "speed": 400,
           "lifetime": 180,
-          "size": [
-            80,
-            40
-          ],
+          "size": [80, 40],
           "damage": 300,
           "hitstun": 40,
           "blockstun": 25,
@@ -351,132 +332,361 @@
       "difficulty": "hard"
     }
   ],
-  "subArchetypes": [
+  "variants": [
     {
-      "subArchetypeId": "traditional",
-      "name": "Traditional Shoto",
-      "description": "Balanced fundamentals-focused playstyle. The classic Ryu approach to fighting.",
+      "variantId": "shoto",
+      "name": "Shoto Ryu",
+      "description": "The classic balanced approach to fighting. Well-rounded fundamentals with fireballs, dragon punches, and tatsumaki.",
       "isDefault": true,
+      "archetype": "shoto",
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
         "runSpeedMultiplier": 1.0,
         "jumpHeightMultiplier": 1.0,
-        "weightMultiplier": 1.0
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
       },
       "moveModifiers": {},
       "uniqueMechanicChanges": [],
-      "additionalMoves": {}
+      "additionalMoves": {},
+      "playstyle": "balanced",
+      "difficulty": "medium",
+      "strengths": ["versatile", "fundamentals", "projectile"],
+      "weaknesses": ["no_gimmicks"]
     },
     {
-      "subArchetypeId": "aggressive",
-      "name": "Aggressive Shoto",
-      "description": "Faster, more offensive playstyle with enhanced pressure tools but reduced health.",
+      "variantId": "grappler",
+      "name": "Grappler Ryu",
+      "description": "A close-range grappler variant with command grabs and throw-based gameplay. High damage but requires getting in close.",
       "isDefault": false,
+      "archetype": "grappler",
       "statModifiers": {
-        "healthMultiplier": 0.9,
-        "walkSpeedMultiplier": 1.1,
-        "runSpeedMultiplier": 1.15,
-        "jumpHeightMultiplier": 1.05,
-        "weightMultiplier": 0.95
+        "healthMultiplier": 1.2,
+        "walkSpeedMultiplier": 0.8,
+        "runSpeedMultiplier": 0.7,
+        "jumpHeightMultiplier": 0.9,
+        "weightMultiplier": 1.2,
+        "damageMultiplier": 1.3
       },
       "moveModifiers": {
         "lightPunch": {
-          "startupFrameBonus": -1,
-          "hitAdvantageBonus": 1,
-          "addedProperties": [
-            "frame_trap"
-          ],
-          "removedProperties": []
+          "damageMultiplier": 1.2,
+          "addedProperties": ["command_grab_setup"]
         },
         "mediumPunch": {
-          "startupFrameBonus": -1,
-          "blockAdvantageBonus": 1,
-          "addedProperties": [],
-          "removedProperties": []
-        },
-        "hadoken": {
-          "recoveryFrameBonus": -3,
-          "addedProperties": [
-            "enhanced_speed"
-          ],
-          "removedProperties": []
-        }
-      },
-      "uniqueMechanicChanges": [
-        "+aggressive_meter_build"
-      ],
-      "additionalMoves": {}
-    },
-    {
-      "subArchetypeId": "technical",
-      "name": "Technical Shoto",
-      "description": "Complex execution with advanced techniques. Higher damage potential for skilled players.",
-      "isDefault": false,
-      "statModifiers": {
-        "healthMultiplier": 1.05,
-        "walkSpeedMultiplier": 0.95,
-        "runSpeedMultiplier": 0.9,
-        "jumpHeightMultiplier": 0.95,
-        "weightMultiplier": 1.05
-      },
-      "moveModifiers": {
-        "shoryuken": {
-          "damageMultiplier": 1.15,
-          "startupFrameBonus": 1,
-          "addedProperties": [
-            "just_frame_bonus"
-          ],
-          "removedProperties": []
-        },
-        "shinku_hadoken": {
           "damageMultiplier": 1.2,
-          "addedProperties": [
-            "technical_input"
-          ],
-          "removedProperties": []
+          "addedProperties": ["command_grab_setup"]
         }
       },
       "uniqueMechanicChanges": [
-        "+advanced_cancels",
-        "+just_frame_timing"
+        "+command_grabs",
+        "+throw_damage",
+        "+close_range_focus"
       ],
       "additionalMoves": {
-        "special_focus_attack": {
-          "name": "Focus Attack",
-          "input": "MP+MK",
-          "description": "Technical focus attack with armor properties",
-          "damage": 80,
-          "startupFrames": 15,
-          "activeFrames": 4,
+        "dragon_throw": {
+          "name": "Dragon Throw",
+          "input": "360P",
+          "description": "Command grab with dragon punch motion",
+          "damage": 180,
+          "startupFrames": 3,
+          "activeFrames": 1,
+          "recoveryFrames": 40,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "command_grab",
+            "invincible"
+          ],
+          "grab": {
+            "range": 80,
+            "damage": 180,
+            "knockdown": true
+          }
+        },
+        "tatsumaki_throw": {
+          "name": "Tatsumaki Throw",
+          "input": "214K",
+          "description": "Command grab with tatsumaki motion",
+          "damage": 160,
+          "startupFrames": 4,
+          "activeFrames": 1,
+          "recoveryFrames": 35,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "command_grab"
+          ],
+          "grab": {
+            "range": 70,
+            "damage": 160,
+            "knockdown": true
+          }
+        }
+      },
+      "playstyle": "grappler",
+      "difficulty": "medium",
+      "strengths": ["high_damage", "throws", "close_range"],
+      "weaknesses": ["slow_movement", "range"]
+    },
+    {
+      "variantId": "zoner",
+      "name": "Zoner Ryu",
+      "description": "A long-range zoning variant focused on controlling space with enhanced projectiles and keepaway tactics.",
+      "isDefault": false,
+      "archetype": "zoner",
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.8,
+        "jumpHeightMultiplier": 1.1,
+        "weightMultiplier": 0.9,
+        "damageMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "hadoken": {
+          "damageMultiplier": 1.3,
+          "startupFrameBonus": -2,
+          "addedProperties": ["enhanced_range", "multi_hit"]
+        },
+        "shinku_hadoken": {
+          "damageMultiplier": 1.5,
+          "addedProperties": ["enhanced_range", "multi_hit"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+enhanced_projectiles",
+        "+range_control",
+        "+keepaway_tactics"
+      ],
+      "additionalMoves": {
+        "yoga_fire": {
+          "name": "Yoga Fire",
+          "input": "236P",
+          "description": "Long-range fireball for zoning",
+          "damage": 120,
+          "startupFrames": 12,
+          "activeFrames": 0,
+          "recoveryFrames": 25,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "projectile",
+            "zoning"
+          ],
+          "projectile": {
+            "speed": 250,
+            "lifetime": 200,
+            "size": [60, 35],
+            "damage": 120,
+            "hitstun": 25,
+            "blockstun": 15
+          }
+        },
+        "yoga_flame": {
+          "name": "Yoga Flame",
+          "input": "214P",
+          "description": "Ground-based flame for area control",
+          "damage": 100,
+          "startupFrames": 10,
+          "activeFrames": 60,
           "recoveryFrames": 20,
           "meterCost": 0,
-          "comboType": "opener",
+          "comboType": "ender",
           "properties": [
-            "armor",
-            "crumple",
-            "cancelable"
+            "projectile",
+            "area_control"
+          ],
+          "projectile": {
+            "speed": 0,
+            "lifetime": 60,
+            "size": [100, 50],
+            "damage": 100,
+            "hitstun": 20,
+            "blockstun": 12
+          }
+        }
+      },
+      "playstyle": "zoner",
+      "difficulty": "hard",
+      "strengths": ["range", "projectiles", "control"],
+      "weaknesses": ["close_range", "health"]
+    },
+    {
+      "variantId": "setplay",
+      "name": "Setplay Ryu",
+      "description": "A setplay-focused variant that excels at knockdown setups and oki pressure. Strong after knockdown situations.",
+      "isDefault": false,
+      "archetype": "setplay",
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
+      },
+      "moveModifiers": {
+        "hadoken": {
+          "addedProperties": ["oki_setup"]
+        },
+        "shoryuken": {
+          "addedProperties": ["knockdown_setup"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+oki_pressure",
+        "+knockdown_setups",
+        "+setplay_tools"
+      ],
+      "additionalMoves": {
+        "oki_hadoken": {
+          "name": "Oki Hadoken",
+          "input": "236P",
+          "description": "Fireball designed for oki pressure",
+          "damage": 80,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 20,
+          "meterCost": 0,
+          "comboType": "oki",
+          "properties": [
+            "projectile",
+            "oki_setup"
+          ],
+          "projectile": {
+            "speed": 200,
+            "lifetime": 150,
+            "size": [40, 20],
+            "damage": 80,
+            "hitstun": 15,
+            "blockstun": 10
+          }
+        },
+        "meaty_attack": {
+          "name": "Meaty Attack",
+          "input": "MP+MK",
+          "description": "Meaty attack for oki pressure",
+          "damage": 100,
+          "startupFrames": 12,
+          "activeFrames": 6,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "oki",
+          "properties": [
+            "meaty",
+            "oki_pressure"
           ],
           "hitboxes": [
             {
-              "startFrame": 15,
-              "endFrame": 18,
-              "position": [
-                70,
-                0
-              ],
-              "size": [
-                60,
-                40
-              ],
-              "damage": 80,
-              "hitstun": 25,
-              "blockstun": 15,
+              "startFrame": 12,
+              "endFrame": 17,
+              "position": [70, 0],
+              "size": [60, 40],
+              "damage": 100,
+              "hitstun": 18,
+              "blockstun": 12,
+              "knockdown": true
+            }
+          ]
+        }
+      },
+      "playstyle": "setplay",
+      "difficulty": "medium",
+      "strengths": ["oki", "setups", "pressure"],
+      "weaknesses": ["neutral", "defense"]
+    },
+    {
+      "variantId": "vortex",
+      "name": "Vortex Ryu",
+      "description": "A heavy mix-up variant focused on overwhelming vortex pressure. Multiple mix-up options and unpredictable offense.",
+      "isDefault": false,
+      "archetype": "vortex",
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.2,
+        "jumpHeightMultiplier": 1.15,
+        "weightMultiplier": 0.9,
+        "damageMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "addedProperties": ["vortex_setup"]
+        },
+        "mediumPunch": {
+          "addedProperties": ["vortex_setup"]
+        },
+        "hadoken": {
+          "addedProperties": ["vortex_pressure"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+vortex_pressure",
+        "+mixup_options",
+        "+unpredictable_offense"
+      ],
+      "additionalMoves": {
+        "vortex_attack": {
+          "name": "Vortex Attack",
+          "input": "236K",
+          "description": "Multi-directional attack for mix-up",
+          "damage": 90,
+          "startupFrames": 8,
+          "activeFrames": 6,
+          "recoveryFrames": 12,
+          "meterCost": 0,
+          "comboType": "mixup",
+          "properties": [
+            "vortex",
+            "mixup"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 8,
+              "endFrame": 13,
+              "position": [60, 0],
+              "size": [50, 35],
+              "damage": 90,
+              "hitstun": 16,
+              "blockstun": 11,
+              "knockdown": false
+            }
+          ]
+        },
+        "vortex_pressure": {
+          "name": "Vortex Pressure",
+          "input": "214K",
+          "description": "Pressure tool for vortex",
+          "damage": 70,
+          "startupFrames": 6,
+          "activeFrames": 4,
+          "recoveryFrames": 10,
+          "meterCost": 0,
+          "comboType": "pressure",
+          "properties": [
+            "vortex",
+            "pressure"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 6,
+              "endFrame": 9,
+              "position": [55, 0],
+              "size": [45, 30],
+              "damage": 70,
+              "hitstun": 14,
+              "blockstun": 9,
               "knockdown": false
             }
           ]
         }
-      }
+      },
+      "playstyle": "vortex",
+      "difficulty": "hard",
+      "strengths": ["mixup", "pressure", "unpredictable"],
+      "weaknesses": ["health", "defense"]
     }
   ],
   "sprites": {
@@ -484,22 +694,6 @@
       {
         "name": "Ryu - Character Sprites",
         "file_name": "street_fighter_6_ryu_character_sprites",
-        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
-        "is_hd": true,
-        "file_size": 1024000,
-        "resolution": "1920x1080"
-      },
-      {
-        "name": "Ryu - Victory Sprites",
-        "file_name": "street_fighter_6_ryu_victory_sprites",
-        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
-        "is_hd": true,
-        "file_size": 1024000,
-        "resolution": "1920x1080"
-      },
-      {
-        "name": "Ryu - Special Move Effects",
-        "file_name": "street_fighter_6_ryu_special_move_effects",
         "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ryu/",
         "is_hd": true,
         "file_size": 1024000,

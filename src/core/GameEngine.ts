@@ -72,6 +72,13 @@ import { PartyService } from './online/PartyService';
 import { TournamentService } from './online/TournamentService';
 import { FixedClock } from './utils/Clock';
 import { RngService } from './utils/RngService';
+import { AudioManager } from './audio/AudioManager';
+import { MusicManager } from './audio/MusicManager';
+import { StoryMode } from './story/StoryMode';
+import { ModernUIManager } from './ui/ModernUIManager';
+import { ParticleSystem } from './graphics/ParticleSystem';
+import { RankingSystem } from './competitive/RankingSystem';
+import { AccessibilityManager } from './accessibility/AccessibilityManager';
 
 export class GameEngine {
   private app: pc.Application;
@@ -135,6 +142,13 @@ export class GameEngine {
   private privacy: PrivacyOverlay | null = null;
   private clock: FixedClock = new FixedClock(60);
   private rng: RngService = new RngService(0xC0FFEE);
+  private audioManager: AudioManager | null = null;
+  private musicManager: MusicManager | null = null;
+  private storyMode: StoryMode | null = null;
+  private modernUI: ModernUIManager | null = null;
+  private particleSystem: ParticleSystem | null = null;
+  private rankingSystem: RankingSystem | null = null;
+  private accessibilityManager: AccessibilityManager | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -552,6 +566,36 @@ export class GameEngine {
       try { const party = this.services.resolve('party'); this.partyOverlay = new PartyOverlay(party); } catch {}
       try { const tour = this.services.resolve('tournament'); this.tournamentOverlay = new TournamentOverlay(tour); } catch {}
       try { new InputRemapOverlay((map) => this.inputManager.setKeyMap(map)); } catch {}
+      
+      // Initialize new systems
+      try { 
+        this.audioManager = new AudioManager(this.app);
+        this.services.register('audio', this.audioManager);
+      } catch {}
+      try { 
+        this.musicManager = new MusicManager(this.audioManager!);
+        this.services.register('music', this.musicManager);
+      } catch {}
+      try { 
+        this.storyMode = new StoryMode();
+        this.services.register('story', this.storyMode);
+      } catch {}
+      try { 
+        this.modernUI = new ModernUIManager(this.app);
+        this.services.register('modernUI', this.modernUI);
+      } catch {}
+      try { 
+        this.particleSystem = new ParticleSystem(this.app);
+        this.services.register('particles', this.particleSystem);
+      } catch {}
+      try { 
+        this.rankingSystem = new RankingSystem();
+        this.services.register('ranking', this.rankingSystem);
+      } catch {}
+      try { 
+        this.accessibilityManager = new AccessibilityManager();
+        this.services.register('accessibility', this.accessibilityManager);
+      } catch {}
       try {
         const loader = new ConfigLoader();
         loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
