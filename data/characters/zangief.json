@@ -319,11 +319,11 @@
   ],
   "variants": [
     {
-      "variantId": "grappler",
-      "name": "Grappler Zangief",
-      "description": "The classic grappler approach. High damage throws and command grabs with slow movement but devastating close-range power.",
+      "variantId": "rushdown",
+      "name": "Rushdown Zangief",
+      "description": "A fast, aggressive variant focused on overwhelming pressure and mobility. Enhanced speed but reduced damage and health.",
       "isDefault": true,
-      "archetype": "grappler",
+      "archetype": "rushdown",
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
@@ -341,11 +341,11 @@
       "weaknesses": ["slow_movement", "range"]
     },
     {
-      "variantId": "rushdown",
-      "name": "Rushdown Zangief",
-      "description": "A fast, aggressive variant focused on overwhelming pressure and mobility. Enhanced speed but reduced damage and health.",
+      "variantId": "power",
+      "name": "Power Zangief",
+      "description": "A devastating power variant with maximum damage potential. Slow but extremely powerful with enhanced armor and health.",
       "isDefault": false,
-      "archetype": "rushdown",
+      "archetype": "power",
       "statModifiers": {
         "healthMultiplier": 0.85,
         "walkSpeedMultiplier": 1.4,
