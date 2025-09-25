@@ -1,519 +1,385 @@
-export interface CharacterSkin {
+import { pc } from 'playcanvas';
+import { Character } from '../../../types/character';
+import { Logger } from '../utils/Logger';
+
+export interface CustomizationItem {
   id: string;
   name: string;
   description: string;
-  characterId: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  unlockMethod: 'default' | 'purchase' | 'achievement' | 'event' | 'battle_pass';
-  unlockRequirement?: {
+  type: 'outfit' | 'color' | 'accessory' | 'effect' | 'voice' | 'move';
+  category: string;
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  price: number;
+  requirements: {
     level?: number;
-    currency?: number;
+    characterUnlocked?: string;
+    storyProgress?: number;
     achievement?: string;
-    event?: string;
   };
-  price?: {
-    currency: number;
-    realMoney?: number;
+  unlockMethod: 'purchase' | 'earn' | 'unlock' | 'event';
+  stats: {
+    damage?: number;
+    defense?: number;
+    speed?: number;
+    meterGain?: number;
   };
-  previewImage: string;
-  spriteSheet: string;
+  visual: {
+    model?: string;
+    texture?: string;
+    color?: string;
+    effect?: string;
+    animation?: string;
+  };
+  audio: {
+    voice?: string;
+    sound?: string;
+    music?: string;
+  };
+}
+
+export interface CharacterCustomization {
+  characterId: string;
+  outfit: string;
   colors: {
     primary: string;
     secondary: string;
     accent: string;
-    skin: string;
-    hair: string;
-    eyes: string;
+    metallic: string;
   };
-  effects?: {
-    trail?: string;
-    aura?: string;
-    particles?: string;
+  effects: {
+    aura: string;
+    particles: string;
+    glow: string;
+    trail: string;
   };
-  voice?: {
-    pitch: number;
-    effects: string[];
+  stats: {
+    damage: number;
+    defense: number;
+    speed: number;
+    meterGain: number;
   };
 }
 
-export interface CharacterColor {
-  id: string;
-  name: string;
-  characterId: string;
-  palette: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    skin: string;
-    hair: string;
-    eyes: string;
-  };
-  unlockMethod: 'default' | 'purchase' | 'achievement';
-  price?: number;
-}
+export class CharacterCustomizationSystem {
+  private app: pc.Application;
+  private customizationItems: Map<string, CustomizationItem> = new Map();
+  private playerCustomizations: Map<string, CharacterCustomization> = new Map();
+  private playerInventory: Map<string, number> = new Map();
+  private playerMoney: number = 10000;
 
-export interface CharacterTitle {
-  id: string;
-  name: string;
-  description: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  unlockMethod: 'default' | 'achievement' | 'event' | 'ranking';
-  unlockRequirement?: {
-    achievement?: string;
-    rank?: string;
-    event?: string;
-    level?: number;
-  };
-  displayText: string;
-  color: string;
-  effects?: string[];
-}
-
-export interface CharacterFrame {
-  id: string;
-  name: string;
-  description: string;
-  characterId: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  unlockMethod: 'default' | 'purchase' | 'achievement' | 'event';
-  unlockRequirement?: {
-    achievement?: string;
-    event?: string;
-    level?: number;
-  };
-  price?: number;
-  image: string;
-  border: {
-    color: string;
-    style: 'solid' | 'gradient' | 'pattern';
-    width: number;
-  };
-  effects?: string[];
-}
-
-export interface CharacterLoadout {
-  characterId: string;
-  skinId: string;
-  colorId: string;
-  titleId: string;
-  frameId: string;
-  effects: string[];
-  name: string;
-  isDefault: boolean;
-}
-
-export class CharacterCustomization {
-  private skins: Map<string, CharacterSkin> = new Map();
-  private colors: Map<string, CharacterColor> = new Map();
-  private titles: Map<string, CharacterTitle> = new Map();
-  private frames: Map<string, CharacterFrame> = new Map();
-  private loadouts: Map<string, CharacterLoadout> = new Map();
-  private unlockedSkins: Set<string> = new Set();
-  private unlockedColors: Set<string> = new Set();
-  private unlockedTitles: Set<string> = new Set();
-  private unlockedFrames: Set<string> = new Set();
-  private isInitialized = false;
-
-  constructor() {
-    this.initializeDefaultContent();
+  constructor(app: pc.Application) {
+    this.app = app;
+    this.initializeCustomizationSystem();
   }
 
-  private initializeDefaultContent(): void {
-    // Initialize default skins for each character
-    const characters = ['ryu', 'ken', 'chun_li', 'akuma', 'cammy', 'zangief', 'sagat', 'lei_wulong'];
-    
-    characters.forEach(charId => {
-      // Default skin
-      this.addSkin({
-        id: `${charId}_default`,
-        name: 'Default',
-        description: 'The classic look',
-        characterId: charId,
-        rarity: 'common',
-        unlockMethod: 'default',
-        previewImage: `/images/skins/${charId}_default_preview.png`,
-        spriteSheet: `/sprites/skins/${charId}_default.png`,
-        colors: {
-          primary: '#FF0000',
-          secondary: '#0000FF',
-          accent: '#FFFF00',
-          skin: '#FDBCB4',
-          hair: '#000000',
-          eyes: '#000000'
-        }
-      });
+  private initializeCustomizationSystem(): void {
+    this.initializeCustomizationItems();
+  }
 
-      // Default color
-      this.addColor({
-        id: `${charId}_default_color`,
-        name: 'Default',
-        characterId: charId,
-        palette: {
-          primary: '#FF0000',
-          secondary: '#0000FF',
-          accent: '#FFFF00',
-          skin: '#FDBCB4',
-          hair: '#000000',
-          eyes: '#000000'
-        },
-        unlockMethod: 'default'
-      });
-
-      // Default title
-      this.addTitle({
-        id: `${charId}_default_title`,
-        name: 'Fighter',
-        description: 'A skilled warrior',
-        rarity: 'common',
-        unlockMethod: 'default',
-        displayText: 'Fighter',
+  private initializeCustomizationItems(): void {
+    // Ryu Customization Items
+    this.customizationItems.set('ryu_classic_outfit', {
+      id: 'ryu_classic_outfit',
+      name: 'Classic Gi',
+      description: 'Ryu\'s traditional white gi',
+      type: 'outfit',
+      category: 'outfit',
+      rarity: 'common',
+      price: 0,
+      requirements: {},
+      unlockMethod: 'unlock',
+      stats: {},
+      visual: {
+        model: 'ryu_classic_gi',
+        texture: 'ryu_classic_texture',
         color: '#FFFFFF'
-      });
-
-      // Default frame
-      this.addFrame({
-        id: `${charId}_default_frame`,
-        name: 'Basic Frame',
-        description: 'A simple portrait frame',
-        characterId: charId,
-        rarity: 'common',
-        unlockMethod: 'default',
-        image: `/images/frames/basic.png`,
-        border: {
-          color: '#CCCCCC',
-          style: 'solid',
-          width: 2
-        }
-      });
-
-      // Create default loadout
-      this.addLoadout({
-        characterId: charId,
-        skinId: `${charId}_default`,
-        colorId: `${charId}_default_color`,
-        titleId: `${charId}_default_title`,
-        frameId: `${charId}_default_frame`,
-        effects: [],
-        name: 'Default Loadout',
-        isDefault: true
-      });
+      },
+      audio: {}
     });
 
-    // Add some premium skins
-    this.addSkin({
-      id: 'ryu_shinryu',
-      name: 'Shinryu',
-      description: 'Ryu\'s ultimate form',
-      characterId: 'ryu',
-      rarity: 'legendary',
-      unlockMethod: 'achievement',
-      unlockRequirement: {
-        achievement: 'master_ryu'
-      },
-      previewImage: '/images/skins/ryu_shinryu_preview.png',
-      spriteSheet: '/sprites/skins/ryu_shinryu.png',
-      colors: {
-        primary: '#FFD700',
-        secondary: '#FF6B35',
-        accent: '#FF0000',
-        skin: '#FDBCB4',
-        hair: '#000000',
-        eyes: '#FF0000'
-      },
-      effects: {
-        trail: 'golden_aura',
-        aura: 'energy_glow',
-        particles: 'sparkles'
-      },
-      voice: {
-        pitch: 1.1,
-        effects: ['echo', 'reverb']
-      }
-    });
-
-    this.addSkin({
-      id: 'akuma_demon',
-      name: 'Demon Akuma',
-      description: 'The true power of the Satsui no Hado',
-      characterId: 'akuma',
-      rarity: 'legendary',
-      unlockMethod: 'purchase',
-      price: {
-        currency: 5000
-      },
-      previewImage: '/images/skins/akuma_demon_preview.png',
-      spriteSheet: '/sprites/skins/akuma_demon.png',
-      colors: {
-        primary: '#8B0000',
-        secondary: '#FF0000',
-        accent: '#FFD700',
-        skin: '#2F1B14',
-        hair: '#000000',
-        eyes: '#FF0000'
-      },
-      effects: {
-        trail: 'dark_energy',
-        aura: 'demon_flames',
-        particles: 'dark_sparks'
-      }
-    });
-
-    // Add some titles
-    this.addTitle({
-      id: 'world_warrior',
-      name: 'World Warrior',
-      description: 'Defeated 100 opponents',
-      rarity: 'rare',
-      unlockMethod: 'achievement',
-      unlockRequirement: {
-        achievement: 'world_warrior'
-      },
-      displayText: 'World Warrior',
-      color: '#FFD700',
-      effects: ['glow']
-    });
-
-    this.addTitle({
-      id: 'grand_master',
-      name: 'Grand Master',
-      description: 'Reached Grand Master rank',
-      rarity: 'legendary',
-      unlockMethod: 'ranking',
-      unlockRequirement: {
-        rank: 'grandmaster'
-      },
-      displayText: 'Grand Master',
-      color: '#FF6B35',
-      effects: ['glow', 'sparkles']
-    });
-
-    // Add some frames
-    this.addFrame({
-      id: 'golden_frame',
-      name: 'Golden Frame',
-      description: 'A luxurious golden frame',
-      characterId: 'all',
+    this.customizationItems.set('ryu_denjin_outfit', {
+      id: 'ryu_denjin_outfit',
+      name: 'Denjin Gi',
+      description: 'Ryu\'s electrified gi with lightning effects',
+      type: 'outfit',
+      category: 'outfit',
       rarity: 'epic',
+      price: 5000,
+      requirements: { level: 20, characterUnlocked: 'ryu' },
       unlockMethod: 'purchase',
-      price: 1000,
-      image: '/images/frames/golden.png',
-      border: {
-        color: '#FFD700',
-        style: 'gradient',
-        width: 4
+      stats: {
+        damage: 1.1,
+        meterGain: 1.2
       },
-      effects: ['glow']
+      visual: {
+        model: 'ryu_denjin_gi',
+        texture: 'ryu_denjin_texture',
+        color: '#FFD700',
+        effect: 'lightning_aura'
+      },
+      audio: {
+        sound: 'denjin_sound'
+      }
     });
 
-    this.isInitialized = true;
+    // Add more customization items as needed
   }
 
-  public addSkin(skin: CharacterSkin): void {
-    this.skins.set(skin.id, skin);
-  }
-
-  public addColor(color: CharacterColor): void {
-    this.colors.set(color.id, color);
-  }
-
-  public addTitle(title: CharacterTitle): void {
-    this.titles.set(title.id, title);
-  }
-
-  public addFrame(frame: CharacterFrame): void {
-    this.frames.set(frame.id, frame);
-  }
-
-  public addLoadout(loadout: CharacterLoadout): void {
-    this.loadouts.set(`${loadout.characterId}_${loadout.name}`, loadout);
-  }
-
-  public getSkin(skinId: string): CharacterSkin | null {
-    return this.skins.get(skinId) || null;
-  }
-
-  public getColor(colorId: string): CharacterColor | null {
-    return this.colors.get(colorId) || null;
-  }
-
-  public getTitle(titleId: string): CharacterTitle | null {
-    return this.titles.get(titleId) || null;
-  }
-
-  public getFrame(frameId: string): CharacterFrame | null {
-    return this.frames.get(frameId) || null;
-  }
-
-  public getLoadout(characterId: string, loadoutName: string): CharacterLoadout | null {
-    return this.loadouts.get(`${characterId}_${loadoutName}`) || null;
-  }
-
-  public getSkinsForCharacter(characterId: string): CharacterSkin[] {
-    return Array.from(this.skins.values())
-      .filter(skin => skin.characterId === characterId);
-  }
-
-  public getColorsForCharacter(characterId: string): CharacterColor[] {
-    return Array.from(this.colors.values())
-      .filter(color => color.characterId === characterId || color.characterId === 'all');
-  }
-
-  public getTitlesForCharacter(characterId: string): CharacterTitle[] {
-    return Array.from(this.titles.values());
-  }
-
-  public getFramesForCharacter(characterId: string): CharacterFrame[] {
-    return Array.from(this.frames.values())
-      .filter(frame => frame.characterId === characterId || frame.characterId === 'all');
-  }
-
-  public getLoadoutsForCharacter(characterId: string): CharacterLoadout[] {
-    return Array.from(this.loadouts.values())
-      .filter(loadout => loadout.characterId === characterId);
-  }
-
-  public unlockSkin(skinId: string): boolean {
-    const skin = this.skins.get(skinId);
-    if (!skin) return false;
-
-    this.unlockedSkins.add(skinId);
-    return true;
-  }
-
-  public unlockColor(colorId: string): boolean {
-    const color = this.colors.get(colorId);
-    if (!color) return false;
-
-    this.unlockedColors.add(colorId);
-    return true;
-  }
-
-  public unlockTitle(titleId: string): boolean {
-    const title = this.titles.get(titleId);
-    if (!title) return false;
-
-    this.unlockedTitles.add(titleId);
-    return true;
-  }
-
-  public unlockFrame(frameId: string): boolean {
-    const frame = this.frames.get(frameId);
-    if (!frame) return false;
-
-    this.unlockedFrames.add(frameId);
-    return true;
-  }
-
-  public isSkinUnlocked(skinId: string): boolean {
-    return this.unlockedSkins.has(skinId);
-  }
-
-  public isColorUnlocked(colorId: string): boolean {
-    return this.unlockedColors.has(colorId);
-  }
-
-  public isTitleUnlocked(titleId: string): boolean {
-    return this.unlockedTitles.has(titleId);
-  }
-
-  public isFrameUnlocked(frameId: string): boolean {
-    return this.unlockedFrames.has(frameId);
-  }
-
-  public getAvailableSkinsForCharacter(characterId: string): CharacterSkin[] {
-    return this.getSkinsForCharacter(characterId)
-      .filter(skin => this.isSkinUnlocked(skin.id));
-  }
-
-  public getAvailableColorsForCharacter(characterId: string): CharacterColor[] {
-    return this.getColorsForCharacter(characterId)
-      .filter(color => this.isColorUnlocked(color.id));
-  }
-
-  public getAvailableTitlesForCharacter(characterId: string): CharacterTitle[] {
-    return this.getTitlesForCharacter(characterId)
-      .filter(title => this.isTitleUnlocked(title.id));
-  }
-
-  public getAvailableFramesForCharacter(characterId: string): CharacterFrame[] {
-    return this.getFramesForCharacter(characterId)
-      .filter(frame => this.isFrameUnlocked(frame.id));
-  }
-
-  public createCustomLoadout(characterId: string, name: string, skinId: string, colorId: string, titleId: string, frameId: string, effects: string[] = []): boolean {
-    // Validate all components exist and are unlocked
-    if (!this.isSkinUnlocked(skinId) || !this.isColorUnlocked(colorId) || 
-        !this.isTitleUnlocked(titleId) || !this.isFrameUnlocked(frameId)) {
-      return false;
-    }
-
-    const loadout: CharacterLoadout = {
-      characterId,
-      skinId,
-      colorId,
-      titleId,
-      frameId,
-      effects,
-      name,
-      isDefault: false
-    };
-
-    this.loadouts.set(`${characterId}_${name}`, loadout);
-    return true;
-  }
-
-  public deleteLoadout(characterId: string, loadoutName: string): boolean {
-    const key = `${characterId}_${loadoutName}`;
-    const loadout = this.loadouts.get(key);
-    
-    if (!loadout || loadout.isDefault) return false;
-
-    this.loadouts.delete(key);
-    return true;
-  }
-
-  public getRarityColor(rarity: string): string {
-    const colors = {
-      common: '#CCCCCC',
-      rare: '#0099FF',
-      epic: '#9966FF',
-      legendary: '#FFD700'
-    };
-    return colors[rarity as keyof typeof colors] || '#CCCCCC';
-  }
-
-  public getRarityName(rarity: string): string {
-    const names = {
-      common: 'Common',
-      rare: 'Rare',
-      epic: 'Epic',
-      legendary: 'Legendary'
-    };
-    return names[rarity as keyof typeof names] || 'Unknown';
-  }
-
-  public exportData(): string {
-    return JSON.stringify({
-      unlockedSkins: Array.from(this.unlockedSkins),
-      unlockedColors: Array.from(this.unlockedColors),
-      unlockedTitles: Array.from(this.unlockedTitles),
-      unlockedFrames: Array.from(this.unlockedFrames),
-      loadouts: Array.from(this.loadouts.entries())
-    });
-  }
-
-  public importData(data: string): boolean {
+  public async customizeCharacter(characterId: string, customization: Partial<CharacterCustomization>): Promise<boolean> {
     try {
-      const parsed = JSON.parse(data);
-      this.unlockedSkins = new Set(parsed.unlockedSkins || []);
-      this.unlockedColors = new Set(parsed.unlockedColors || []);
-      this.unlockedTitles = new Set(parsed.unlockedTitles || []);
-      this.unlockedFrames = new Set(parsed.unlockedFrames || []);
-      this.loadouts = new Map(parsed.loadouts || []);
+      let currentCustomization = this.playerCustomizations.get(characterId);
+      if (!currentCustomization) {
+        currentCustomization = this.createDefaultCustomization(characterId);
+      }
+
+      // Apply customization changes
+      if (customization.outfit) {
+        currentCustomization.outfit = customization.outfit;
+      }
+
+      if (customization.colors) {
+        currentCustomization.colors = { ...currentCustomization.colors, ...customization.colors };
+      }
+
+      if (customization.effects) {
+        currentCustomization.effects = { ...currentCustomization.effects, ...customization.effects };
+      }
+
+      if (customization.stats) {
+        currentCustomization.stats = { ...currentCustomization.stats, ...customization.stats };
+      }
+
+      this.playerCustomizations.set(characterId, currentCustomization);
+      await this.applyCustomizationToCharacter(characterId, currentCustomization);
+
+      this.app.fire('customization:changed', {
+        characterId,
+        customization: currentCustomization
+      });
+
+      Logger.info(`Customized character ${characterId}`);
       return true;
     } catch (error) {
-      console.error('Failed to import customization data:', error);
+      Logger.error(`Error customizing character ${characterId}:`, error);
       return false;
     }
+  }
+
+  private createDefaultCustomization(characterId: string): CharacterCustomization {
+    return {
+      characterId,
+      outfit: 'classic',
+      colors: {
+        primary: '#FFFFFF',
+        secondary: '#000000',
+        accent: '#FF0000',
+        metallic: '#C0C0C0'
+      },
+      effects: {
+        aura: 'none',
+        particles: 'none',
+        glow: 'none',
+        trail: 'none'
+      },
+      stats: {
+        damage: 1.0,
+        defense: 1.0,
+        speed: 1.0,
+        meterGain: 1.0
+      }
+    };
+  }
+
+  private async applyCustomizationToCharacter(characterId: string, customization: CharacterCustomization): Promise<void> {
+    // Apply visual changes
+    await this.applyVisualCustomization(characterId, customization);
+    
+    // Apply audio changes
+    await this.applyAudioCustomization(characterId, customization);
+    
+    // Apply stat changes
+    await this.applyStatCustomization(characterId, customization);
+  }
+
+  private async applyVisualCustomization(characterId: string, customization: CharacterCustomization): Promise<void> {
+    // Apply outfit changes
+    const character = this.getCharacterById(characterId);
+    if (character) {
+      await this.updateCharacterModel(character, customization.outfit);
+      await this.updateCharacterColors(character, customization.colors);
+      await this.updateCharacterEffects(character, customization.effects);
+    }
+  }
+
+  private async applyAudioCustomization(characterId: string, customization: CharacterCustomization): Promise<void> {
+    // Apply voice line changes
+  }
+
+  private async applyStatCustomization(characterId: string, customization: CharacterCustomization): Promise<void> {
+    const character = this.getCharacterById(characterId);
+    if (character) {
+      character.damageMultiplier = customization.stats.damage;
+      character.defenseMultiplier = customization.stats.defense;
+      character.speedMultiplier = customization.stats.speed;
+      character.meterGainMultiplier = customization.stats.meterGain;
+    }
+  }
+
+  private async updateCharacterModel(character: Character, outfit: string): Promise<void> {
+    // Update character model based on outfit
+  }
+
+  private async updateCharacterColors(character: Character, colors: any): Promise<void> {
+    // Update character colors
+  }
+
+  private async updateCharacterEffects(character: Character, effects: any): Promise<void> {
+    // Update character effects
+  }
+
+  private getCharacterById(characterId: string): Character | undefined {
+    return undefined; // Placeholder
+  }
+
+  public async purchaseItem(itemId: string): Promise<boolean> {
+    const item = this.customizationItems.get(itemId);
+    if (!item) {
+      Logger.warn(`Item ${itemId} not found`);
+      return false;
+    }
+
+    if (!this.checkItemRequirements(item)) {
+      Logger.warn(`Requirements not met for item ${itemId}`);
+      return false;
+    }
+
+    if (this.playerInventory.has(itemId)) {
+      Logger.warn(`Item ${itemId} already owned`);
+      return false;
+    }
+
+    if (this.playerMoney < item.price) {
+      Logger.warn(`Not enough money for item ${itemId}`);
+      return false;
+    }
+
+    this.playerMoney -= item.price;
+    this.playerInventory.set(itemId, 1);
+
+    this.app.fire('customization:item_purchased', {
+      itemId,
+      item,
+      playerMoney: this.playerMoney
+    });
+
+    Logger.info(`Purchased item ${item.name} for ${item.price} money`);
+    return true;
+  }
+
+  private checkItemRequirements(item: CustomizationItem): boolean {
+    if (item.requirements.level && this.getPlayerLevel() < item.requirements.level) {
+      return false;
+    }
+
+    if (item.requirements.characterUnlocked && !this.isCharacterUnlocked(item.requirements.characterUnlocked)) {
+      return false;
+    }
+
+    if (item.requirements.storyProgress && this.getStoryProgress() < item.requirements.storyProgress) {
+      return false;
+    }
+
+    if (item.requirements.achievement && !this.hasAchievement(item.requirements.achievement)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private getPlayerLevel(): number {
+    return 1; // Placeholder
+  }
+
+  private isCharacterUnlocked(characterId: string): boolean {
+    return true; // Placeholder
+  }
+
+  private getStoryProgress(): number {
+    return 0; // Placeholder
+  }
+
+  private hasAchievement(achievementId: string): boolean {
+    return false; // Placeholder
+  }
+
+  public getAvailableItems(characterId?: string): CustomizationItem[] {
+    let items = Array.from(this.customizationItems.values());
+    
+    if (characterId) {
+      items = items.filter(item => 
+        item.type === 'outfit' || 
+        item.type === 'color' || 
+        item.type === 'accessory' ||
+        item.type === 'effect' ||
+        item.type === 'voice' ||
+        item.type === 'move'
+      );
+    }
+
+    return items.filter(item => 
+      this.checkItemRequirements(item) && 
+      !this.playerInventory.has(item.id)
+    );
+  }
+
+  public getOwnedItems(): CustomizationItem[] {
+    const ownedItems: CustomizationItem[] = [];
+    
+    for (const [itemId, quantity] of this.playerInventory.entries()) {
+      const item = this.customizationItems.get(itemId);
+      if (item) {
+        ownedItems.push(item);
+      }
+    }
+    
+    return ownedItems;
+  }
+
+  public getCharacterCustomization(characterId: string): CharacterCustomization | undefined {
+    return this.playerCustomizations.get(characterId);
+  }
+
+  public getPlayerMoney(): number {
+    return this.playerMoney;
+  }
+
+  public addMoney(amount: number): void {
+    this.playerMoney += amount;
+    
+    this.app.fire('customization:money_added', {
+      amount,
+      totalMoney: this.playerMoney
+    });
+  }
+
+  public spendMoney(amount: number): boolean {
+    if (this.playerMoney < amount) {
+      return false;
+    }
+    
+    this.playerMoney -= amount;
+    
+    this.app.fire('customization:money_spent', {
+      amount,
+      totalMoney: this.playerMoney
+    });
+    
+    return true;
+  }
+
+  public destroy(): void {
+    this.customizationItems.clear();
+    this.playerCustomizations.clear();
+    this.playerInventory.clear();
   }
 }
