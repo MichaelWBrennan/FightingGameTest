@@ -7,7 +7,6 @@ export interface FeatureInfo {
     icon: string;
     category: 'training' | 'competitive' | 'social' | 'accessibility' | 'ai' | 'performance';
     features: string[];
-    demoFunction?: () => void;
 }
 
 export class FeatureShowcaseUI {
@@ -38,8 +37,7 @@ export class FeatureShowcaseUI {
                 'Combo Trials with AI Hints',
                 'Recording & Analysis Tools',
                 'AI-Powered Performance Feedback'
-            ],
-            demoFunction: () => this.startTrainingDemo()
+            ]
         });
 
         // Bayesian Ranking Features
@@ -55,8 +53,7 @@ export class FeatureShowcaseUI {
                 'Anti-Toxic Measures & Behavior Analysis',
                 'Consistency Rewards & Skill Decay Protection',
                 '9 Competitive Tiers (Iron to Challenger)'
-            ],
-            demoFunction: () => this.startRankingDemo()
+            ]
         });
 
         // Social Features
@@ -72,8 +69,7 @@ export class FeatureShowcaseUI {
                 'Guilds & Tournament Management',
                 'Voice & Text Chat Integration',
                 'Leaderboards & Achievement System'
-            ],
-            demoFunction: () => this.startSocialDemo()
+            ]
         });
 
         // Accessibility Features
@@ -89,8 +85,7 @@ export class FeatureShowcaseUI {
                 'Text Scaling & High Contrast Modes',
                 'Audio Descriptions & Screen Reader Support',
                 'Voice Control & Gesture Recognition'
-            ],
-            demoFunction: () => this.startAccessibilityDemo()
+            ]
         });
 
         // AI Features
@@ -106,8 +101,7 @@ export class FeatureShowcaseUI {
                 'Smart Matchmaking with Quality Prediction',
                 'Neural Network Input Prediction',
                 'Machine Learning Cheat Detection'
-            ],
-            demoFunction: () => this.startAIDemo()
+            ]
         });
 
         // Performance Features
@@ -123,8 +117,7 @@ export class FeatureShowcaseUI {
                 'Network Optimization & Lag Reduction',
                 'Memory Management & Crash Prevention',
                 'Battery Optimization for Mobile'
-            ],
-            demoFunction: () => this.startPerformanceDemo()
+            ]
         });
     }
 
@@ -313,16 +306,16 @@ export class FeatureShowcaseUI {
         });
         card.addChild(description);
 
-        // Demo button
-        const demoButton = new pc.Entity('DemoButton');
-        demoButton.addComponent('element', {
+        // Feature action button
+        const actionButton = new pc.Entity('ActionButton');
+        actionButton.addComponent('element', {
             type: pc.ELEMENTTYPE_IMAGE,
             anchor: [0.1, 0.1, 0.9, 0.3],
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0],
             color: new pc.Color(1, 0.4, 0.2, 0.8)
         });
-        card.addChild(demoButton);
+        card.addChild(actionButton);
 
         const buttonText = new pc.Entity('ButtonText');
         buttonText.addComponent('element', {
@@ -330,17 +323,17 @@ export class FeatureShowcaseUI {
             anchor: [0, 0, 1, 1],
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0],
-            text: 'Try Demo',
+            text: this.getActionButtonText(feature.id),
             fontSize: 14,
             color: new pc.Color(1, 1, 1, 1),
             fontAsset: this.app.assets.find('arial') || null,
             textAlign: pc.TEXTALIGN_CENTER
         });
-        demoButton.addChild(buttonText);
+        actionButton.addChild(buttonText);
 
         // Add click handler
-        demoButton.addComponent('script');
-        demoButton.script.create('buttonHandler', {
+        actionButton.addComponent('script');
+        actionButton.script.create('buttonHandler', {
             attributes: {
                 featureId: feature.id
             }
@@ -561,6 +554,25 @@ export class FeatureShowcaseUI {
         });
     }
 
+    private getActionButtonText(featureId: string): string {
+        switch (featureId) {
+            case 'training_mode':
+                return 'Start Training';
+            case 'bayesian_ranking':
+                return 'View Rankings';
+            case 'social_features':
+                return 'Open Social Hub';
+            case 'accessibility':
+                return 'Open Settings';
+            case 'ai_features':
+                return 'AI Features';
+            case 'performance':
+                return 'View Stats';
+            default:
+                return 'Learn More';
+        }
+    }
+
     private addHoverEffects(entity: pc.Entity): void {
         // Add hover effects using scripts
         entity.addComponent('script');
@@ -578,164 +590,31 @@ export class FeatureShowcaseUI {
         });
     }
 
-    // Demo functions
-    private startTrainingDemo(): void {
-        console.log('🎯 Starting Training Mode Demo');
-        // This would start the actual training mode demo
-        this.showDemoPanel('Training Mode Demo', [
-            'Real-time frame data display',
-            'Hitbox visualization',
-            'Combo trials with AI hints',
-            'Recording & analysis tools',
-            'AI-powered feedback'
-        ]);
-    }
-
-    private startRankingDemo(): void {
-        console.log('🧠 Starting Ranking System Demo');
-        this.showDemoPanel('Bayesian Ranking Demo', [
-            'Multi-algorithm system',
-            'Reliability weighting',
-            'Anti-toxic measures',
-            'Confidence-based matchmaking',
-            '9 competitive tiers'
-        ]);
-    }
-
-    private startSocialDemo(): void {
-        console.log('👥 Starting Social Features Demo');
-        this.showDemoPanel('Social Features Demo', [
-            'Live spectating',
-            'Coaching system',
-            'Guild management',
-            'Voice & text chat',
-            'Leaderboards'
-        ]);
-    }
-
-    private startAccessibilityDemo(): void {
-        console.log('♿ Starting Accessibility Demo');
-        this.showDemoPanel('Accessibility Demo', [
-            'Colorblind support',
-            'Customizable controls',
-            'Text scaling',
-            'Audio descriptions',
-            'Voice control'
-        ]);
-    }
-
-    private startAIDemo(): void {
-        console.log('🤖 Starting AI Features Demo');
-        this.showDemoPanel('AI Features Demo', [
-            '24-layer neural network',
-            'Adaptive difficulty',
-            'Smart matchmaking',
-            'Input prediction',
-            'Cheat detection'
-        ]);
-    }
-
-    private startPerformanceDemo(): void {
-        console.log('⚡ Starting Performance Demo');
-        this.showDemoPanel('Performance Demo', [
-            'Real-time monitoring',
-            'Adaptive quality',
-            'Network optimization',
-            'Memory management',
-            'Battery optimization'
-        ]);
-    }
-
-    private showDemoPanel(title: string, features: string[]): void {
-        // Create demo panel
-        if (this.currentPanel) {
-            this.currentPanel.destroy();
+    // Feature navigation functions
+    private navigateToFeature(featureId: string): void {
+        switch (featureId) {
+            case 'training_mode':
+                this.app.fire('game:trainingMode');
+                this.hide();
+                break;
+            case 'bayesian_ranking':
+                this.app.fire('ui:rankings');
+                break;
+            case 'social_features':
+                this.app.fire('ui:socialHub');
+                this.hide();
+                break;
+            case 'accessibility':
+                this.app.fire('ui:settings');
+                this.hide();
+                break;
+            case 'ai_features':
+                this.app.fire('ui:aiFeatures');
+                break;
+            case 'performance':
+                this.app.fire('ui:performanceStats');
+                break;
         }
-
-        this.currentPanel = new pc.Entity('DemoPanel');
-        this.currentPanel.addComponent('element', {
-            type: pc.ELEMENTTYPE_GROUP,
-            anchor: [0.2, 0.2, 0.8, 0.8],
-            pivot: [0.5, 0.5, 0.5, 0.5],
-            margin: [0, 0, 0, 0]
-        });
-        this.uiContainer.addChild(this.currentPanel);
-
-        // Demo background
-        const background = new pc.Entity('DemoBackground');
-        background.addComponent('element', {
-            type: pc.ELEMENTTYPE_IMAGE,
-            anchor: [0, 0, 1, 1],
-            pivot: [0.5, 0.5, 0.5, 0.5],
-            margin: [0, 0, 0, 0],
-            color: new pc.Color(0.1, 0.1, 0.2, 0.9)
-        });
-        this.currentPanel.addChild(background);
-
-        // Demo title
-        const demoTitle = new pc.Entity('DemoTitle');
-        demoTitle.addComponent('element', {
-            type: pc.ELEMENTTYPE_TEXT,
-            anchor: [0, 0.8, 1, 1],
-            pivot: [0.5, 0.5, 0.5, 0.5],
-            margin: [0, 0, 0, 0],
-            text: title,
-            fontSize: 24,
-            color: new pc.Color(1, 0.4, 0.2, 1),
-            fontAsset: this.app.assets.find('arial') || null,
-            textAlign: pc.TEXTALIGN_CENTER
-        });
-        this.currentPanel.addChild(demoTitle);
-
-        // Demo features list
-        features.forEach((feature, index) => {
-            const featureText = new pc.Entity(`Feature_${index}`);
-            featureText.addComponent('element', {
-                type: pc.ELEMENTTYPE_TEXT,
-                anchor: [0.1, 0.6 - (index * 0.08), 0.9, 0.68 - (index * 0.08)],
-                pivot: [0, 0.5, 0, 0.5],
-                margin: [0, 0, 0, 0],
-                text: `• ${feature}`,
-                fontSize: 16,
-                color: new pc.Color(1, 1, 1, 0.9),
-                fontAsset: this.app.assets.find('arial') || null,
-                textAlign: pc.TEXTALIGN_LEFT
-            });
-            this.currentPanel.addChild(featureText);
-        });
-
-        // Close demo button
-        const closeDemoButton = new pc.Entity('CloseDemoButton');
-        closeDemoButton.addComponent('element', {
-            type: pc.ELEMENTTYPE_IMAGE,
-            anchor: [0.4, 0.1, 0.6, 0.2],
-            pivot: [0.5, 0.5, 0.5, 0.5],
-            margin: [0, 0, 0, 0],
-            color: new pc.Color(1, 0.4, 0.2, 0.8)
-        });
-        this.currentPanel.addChild(closeDemoButton);
-
-        const closeDemoText = new pc.Entity('CloseDemoText');
-        closeDemoText.addComponent('element', {
-            type: pc.ELEMENTTYPE_TEXT,
-            anchor: [0, 0, 1, 1],
-            pivot: [0.5, 0.5, 0.5, 0.5],
-            margin: [0, 0, 0, 0],
-            text: 'Close Demo',
-            fontSize: 16,
-            color: new pc.Color(1, 1, 1, 1),
-            fontAsset: this.app.assets.find('arial') || null,
-            textAlign: pc.TEXTALIGN_CENTER
-        });
-        closeDemoButton.addChild(closeDemoText);
-
-        // Add click handler
-        closeDemoButton.addComponent('script');
-        closeDemoButton.script.create('buttonHandler', {
-            attributes: {
-                action: 'closeDemo'
-            }
-        });
     }
 
     // Public API
