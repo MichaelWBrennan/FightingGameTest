@@ -86,6 +86,11 @@ import { AdvancedAntiCheatSystem } from './security/AdvancedAntiCheatSystem';
 import { AdvancedMobileOptimizer } from './mobile/AdvancedMobileOptimizer';
 import { AdvancedEsportsPlatform } from './esports/AdvancedEsportsPlatform';
 import { NeuralInterfaceSystem } from './neural/NeuralInterfaceSystem';
+import { AdvancedTrainingMode } from './training/AdvancedTrainingMode';
+import { SmartReplaySystem } from './replay/SmartReplaySystem';
+import { SocialFeatures } from './social/SocialFeatures';
+import { PerformanceOptimizer } from './performance/PerformanceOptimizer';
+import { PracticalAccessibility } from './accessibility/PracticalAccessibility';
 
 export class GameEngine {
   private app: pc.Application;
@@ -163,6 +168,11 @@ export class GameEngine {
   private advancedMobileOptimizer: AdvancedMobileOptimizer | null = null;
   private advancedEsportsPlatform: AdvancedEsportsPlatform | null = null;
   private neuralInterfaceSystem: NeuralInterfaceSystem | null = null;
+  private advancedTrainingMode: AdvancedTrainingMode | null = null;
+  private smartReplaySystem: SmartReplaySystem | null = null;
+  private socialFeatures: SocialFeatures | null = null;
+  private performanceOptimizer: PerformanceOptimizer | null = null;
+  private practicalAccessibility: PracticalAccessibility | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -637,6 +647,26 @@ export class GameEngine {
       try { 
         this.neuralInterfaceSystem = new NeuralInterfaceSystem(this.app);
         this.services.register('neuralInterfaceSystem', this.neuralInterfaceSystem);
+      } catch {}
+      try { 
+        this.advancedTrainingMode = new AdvancedTrainingMode(this.app);
+        this.services.register('advancedTrainingMode', this.advancedTrainingMode);
+      } catch {}
+      try { 
+        this.smartReplaySystem = new SmartReplaySystem(this.app);
+        this.services.register('smartReplaySystem', this.smartReplaySystem);
+      } catch {}
+      try { 
+        this.socialFeatures = new SocialFeatures(this.app);
+        this.services.register('socialFeatures', this.socialFeatures);
+      } catch {}
+      try { 
+        this.performanceOptimizer = new PerformanceOptimizer(this.app);
+        this.services.register('performanceOptimizer', this.performanceOptimizer);
+      } catch {}
+      try { 
+        this.practicalAccessibility = new PracticalAccessibility(this.app);
+        this.services.register('practicalAccessibility', this.practicalAccessibility);
       } catch {}
       try {
         const loader = new ConfigLoader();
