@@ -3,7 +3,7 @@
   "name": "Zangief",
   "displayName": "Zangief",
   "description": "The Red Cyclone, a massive grappler who dominates close-range combat with devastating throws and command grabs.",
-  "archetype": "grappler",
+  "archetype": "rushdown",
   "complexity": "medium",
   "counterplayTags": [
     "grappler",
@@ -325,28 +325,6 @@
       "isDefault": true,
       "archetype": "rushdown",
       "statModifiers": {
-        "healthMultiplier": 1.0,
-        "walkSpeedMultiplier": 1.0,
-        "runSpeedMultiplier": 1.0,
-        "jumpHeightMultiplier": 1.0,
-        "weightMultiplier": 1.0,
-        "damageMultiplier": 1.0
-      },
-      "moveModifiers": {},
-      "uniqueMechanicChanges": [],
-      "additionalMoves": {},
-      "playstyle": "grappler",
-      "difficulty": "medium",
-      "strengths": ["high_damage", "throws", "armor"],
-      "weaknesses": ["slow_movement", "range"]
-    },
-    {
-      "variantId": "power",
-      "name": "Power Zangief",
-      "description": "A devastating power variant with maximum damage potential. Slow but extremely powerful with enhanced armor and health.",
-      "isDefault": false,
-      "archetype": "power",
-      "statModifiers": {
         "healthMultiplier": 0.85,
         "walkSpeedMultiplier": 1.4,
         "runSpeedMultiplier": 1.5,
@@ -502,6 +480,145 @@
       "difficulty": "easy",
       "strengths": ["maximum_damage", "armor", "health"],
       "weaknesses": ["very_slow", "mobility"]
+    },
+    {
+      "variantId": "defensive",
+      "name": "Defensive Zangief",
+      "description": "A tank-like defensive variant with enhanced armor, health, and defensive options. Slower but extremely durable.",
+      "isDefault": false,
+      "archetype": "defensive",
+      "statModifiers": {
+        "healthMultiplier": 1.3,
+        "walkSpeedMultiplier": 0.8,
+        "runSpeedMultiplier": 0.7,
+        "jumpHeightMultiplier": 0.9,
+        "weightMultiplier": 1.2,
+        "damageMultiplier": 1.2
+      },
+      "moveModifiers": {
+        "spinning_piledriver": {
+          "damageMultiplier": 1.3,
+          "startupFrameBonus": 2
+        },
+        "lariat": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["enhanced_armor"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+enhanced_armor",
+        "+damage_reduction",
+        "+defensive_options"
+      ],
+      "additionalMoves": {
+        "iron_body": {
+          "name": "Iron Body",
+          "input": "214P",
+          "description": "Defensive stance with damage reduction",
+          "damage": 0,
+          "startupFrames": 5,
+          "activeFrames": 30,
+          "recoveryFrames": 10,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": [
+            "armor",
+            "damage_reduction"
+          ]
+        },
+        "counter_grab": {
+          "name": "Counter Grab",
+          "input": "214K",
+          "description": "Counter-attack command grab",
+          "damage": 180,
+          "startupFrames": 3,
+          "activeFrames": 1,
+          "recoveryFrames": 35,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "command_grab",
+            "counter"
+          ],
+          "grab": {
+            "range": 70,
+            "damage": 180,
+            "knockdown": true
+          }
+        }
+      },
+      "playstyle": "defensive",
+      "difficulty": "easy",
+      "strengths": ["high_health", "armor", "damage"],
+      "weaknesses": ["slow_movement", "mobility"]
+    },
+    {
+      "variantId": "puppet",
+      "name": "Puppet Zangief",
+      "description": "A puppet character variant with assist mechanics. Controls a secondary character for two-character gameplay.",
+      "isDefault": false,
+      "archetype": "puppet",
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "addedProperties": ["assist_call"]
+        },
+        "mediumPunch": {
+          "addedProperties": ["assist_call"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+assist_mechanics",
+        "+puppet_control",
+        "+two_character_gameplay"
+      ],
+      "additionalMoves": {
+        "assist_call": {
+          "name": "Assist Call",
+          "input": "236P",
+          "description": "Call assist character for attack",
+          "damage": 80,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "assist",
+          "properties": [
+            "assist",
+            "puppet"
+          ],
+          "assist": {
+            "range": 120,
+            "damage": 80,
+            "knockdown": false
+          }
+        },
+        "puppet_control": {
+          "name": "Puppet Control",
+          "input": "214P",
+          "description": "Direct control of assist character",
+          "damage": 0,
+          "startupFrames": 5,
+          "activeFrames": 0,
+          "recoveryFrames": 10,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": [
+            "puppet_control"
+          ]
+        }
+      },
+      "playstyle": "puppet",
+      "difficulty": "hard",
+      "strengths": ["assist", "pressure", "mixup"],
+      "weaknesses": ["complexity", "resource_management"]
     }
   ],
   "sprites": {

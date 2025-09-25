@@ -512,6 +512,90 @@
       "difficulty": "hard",
       "strengths": ["range", "projectiles", "control"],
       "weaknesses": ["close_range", "health"]
+    },
+    {
+      "variantId": "setplay",
+      "name": "Setplay Ryu",
+      "description": "A setplay-focused variant that excels at knockdown setups and oki pressure. Strong after knockdown situations.",
+      "isDefault": false,
+      "archetype": "setplay",
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
+      },
+      "moveModifiers": {
+        "hadoken": {
+          "addedProperties": ["oki_setup"]
+        },
+        "shoryuken": {
+          "addedProperties": ["knockdown_setup"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+oki_pressure",
+        "+knockdown_setups",
+        "+setplay_tools"
+      ],
+      "additionalMoves": {
+        "oki_hadoken": {
+          "name": "Oki Hadoken",
+          "input": "236P",
+          "description": "Fireball designed for oki pressure",
+          "damage": 80,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 20,
+          "meterCost": 0,
+          "comboType": "oki",
+          "properties": [
+            "projectile",
+            "oki_setup"
+          ],
+          "projectile": {
+            "speed": 200,
+            "lifetime": 150,
+            "size": [40, 20],
+            "damage": 80,
+            "hitstun": 15,
+            "blockstun": 10
+          }
+        },
+        "meaty_attack": {
+          "name": "Meaty Attack",
+          "input": "MP+MK",
+          "description": "Meaty attack for oki pressure",
+          "damage": 100,
+          "startupFrames": 12,
+          "activeFrames": 6,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "oki",
+          "properties": [
+            "meaty",
+            "oki_pressure"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 12,
+              "endFrame": 17,
+              "position": [70, 0],
+              "size": [60, 40],
+              "damage": 100,
+              "hitstun": 18,
+              "blockstun": 12,
+              "knockdown": true
+            }
+          ]
+        }
+      },
+      "playstyle": "setplay",
+      "difficulty": "medium",
+      "strengths": ["oki", "setups", "pressure"],
+      "weaknesses": ["neutral", "defense"]
     }
   ],
   "sprites": {
