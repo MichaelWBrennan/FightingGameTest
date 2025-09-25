@@ -332,10 +332,11 @@
   ],
   "variants": [
     {
-      "variantId": "traditional",
-      "name": "Traditional Rushdown",
+      "variantId": "rushdown",
+      "name": "Rushdown Cammy",
       "description": "Classic rushdown with balanced offense and mobility. Good mix of speed and power with solid fundamentals.",
       "isDefault": true,
+      "archetype": "rushdown",
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
@@ -353,141 +354,148 @@
       "weaknesses": ["range", "health"]
     },
     {
-      "variantId": "aggressive",
-      "name": "Aggressive Rushdown",
-      "description": "Maximum aggression with enhanced speed and pressure tools. Lower health but overwhelming offense.",
+      "variantId": "mixup",
+      "name": "Mix-up Cammy",
+      "description": "A tricky mix-up variant focused on deception and unpredictable attacks. Enhanced mobility and tricky movement options.",
       "isDefault": false,
+      "archetype": "mixup",
       "statModifiers": {
-        "healthMultiplier": 0.8,
-        "walkSpeedMultiplier": 1.2,
-        "runSpeedMultiplier": 1.3,
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.1,
+        "runSpeedMultiplier": 1.2,
         "jumpHeightMultiplier": 1.15,
         "weightMultiplier": 0.9,
         "damageMultiplier": 1.1
       },
       "moveModifiers": {
-        "spiral_arrow": {
-          "startupFrameBonus": -2,
-          "damageMultiplier": 1.1,
-          "addedProperties": ["enhanced_speed"]
-        },
-        "cannon_spike": {
-          "startupFrameBonus": -1,
-          "damageMultiplier": 1.1
-        },
         "hooligan_combination": {
           "startupFrameBonus": -3,
-          "recoveryFrameBonus": -2
+          "recoveryFrameBonus": -2,
+          "addedProperties": ["enhanced_mixup"]
+        },
+        "spiral_arrow": {
+          "startupFrameBonus": -1,
+          "addedProperties": ["tricky_angle"]
         }
       },
       "uniqueMechanicChanges": [
-        "+enhanced_mobility",
-        "+faster_specials",
-        "+pressure_tools"
+        "+enhanced_mixup",
+        "+tricky_movement",
+        "+deception_tools"
       ],
       "additionalMoves": {
-        "dive_kick": {
-          "name": "Dive Kick",
-          "input": "jump_down_K",
-          "description": "Fast overhead attack from air",
+        "ninja_strike": {
+          "name": "Ninja Strike",
+          "input": "236K",
+          "description": "Tricky overhead attack for mix-up",
           "damage": 80,
-          "startupFrames": 4,
+          "startupFrames": 6,
           "activeFrames": 3,
           "recoveryFrames": 8,
           "meterCost": 0,
           "comboType": "opener",
           "properties": [
             "overhead",
-            "air_ok"
+            "air_ok",
+            "tricky"
           ],
           "hitboxes": [
             {
-              "startFrame": 4,
-              "endFrame": 6,
-              "position": [60, -20],
-              "size": [50, 25],
+              "startFrame": 6,
+              "endFrame": 8,
+              "position": [55, -10],
+              "size": [40, 20],
               "damage": 80,
-              "hitstun": 15,
-              "blockstun": 10,
-              "knockdown": false
-            }
-          ]
-        },
-        "pressure_arrow": {
-          "name": "Pressure Arrow",
-          "input": "236K",
-          "description": "Fast, short-range arrow for pressure",
-          "damage": 90,
-          "startupFrames": 5,
-          "activeFrames": 6,
-          "recoveryFrames": 10,
-          "meterCost": 0,
-          "comboType": "linker",
-          "properties": [
-            "pressure",
-            "air_ok"
-          ],
-          "hitboxes": [
-            {
-              "startFrame": 5,
-              "endFrame": 10,
-              "position": [50, 0],
-              "size": [60, 20],
-              "damage": 90,
-              "hitstun": 15,
+              "hitstun": 14,
               "blockstun": 9,
               "knockdown": false
             }
           ]
+        },
+        "deception_teleport": {
+          "name": "Deception Teleport",
+          "input": "214K",
+          "description": "Tricky teleport for mix-up",
+          "damage": 0,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": [
+            "teleport",
+            "tricky"
+          ]
         }
       },
-      "playstyle": "aggressive_rushdown",
+      "playstyle": "mixup",
       "difficulty": "hard",
-      "strengths": ["speed", "pressure", "mixup"],
-      "weaknesses": ["low_health", "execution"]
+      "strengths": ["mixup", "tricky", "mobility"],
+      "weaknesses": ["health", "execution"]
     },
     {
-      "variantId": "technical",
-      "name": "Technical Rushdown",
-      "description": "Complex execution with advanced techniques. Higher damage potential for skilled players with precise timing.",
+      "variantId": "shoto",
+      "name": "Shoto Cammy",
+      "description": "A balanced shoto variant with fireballs, dragon punches, and tatsumaki. Well-rounded fundamentals with no major weaknesses.",
       "isDefault": false,
+      "archetype": "shoto",
       "statModifiers": {
         "healthMultiplier": 1.1,
         "walkSpeedMultiplier": 0.9,
         "runSpeedMultiplier": 0.85,
         "jumpHeightMultiplier": 0.95,
         "weightMultiplier": 1.05,
-        "damageMultiplier": 1.2
+        "damageMultiplier": 1.1
       },
       "moveModifiers": {
-        "cannon_spike": {
-          "damageMultiplier": 1.3,
-          "startupFrameBonus": 1,
-          "addedProperties": ["just_frame_bonus"]
+        "spiral_arrow": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["projectile_like"]
         },
-        "killer_bee_arrow": {
-          "damageMultiplier": 1.4,
-          "addedProperties": ["technical_input"]
+        "cannon_spike": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["dragon_punch_like"]
         }
       },
       "uniqueMechanicChanges": [
-        "+advanced_cancels",
-        "+just_frame_timing",
-        "+technical_execution"
+        "+shoto_fundamentals",
+        "+balanced_approach",
+        "+versatile_tools"
       ],
       "additionalMoves": {
-        "delta_red_assault": {
-          "name": "Delta Red Assault",
-          "input": "623623K",
-          "description": "Technical multi-hit super",
-          "damage": 350,
-          "startupFrames": 3,
-          "activeFrames": 8,
-          "recoveryFrames": 40,
-          "meterCost": 100,
+        "delta_fireball": {
+          "name": "Delta Fireball",
+          "input": "236P",
+          "description": "Shoto-style fireball for zoning",
+          "damage": 100,
+          "startupFrames": 12,
+          "activeFrames": 0,
+          "recoveryFrames": 25,
+          "meterCost": 0,
           "comboType": "ender",
           "properties": [
-            "super",
+            "projectile"
+          ],
+          "projectile": {
+            "speed": 300,
+            "lifetime": 120,
+            "size": [40, 20],
+            "damage": 100,
+            "hitstun": 18,
+            "blockstun": 12
+          }
+        },
+        "delta_dragon": {
+          "name": "Delta Dragon Punch",
+          "input": "623P",
+          "description": "Shoto-style dragon punch",
+          "damage": 150,
+          "startupFrames": 3,
+          "activeFrames": 8,
+          "recoveryFrames": 30,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
             "invincible",
             "launcher"
           ],
@@ -495,40 +503,20 @@
             {
               "startFrame": 3,
               "endFrame": 10,
-              "position": [35, -25],
+              "position": [40, -30],
               "size": [50, 80],
-              "damage": 350,
-              "hitstun": 35,
+              "damage": 150,
+              "hitstun": 30,
               "blockstun": 20,
               "knockdown": true
             }
           ]
-        },
-        "technical_combination": {
-          "name": "Technical Combination",
-          "input": "214214P",
-          "description": "Complex hooligan follow-up",
-          "damage": 150,
-          "startupFrames": 8,
-          "activeFrames": 0,
-          "recoveryFrames": 15,
-          "meterCost": 0,
-          "comboType": "ender",
-          "properties": [
-            "grab",
-            "technical"
-          ],
-          "grab": {
-            "range": 100,
-            "damage": 150,
-            "knockdown": true
-          }
         }
       },
-      "playstyle": "technical_rushdown",
-      "difficulty": "expert",
-      "strengths": ["high_damage", "advanced_tech", "execution"],
-      "weaknesses": ["complexity", "slow_movement"]
+      "playstyle": "shoto",
+      "difficulty": "medium",
+      "strengths": ["versatile", "fundamentals", "balanced"],
+      "weaknesses": ["no_gimmicks", "slow_movement"]
     }
   ],
   "sprites": {

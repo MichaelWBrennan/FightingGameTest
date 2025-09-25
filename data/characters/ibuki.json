@@ -334,10 +334,11 @@
   ],
   "variants": [
     {
-      "variantId": "traditional",
-      "name": "Traditional Mixup",
+      "variantId": "mixup",
+      "name": "Mix-up Ibuki",
       "description": "Classic mix-up character with balanced tricky options. Good mix of offense and defense with solid fundamentals.",
       "isDefault": true,
+      "archetype": "mixup",
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
@@ -355,27 +356,28 @@
       "weaknesses": ["health", "range"]
     },
     {
-      "variantId": "aggressive",
-      "name": "Aggressive Mixup",
-      "description": "Maximum aggression with enhanced speed and pressure tools. Lower health but overwhelming mix-up potential.",
+      "variantId": "rushdown",
+      "name": "Rushdown Ibuki",
+      "description": "A fast, aggressive variant focused on overwhelming pressure and mobility. Enhanced speed but reduced damage and health.",
       "isDefault": false,
+      "archetype": "rushdown",
       "statModifiers": {
         "healthMultiplier": 0.85,
-        "walkSpeedMultiplier": 1.2,
-        "runSpeedMultiplier": 1.3,
-        "jumpHeightMultiplier": 1.15,
+        "walkSpeedMultiplier": 1.3,
+        "runSpeedMultiplier": 1.4,
+        "jumpHeightMultiplier": 1.2,
         "weightMultiplier": 0.9,
-        "damageMultiplier": 1.1
+        "damageMultiplier": 0.9
       },
       "moveModifiers": {
         "kunai": {
           "startupFrameBonus": -2,
-          "damageMultiplier": 1.1,
+          "damageMultiplier": 0.9,
           "addedProperties": ["enhanced_speed"]
         },
         "raida": {
           "startupFrameBonus": -1,
-          "damageMultiplier": 1.1
+          "damageMultiplier": 0.9
         },
         "kazekiri": {
           "startupFrameBonus": -2,
@@ -439,98 +441,93 @@
           }
         }
       },
-      "playstyle": "aggressive_mixup",
-      "difficulty": "hard",
-      "strengths": ["pressure", "speed", "mixup"],
-      "weaknesses": ["low_health", "execution"]
+      "playstyle": "rushdown",
+      "difficulty": "medium",
+      "strengths": ["mobility", "pressure", "speed"],
+      "weaknesses": ["lower_damage", "health"]
     },
     {
-      "variantId": "technical",
-      "name": "Technical Mixup",
-      "description": "Complex execution with advanced mix-up techniques. Higher damage potential for skilled players with precise timing.",
+      "variantId": "zoner",
+      "name": "Zoner Ibuki",
+      "description": "A long-range zoning variant focused on controlling space with enhanced projectiles and keepaway tactics.",
       "isDefault": false,
+      "archetype": "zoner",
       "statModifiers": {
         "healthMultiplier": 1.1,
-        "walkSpeedMultiplier": 0.9,
-        "runSpeedMultiplier": 0.85,
-        "jumpHeightMultiplier": 0.95,
-        "weightMultiplier": 1.05,
+        "walkSpeedMultiplier": 0.8,
+        "runSpeedMultiplier": 0.7,
+        "jumpHeightMultiplier": 0.9,
+        "weightMultiplier": 1.1,
         "damageMultiplier": 1.2
       },
       "moveModifiers": {
-        "raida": {
-          "damageMultiplier": 1.3,
-          "startupFrameBonus": 1,
-          "addedProperties": ["just_frame_bonus"]
+        "kunai": {
+          "damageMultiplier": 1.4,
+          "startupFrameBonus": -2,
+          "addedProperties": ["enhanced_range", "multi_hit"]
         },
         "kasumi_suzaku": {
-          "damageMultiplier": 1.4,
-          "addedProperties": ["technical_input"]
+          "damageMultiplier": 1.5,
+          "addedProperties": ["enhanced_range", "multi_hit"]
         }
       },
       "uniqueMechanicChanges": [
-        "+advanced_mixups",
-        "+just_frame_timing",
-        "+technical_execution"
+        "+enhanced_projectiles",
+        "+range_control",
+        "+keepaway_tactics"
       ],
       "additionalMoves": {
-        "ninja_mastery": {
-          "name": "Ninja Mastery",
-          "input": "623623P",
-          "description": "Technical multi-hit super",
-          "damage": 320,
-          "startupFrames": 4,
-          "activeFrames": 8,
-          "recoveryFrames": 35,
-          "meterCost": 100,
-          "comboType": "ender",
-          "properties": [
-            "super",
-            "invincible",
-            "launcher"
-          ],
-          "hitboxes": [
-            {
-              "startFrame": 4,
-              "endFrame": 11,
-              "position": [30, -20],
-              "size": [40, 60],
-              "damage": 320,
-              "hitstun": 30,
-              "blockstun": 18,
-              "knockdown": true
-            }
-          ]
-        },
-        "technical_kunai": {
-          "name": "Technical Kunai",
-          "input": "214214P",
-          "description": "Complex kunai with multiple hits",
-          "damage": 120,
-          "startupFrames": 8,
+        "shuriken_storm": {
+          "name": "Shuriken Storm",
+          "input": "236P",
+          "description": "Long-range projectile for zoning",
+          "damage": 100,
+          "startupFrames": 10,
           "activeFrames": 0,
-          "recoveryFrames": 25,
+          "recoveryFrames": 20,
           "meterCost": 0,
           "comboType": "ender",
           "properties": [
             "projectile",
-            "technical"
+            "zoning"
           ],
           "projectile": {
-            "speed": 300,
-            "lifetime": 150,
-            "size": [35, 20],
-            "damage": 120,
+            "speed": 250,
+            "lifetime": 180,
+            "size": [50, 25],
+            "damage": 100,
             "hitstun": 20,
-            "blockstun": 12,
-            "hits": 2
+            "blockstun": 12
+          }
+        },
+        "ninja_barrier": {
+          "name": "Ninja Barrier",
+          "input": "214P",
+          "description": "Ground-based barrier for area control",
+          "damage": 80,
+          "startupFrames": 8,
+          "activeFrames": 90,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "projectile",
+            "area_control"
+          ],
+          "projectile": {
+            "speed": 0,
+            "lifetime": 90,
+            "size": [80, 40],
+            "damage": 80,
+            "hitstun": 15,
+            "blockstun": 9
           }
         }
       },
-      "playstyle": "technical_mixup",
-      "difficulty": "expert",
-      "strengths": ["high_damage", "advanced_tech", "execution"],
-      "weaknesses": ["complexity", "slow_movement"]
+      "playstyle": "zoner",
+      "difficulty": "hard",
+      "strengths": ["range", "projectiles", "control"],
+      "weaknesses": ["close_range", "mobility"]
     }
   ],
   "sprites": {

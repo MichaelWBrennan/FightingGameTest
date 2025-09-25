@@ -314,10 +314,11 @@
   ],
   "variants": [
     {
-      "variantId": "traditional",
-      "name": "Traditional Zoner",
+      "variantId": "zoner",
+      "name": "Zoner Dhalsim",
       "description": "Classic zoning with long-range projectiles and keepaway tactics. Controls space with fireballs and teleportation.",
       "isDefault": true,
+      "archetype": "zoner",
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
@@ -335,92 +336,11 @@
       "weaknesses": ["close_range", "health"]
     },
     {
-      "variantId": "aggressive",
-      "name": "Aggressive Zoner",
-      "description": "More aggressive approach with faster projectiles and better close-range options. Reduced range but enhanced mobility.",
-      "isDefault": false,
-      "statModifiers": {
-        "healthMultiplier": 0.9,
-        "walkSpeedMultiplier": 1.2,
-        "runSpeedMultiplier": 1.3,
-        "jumpHeightMultiplier": 1.1,
-        "weightMultiplier": 0.95,
-        "damageMultiplier": 1.1
-      },
-      "moveModifiers": {
-        "yoga_fire": {
-          "startupFrameBonus": -3,
-          "damageMultiplier": 1.1,
-          "addedProperties": ["enhanced_speed"]
-        },
-        "yoga_teleport": {
-          "startupFrameBonus": -2,
-          "recoveryFrameBonus": -3
-        }
-      },
-      "uniqueMechanicChanges": [
-        "+faster_projectiles",
-        "+enhanced_mobility",
-        "+close_range_tools"
-      ],
-      "additionalMoves": {
-        "yoga_spear": {
-          "name": "Yoga Spear",
-          "input": "236K",
-          "description": "Fast, short-range projectile for pressure",
-          "damage": 70,
-          "startupFrames": 8,
-          "activeFrames": 0,
-          "recoveryFrames": 20,
-          "meterCost": 0,
-          "comboType": "linker",
-          "properties": [
-            "projectile",
-            "pressure"
-          ],
-          "projectile": {
-            "speed": 400,
-            "lifetime": 100,
-            "size": [30, 20],
-            "damage": 70,
-            "hitstun": 15,
-            "blockstun": 9
-          }
-        },
-        "yoga_blast": {
-          "name": "Yoga Blast",
-          "input": "214K",
-          "description": "Close-range explosion for pressure",
-          "damage": 100,
-          "startupFrames": 6,
-          "activeFrames": 4,
-          "recoveryFrames": 15,
-          "meterCost": 0,
-          "comboType": "ender",
-          "properties": [
-            "projectile",
-            "close_range"
-          ],
-          "projectile": {
-            "speed": 0,
-            "lifetime": 30,
-            "size": [60, 40],
-            "damage": 100,
-            "hitstun": 18,
-            "blockstun": 11
-          }
-        }
-      },
-      "playstyle": "aggressive_zoner",
-      "difficulty": "medium",
-      "strengths": ["pressure", "mobility", "mixup"],
-      "weaknesses": ["range", "health"]
-    },
-    {
       "variantId": "technical",
-      "name": "Technical Zoner",
+      "name": "Technical Dhalsim",
       "description": "Complex execution with advanced zoning techniques. Higher damage potential for skilled players with precise positioning.",
       "isDefault": false,
+      "archetype": "technical",
       "statModifiers": {
         "healthMultiplier": 1.1,
         "walkSpeedMultiplier": 0.8,
@@ -486,10 +406,92 @@
           ]
         }
       },
-      "playstyle": "technical_zoner",
+      "playstyle": "technical",
       "difficulty": "expert",
       "strengths": ["high_damage", "advanced_tech", "positioning"],
       "weaknesses": ["execution", "slow_movement"]
+    },
+    {
+      "variantId": "defensive",
+      "name": "Defensive Dhalsim",
+      "description": "A tank-like defensive variant with enhanced armor, health, and defensive options. Slower but extremely durable.",
+      "isDefault": false,
+      "archetype": "defensive",
+      "statModifiers": {
+        "healthMultiplier": 1.4,
+        "walkSpeedMultiplier": 0.7,
+        "runSpeedMultiplier": 0.6,
+        "jumpHeightMultiplier": 0.8,
+        "weightMultiplier": 1.3,
+        "damageMultiplier": 1.2
+      },
+      "moveModifiers": {
+        "yoga_fire": {
+          "damageMultiplier": 1.3,
+          "addedProperties": ["armor_break"]
+        },
+        "yoga_flame": {
+          "damageMultiplier": 1.4,
+          "addedProperties": ["enhanced_armor"]
+        },
+        "heavyPunch": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["armor"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+enhanced_armor",
+        "+damage_reduction",
+        "+defensive_options"
+      ],
+      "additionalMoves": {
+        "yoga_armor": {
+          "name": "Yoga Armor",
+          "input": "214P",
+          "description": "Defensive stance with damage reduction and armor",
+          "damage": 0,
+          "startupFrames": 5,
+          "activeFrames": 45,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "utility",
+          "properties": [
+            "super_armor",
+            "damage_reduction"
+          ]
+        },
+        "yoga_counter": {
+          "name": "Yoga Counter",
+          "input": "214K",
+          "description": "Counter-attack with armor",
+          "damage": 180,
+          "startupFrames": 3,
+          "activeFrames": 4,
+          "recoveryFrames": 25,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "counter",
+            "armor"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 3,
+              "endFrame": 6,
+              "position": [80, 0],
+              "size": [60, 40],
+              "damage": 180,
+              "hitstun": 25,
+              "blockstun": 15,
+              "knockdown": true
+            }
+          ]
+        }
+      },
+      "playstyle": "defensive",
+      "difficulty": "easy",
+      "strengths": ["high_health", "armor", "defense"],
+      "weaknesses": ["very_slow", "mobility"]
     }
   ],
   "sprites": {

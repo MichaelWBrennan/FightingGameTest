@@ -319,10 +319,11 @@
   ],
   "variants": [
     {
-      "variantId": "traditional",
-      "name": "Traditional Grappler",
+      "variantId": "grappler",
+      "name": "Grappler Zangief",
       "description": "The classic grappler approach. High damage throws and command grabs with slow movement but devastating close-range power.",
       "isDefault": true,
+      "archetype": "grappler",
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
@@ -340,42 +341,75 @@
       "weaknesses": ["slow_movement", "range"]
     },
     {
-      "variantId": "aggressive",
-      "name": "Aggressive Grappler",
-      "description": "Faster movement and more aggressive approach. Enhanced mobility but reduced damage and health.",
+      "variantId": "rushdown",
+      "name": "Rushdown Zangief",
+      "description": "A fast, aggressive variant focused on overwhelming pressure and mobility. Enhanced speed but reduced damage and health.",
       "isDefault": false,
+      "archetype": "rushdown",
       "statModifiers": {
-        "healthMultiplier": 0.9,
-        "walkSpeedMultiplier": 1.3,
-        "runSpeedMultiplier": 1.4,
+        "healthMultiplier": 0.85,
+        "walkSpeedMultiplier": 1.4,
+        "runSpeedMultiplier": 1.5,
         "jumpHeightMultiplier": 1.2,
-        "weightMultiplier": 0.85,
+        "weightMultiplier": 0.8,
         "damageMultiplier": 0.9
       },
       "moveModifiers": {
-        "spinning_piledriver": {
+        "lightPunch": {
           "startupFrameBonus": -1,
-          "damageMultiplier": 0.9
+          "hitAdvantageBonus": 2,
+          "addedProperties": ["frame_trap"]
         },
-        "lariat": {
+        "mediumPunch": {
+          "startupFrameBonus": -1,
+          "blockAdvantageBonus": 1
+        },
+        "spinning_piledriver": {
           "startupFrameBonus": -2,
-          "recoveryFrameBonus": -3
+          "damageMultiplier": 0.9
         }
       },
       "uniqueMechanicChanges": [
         "+enhanced_mobility",
-        "+faster_grabs",
-        "+pressure_tools"
+        "+pressure_tools",
+        "+faster_attacks"
       ],
       "additionalMoves": {
-        "quick_grab": {
-          "name": "Quick Grab",
+        "dash_attack": {
+          "name": "Dash Attack",
+          "input": "66P",
+          "description": "Fast running attack for pressure",
+          "damage": 100,
+          "startupFrames": 6,
+          "activeFrames": 4,
+          "recoveryFrames": 10,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": [
+            "dash",
+            "pressure"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 6,
+              "endFrame": 9,
+              "position": [80, 0],
+              "size": [60, 40],
+              "damage": 100,
+              "hitstun": 15,
+              "blockstun": 10,
+              "knockdown": false
+            }
+          ]
+        },
+        "pressure_grab": {
+          "name": "Pressure Grab",
           "input": "236P",
           "description": "Fast command grab for pressure",
           "damage": 120,
-          "startupFrames": 5,
+          "startupFrames": 4,
           "activeFrames": 1,
-          "recoveryFrames": 25,
+          "recoveryFrames": 20,
           "meterCost": 0,
           "comboType": "linker",
           "properties": [
@@ -386,102 +420,88 @@
             "damage": 120,
             "knockdown": false
           }
-        },
-        "dash_grab": {
-          "name": "Dash Grab",
-          "input": "66P",
-          "description": "Running command grab",
-          "damage": 140,
-          "startupFrames": 8,
-          "activeFrames": 1,
-          "recoveryFrames": 30,
-          "meterCost": 0,
-          "comboType": "ender",
-          "properties": [
-            "command_grab",
-            "dash"
-          ],
-          "grab": {
-            "range": 80,
-            "damage": 140,
-            "knockdown": true
-          }
         }
       },
-      "playstyle": "rushdown_grappler",
+      "playstyle": "rushdown",
       "difficulty": "medium",
       "strengths": ["mobility", "pressure", "speed"],
       "weaknesses": ["lower_damage", "health"]
     },
     {
-      "variantId": "defensive",
-      "name": "Defensive Grappler",
-      "description": "Tank-like approach with enhanced armor, health, and defensive options. Slower but extremely durable.",
+      "variantId": "power",
+      "name": "Power Zangief",
+      "description": "A devastating power variant with maximum damage potential. Slow but extremely powerful with enhanced armor and health.",
       "isDefault": false,
+      "archetype": "power",
       "statModifiers": {
-        "healthMultiplier": 1.3,
-        "walkSpeedMultiplier": 0.8,
-        "runSpeedMultiplier": 0.7,
-        "jumpHeightMultiplier": 0.9,
-        "weightMultiplier": 1.2,
-        "damageMultiplier": 1.2
+        "healthMultiplier": 1.4,
+        "walkSpeedMultiplier": 0.7,
+        "runSpeedMultiplier": 0.6,
+        "jumpHeightMultiplier": 0.8,
+        "weightMultiplier": 1.3,
+        "damageMultiplier": 1.5
       },
       "moveModifiers": {
         "spinning_piledriver": {
-          "damageMultiplier": 1.3,
-          "startupFrameBonus": 2
+          "damageMultiplier": 1.6,
+          "startupFrameBonus": 3
         },
         "lariat": {
-          "damageMultiplier": 1.2,
-          "addedProperties": ["enhanced_armor"]
+          "damageMultiplier": 1.4,
+          "addedProperties": ["enhanced_armor", "super_armor"]
+        },
+        "heavyPunch": {
+          "damageMultiplier": 1.3,
+          "addedProperties": ["armor"]
         }
       },
       "uniqueMechanicChanges": [
         "+enhanced_armor",
-        "+damage_reduction",
-        "+defensive_options"
+        "+maximum_damage",
+        "+power_focus"
       ],
       "additionalMoves": {
         "iron_body": {
           "name": "Iron Body",
           "input": "214P",
-          "description": "Defensive stance with damage reduction",
+          "description": "Defensive stance with damage reduction and armor",
           "damage": 0,
           "startupFrames": 5,
-          "activeFrames": 30,
-          "recoveryFrames": 10,
+          "activeFrames": 45,
+          "recoveryFrames": 15,
           "meterCost": 0,
           "comboType": "utility",
           "properties": [
-            "armor",
+            "super_armor",
             "damage_reduction"
           ]
         },
-        "counter_grab": {
-          "name": "Counter Grab",
-          "input": "214K",
-          "description": "Counter-attack command grab",
-          "damage": 180,
-          "startupFrames": 3,
+        "devastating_throw": {
+          "name": "Devastating Throw",
+          "input": "360360P",
+          "description": "Ultimate power throw",
+          "damage": 300,
+          "startupFrames": 2,
           "activeFrames": 1,
-          "recoveryFrames": 35,
+          "recoveryFrames": 60,
           "meterCost": 0,
           "comboType": "ender",
           "properties": [
             "command_grab",
-            "counter"
+            "invincible",
+            "devastating"
           ],
           "grab": {
-            "range": 70,
-            "damage": 180,
+            "range": 100,
+            "damage": 300,
             "knockdown": true
           }
         }
       },
-      "playstyle": "defensive_grappler",
+      "playstyle": "power",
       "difficulty": "easy",
-      "strengths": ["high_health", "armor", "damage"],
-      "weaknesses": ["slow_movement", "mobility"]
+      "strengths": ["maximum_damage", "armor", "health"],
+      "weaknesses": ["very_slow", "mobility"]
     }
   ],
   "sprites": {

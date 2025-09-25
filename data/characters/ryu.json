@@ -334,10 +334,11 @@
   ],
   "variants": [
     {
-      "variantId": "traditional",
-      "name": "Traditional Shoto",
-      "description": "The classic balanced approach to fighting. Well-rounded fundamentals with no major weaknesses.",
+      "variantId": "shoto",
+      "name": "Shoto Ryu",
+      "description": "The classic balanced approach to fighting. Well-rounded fundamentals with fireballs, dragon punches, and tatsumaki.",
       "isDefault": true,
+      "archetype": "shoto",
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
@@ -355,156 +356,162 @@
       "weaknesses": ["no_gimmicks"]
     },
     {
-      "variantId": "aggressive",
-      "name": "Aggressive Shoto",
-      "description": "Faster, more offensive playstyle with enhanced pressure tools but reduced health and defense.",
+      "variantId": "grappler",
+      "name": "Grappler Ryu",
+      "description": "A close-range grappler variant with command grabs and throw-based gameplay. High damage but requires getting in close.",
       "isDefault": false,
+      "archetype": "grappler",
       "statModifiers": {
-        "healthMultiplier": 0.85,
-        "walkSpeedMultiplier": 1.15,
-        "runSpeedMultiplier": 1.2,
+        "healthMultiplier": 1.2,
+        "walkSpeedMultiplier": 0.8,
+        "runSpeedMultiplier": 0.7,
+        "jumpHeightMultiplier": 0.9,
+        "weightMultiplier": 1.2,
+        "damageMultiplier": 1.3
+      },
+      "moveModifiers": {
+        "lightPunch": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["command_grab_setup"]
+        },
+        "mediumPunch": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["command_grab_setup"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+command_grabs",
+        "+throw_damage",
+        "+close_range_focus"
+      ],
+      "additionalMoves": {
+        "dragon_throw": {
+          "name": "Dragon Throw",
+          "input": "360P",
+          "description": "Command grab with dragon punch motion",
+          "damage": 180,
+          "startupFrames": 3,
+          "activeFrames": 1,
+          "recoveryFrames": 40,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "command_grab",
+            "invincible"
+          ],
+          "grab": {
+            "range": 80,
+            "damage": 180,
+            "knockdown": true
+          }
+        },
+        "tatsumaki_throw": {
+          "name": "Tatsumaki Throw",
+          "input": "214K",
+          "description": "Command grab with tatsumaki motion",
+          "damage": 160,
+          "startupFrames": 4,
+          "activeFrames": 1,
+          "recoveryFrames": 35,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "command_grab"
+          ],
+          "grab": {
+            "range": 70,
+            "damage": 160,
+            "knockdown": true
+          }
+        }
+      },
+      "playstyle": "grappler",
+      "difficulty": "medium",
+      "strengths": ["high_damage", "throws", "close_range"],
+      "weaknesses": ["slow_movement", "range"]
+    },
+    {
+      "variantId": "zoner",
+      "name": "Zoner Ryu",
+      "description": "A long-range zoning variant focused on controlling space with enhanced projectiles and keepaway tactics.",
+      "isDefault": false,
+      "archetype": "zoner",
+      "statModifiers": {
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.8,
         "jumpHeightMultiplier": 1.1,
         "weightMultiplier": 0.9,
         "damageMultiplier": 1.1
       },
       "moveModifiers": {
-        "lightPunch": {
-          "startupFrameBonus": -1,
-          "hitAdvantageBonus": 2,
-          "addedProperties": ["frame_trap"]
-        },
-        "mediumPunch": {
-          "startupFrameBonus": -1,
-          "blockAdvantageBonus": 1
-        },
         "hadoken": {
-          "recoveryFrameBonus": -3,
-          "addedProperties": ["enhanced_speed"]
-        }
-      },
-      "uniqueMechanicChanges": [
-        "+aggressive_meter_build",
-        "+enhanced_pressure",
-        "+faster_movement"
-      ],
-      "additionalMoves": {
-        "pressure_hadoken": {
-          "name": "Pressure Hadoken",
-          "input": "236P",
-          "description": "Faster, shorter-range fireball for pressure",
-          "damage": 80,
-          "startupFrames": 8,
-          "activeFrames": 0,
-          "recoveryFrames": 18,
-          "meterCost": 0,
-          "comboType": "linker",
-          "properties": [
-            "projectile",
-            "pressure"
-          ],
-          "projectile": {
-            "speed": 400,
-            "lifetime": 80,
-            "size": [30, 15],
-            "damage": 80,
-            "hitstun": 15,
-            "blockstun": 10
-          }
-        }
-      },
-      "playstyle": "rushdown",
-      "difficulty": "medium",
-      "strengths": ["pressure", "speed", "offense"],
-      "weaknesses": ["low_health", "defense"]
-    },
-    {
-      "variantId": "technical",
-      "name": "Technical Shoto",
-      "description": "Complex execution with advanced techniques. Higher damage potential for skilled players with precise timing.",
-      "isDefault": false,
-      "statModifiers": {
-        "healthMultiplier": 1.1,
-        "walkSpeedMultiplier": 0.9,
-        "runSpeedMultiplier": 0.85,
-        "jumpHeightMultiplier": 0.95,
-        "weightMultiplier": 1.1,
-        "damageMultiplier": 1.2
-      },
-      "moveModifiers": {
-        "shoryuken": {
           "damageMultiplier": 1.3,
-          "startupFrameBonus": 2,
-          "addedProperties": ["just_frame_bonus"]
+          "startupFrameBonus": -2,
+          "addedProperties": ["enhanced_range", "multi_hit"]
         },
         "shinku_hadoken": {
-          "damageMultiplier": 1.4,
-          "addedProperties": ["technical_input"]
+          "damageMultiplier": 1.5,
+          "addedProperties": ["enhanced_range", "multi_hit"]
         }
       },
       "uniqueMechanicChanges": [
-        "+advanced_cancels",
-        "+just_frame_timing",
-        "+technical_execution"
+        "+enhanced_projectiles",
+        "+range_control",
+        "+keepaway_tactics"
       ],
       "additionalMoves": {
-        "denjin_hadoken": {
-          "name": "Denjin Hadoken",
-          "input": "236236P",
-          "description": "Charged fireball with multiple hits",
-          "damage": 200,
-          "startupFrames": 20,
+        "yoga_fire": {
+          "name": "Yoga Fire",
+          "input": "236P",
+          "description": "Long-range fireball for zoning",
+          "damage": 120,
+          "startupFrames": 12,
           "activeFrames": 0,
-          "recoveryFrames": 35,
+          "recoveryFrames": 25,
           "meterCost": 0,
           "comboType": "ender",
           "properties": [
             "projectile",
-            "chargeable",
-            "multi_hit"
+            "zoning"
           ],
           "projectile": {
             "speed": 250,
-            "lifetime": 150,
-            "size": [60, 30],
-            "damage": 200,
+            "lifetime": 200,
+            "size": [60, 35],
+            "damage": 120,
             "hitstun": 25,
-            "blockstun": 18,
-            "hits": 3
+            "blockstun": 15
           }
         },
-        "focus_attack": {
-          "name": "Focus Attack",
-          "input": "MP+MK",
-          "description": "Technical focus attack with armor properties",
+        "yoga_flame": {
+          "name": "Yoga Flame",
+          "input": "214P",
+          "description": "Ground-based flame for area control",
           "damage": 100,
-          "startupFrames": 15,
-          "activeFrames": 4,
+          "startupFrames": 10,
+          "activeFrames": 60,
           "recoveryFrames": 20,
           "meterCost": 0,
-          "comboType": "opener",
+          "comboType": "ender",
           "properties": [
-            "armor",
-            "crumple",
-            "cancelable"
+            "projectile",
+            "area_control"
           ],
-          "hitboxes": [
-            {
-              "startFrame": 15,
-              "endFrame": 18,
-              "position": [70, 0],
-              "size": [60, 40],
-              "damage": 100,
-              "hitstun": 25,
-              "blockstun": 15,
-              "knockdown": false
-            }
-          ]
+          "projectile": {
+            "speed": 0,
+            "lifetime": 60,
+            "size": [100, 50],
+            "damage": 100,
+            "hitstun": 20,
+            "blockstun": 12
+          }
         }
       },
-      "playstyle": "technical",
+      "playstyle": "zoner",
       "difficulty": "hard",
-      "strengths": ["high_damage", "advanced_tech", "defense"],
-      "weaknesses": ["execution", "slow_movement"]
+      "strengths": ["range", "projectiles", "control"],
+      "weaknesses": ["close_range", "health"]
     }
   ],
   "sprites": {
