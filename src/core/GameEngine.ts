@@ -93,6 +93,7 @@ import { PerformanceOptimizer } from './performance/PerformanceOptimizer';
 import { PracticalAccessibility } from './accessibility/PracticalAccessibility';
 import { UserAccountSystem } from './accounts/UserAccountSystem';
 import { LeagueRankingSystem } from './competitive/LeagueRankingSystem';
+import { BayesianRankingSystem } from './competitive/BayesianRankingSystem';
 import { BrowserUISystem } from './ui/BrowserUISystem';
 import { BrowserGameLauncher } from '../launcher/BrowserGameLauncher';
 
@@ -179,6 +180,7 @@ export class GameEngine {
   private practicalAccessibility: PracticalAccessibility | null = null;
   private userAccountSystem: UserAccountSystem | null = null;
   private leagueRankingSystem: LeagueRankingSystem | null = null;
+  private bayesianRankingSystem: BayesianRankingSystem | null = null;
   private browserUISystem: BrowserUISystem | null = null;
   private browserGameLauncher: BrowserGameLauncher | null = null;
 
@@ -683,6 +685,10 @@ export class GameEngine {
       try { 
         this.leagueRankingSystem = new LeagueRankingSystem(this.app);
         this.services.register('leagueRankingSystem', this.leagueRankingSystem);
+      } catch {}
+      try { 
+        this.bayesianRankingSystem = new BayesianRankingSystem(this.app);
+        this.services.register('bayesianRankingSystem', this.bayesianRankingSystem);
       } catch {}
       try { 
         this.browserUISystem = new BrowserUISystem(this.app);

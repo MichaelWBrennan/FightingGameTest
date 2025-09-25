@@ -151,28 +151,30 @@ export class LeagueRankingSystem {
   }
 
   private setupMatchmakingSystem() {
-    // Skill-based matchmaking
+    // Bayesian-based matchmaking (replaces archaic MMR)
     this.matchmakingSystem = {
       enabled: true,
       features: {
-        skillBased: true,
-        rankBased: true,
-        regionBased: true,
-        pingBased: true,
-        timeBased: true
+        bayesianBased: true,        // Primary: Bayesian confidence-based
+        skillBased: true,           // Secondary: Skill level matching
+        regionBased: true,          // Geographic matching
+        pingBased: true,            // Network quality matching
+        timeBased: true,            // Time-based expansion
+        antiToxic: true             // Anti-toxic measures
       },
       parameters: {
-        skillDifference: 2, // divisions
-        pingThreshold: 100, // ms
-        maxWaitTime: 300, // seconds
+        confidenceThreshold: 0.7,   // Min confidence for fair matches
+        skillRange: 150,            // Skill range based on confidence
+        pingThreshold: 100,         // ms
+        maxWaitTime: 300,           // seconds
         minPlayers: 2,
         maxPlayers: 2
       },
       algorithms: {
-        elo: true,
-        trueskill: true,
-        glicko: true,
-        hybrid: true
+        betaBinomial: true,         // Primary: Beta-Binomial for win/loss
+        trueSkill: true,            // Secondary: TrueSkill for skill estimation
+        glicko2: true,              // Tertiary: Glicko-2 for rating periods
+        hybrid: true                // Hybrid approach combining all
       }
     };
   }
@@ -217,20 +219,29 @@ export class LeagueRankingSystem {
     };
   }
 
-  // Ranking Methods
+  // Bayesian Ranking Methods (replaces archaic MMR)
   async calculateRank(userId: string, matchResult: any): Promise<any> {
     try {
-      // Get current rank
-      const currentRank = await this.getCurrentRank(userId);
+      // Get current Bayesian rating
+      const currentRating = await this.getCurrentBayesianRating(userId);
       
-      // Calculate new rank based on match result
-      const newRank = await this.calculateNewRank(currentRank, matchResult);
+      // Calculate reliability weight (reduces toxic play)
+      const reliability = await this.calculateReliabilityWeight(userId, matchResult);
+      
+      // Update Bayesian parameters
+      const newRating = await this.updateBayesianRating(currentRating, matchResult, reliability);
+      
+      // Apply anti-toxic measures
+      const adjustedRating = await this.applyAntiToxicMeasures(newRating, matchResult);
+      
+      // Convert to tier/division system
+      const newRank = await this.convertToTierSystem(adjustedRating);
       
       // Update rank
       await this.updateRank(userId, newRank);
       
       // Check for promotions/demotions
-      await this.checkPromotions(userId, currentRank, newRank);
+      await this.checkPromotions(userId, currentRating, newRank);
       
       // Award rewards
       await this.awardRewards(userId, matchResult, newRank);
@@ -242,15 +253,285 @@ export class LeagueRankingSystem {
     }
   }
 
-  private async getCurrentRank(userId: string): Promise<any> {
-    // Get current rank from database
+  private async getCurrentBayesianRating(userId: string): Promise<any> {
+    // Get current Bayesian rating from database
     return {
-      tier: 'bronze',
-      division: 3,
-      lp: 45,
-      wins: 5,
-      losses: 3,
-      winStreak: 2
+      id: userId,
+      betaAlpha: 1,        // Prior wins
+      betaBeta: 1,         // Prior losses
+      trueSkillMu: 25,     // Mean skill
+      trueSkillSigma: 8.33, // Skill uncertainty
+      glickoRating: 1500,  // Glicko-2 rating
+      glickoDeviation: 350, // Rating deviation
+      glickoVolatility: 0.06, // Rating volatility
+      confidence: 0.5,     // Rating confidence
+      consistency: 0.7,    // Player consistency
+      lastMatch: Date.now()
+    };
+  }
+
+  private async calculateReliabilityWeight(userId: string, matchResult: any): Promise<number> {
+    // Calculate reliability weight to reduce toxic play
+    const factors = {
+      // Network quality (0.25 to 2.0)
+      network: this.calculateNetworkReliability(matchResult.networkStats),
+      
+      // Opponent strength (0.5 to 1.5)
+      opponent: this.calculateOpponentReliability(matchResult.opponentRating),
+      
+      // Match quality (0.5 to 1.5)
+      quality: this.calculateMatchQuality(matchResult),
+      
+      // Player consistency (0.5 to 1.5)
+      consistency: this.calculateConsistencyReliability(matchResult.playerConsistency),
+      
+      // Recency (0.5 to 1.0)
+      recency: this.calculateRecencyReliability(matchResult.timeSinceLastMatch)
+    };
+    
+    // Weighted average of all factors
+    const weights = {
+      network: 0.3,
+      opponent: 0.25,
+      quality: 0.2,
+      consistency: 0.15,
+      recency: 0.1
+    };
+    
+    let reliability = 0;
+    for (const [factor, value] of Object.entries(factors)) {
+      reliability += value * weights[factor];
+    }
+    
+    return Math.max(0.25, Math.min(2.0, reliability));
+  }
+
+  private calculateNetworkReliability(networkStats: any): number {
+    if (!networkStats) return 1.0;
+    
+    const latency = networkStats.latency || 0;
+    const jitter = networkStats.jitter || 0;
+    const packetLoss = networkStats.packetLoss || 0;
+    
+    // Lower latency, jitter, and packet loss = higher reliability
+    const latencyScore = Math.max(0, 1 - (latency - 50) / 200);
+    const jitterScore = Math.max(0, 1 - (jitter - 5) / 50);
+    const packetLossScore = Math.max(0, 1 - packetLoss / 0.1);
+    
+    return (latencyScore + jitterScore + packetLossScore) / 3;
+  }
+
+  private calculateOpponentReliability(opponentRating: any): number {
+    if (!opponentRating) return 1.0;
+    
+    // Opponents closer to your skill level provide more reliable information
+    const skillDifference = Math.abs(opponentRating - 1500);
+    return Math.max(0.5, Math.min(1.5, 1.5 - skillDifference / 1000));
+  }
+
+  private calculateMatchQuality(matchResult: any): number {
+    // Higher quality matches provide more reliable information
+    const factors = {
+      duration: Math.min(1.0, matchResult.duration / 300), // 5 minutes = 1.0
+      competitiveness: 1 - Math.abs(matchResult.scoreDifference) / 10,
+      completion: matchResult.completed ? 1.0 : 0.5
+    };
+    
+    return (factors.duration + factors.competitiveness + factors.completion) / 3;
+  }
+
+  private calculateConsistencyReliability(consistency: number): number {
+    // More consistent players provide more reliable information
+    return Math.max(0.5, Math.min(1.5, consistency));
+  }
+
+  private calculateRecencyReliability(timeSinceLastMatch: number): number {
+    // More recent matches are more reliable
+    const daysSince = timeSinceLastMatch / (1000 * 60 * 60 * 24);
+    return Math.max(0.5, Math.min(1.0, 1 - daysSince / 30));
+  }
+
+  private async updateBayesianRating(currentRating: any, matchResult: any, reliability: number): Promise<any> {
+    // Update Beta-Binomial parameters
+    const newBetaAlpha = currentRating.betaAlpha + (matchResult.won ? reliability : 0);
+    const newBetaBeta = currentRating.betaBeta + (matchResult.won ? 0 : reliability);
+    
+    // Update TrueSkill parameters
+    const trueSkillUpdate = this.updateTrueSkill(
+      currentRating.trueSkillMu,
+      currentRating.trueSkillSigma,
+      matchResult.opponentRating,
+      matchResult.won,
+      reliability
+    );
+    
+    // Update Glicko-2 parameters
+    const glickoUpdate = this.updateGlicko2(
+      currentRating.glickoRating,
+      currentRating.glickoDeviation,
+      currentRating.glickoVolatility,
+      matchResult.opponentRating,
+      matchResult.won,
+      reliability
+    );
+    
+    return {
+      ...currentRating,
+      betaAlpha: newBetaAlpha,
+      betaBeta: newBetaBeta,
+      trueSkillMu: trueSkillUpdate.mu,
+      trueSkillSigma: trueSkillUpdate.sigma,
+      glickoRating: glickoUpdate.rating,
+      glickoDeviation: glickoUpdate.deviation,
+      glickoVolatility: glickoUpdate.volatility,
+      lastMatch: Date.now()
+    };
+  }
+
+  private updateTrueSkill(mu: number, sigma: number, opponentRating: number, won: boolean, reliability: number): any {
+    // Simplified TrueSkill update
+    const beta = 4.17;
+    const tau = 0.083;
+    
+    const opponentMu = opponentRating / 100; // Convert to TrueSkill scale
+    const opponentSigma = 8.33;
+    
+    const c = Math.sqrt(sigma * sigma + opponentSigma * opponentSigma + 2 * beta * beta);
+    const expectedScore = 1 / (1 + Math.exp((opponentMu - mu) / c));
+    
+    const v = reliability * (expectedScore * (1 - expectedScore)) / c;
+    const w = reliability * v * (v + c) / (c * c);
+    
+    const newMu = mu + v * (won ? 1 : 0 - expectedScore);
+    const newSigma = Math.sqrt(sigma * sigma * (1 - w));
+    
+    return {
+      mu: Math.max(0, newMu),
+      sigma: Math.max(0.1, newSigma)
+    };
+  }
+
+  private updateGlicko2(rating: number, deviation: number, volatility: number, opponentRating: number, won: boolean, reliability: number): any {
+    // Simplified Glicko-2 update
+    const tau = 0.06;
+    const q = Math.log(10) / 400;
+    
+    const opponentDeviation = 350;
+    const g = 1 / Math.sqrt(1 + 3 * q * q * opponentDeviation * opponentDeviation / (Math.PI * Math.PI));
+    const expectedScore = 1 / (1 + Math.exp(-g * (rating - opponentRating)));
+    
+    const v = 1 / (q * q * g * g * expectedScore * (1 - expectedScore));
+    const delta = v * g * (won ? 1 : 0 - expectedScore);
+    
+    const newVolatility = Math.sqrt(volatility * volatility + tau * tau);
+    const newDeviation = 1 / Math.sqrt(1 / (deviation * deviation) + 1 / v);
+    const newRating = rating + q * newDeviation * newDeviation * g * (won ? 1 : 0 - expectedScore);
+    
+    return {
+      rating: Math.max(0, newRating),
+      deviation: Math.max(30, newDeviation),
+      volatility: Math.max(0.01, newVolatility)
+    };
+  }
+
+  private async applyAntiToxicMeasures(rating: any, matchResult: any): Promise<any> {
+    // Apply anti-toxic measures to reduce toxic play
+    const measures = {
+      consistencyBonus: { enabled: true, threshold: 0.7, bonus: 0.1 },
+      behaviorPenalty: { enabled: true, rageQuitPenalty: 0.3, afkPenalty: 0.2, toxicChatPenalty: 0.1 },
+      positiveReward: { enabled: true, goodSportBonus: 0.05, comebackBonus: 0.1, clutchBonus: 0.08 },
+      dynamicBounds: { enabled: true, maxGain: 50, maxLoss: 30, volatilityCap: 0.8 }
+    };
+    
+    // Apply consistency bonus
+    if (measures.consistencyBonus.enabled && rating.consistency > measures.consistencyBonus.threshold) {
+      const bonus = measures.consistencyBonus.bonus;
+      rating.trueSkillMu *= (1 + bonus);
+      rating.glickoRating *= (1 + bonus);
+    }
+    
+    // Apply behavior penalties
+    if (matchResult.behavior) {
+      if (matchResult.behavior.rageQuit && measures.behaviorPenalty.enabled) {
+        const penalty = measures.behaviorPenalty.rageQuitPenalty;
+        rating.trueSkillMu *= (1 - penalty);
+        rating.glickoRating *= (1 - penalty);
+      }
+      
+      if (matchResult.behavior.afk && measures.behaviorPenalty.enabled) {
+        const penalty = measures.behaviorPenalty.afkPenalty;
+        rating.trueSkillMu *= (1 - penalty);
+        rating.glickoRating *= (1 - penalty);
+      }
+      
+      if (matchResult.behavior.toxicChat && measures.behaviorPenalty.enabled) {
+        const penalty = measures.behaviorPenalty.toxicChatPenalty;
+        rating.trueSkillMu *= (1 - penalty);
+        rating.glickoRating *= (1 - penalty);
+      }
+    }
+    
+    // Apply positive rewards
+    if (matchResult.positiveBehavior) {
+      if (matchResult.positiveBehavior.goodSport && measures.positiveReward.enabled) {
+        const bonus = measures.positiveReward.goodSportBonus;
+        rating.trueSkillMu *= (1 + bonus);
+        rating.glickoRating *= (1 + bonus);
+      }
+      
+      if (matchResult.positiveBehavior.comeback && measures.positiveReward.enabled) {
+        const bonus = measures.positiveReward.comebackBonus;
+        rating.trueSkillMu *= (1 + bonus);
+        rating.glickoRating *= (1 + bonus);
+      }
+    }
+    
+    return rating;
+  }
+
+  private async convertToTierSystem(rating: any): Promise<any> {
+    // Convert Bayesian rating to tier/division system
+    const glickoRating = rating.glickoRating;
+    
+    // Map Glicko rating to tier
+    let tier = 'iron';
+    let division = 4;
+    
+    if (glickoRating >= 2400) {
+      tier = 'challenger';
+      division = 1;
+    } else if (glickoRating >= 2200) {
+      tier = 'grandmaster';
+      division = 1;
+    } else if (glickoRating >= 2000) {
+      tier = 'master';
+      division = 1;
+    } else if (glickoRating >= 1800) {
+      tier = 'diamond';
+      division = Math.max(1, 4 - Math.floor((glickoRating - 1800) / 50));
+    } else if (glickoRating >= 1600) {
+      tier = 'platinum';
+      division = Math.max(1, 4 - Math.floor((glickoRating - 1600) / 50));
+    } else if (glickoRating >= 1400) {
+      tier = 'gold';
+      division = Math.max(1, 4 - Math.floor((glickoRating - 1400) / 50));
+    } else if (glickoRating >= 1200) {
+      tier = 'silver';
+      division = Math.max(1, 4 - Math.floor((glickoRating - 1200) / 50));
+    } else if (glickoRating >= 1000) {
+      tier = 'bronze';
+      division = Math.max(1, 4 - Math.floor((glickoRating - 1000) / 50));
+    } else {
+      tier = 'iron';
+      division = Math.max(1, 4 - Math.floor(glickoRating / 250));
+    }
+    
+    return {
+      tier: tier,
+      division: division,
+      lp: Math.floor((glickoRating % 200) / 2), // Convert to LP
+      confidence: rating.confidence,
+      consistency: rating.consistency
     };
   }
 
