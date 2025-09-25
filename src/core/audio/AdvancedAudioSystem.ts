@@ -1,571 +1,744 @@
 import { pc } from 'playcanvas';
+import { Logger } from '../utils/Logger';
+
+export interface AudioSettings {
+  masterVolume: number;
+  musicVolume: number;
+  sfxVolume: number;
+  voiceVolume: number;
+  ambientVolume: number;
+  spatialAudio: boolean;
+  surroundSound: boolean;
+  audioCompression: boolean;
+  dynamicRange: 'low' | 'medium' | 'high';
+  equalizer: EqualizerSettings;
+  reverb: ReverbSettings;
+  effects: AudioEffects;
+  customization: AudioCustomization;
+}
+
+export interface EqualizerSettings {
+  enabled: boolean;
+  bands: {
+    low: number;
+    midLow: number;
+    mid: number;
+    midHigh: number;
+    high: number;
+  };
+  presets: EqualizerPreset[];
+  custom: boolean;
+}
+
+export interface EqualizerPreset {
+  id: string;
+  name: string;
+  description: string;
+  bands: {
+    low: number;
+    midLow: number;
+    mid: number;
+    midHigh: number;
+    high: number;
+  };
+}
+
+export interface ReverbSettings {
+  enabled: boolean;
+  roomSize: number;
+  damping: number;
+  wetness: number;
+  dryness: number;
+  presets: ReverbPreset[];
+  custom: boolean;
+}
+
+export interface ReverbPreset {
+  id: string;
+  name: string;
+  description: string;
+  roomSize: number;
+  damping: number;
+  wetness: number;
+  dryness: number;
+}
+
+export interface AudioEffects {
+  distortion: {
+    enabled: boolean;
+    amount: number;
+  };
+  chorus: {
+    enabled: boolean;
+    rate: number;
+    depth: number;
+  };
+  delay: {
+    enabled: boolean;
+    time: number;
+    feedback: number;
+  };
+  flanger: {
+    enabled: boolean;
+    rate: number;
+    depth: number;
+  };
+  compressor: {
+    enabled: boolean;
+    threshold: number;
+    ratio: number;
+    attack: number;
+    release: number;
+  };
+  limiter: {
+    enabled: boolean;
+    threshold: number;
+    release: number;
+  };
+}
+
+export interface AudioCustomization {
+  enabled: boolean;
+  customSounds: CustomSound[];
+  soundPacks: SoundPack[];
+  voiceMods: VoiceMod[];
+  musicTracks: MusicTrack[];
+  playlists: Playlist[];
+}
+
+export interface CustomSound {
+  id: string;
+  name: string;
+  description: string;
+  type: 'sfx' | 'voice' | 'ambient' | 'music';
+  file: string;
+  volume: number;
+  pitch: number;
+  loop: boolean;
+  spatial: boolean;
+  category: string;
+  tags: string[];
+}
+
+export interface SoundPack {
+  id: string;
+  name: string;
+  description: string;
+  sounds: CustomSound[];
+  theme: string;
+  creator: string;
+  downloads: number;
+  rating: number;
+  isPublic: boolean;
+}
+
+export interface VoiceMod {
+  id: string;
+  name: string;
+  description: string;
+  type: 'pitch' | 'distortion' | 'reverb' | 'chorus' | 'delay';
+  parameters: any;
+  enabled: boolean;
+}
+
+export interface MusicTrack {
+  id: string;
+  name: string;
+  artist: string;
+  duration: number;
+  file: string;
+  genre: string;
+  mood: string;
+  intensity: number;
+  loop: boolean;
+  fadeIn: number;
+  fadeOut: number;
+}
+
+export interface Playlist {
+  id: string;
+  name: string;
+  description: string;
+  tracks: MusicTrack[];
+  shuffle: boolean;
+  repeat: 'none' | 'one' | 'all';
+  createdBy: string;
+  isPublic: boolean;
+}
+
+export interface SpatialAudio {
+  enabled: boolean;
+  listener: AudioListener;
+  sources: AudioSource[];
+  occlusion: OcclusionSettings;
+  reverb: SpatialReverbSettings;
+  doppler: DopplerSettings;
+}
+
+export interface AudioListener {
+  position: { x: number; y: number; z: number };
+  orientation: { x: number; y: number; z: number };
+  velocity: { x: number; y: number; z: number };
+  up: { x: number; y: number; z: number };
+}
+
+export interface AudioSource {
+  id: string;
+  position: { x: number; y: number; z: number };
+  orientation: { x: number; y: number; z: number };
+  velocity: { x: number; y: number; z: number };
+  volume: number;
+  pitch: number;
+  loop: boolean;
+  spatial: boolean;
+  maxDistance: number;
+  rolloffFactor: number;
+  referenceDistance: number;
+}
+
+export interface OcclusionSettings {
+  enabled: boolean;
+  factor: number;
+  lowPassFilter: boolean;
+  highPassFilter: boolean;
+  reverb: boolean;
+}
+
+export interface SpatialReverbSettings {
+  enabled: boolean;
+  roomSize: number;
+  damping: number;
+  wetness: number;
+  dryness: number;
+  position: { x: number; y: number; z: number };
+  size: { width: number; height: number; depth: number };
+}
+
+export interface DopplerSettings {
+  enabled: boolean;
+  factor: number;
+  velocity: number;
+}
+
+export interface DynamicMusic {
+  enabled: boolean;
+  tracks: MusicTrack[];
+  currentTrack: MusicTrack | null;
+  transitions: MusicTransition[];
+  adaptive: boolean;
+  intensity: number;
+  mood: string;
+  genre: string;
+}
+
+export interface MusicTransition {
+  id: string;
+  fromTrack: string;
+  toTrack: string;
+  type: 'fade' | 'crossfade' | 'cut' | 'segue';
+  duration: number;
+  conditions: MusicTransitionCondition[];
+}
+
+export interface MusicTransitionCondition {
+  type: 'health' | 'combo' | 'time' | 'event' | 'random';
+  threshold: number;
+  probability: number;
+  operator: 'less' | 'greater' | 'equal' | 'lessEqual' | 'greaterEqual';
+}
+
+export interface AudioManager {
+  settings: AudioSettings;
+  spatialAudio: SpatialAudio;
+  dynamicMusic: DynamicMusic;
+  audioEngine: AudioEngine;
+  soundLibrary: SoundLibrary;
+  musicManager: MusicManager;
+  voiceManager: VoiceManager;
+}
 
 export class AdvancedAudioSystem {
   private app: pc.Application;
-  private spatialAudio: any;
-  private dynamicMixing: any;
-  private voiceRecognition: any;
-  private hapticSync: any;
-  private audioProcessing: any;
-  private synthesis: any;
+  private audioManager: AudioManager;
+  private audioContext: AudioContext | null = null;
+  private audioNodes: Map<string, AudioNode> = new Map();
+  private audioBuffers: Map<string, AudioBuffer> = new Map();
+  private audioSources: Map<string, AudioSource> = new Map();
+  private currentMusic: MusicTrack | null = null;
+  private audioQueue: AudioQueue;
 
   constructor(app: pc.Application) {
     this.app = app;
-    this.initializeAdvancedAudio();
+    this.initializeAdvancedAudioSystem();
   }
 
-  private initializeAdvancedAudio() {
-    // 3D Spatial Audio System
-    this.setupSpatialAudio();
-    
-    // Dynamic Audio Mixing
-    this.setupDynamicMixing();
-    
-    // Voice Recognition
-    this.setupVoiceRecognition();
-    
-    // Haptic Synchronization
-    this.setupHapticSync();
-    
-    // Advanced Audio Processing
-    this.setupAudioProcessing();
-    
-    // Real-time Synthesis
-    this.setupSynthesis();
+  private initializeAdvancedAudioSystem(): void {
+    this.initializeAudioSettings();
+    this.initializeAudioManager();
+    this.initializeAudioContext();
+    this.initializeAudioEngine();
+    this.initializeSoundLibrary();
+    this.initializeMusicManager();
+    this.initializeVoiceManager();
+    this.initializeAudioQueue();
   }
 
-  private setupSpatialAudio() {
-    // 3D Spatial Audio with HRTF
-    this.spatialAudio = {
-      // HRTF (Head-Related Transfer Function)
-      hrtf: {
-        enabled: true,
-        database: 'MIT_KEMAR',
-        individualization: true,
-        calibration: true,
-        updateRate: 60 // Hz
-      },
-      
-      // Binaural Rendering
-      binaural: {
-        enabled: true,
-        algorithm: 'convolver',
-        quality: 'high',
-        latency: 16, // ms
-        headTracking: true
-      },
-      
-      // 3D Positioning
-      positioning: {
-        enabled: true,
-        algorithm: 'VBAP', // Vector Base Amplitude Panning
-        speakers: 8,
-        distanceAttenuation: true,
-        dopplerEffect: true,
-        occlusion: true,
-        obstruction: true
-      },
-      
-      // Environmental Audio
-      environmental: {
-        enabled: true,
-        reverb: true,
-        echo: true,
-        filtering: true,
-        absorption: true,
-        scattering: true
-      }
-    };
-  }
-
-  private setupDynamicMixing() {
-    // Dynamic audio mixing that adapts to game state
-    this.dynamicMixing = {
-      // Adaptive Mixing
-      adaptive: {
-        enabled: true,
-        gameStateAware: true,
-        playerHealthAware: true,
-        intensityAware: true,
-        contextAware: true
-      },
-      
-      // Audio Layers
-      layers: {
-        music: { priority: 1, volume: 0.8, ducking: false },
-        sfx: { priority: 2, volume: 1.0, ducking: true },
-        voice: { priority: 3, volume: 0.9, ducking: true },
-        ambient: { priority: 4, volume: 0.6, ducking: false },
-        ui: { priority: 5, volume: 0.7, ducking: false }
-      },
-      
-      // Dynamic Range
-      dynamicRange: {
-        enabled: true,
-        compression: true,
-        limiting: true,
-        expansion: true,
-        normalization: true
-      },
-      
-      // Frequency Management
-      frequencyManagement: {
-        enabled: true,
-        eq: true,
-        filtering: true,
-        masking: true,
-        separation: true
-      }
-    };
-  }
-
-  private setupVoiceRecognition() {
-    // Voice recognition for commands and chat
-    this.voiceRecognition = {
-      // Speech Recognition
-      speechRecognition: {
-        enabled: true,
-        languages: ['en', 'es', 'fr', 'de', 'ja', 'ko', 'zh'],
-        accuracy: 0.95,
-        latency: 200, // ms
-        noiseCancellation: true,
-        speakerAdaptation: true
-      },
-      
-      // Voice Commands
-      voiceCommands: {
-        gameControl: [
-          'punch', 'kick', 'block', 'jump', 'crouch',
-          'hadoken', 'shoryuken', 'tatsumaki',
-          'pause', 'menu', 'quit', 'restart'
-        ],
-        communication: [
-          'hello', 'good game', 'well played', 'thanks',
-          'sorry', 'nice move', 'gg', 'wp'
-        ],
-        accessibility: [
-          'describe screen', 'read text', 'navigate menu',
-          'increase volume', 'decrease volume'
-        ]
-      },
-      
-      // Natural Language Processing
-      nlp: {
-        enabled: true,
-        intentRecognition: true,
-        contextAware: true,
-        multiTurn: true,
-        emotionDetection: true
-      }
-    };
-  }
-
-  private setupHapticSync() {
-    // Haptic feedback synchronization with audio
-    this.hapticSync = {
-      // Audio-Haptic Synchronization
-      synchronization: {
-        enabled: true,
-        latency: 5, // ms
-        accuracy: 0.99,
-        realTime: true,
-        adaptive: true
-      },
-      
-      // Haptic Mapping
-      hapticMapping: {
-        bass: { intensity: 0.8, frequency: 60, duration: 100 },
-        mid: { intensity: 0.6, frequency: 1000, duration: 50 },
-        treble: { intensity: 0.4, frequency: 8000, duration: 25 },
-        impact: { intensity: 1.0, frequency: 200, duration: 200 }
-      },
-      
-      // Haptic Patterns
-      patterns: {
-        punch: { intensity: 0.9, frequency: 150, duration: 150 },
-        kick: { intensity: 0.8, frequency: 100, duration: 200 },
-        block: { intensity: 0.6, frequency: 300, duration: 100 },
-        special: { intensity: 1.0, frequency: 50, duration: 500 }
-      }
-    };
-  }
-
-  private setupAudioProcessing() {
-    // Advanced audio processing
-    this.audioProcessing = {
-      // Real-time Effects
-      effects: {
+  private initializeAudioSettings(): void {
+    this.audioManager = {
+      settings: {
+        masterVolume: 1.0,
+        musicVolume: 0.8,
+        sfxVolume: 1.0,
+        voiceVolume: 0.9,
+        ambientVolume: 0.6,
+        spatialAudio: true,
+        surroundSound: true,
+        audioCompression: true,
+        dynamicRange: 'high',
+        equalizer: {
+          enabled: true,
+          bands: {
+            low: 0,
+            midLow: 0,
+            mid: 0,
+            midHigh: 0,
+            high: 0
+          },
+          presets: [
+            {
+              id: 'flat',
+              name: 'Flat',
+              description: 'No equalization',
+              bands: { low: 0, midLow: 0, mid: 0, midHigh: 0, high: 0 }
+            },
+            {
+              id: 'bass_boost',
+              name: 'Bass Boost',
+              description: 'Enhanced bass frequencies',
+              bands: { low: 6, midLow: 3, mid: 0, midHigh: 0, high: 0 }
+            },
+            {
+              id: 'treble_boost',
+              name: 'Treble Boost',
+              description: 'Enhanced treble frequencies',
+              bands: { low: 0, midLow: 0, mid: 0, midHigh: 3, high: 6 }
+            }
+          ],
+          custom: false
+        },
         reverb: {
           enabled: true,
-          algorithm: 'convolution',
           roomSize: 0.5,
           damping: 0.5,
-          wet: 0.3
+          wetness: 0.3,
+          dryness: 0.7,
+          presets: [
+            {
+              id: 'room',
+              name: 'Room',
+              description: 'Small room reverb',
+              roomSize: 0.3,
+              damping: 0.7,
+              wetness: 0.2,
+              dryness: 0.8
+            },
+            {
+              id: 'hall',
+              name: 'Hall',
+              description: 'Large hall reverb',
+              roomSize: 0.8,
+              damping: 0.3,
+              wetness: 0.5,
+              dryness: 0.5
+            }
+          ],
+          custom: false
         },
-        echo: {
-          enabled: true,
-          delay: 250, // ms
-          feedback: 0.3,
-          wet: 0.2
+        effects: {
+          distortion: { enabled: false, amount: 0 },
+          chorus: { enabled: false, rate: 0, depth: 0 },
+          delay: { enabled: false, time: 0, feedback: 0 },
+          flanger: { enabled: false, rate: 0, depth: 0 },
+          compressor: { enabled: true, threshold: -20, ratio: 4, attack: 0.003, release: 0.1 },
+          limiter: { enabled: true, threshold: -6, release: 0.1 }
         },
-        distortion: {
+        customization: {
           enabled: true,
-          drive: 0.5,
-          tone: 0.5,
-          level: 0.8
-        },
-        compression: {
-          enabled: true,
-          threshold: -20, // dB
-          ratio: 4,
-          attack: 10, // ms
-          release: 100 // ms
+          customSounds: [],
+          soundPacks: [],
+          voiceMods: [],
+          musicTracks: [],
+          playlists: []
         }
       },
-      
-      // Spectral Processing
-      spectral: {
+      spatialAudio: {
         enabled: true,
-        fft: true,
-        analysis: true,
-        synthesis: true,
-        manipulation: true
+        listener: {
+          position: { x: 0, y: 0, z: 0 },
+          orientation: { x: 0, y: 0, z: 1 },
+          velocity: { x: 0, y: 0, z: 0 },
+          up: { x: 0, y: 1, z: 0 }
+        },
+        sources: [],
+        occlusion: {
+          enabled: true,
+          factor: 0.5,
+          lowPassFilter: true,
+          highPassFilter: false,
+          reverb: true
+        },
+        reverb: {
+          enabled: true,
+          roomSize: 0.5,
+          damping: 0.5,
+          wetness: 0.3,
+          dryness: 0.7,
+          position: { x: 0, y: 0, z: 0 },
+          size: { width: 10, height: 10, depth: 10 }
+        },
+        doppler: {
+          enabled: true,
+          factor: 1.0,
+          velocity: 343
+        }
       },
-      
-      // Adaptive Processing
-      adaptive: {
+      dynamicMusic: {
         enabled: true,
-        noiseReduction: true,
-        echoCancellation: true,
-        automaticGain: true,
-        voiceActivity: true
-      }
-    };
-  }
-
-  private setupSynthesis() {
-    // Real-time audio synthesis
-    this.synthesis = {
-      // Synthesis Engines
-      engines: {
-        wavetable: true,
-        fm: true,
-        additive: true,
-        granular: true,
-        physical: true
-      },
-      
-      // Sound Generation
-      soundGeneration: {
-        procedural: true,
-        aiGenerated: true,
+        tracks: [],
+        currentTrack: null,
+        transitions: [],
         adaptive: true,
-        contextual: true
+        intensity: 0.5,
+        mood: 'neutral',
+        genre: 'electronic'
       },
-      
-      // Voice Synthesis
-      voiceSynthesis: {
-        enabled: true,
-        tts: true,
-        voiceCloning: true,
-        emotionSynthesis: true,
-        realTime: true
-      }
+      audioEngine: new AudioEngine(),
+      soundLibrary: new SoundLibrary(),
+      musicManager: new MusicManager(),
+      voiceManager: new VoiceManager()
     };
   }
 
-  // 3D Spatial Audio Methods
-  async playSpatialSound(sound: any, position: pc.Vec3, properties: any = {}): Promise<void> {
+  private initializeAudioManager(): void {
+    // Audio manager is initialized in initializeAudioSettings
+  }
+
+  private initializeAudioContext(): void {
     try {
-      // Calculate 3D audio properties
-      const audioProperties = this.calculateSpatialProperties(position, properties);
-      
-      // Apply HRTF processing
-      const hrtfProcessed = await this.applyHRTF(sound, audioProperties);
-      
-      // Apply binaural rendering
-      const binauralProcessed = await this.applyBinauralRendering(hrtfProcessed, audioProperties);
-      
-      // Play the processed sound
-      await this.playProcessedSound(binauralProcessed, audioProperties);
+      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      Logger.info('Audio context initialized');
     } catch (error) {
-      console.error('Error playing spatial sound:', error);
+      Logger.error('Failed to initialize audio context:', error);
     }
   }
 
-  private calculateSpatialProperties(position: pc.Vec3, properties: any): any {
-    // Calculate 3D audio properties
-    const camera = this.app.camera;
-    const cameraPos = camera.getPosition();
-    
-    // Calculate distance
-    const distance = position.distance(cameraPos);
-    
-    // Calculate direction
-    const direction = position.clone().sub(cameraPos).normalize();
-    
-    // Calculate elevation and azimuth
-    const elevation = Math.asin(direction.y) * (180 / Math.PI);
-    const azimuth = Math.atan2(direction.x, direction.z) * (180 / Math.PI);
-    
-    // Calculate attenuation
-    const attenuation = this.calculateAttenuation(distance, properties.rolloffFactor || 1.0);
-    
-    // Calculate doppler effect
-    const doppler = this.calculateDopplerEffect(position, properties.velocity || new pc.Vec3());
-    
-    return {
-      position,
-      distance,
-      elevation,
-      azimuth,
-      attenuation,
-      doppler,
-      ...properties
-    };
+  private initializeAudioEngine(): void {
+    // Initialize audio engine
   }
 
-  private calculateAttenuation(distance: number, rolloffFactor: number): number {
-    // Calculate distance attenuation
-    const maxDistance = 100; // meters
-    const minDistance = 1; // meters
-    
-    if (distance <= minDistance) return 1.0;
-    if (distance >= maxDistance) return 0.0;
-    
-    // Inverse square law with rolloff factor
-    const attenuation = Math.pow(minDistance / distance, rolloffFactor);
-    return Math.max(0.0, Math.min(1.0, attenuation));
+  private initializeSoundLibrary(): void {
+    // Initialize sound library
   }
 
-  private calculateDopplerEffect(position: pc.Vec3, velocity: pc.Vec3): number {
-    // Calculate doppler effect
-    const speedOfSound = 343; // m/s
-    const relativeVelocity = velocity.length();
-    const dopplerFactor = 1.0 + (relativeVelocity / speedOfSound);
-    
-    return Math.max(0.1, Math.min(10.0, dopplerFactor));
+  private initializeMusicManager(): void {
+    // Initialize music manager
   }
 
-  private async applyHRTF(sound: any, properties: any): Promise<any> {
-    // Apply HRTF processing
-    const hrtf = this.spatialAudio.hrtf;
-    
-    if (hrtf.enabled) {
-      // Load HRTF data
-      const hrtfData = await this.loadHRTFData(hrtf.database);
-      
-      // Apply HRTF convolution
-      const hrtfProcessed = await this.convolveHRTF(sound, hrtfData, properties);
-      
-      return hrtfProcessed;
-    }
-    
-    return sound;
+  private initializeVoiceManager(): void {
+    // Initialize voice manager
   }
 
-  private async loadHRTFData(database: string): Promise<any> {
-    // Load HRTF database
-    // This would load the HRTF database
-    return {};
+  private initializeAudioQueue(): void {
+    this.audioQueue = new AudioQueue();
   }
 
-  private async convolveHRTF(sound: any, hrtfData: any, properties: any): Promise<any> {
-    // Apply HRTF convolution
-    // This would apply HRTF convolution
-    return sound;
-  }
-
-  private async applyBinauralRendering(sound: any, properties: any): Promise<any> {
-    // Apply binaural rendering
-    const binaural = this.spatialAudio.binaural;
-    
-    if (binaural.enabled) {
-      // Apply binaural processing
-      const binauralProcessed = await this.processBinaural(sound, properties);
-      
-      return binauralProcessed;
-    }
-    
-    return sound;
-  }
-
-  private async processBinaural(sound: any, properties: any): Promise<any> {
-    // Process binaural audio
-    // This would apply binaural processing
-    return sound;
-  }
-
-  private async playProcessedSound(sound: any, properties: any): Promise<void> {
-    // Play the processed sound
-    // This would play the processed sound
-  }
-
-  // Dynamic Mixing Methods
-  async updateDynamicMixing(gameState: any): Promise<void> {
-    try {
-      // Update mixing based on game state
-      const mixingParams = this.calculateMixingParams(gameState);
-      
-      // Apply dynamic mixing
-      await this.applyDynamicMixing(mixingParams);
-      
-      // Update haptic synchronization
-      await this.updateHapticSync(mixingParams);
-    } catch (error) {
-      console.error('Error updating dynamic mixing:', error);
-    }
-  }
-
-  private calculateMixingParams(gameState: any): any {
-    // Calculate mixing parameters based on game state
-    const params = {
-      music: { volume: 0.8, ducking: false },
-      sfx: { volume: 1.0, ducking: false },
-      voice: { volume: 0.9, ducking: false },
-      ambient: { volume: 0.6, ducking: false },
-      ui: { volume: 0.7, ducking: false }
-    };
-    
-    // Adjust based on game state
-    if (gameState.intensity > 0.8) {
-      params.music.volume *= 0.7;
-      params.sfx.volume *= 1.2;
-      params.voice.ducking = true;
-    }
-    
-    if (gameState.playerHealth < 0.3) {
-      params.music.volume *= 0.5;
-      params.ambient.volume *= 1.5;
-    }
-    
-    return params;
-  }
-
-  private async applyDynamicMixing(params: any): Promise<void> {
-    // Apply dynamic mixing parameters
-    // This would apply the mixing parameters
-  }
-
-  private async updateHapticSync(params: any): Promise<void> {
-    // Update haptic synchronization
-    const hapticSync = this.hapticSync;
-    
-    if (hapticSync.synchronization.enabled) {
-      // Update haptic patterns based on audio
-      await this.updateHapticPatterns(params);
-    }
-  }
-
-  private async updateHapticPatterns(params: any): Promise<void> {
-    // Update haptic patterns
-    // This would update haptic patterns based on audio
-  }
-
-  // Voice Recognition Methods
-  async initializeVoiceRecognition(): Promise<boolean> {
-    try {
-      // Initialize speech recognition
-      const success = await this.setupSpeechRecognition();
-      
-      if (success) {
-        // Start voice recognition
-        await this.startVoiceRecognition();
-        
-        // Setup voice commands
-        await this.setupVoiceCommands();
-        
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error('Error initializing voice recognition:', error);
+  public playSound(soundId: string, volume: number = 1.0, pitch: number = 1.0, loop: boolean = false): boolean {
+    const sound = this.audioManager.soundLibrary.getSound(soundId);
+    if (!sound) {
+      Logger.warn(`Sound ${soundId} not found`);
       return false;
     }
-  }
 
-  private async setupSpeechRecognition(): Promise<boolean> {
-    // Setup speech recognition
-    // This would setup the speech recognition system
+    const audioSource = this.createAudioSource(sound, volume, pitch, loop);
+    if (!audioSource) {
+      Logger.warn(`Failed to create audio source for ${soundId}`);
+      return false;
+    }
+
+    this.audioSources.set(soundId, audioSource);
+    this.audioQueue.addSound(audioSource);
+
+    this.app.fire('audio:sound_played', { soundId, volume, pitch, loop });
+    Logger.info(`Playing sound: ${soundId}`);
     return true;
   }
 
-  private async startVoiceRecognition(): Promise<void> {
-    // Start voice recognition
-    // This would start the voice recognition system
+  public stopSound(soundId: string): boolean {
+    const audioSource = this.audioSources.get(soundId);
+    if (!audioSource) {
+      Logger.warn(`Audio source ${soundId} not found`);
+      return false;
+    }
+
+    this.audioQueue.removeSound(audioSource);
+    this.audioSources.delete(soundId);
+
+    this.app.fire('audio:sound_stopped', { soundId });
+    Logger.info(`Stopped sound: ${soundId}`);
+    return true;
   }
 
-  private async setupVoiceCommands(): Promise<void> {
-    // Setup voice commands
-    // This would setup voice command mapping
+  public playMusic(trackId: string, fadeIn: number = 0, loop: boolean = true): boolean {
+    const track = this.audioManager.musicManager.getTrack(trackId);
+    if (!track) {
+      Logger.warn(`Music track ${trackId} not found`);
+      return false;
+    }
+
+    // Stop current music if playing
+    if (this.currentMusic) {
+      this.stopMusic();
+    }
+
+    this.currentMusic = track;
+    this.audioManager.dynamicMusic.currentTrack = track;
+
+    this.audioQueue.addMusic(track, fadeIn, loop);
+
+    this.app.fire('audio:music_played', { trackId, fadeIn, loop });
+    Logger.info(`Playing music: ${trackId}`);
+    return true;
   }
 
-  // Audio Processing Methods
-  async applyAudioEffect(sound: any, effect: string, params: any): Promise<any> {
-    try {
-      // Apply audio effect
-      const effectConfig = this.audioProcessing.effects[effect];
-      
-      if (effectConfig && effectConfig.enabled) {
-        // Apply the effect
-        const processedSound = await this.processAudioEffect(sound, effect, params);
-        
-        return processedSound;
-      }
-      
-      return sound;
-    } catch (error) {
-      console.error('Error applying audio effect:', error);
-      return sound;
+  public stopMusic(fadeOut: number = 0): boolean {
+    if (!this.currentMusic) {
+      Logger.warn('No music currently playing');
+      return false;
+    }
+
+    this.audioQueue.removeMusic(this.currentMusic, fadeOut);
+    this.currentMusic = null;
+    this.audioManager.dynamicMusic.currentTrack = null;
+
+    this.app.fire('audio:music_stopped', { fadeOut });
+    Logger.info('Stopped music');
+    return true;
+  }
+
+  public setVolume(type: 'master' | 'music' | 'sfx' | 'voice' | 'ambient', volume: number): boolean {
+    if (volume < 0 || volume > 1) {
+      Logger.warn(`Invalid volume ${volume} for ${type}`);
+      return false;
+    }
+
+    switch (type) {
+      case 'master':
+        this.audioManager.settings.masterVolume = volume;
+        break;
+      case 'music':
+        this.audioManager.settings.musicVolume = volume;
+        break;
+      case 'sfx':
+        this.audioManager.settings.sfxVolume = volume;
+        break;
+      case 'voice':
+        this.audioManager.settings.voiceVolume = volume;
+        break;
+      case 'ambient':
+        this.audioManager.settings.ambientVolume = volume;
+        break;
+    }
+
+    this.applyVolumeSettings();
+    this.app.fire('audio:volume_changed', { type, volume });
+    Logger.info(`Changed ${type} volume to ${volume}`);
+    return true;
+  }
+
+  private applyVolumeSettings(): void {
+    // Apply volume settings to all audio sources
+    for (const source of this.audioSources.values()) {
+      this.updateSourceVolume(source);
     }
   }
 
-  private async processAudioEffect(sound: any, effect: string, params: any): Promise<any> {
-    // Process audio effect
-    // This would apply the specific audio effect
-    return sound;
+  private updateSourceVolume(source: AudioSource): void {
+    // Update source volume based on settings
+    const masterVolume = this.audioManager.settings.masterVolume;
+    const typeVolume = this.getTypeVolume(source);
+    source.volume = masterVolume * typeVolume;
   }
 
-  // Synthesis Methods
-  async synthesizeSound(type: string, params: any): Promise<any> {
-    try {
-      // Synthesize sound
-      const synthesis = this.synthesis;
-      
-      if (synthesis.engines[type]) {
-        // Generate sound using specified engine
-        const sound = await this.generateSound(type, params);
-        
-        return sound;
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error synthesizing sound:', error);
-      return null;
+  private getTypeVolume(source: AudioSource): number {
+    // Determine volume based on source type
+    // This would be determined by the source's category
+    return this.audioManager.settings.sfxVolume;
+  }
+
+  public setEqualizerPreset(presetId: string): boolean {
+    const preset = this.audioManager.settings.equalizer.presets.find(p => p.id === presetId);
+    if (!preset) {
+      Logger.warn(`Equalizer preset ${presetId} not found`);
+      return false;
+    }
+
+    this.audioManager.settings.equalizer.bands = preset.bands;
+    this.audioManager.settings.equalizer.custom = false;
+
+    this.applyEqualizerSettings();
+    this.app.fire('audio:equalizer_changed', { preset });
+    Logger.info(`Changed equalizer preset to: ${preset.name}`);
+    return true;
+  }
+
+  private applyEqualizerSettings(): void {
+    // Apply equalizer settings to audio context
+    if (this.audioContext) {
+      // This would apply the equalizer bands to the audio context
     }
   }
 
-  private async generateSound(type: string, params: any): Promise<any> {
-    // Generate sound using synthesis engine
-    // This would generate sound using the specified engine
-    return {};
+  public setReverbPreset(presetId: string): boolean {
+    const preset = this.audioManager.settings.reverb.presets.find(p => p.id === presetId);
+    if (!preset) {
+      Logger.warn(`Reverb preset ${presetId} not found`);
+      return false;
+    }
+
+    this.audioManager.settings.reverb.roomSize = preset.roomSize;
+    this.audioManager.settings.reverb.damping = preset.damping;
+    this.audioManager.settings.reverb.wetness = preset.wetness;
+    this.audioManager.settings.reverb.dryness = preset.dryness;
+    this.audioManager.settings.reverb.custom = false;
+
+    this.applyReverbSettings();
+    this.app.fire('audio:reverb_changed', { preset });
+    Logger.info(`Changed reverb preset to: ${preset.name}`);
+    return true;
   }
 
-  // Public API
-  async initialize(): Promise<void> {
-    // Initialize advanced audio system
-    console.log('Advanced Audio System initialized');
+  private applyReverbSettings(): void {
+    // Apply reverb settings to audio context
+    if (this.audioContext) {
+      // This would apply the reverb settings to the audio context
+    }
   }
 
-  async update(deltaTime: number): Promise<void> {
-    // Update audio systems
-    // This would update all audio systems
+  public updateSpatialAudio(listener: AudioListener, sources: AudioSource[]): void {
+    this.audioManager.spatialAudio.listener = listener;
+    this.audioManager.spatialAudio.sources = sources;
+
+    this.applySpatialAudioSettings();
+    this.app.fire('audio:spatial_audio_updated', { listener, sources });
   }
 
-  async destroy(): Promise<void> {
-    // Cleanup audio systems
-    // This would cleanup all audio systems
+  private applySpatialAudioSettings(): void {
+    // Apply spatial audio settings
+    if (this.audioContext) {
+      // This would apply the spatial audio settings to the audio context
+    }
+  }
+
+  public createAudioSource(sound: CustomSound, volume: number, pitch: number, loop: boolean): AudioSource | null {
+    const audioSource: AudioSource = {
+      id: sound.id,
+      position: { x: 0, y: 0, z: 0 },
+      orientation: { x: 0, y: 0, z: 1 },
+      velocity: { x: 0, y: 0, z: 0 },
+      volume: volume * sound.volume,
+      pitch: pitch * sound.pitch,
+      loop: loop || sound.loop,
+      spatial: sound.spatial,
+      maxDistance: 100,
+      rolloffFactor: 1,
+      referenceDistance: 1
+    };
+
+    return audioSource;
+  }
+
+  public getAudioSettings(): AudioSettings {
+    return this.audioManager.settings;
+  }
+
+  public getSpatialAudio(): SpatialAudio {
+    return this.audioManager.spatialAudio;
+  }
+
+  public getDynamicMusic(): DynamicMusic {
+    return this.audioManager.dynamicMusic;
+  }
+
+  public getCurrentMusic(): MusicTrack | null {
+    return this.currentMusic;
+  }
+
+  public destroy(): void {
+    this.audioSources.clear();
+    this.audioNodes.clear();
+    this.audioBuffers.clear();
+    this.currentMusic = null;
+  }
+}
+
+class AudioEngine {
+  public processAudio(): void {
+    // Process audio in real-time
+  }
+}
+
+class SoundLibrary {
+  private sounds: Map<string, CustomSound> = new Map();
+
+  public getSound(id: string): CustomSound | undefined {
+    return this.sounds.get(id);
+  }
+
+  public addSound(sound: CustomSound): void {
+    this.sounds.set(sound.id, sound);
+  }
+}
+
+class MusicManager {
+  private tracks: Map<string, MusicTrack> = new Map();
+
+  public getTrack(id: string): MusicTrack | undefined {
+    return this.tracks.get(id);
+  }
+
+  public addTrack(track: MusicTrack): void {
+    this.tracks.set(track.id, track);
+  }
+}
+
+class VoiceManager {
+  public processVoice(): void {
+    // Process voice audio
+  }
+}
+
+class AudioQueue {
+  private sounds: AudioSource[] = [];
+  private music: MusicTrack | null = null;
+
+  public addSound(source: AudioSource): void {
+    this.sounds.push(source);
+  }
+
+  public removeSound(source: AudioSource): void {
+    const index = this.sounds.indexOf(source);
+    if (index > -1) {
+      this.sounds.splice(index, 1);
+    }
+  }
+
+  public addMusic(track: MusicTrack, fadeIn: number, loop: boolean): void {
+    this.music = track;
+  }
+
+  public removeMusic(track: MusicTrack, fadeOut: number): void {
+    if (this.music === track) {
+      this.music = null;
+    }
   }
 }
