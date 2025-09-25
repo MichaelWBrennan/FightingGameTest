@@ -34,7 +34,7 @@ export class FeatureShowcaseUI {
     }
 
     private initializeFeatures(): void {
-        // STORY MODE - Single player campaign with advanced features
+        // STORY MODE
         this.addSection({
             id: 'story_mode',
             title: 'STORY MODE',
@@ -42,27 +42,18 @@ export class FeatureShowcaseUI {
             color: new pc.Color(1, 0.4, 0.2, 1),
             features: [
                 {
-                    id: 'character_campaigns',
-                    title: 'Character Campaigns',
-                    description: 'Experience each character\'s story',
-                    icon: '🎭',
+                    id: 'story_mode',
+                    title: 'Story Mode',
+                    description: 'Experience the epic narrative',
+                    icon: '📖',
                     category: 'play',
-                    features: ['Cinematic Cutscenes', 'Character Development', 'Unlock Rewards', 'Multiple Endings'],
-                    action: 'characterCampaigns'
-                },
-                {
-                    id: 'story_customization',
-                    title: 'Story Customization',
-                    description: 'Personalize your narrative experience',
-                    icon: '🎨',
-                    category: 'play',
-                    features: ['Difficulty Settings', 'Skip Options', 'Accessibility Features', 'Language Selection'],
-                    action: 'storyCustomization'
+                    features: [],
+                    action: 'storyMode'
                 }
             ]
         });
 
-        // ARCADE MODE - Classic arcade with modern features
+        // ARCADE MODE
         this.addSection({
             id: 'arcade_mode',
             title: 'ARCADE MODE',
@@ -70,27 +61,18 @@ export class FeatureShowcaseUI {
             color: new pc.Color(0.2, 0.8, 0.4, 1),
             features: [
                 {
-                    id: 'classic_arcade',
-                    title: 'Classic Arcade',
-                    description: 'Traditional arcade experience',
-                    icon: '🎮',
+                    id: 'arcade_mode',
+                    title: 'Arcade Mode',
+                    description: 'Classic arcade experience',
+                    icon: '🕹️',
                     category: 'play',
-                    features: ['AI Opponents', 'Progressive Difficulty', 'High Scores', 'Continue System'],
-                    action: 'classicArcade'
-                },
-                {
-                    id: 'arcade_plus',
-                    title: 'Arcade Plus',
-                    description: 'Enhanced arcade with modern features',
-                    icon: '⚡',
-                    category: 'play',
-                    features: ['AI Coaching', 'Performance Analysis', 'Replay Recording', 'Achievement Tracking'],
-                    action: 'arcadePlus'
+                    features: [],
+                    action: 'arcadeMode'
                 }
             ]
         });
 
-        // VERSUS MODE - Local and online multiplayer
+        // VERSUS MODE
         this.addSection({
             id: 'versus_mode',
             title: 'VERSUS MODE',
@@ -98,27 +80,18 @@ export class FeatureShowcaseUI {
             color: new pc.Color(0.2, 0.4, 1, 1),
             features: [
                 {
-                    id: 'local_versus',
-                    title: 'Local Versus',
-                    description: 'Play with friends locally',
-                    icon: '🏠',
+                    id: 'versus_mode',
+                    title: 'Versus Mode',
+                    description: 'Local and online multiplayer',
+                    icon: '👥',
                     category: 'play',
-                    features: ['Split Screen', 'Custom Rules', 'Tournament Mode', 'Spectator Mode'],
-                    action: 'localVersus'
-                },
-                {
-                    id: 'online_versus',
-                    title: 'Online Versus',
-                    description: 'Compete with players worldwide',
-                    icon: '🌐',
-                    category: 'play',
-                    features: ['Quick Match', 'Custom Rooms', 'Ranked Matches', 'Social Features'],
-                    action: 'onlineVersus'
+                    features: [],
+                    action: 'versusMode'
                 }
             ]
         });
 
-        // TRAINING MODE - Learning and improvement with advanced tools
+        // TRAINING MODE
         this.addSection({
             id: 'training_mode',
             title: 'TRAINING MODE',
@@ -126,27 +99,18 @@ export class FeatureShowcaseUI {
             color: new pc.Color(0.8, 0.2, 1, 1),
             features: [
                 {
-                    id: 'basic_training',
-                    title: 'Basic Training',
-                    description: 'Learn the fundamentals',
-                    icon: '📚',
+                    id: 'training_mode',
+                    title: 'Training Mode',
+                    description: 'Practice and improve your skills',
+                    icon: '🎯',
                     category: 'training',
-                    features: ['Tutorial Lessons', 'Combo Trials', 'Frame Data Display', 'Hitbox Visualization'],
-                    action: 'basicTraining'
-                },
-                {
-                    id: 'advanced_training',
-                    title: 'Advanced Training',
-                    description: 'Master advanced techniques',
-                    icon: '🧠',
-                    category: 'training',
-                    features: ['AI Coaching', 'Match Analysis', 'Replay System', 'Performance Feedback'],
-                    action: 'advancedTraining'
+                    features: [],
+                    action: 'trainingMode'
                 }
             ]
         });
 
-        // ONLINE MODE - Competitive play with social features
+        // ONLINE MODE
         this.addSection({
             id: 'online_mode',
             title: 'ONLINE MODE',
@@ -154,91 +118,37 @@ export class FeatureShowcaseUI {
             color: new pc.Color(1, 0.8, 0.2, 1),
             features: [
                 {
-                    id: 'ranked_play',
-                    title: 'Ranked Play',
-                    description: 'Compete in ranked matches',
-                    icon: '🥇',
+                    id: 'online_mode',
+                    title: 'Online Mode',
+                    description: 'Compete with players worldwide',
+                    icon: '🏆',
                     category: 'online',
-                    features: ['Bayesian Ranking System', '9 Competitive Tiers', 'LP System', 'Anti-Toxic Measures'],
-                    action: 'rankedPlay'
-                },
-                {
-                    id: 'casual_play',
-                    title: 'Casual Play',
-                    description: 'Play without ranking pressure',
-                    icon: '😊',
-                    category: 'online',
-                    features: ['Quick Match', 'Custom Rooms', 'Social Features', 'Spectator Mode'],
-                    action: 'casualPlay'
-                },
-                {
-                    id: 'tournament_mode',
-                    title: 'Tournament Mode',
-                    description: 'Compete in organized tournaments',
-                    icon: '🏅',
-                    category: 'online',
-                    features: ['Automated Brackets', 'Prize Pools', 'Live Streaming', 'Community Events'],
-                    action: 'tournamentMode'
-                },
-                {
-                    id: 'social_hub',
-                    title: 'Social Hub',
-                    description: 'Connect with the community',
-                    icon: '👥',
-                    category: 'online',
-                    features: ['Guilds', 'Coaching System', 'Voice Chat', 'Leaderboards'],
-                    action: 'socialHub'
+                    features: [],
+                    action: 'onlineMode'
                 }
             ]
         });
 
-        // COLLECTION - Characters, customization, and progress
+        // CHARACTER SELECT
         this.addSection({
-            id: 'collection',
-            title: 'COLLECTION',
-            icon: '📦',
+            id: 'character_select',
+            title: 'CHARACTER SELECT',
+            icon: '🥋',
             color: new pc.Color(0.5, 0.5, 0.5, 1),
             features: [
                 {
                     id: 'character_select',
                     title: 'Character Select',
-                    description: 'Choose from 30 unique archetypes',
+                    description: 'Choose your fighter',
                     icon: '🥋',
                     category: 'collection',
-                    features: ['6 Characters × 5 Variants', 'Unique Playstyles', 'Character Customization', 'Move Lists'],
+                    features: [],
                     action: 'characterSelect'
-                },
-                {
-                    id: 'customization',
-                    title: 'Customization',
-                    description: 'Personalize your experience',
-                    icon: '🎨',
-                    category: 'collection',
-                    features: ['Character Skins', 'UI Themes', 'Control Schemes', 'Accessibility Options'],
-                    action: 'customization'
-                },
-                {
-                    id: 'achievements',
-                    title: 'Achievements',
-                    description: 'Track your progress and milestones',
-                    icon: '🏆',
-                    category: 'collection',
-                    features: ['Personal Achievements', 'Social Achievements', 'Rare Rewards', 'Progress Tracking'],
-                    action: 'achievements'
-                },
-                {
-                    id: 'replay_gallery',
-                    title: 'Replay Gallery',
-                    description: 'Save and share your best moments',
-                    icon: '📁',
-                    category: 'collection',
-                    features: ['Match Replays', 'Combo Videos', 'Community Sharing', 'AI Analysis'],
-                    action: 'replayGallery'
                 }
             ]
         });
 
-        // SETTINGS - Configuration and accessibility
+        // SETTINGS
         this.addSection({
             id: 'settings',
             title: 'SETTINGS',
@@ -246,22 +156,13 @@ export class FeatureShowcaseUI {
             color: new pc.Color(0.3, 0.3, 0.3, 1),
             features: [
                 {
-                    id: 'game_settings',
-                    title: 'Game Settings',
-                    description: 'Configure gameplay options',
-                    icon: '🎮',
+                    id: 'settings',
+                    title: 'Settings',
+                    description: 'Configure game options',
+                    icon: '⚙️',
                     category: 'settings',
-                    features: ['Graphics', 'Audio', 'Controls', 'Network', 'Performance'],
-                    action: 'gameSettings'
-                },
-                {
-                    id: 'accessibility',
-                    title: 'Accessibility',
-                    description: 'Make the game accessible to everyone',
-                    icon: '♿',
-                    category: 'settings',
-                    features: ['Colorblind Support', 'Text Scaling', 'Voice Control', 'Screen Reader', 'Custom Controls'],
-                    action: 'accessibility'
+                    features: [],
+                    action: 'settings'
                 }
             ]
         });
@@ -878,30 +779,39 @@ export class FeatureShowcaseUI {
         });
     }
 
-    // Feature navigation functions
+    // Game mode navigation functions
     private navigateToFeature(featureId: string): void {
         switch (featureId) {
-            case 'training_mode':
+            case 'storyMode':
+                this.app.fire('game:storyMode');
+                this.hide();
+                break;
+            case 'arcadeMode':
+                this.app.fire('game:arcadeMode');
+                this.hide();
+                break;
+            case 'versusMode':
+                this.app.fire('game:versusMode');
+                this.hide();
+                break;
+            case 'trainingMode':
                 this.app.fire('game:trainingMode');
                 this.hide();
                 break;
-            case 'bayesian_ranking':
-                this.app.fire('ui:rankings');
-                break;
-            case 'social_features':
-                this.app.fire('ui:socialHub');
+            case 'onlineMode':
+                this.app.fire('game:onlineMode');
                 this.hide();
                 break;
-            case 'accessibility':
+            case 'characterSelect':
+                this.app.fire('ui:characterSelect');
+                this.hide();
+                break;
+            case 'settings':
                 this.app.fire('ui:settings');
                 this.hide();
                 break;
-            case 'ai_features':
-                this.app.fire('ui:aiFeatures');
-                break;
-            case 'performance':
-                this.app.fire('ui:performanceStats');
-                break;
+            default:
+                Logger.warn(`Unknown game mode: ${featureId}`);
         }
     }
 

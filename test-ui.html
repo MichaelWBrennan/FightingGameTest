@@ -52,13 +52,14 @@
             <h3>🎮 Fighting Game UI Test</h3>
             <ul>
                 <li><strong>ESC</strong> - Toggle Main Menu</li>
-                <li><strong>F1</strong> - Toggle Feature Showcase</li>
-                <li><strong>F2</strong> - Start Training Mode</li>
-                <li><strong>F3</strong> - View Rankings</li>
-                <li><strong>F4</strong> - Open Social Hub</li>
-                <li><strong>F5</strong> - Open Settings</li>
-                <li><strong>F6</strong> - AI Features</li>
-                <li><strong>F7</strong> - Performance Stats</li>
+                <li><strong>F1</strong> - Toggle Game Modes</li>
+                <li><strong>F2</strong> - Story Mode</li>
+                <li><strong>F3</strong> - Arcade Mode</li>
+                <li><strong>F4</strong> - Versus Mode</li>
+                <li><strong>F5</strong> - Training Mode</li>
+                <li><strong>F6</strong> - Online Mode</li>
+                <li><strong>F7</strong> - Character Select</li>
+                <li><strong>F8</strong> - Settings</li>
             </ul>
         </div>
     </div>
@@ -192,29 +193,29 @@
             });
             menuContainer.addChild(subtitle);
 
-            // Feature showcase button
-            const featureButton = new pc.Entity('FeatureButton');
-            featureButton.addComponent('element', {
+            // Game modes button
+            const gameModesButton = new pc.Entity('GameModesButton');
+            gameModesButton.addComponent('element', {
                 type: pc.ELEMENTTYPE_IMAGE,
                 anchor: [0.3, 0.4, 0.7, 0.5],
                 pivot: [0.5, 0.5, 0.5, 0.5],
                 margin: [0, 0, 0, 0],
                 color: new pc.Color(1, 0.4, 0.2, 0.8)
             });
-            menuContainer.addChild(featureButton);
+            menuContainer.addChild(gameModesButton);
 
-            const featureButtonText = new pc.Entity('FeatureButtonText');
-            featureButtonText.addComponent('element', {
+            const gameModesButtonText = new pc.Entity('GameModesButtonText');
+            gameModesButtonText.addComponent('element', {
                 type: pc.ELEMENTTYPE_TEXT,
                 anchor: [0, 0, 1, 1],
                 pivot: [0.5, 0.5, 0.5, 0.5],
                 margin: [0, 0, 0, 0],
-                text: 'Feature Showcase',
+                text: 'Game Modes',
                 fontSize: 24,
                 color: new pc.Color(1, 1, 1, 1),
                 textAlign: pc.TEXTALIGN_CENTER
             });
-            featureButton.addChild(featureButtonText);
+            gameModesButton.addChild(gameModesButtonText);
 
             // Play button
             const playButton = new pc.Entity('PlayButton');
@@ -282,25 +283,28 @@
                     console.log(mainMenuVisible ? '📱 Main menu opened' : '📱 Main menu closed');
                     break;
                 case pc.KEY_F1:
-                    console.log('🎯 Feature Showcase - Press ESC to open main menu');
+                    console.log('🎮 Game Modes - Press ESC to open main menu');
                     break;
                 case pc.KEY_F2:
-                    console.log('🎯 Starting Training Mode - Real-time frame data, hitbox visualization, combo trials');
+                    console.log('📖 Starting Story Mode - Experience the epic narrative');
                     break;
                 case pc.KEY_F3:
-                    console.log('🧠 Opening Rankings - Bayesian anti-toxic ranking, 9 competitive tiers');
+                    console.log('🕹️ Starting Arcade Mode - Classic arcade experience');
                     break;
                 case pc.KEY_F4:
-                    console.log('👥 Opening Social Hub - Live spectating, coaching, guilds, tournaments');
+                    console.log('👥 Starting Versus Mode - Local and online multiplayer');
                     break;
                 case pc.KEY_F5:
-                    console.log('⚙️ Opening Settings - Colorblind support, customizable controls, voice control');
+                    console.log('🎯 Starting Training Mode - Practice and improve your skills');
                     break;
                 case pc.KEY_F6:
-                    console.log('🤖 AI Features - 24-layer neural network, adaptive difficulty, smart matchmaking');
+                    console.log('🏆 Starting Online Mode - Compete with players worldwide');
                     break;
                 case pc.KEY_F7:
-                    console.log('⚡ Performance Stats - Real-time monitoring, adaptive quality, network optimization');
+                    console.log('🥋 Opening Character Select - Choose your fighter');
+                    break;
+                case pc.KEY_F8:
+                    console.log('⚙️ Opening Settings - Configure game options');
                     break;
             }
         });
@@ -308,7 +312,7 @@
         // Show initial message
         setTimeout(() => {
             console.log('🎮 Fighting Game UI Test Ready!');
-            console.log('Press ESC to open the main menu and explore the actual game features.');
+            console.log('Press ESC to open the main menu and explore the game modes.');
         }, 1000);
     </script>
 </body>
