@@ -2,33 +2,32 @@
   "characterId": "akuma",
   "name": "Akuma",
   "displayName": "Akuma",
-  "description": "A master of the Satsui no Hado, seeking worthy opponents to test his ultimate techniques.",
-  "archetype": "shoto",
-  "complexity": "hard",
+  "description": "The master of the Satsui no Hado, a powerful warrior with devastating attacks and high damage potential. The ultimate glass cannon.",
+  "archetype": "power",
+  "complexity": "expert",
   "counterplayTags": [
-    "rushdown",
-    "mixup",
-    "high_damage"
+    "power",
+    "high_damage",
+    "glass_cannon"
   ],
   "meterInteractions": [
     "ex_specials",
-    "super_meter",
-    "demon_mode"
+    "super_meter"
   ],
   "uniqueMechanics": [
-    "demon_mode",
-    "teleport",
-    "fireball_variants"
+    "gohadoken",
+    "goshoryuken",
+    "tatsumaki"
   ],
-  "health": 850,
+  "health": 800,
   "meter": 100,
-  "walkSpeed": 160,
-  "runSpeed": 280,
-  "jumpHeight": 320,
-  "airDashSpeed": 250,
-  "dashDistance": 140,
-  "maxAirDashes": 2,
-  "weight": 90,
+  "walkSpeed": 140,
+  "runSpeed": 240,
+  "jumpHeight": 280,
+  "airDashSpeed": 220,
+  "dashDistance": 100,
+  "maxAirDashes": 1,
+  "weight": 95,
   "dlcCharacter": false,
   "releaseDate": "2024-08-05",
   "balancePatch": "1.0.0",
@@ -44,19 +43,18 @@
     "knockdown": "akuma_knockdown",
     "dash": "akuma_dash",
     "airDash": "akuma_air_dash",
-    "wakeup": "akuma_wakeup",
-    "demonMode": "akuma_demon_mode"
+    "wakeup": "akuma_wakeup"
   },
   "moves": {
     "normals": {
       "lightPunch": {
         "name": "Jab",
-        "damage": 45,
-        "startupFrames": 3,
-        "activeFrames": 2,
-        "recoveryFrames": 5,
-        "blockAdvantage": 2,
-        "hitAdvantage": 5,
+        "damage": 55,
+        "startupFrames": 4,
+        "activeFrames": 3,
+        "recoveryFrames": 7,
+        "blockAdvantage": 0,
+        "hitAdvantage": 3,
         "comboType": "opener",
         "properties": [
           "cancelable",
@@ -64,11 +62,11 @@
         ],
         "hitboxes": [
           {
-            "startFrame": 3,
-            "endFrame": 4,
+            "startFrame": 4,
+            "endFrame": 6,
             "position": [55, 0],
             "size": [35, 25],
-            "damage": 45,
+            "damage": 55,
             "hitstun": 10,
             "blockstun": 6
           }
@@ -76,47 +74,47 @@
       },
       "mediumPunch": {
         "name": "Cross",
-        "damage": 75,
-        "startupFrames": 5,
-        "activeFrames": 3,
-        "recoveryFrames": 7,
-        "blockAdvantage": -1,
-        "hitAdvantage": 4,
+        "damage": 85,
+        "startupFrames": 6,
+        "activeFrames": 4,
+        "recoveryFrames": 9,
+        "blockAdvantage": -2,
+        "hitAdvantage": 2,
         "comboType": "linker",
         "properties": [
           "cancelable"
         ],
         "hitboxes": [
           {
-            "startFrame": 5,
-            "endFrame": 7,
+            "startFrame": 6,
+            "endFrame": 9,
             "position": [65, 0],
             "size": [45, 30],
-            "damage": 75,
-            "hitstun": 13,
+            "damage": 85,
+            "hitstun": 14,
             "blockstun": 9
           }
         ]
       },
       "heavyPunch": {
         "name": "Hook",
-        "damage": 110,
-        "startupFrames": 8,
-        "activeFrames": 4,
-        "recoveryFrames": 12,
-        "blockAdvantage": -4,
-        "hitAdvantage": 1,
+        "damage": 130,
+        "startupFrames": 9,
+        "activeFrames": 5,
+        "recoveryFrames": 16,
+        "blockAdvantage": -5,
+        "hitAdvantage": -1,
         "comboType": "ender",
         "properties": [
           "launcher"
         ],
         "hitboxes": [
           {
-            "startFrame": 8,
-            "endFrame": 11,
+            "startFrame": 9,
+            "endFrame": 13,
             "position": [75, -5],
             "size": [55, 35],
-            "damage": 110,
+            "damage": 130,
             "hitstun": 18,
             "blockstun": 11,
             "knockdown": true
@@ -125,12 +123,12 @@
       },
       "lightKick": {
         "name": "Low Kick",
-        "damage": 55,
-        "startupFrames": 4,
-        "activeFrames": 2,
-        "recoveryFrames": 6,
-        "blockAdvantage": 1,
-        "hitAdvantage": 4,
+        "damage": 65,
+        "startupFrames": 5,
+        "activeFrames": 3,
+        "recoveryFrames": 8,
+        "blockAdvantage": -1,
+        "hitAdvantage": 2,
         "comboType": "opener",
         "properties": [
           "low",
@@ -138,11 +136,11 @@
         ],
         "hitboxes": [
           {
-            "startFrame": 4,
-            "endFrame": 5,
+            "startFrame": 5,
+            "endFrame": 7,
             "position": [45, 35],
             "size": [40, 20],
-            "damage": 55,
+            "damage": 65,
             "hitstun": 11,
             "blockstun": 7
           }
@@ -150,85 +148,85 @@
       },
       "mediumKick": {
         "name": "Mid Kick",
-        "damage": 85,
-        "startupFrames": 7,
-        "activeFrames": 3,
-        "recoveryFrames": 9,
-        "blockAdvantage": -2,
-        "hitAdvantage": 3,
+        "damage": 95,
+        "startupFrames": 8,
+        "activeFrames": 4,
+        "recoveryFrames": 11,
+        "blockAdvantage": -3,
+        "hitAdvantage": 1,
         "comboType": "linker",
         "properties": [
           "cancelable"
         ],
         "hitboxes": [
           {
-            "startFrame": 7,
-            "endFrame": 9,
+            "startFrame": 8,
+            "endFrame": 11,
             "position": [70, 0],
             "size": [50, 35],
-            "damage": 85,
-            "hitstun": 14,
+            "damage": 95,
+            "hitstun": 15,
             "blockstun": 10
           }
         ]
       },
       "heavyKick": {
         "name": "Roundhouse",
-        "damage": 130,
-        "startupFrames": 10,
-        "activeFrames": 5,
-        "recoveryFrames": 15,
-        "blockAdvantage": -7,
-        "hitAdvantage": -1,
+        "damage": 150,
+        "startupFrames": 11,
+        "activeFrames": 6,
+        "recoveryFrames": 19,
+        "blockAdvantage": -8,
+        "hitAdvantage": -3,
         "comboType": "ender",
         "properties": [
           "launcher"
         ],
         "hitboxes": [
           {
-            "startFrame": 10,
-            "endFrame": 14,
+            "startFrame": 11,
+            "endFrame": 16,
             "position": [85, -3],
             "size": [65, 40],
-            "damage": 130,
+            "damage": 150,
             "hitstun": 22,
-            "blockstun": 14,
+            "blockstun": 13,
             "knockdown": true
           }
         ]
       }
     },
     "specials": {
-      "hadoken": {
+      "gohadoken": {
         "name": "Gohadoken",
         "input": "236P",
         "description": "Quarter-circle forward + Punch",
-        "damage": 90,
+        "damage": 120,
         "startupFrames": 10,
         "activeFrames": 0,
-        "recoveryFrames": 22,
+        "recoveryFrames": 28,
         "meterCost": 0,
         "comboType": "ender",
         "properties": [
           "projectile"
         ],
         "projectile": {
-          "speed": 320,
-          "lifetime": 100,
-          "size": [35, 18],
-          "damage": 90,
-          "hitstun": 16,
-          "blockstun": 10
+          "speed": 350,
+          "lifetime": 150,
+          "size": [50, 25],
+          "damage": 120,
+          "hitstun": 22,
+          "blockstun": 14
         }
       },
-      "shoryuken": {
+      "goshoryuken": {
         "name": "Goshoryuken",
         "input": "623P",
         "description": "Dragon punch motion + Punch",
-        "damage": 150,
+        "damage": 180,
         "startupFrames": 2,
-        "activeFrames": 6,
-        "recoveryFrames": 28,
+        "activeFrames": 10,
+        "recoveryFrames": 35,
         "meterCost": 0,
         "comboType": "ender",
         "properties": [
@@ -238,24 +236,24 @@
         "hitboxes": [
           {
             "startFrame": 2,
-            "endFrame": 7,
+            "endFrame": 11,
             "position": [35, -25],
             "size": [45, 70],
-            "damage": 150,
-            "hitstun": 28,
-            "blockstun": 18,
+            "damage": 180,
+            "hitstun": 35,
+            "blockstun": 22,
             "knockdown": true
           }
         ]
       },
       "tatsumaki": {
-        "name": "Tatsumaki Zankukyaku",
+        "name": "Tatsumaki Senpukyaku",
         "input": "214K",
         "description": "Quarter-circle back + Kick",
-        "damage": 120,
-        "startupFrames": 8,
-        "activeFrames": 12,
-        "recoveryFrames": 20,
+        "damage": 140,
+        "startupFrames": 6,
+        "activeFrames": 14,
+        "recoveryFrames": 22,
         "meterCost": 0,
         "comboType": "ender",
         "properties": [
@@ -264,35 +262,16 @@
         ],
         "hitboxes": [
           {
-            "startFrame": 8,
+            "startFrame": 6,
             "endFrame": 19,
-            "position": [60, 0],
-            "size": [70, 30],
-            "damage": 120,
-            "hitstun": 20,
-            "blockstun": 12,
+            "position": [55, 0],
+            "size": [75, 35],
+            "damage": 140,
+            "hitstun": 22,
+            "blockstun": 14,
             "knockdown": true
           }
         ]
-      },
-      "teleport": {
-        "name": "Ashura Senku",
-        "input": "214P",
-        "description": "Quarter-circle back + Punch",
-        "damage": 0,
-        "startupFrames": 15,
-        "activeFrames": 0,
-        "recoveryFrames": 10,
-        "meterCost": 0,
-        "comboType": "utility",
-        "properties": [
-          "teleport",
-          "invincible"
-        ],
-        "teleport": {
-          "distance": 200,
-          "invulnFrames": 15
-        }
       }
     },
     "supers": {
@@ -300,10 +279,10 @@
         "name": "Messatsu Gohadoken",
         "input": "236236P",
         "description": "Quarter-circle forward x2 + Punch",
-        "damage": 280,
+        "damage": 400,
         "startupFrames": 6,
         "activeFrames": 0,
-        "recoveryFrames": 40,
+        "recoveryFrames": 50,
         "meterCost": 100,
         "comboType": "ender",
         "properties": [
@@ -312,41 +291,13 @@
         ],
         "projectile": {
           "speed": 450,
-          "lifetime": 150,
-          "size": [100, 50],
-          "damage": 280,
-          "hitstun": 35,
-          "blockstun": 20,
-          "hits": 3
+          "lifetime": 200,
+          "size": [90, 50],
+          "damage": 400,
+          "hitstun": 45,
+          "blockstun": 28,
+          "hits": 6
         }
-      },
-      "messatsu_goshoryuken": {
-        "name": "Messatsu Goshoryuken",
-        "input": "623623P",
-        "description": "Dragon punch motion x2 + Punch",
-        "damage": 350,
-        "startupFrames": 4,
-        "activeFrames": 8,
-        "recoveryFrames": 45,
-        "meterCost": 100,
-        "comboType": "ender",
-        "properties": [
-          "super",
-          "invincible",
-          "launcher"
-        ],
-        "hitboxes": [
-          {
-            "startFrame": 4,
-            "endFrame": 11,
-            "position": [40, -30],
-            "size": [60, 90],
-            "damage": 350,
-            "hitstun": 40,
-            "blockstun": 25,
-            "knockdown": true
-          }
-        ]
       }
     }
   },
@@ -356,104 +307,230 @@
       "inputs": [
         "lightPunch",
         "mediumPunch",
-        "hadoken"
+        "gohadoken"
       ],
-      "damage": 210,
+      "damage": 260,
       "difficulty": "easy"
     },
     {
-      "name": "Teleport Mixup",
+      "name": "Launch Combo",
       "inputs": [
-        "teleport",
         "heavyPunch",
-        "shoryuken"
+        "goshoryuken"
       ],
-      "damage": 260,
+      "damage": 310,
       "difficulty": "medium"
     },
     {
-      "name": "Demon Combo",
+      "name": "Super Combo",
       "inputs": [
         "lightPunch",
         "mediumPunch",
-        "tatsumaki",
-        "messatsu_goshoryuken"
+        "messatsu_gohadoken"
       ],
-      "damage": 565,
+      "damage": 560,
       "difficulty": "hard"
     }
   ],
-  "subArchetypes": [
+  "variants": [
     {
-      "subArchetypeId": "traditional",
-      "name": "Traditional Akuma",
-      "description": "Classic Akuma with balanced offense and defense.",
+      "variantId": "traditional",
+      "name": "Traditional Power",
+      "description": "Classic glass cannon approach. High damage and powerful attacks with low health and high execution requirements.",
       "isDefault": true,
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
         "runSpeedMultiplier": 1.0,
         "jumpHeightMultiplier": 1.0,
-        "weightMultiplier": 1.0
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
       },
       "moveModifiers": {},
       "uniqueMechanicChanges": [],
-      "additionalMoves": {}
+      "additionalMoves": {},
+      "playstyle": "power",
+      "difficulty": "expert",
+      "strengths": ["high_damage", "power", "projectiles"],
+      "weaknesses": ["low_health", "execution"]
     },
     {
-      "subArchetypeId": "demon_mode",
-      "name": "Demon Mode",
-      "description": "Enhanced abilities at the cost of health drain.",
+      "variantId": "aggressive",
+      "name": "Aggressive Power",
+      "description": "Maximum aggression with enhanced speed and pressure tools. Even lower health but overwhelming offensive power.",
       "isDefault": false,
       "statModifiers": {
-        "healthMultiplier": 0.8,
+        "healthMultiplier": 0.75,
         "walkSpeedMultiplier": 1.2,
         "runSpeedMultiplier": 1.3,
         "jumpHeightMultiplier": 1.1,
-        "weightMultiplier": 0.9
+        "weightMultiplier": 0.9,
+        "damageMultiplier": 1.2
       },
       "moveModifiers": {
-        "hadoken": {
-          "damageMultiplier": 1.3,
-          "speedMultiplier": 1.2,
+        "gohadoken": {
+          "startupFrameBonus": -2,
+          "damageMultiplier": 1.2,
           "addedProperties": ["enhanced_speed"]
         },
-        "shoryuken": {
-          "damageMultiplier": 1.2,
+        "goshoryuken": {
           "startupFrameBonus": -1,
-          "addedProperties": ["enhanced_damage"]
+          "damageMultiplier": 1.2
+        },
+        "tatsumaki": {
+          "startupFrameBonus": -2,
+          "recoveryFrameBonus": -3
         }
       },
       "uniqueMechanicChanges": [
-        "+health_drain",
         "+enhanced_mobility",
-        "+damage_boost"
+        "+faster_specials",
+        "+pressure_tools"
       ],
       "additionalMoves": {
-        "demon_fireball": {
-          "name": "Demon Gohadoken",
+        "pressure_hadoken": {
+          "name": "Pressure Gohadoken",
           "input": "236P",
-          "description": "Enhanced fireball in demon mode",
-          "damage": 120,
+          "description": "Fast, short-range fireball for pressure",
+          "damage": 100,
+          "startupFrames": 6,
+          "activeFrames": 0,
+          "recoveryFrames": 20,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": [
+            "projectile",
+            "pressure"
+          ],
+          "projectile": {
+            "speed": 450,
+            "lifetime": 100,
+            "size": [40, 20],
+            "damage": 100,
+            "hitstun": 18,
+            "blockstun": 11
+          }
+        },
+        "dash_attack": {
+          "name": "Dash Attack",
+          "input": "66P",
+          "description": "Running attack for pressure",
+          "damage": 110,
+          "startupFrames": 8,
+          "activeFrames": 4,
+          "recoveryFrames": 12,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "dash",
+            "launcher"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 8,
+              "endFrame": 11,
+              "position": [80, 0],
+              "size": [60, 30],
+              "damage": 110,
+              "hitstun": 20,
+              "blockstun": 12,
+              "knockdown": true
+            }
+          ]
+        }
+      },
+      "playstyle": "aggressive_power",
+      "difficulty": "expert",
+      "strengths": ["pressure", "speed", "damage"],
+      "weaknesses": ["very_low_health", "execution"]
+    },
+    {
+      "variantId": "technical",
+      "name": "Technical Power",
+      "description": "Complex execution with advanced power techniques. Higher damage potential for skilled players with precise timing.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.2,
+        "walkSpeedMultiplier": 0.8,
+        "runSpeedMultiplier": 0.7,
+        "jumpHeightMultiplier": 0.9,
+        "weightMultiplier": 1.1,
+        "damageMultiplier": 1.4
+      },
+      "moveModifiers": {
+        "goshoryuken": {
+          "damageMultiplier": 1.5,
+          "startupFrameBonus": 2,
+          "addedProperties": ["just_frame_bonus"]
+        },
+        "messatsu_gohadoken": {
+          "damageMultiplier": 1.6,
+          "addedProperties": ["technical_input"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+advanced_power_tech",
+        "+just_frame_timing",
+        "+technical_execution"
+      ],
+      "additionalMoves": {
+        "messatsu_goshoryuken": {
+          "name": "Messatsu Goshoryuken",
+          "input": "623623P",
+          "description": "Technical multi-hit super",
+          "damage": 450,
+          "startupFrames": 1,
+          "activeFrames": 12,
+          "recoveryFrames": 50,
+          "meterCost": 100,
+          "comboType": "ender",
+          "properties": [
+            "super",
+            "invincible",
+            "launcher"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 1,
+              "endFrame": 12,
+              "position": [30, -30],
+              "size": [50, 80],
+              "damage": 450,
+              "hitstun": 40,
+              "blockstun": 25,
+              "knockdown": true
+            }
+          ]
+        },
+        "technical_hadoken": {
+          "name": "Technical Gohadoken",
+          "input": "214214P",
+          "description": "Complex fireball with multiple hits",
+          "damage": 180,
           "startupFrames": 8,
           "activeFrames": 0,
-          "recoveryFrames": 18,
+          "recoveryFrames": 35,
           "meterCost": 0,
           "comboType": "ender",
           "properties": [
             "projectile",
-            "enhanced"
+            "technical"
           ],
           "projectile": {
-            "speed": 400,
-            "lifetime": 120,
-            "size": [45, 25],
-            "damage": 120,
-            "hitstun": 20,
-            "blockstun": 12
+            "speed": 300,
+            "lifetime": 180,
+            "size": [60, 35],
+            "damage": 180,
+            "hitstun": 25,
+            "blockstun": 16,
+            "hits": 3
           }
         }
-      }
+      },
+      "playstyle": "technical_power",
+      "difficulty": "expert",
+      "strengths": ["very_high_damage", "advanced_tech", "defense"],
+      "weaknesses": ["execution", "slow_movement"]
     }
   ],
   "sprites": {
@@ -463,7 +540,7 @@
         "file_name": "street_fighter_6_akuma_character_sprites",
         "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/akuma/",
         "is_hd": true,
-        "file_size": 1200000,
+        "file_size": 1150000,
         "resolution": "1920x1080"
       }
     ],
@@ -473,7 +550,7 @@
         "file_name": "street_fighter_6_akuma_portrait",
         "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/akuma/",
         "is_hd": true,
-        "file_size": 1200000,
+        "file_size": 1150000,
         "resolution": "1920x1080"
       }
     ],

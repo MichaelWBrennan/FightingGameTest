@@ -1,33 +1,35 @@
 {
   "characterId": "zangief",
-  "name": "FighterD",
-  "displayName": "FighterD",
-  "description": "The Red Cyclone, a massive Russian wrestler with devastating grappling techniques.",
+  "name": "Zangief",
+  "displayName": "Zangief",
+  "description": "The Red Cyclone, a massive grappler who dominates close-range combat with devastating throws and command grabs.",
   "archetype": "grappler",
   "complexity": "medium",
   "counterplayTags": [
-    "keepaway",
-    "neutral"
+    "grappler",
+    "close_range",
+    "high_damage"
   ],
   "meterInteractions": [
     "ex_specials",
     "super_meter"
   ],
   "uniqueMechanics": [
-    "command_grab",
-    "armor"
+    "command_grabs",
+    "spinning_piledriver",
+    "lariat"
   ],
   "health": 1200,
   "meter": 100,
-  "walkSpeed": 120,
-  "runSpeed": 200,
-  "jumpHeight": 280,
-  "airDashSpeed": 0,
-  "dashDistance": 100,
+  "walkSpeed": 100,
+  "runSpeed": 180,
+  "jumpHeight": 250,
+  "airDashSpeed": 150,
+  "dashDistance": 80,
   "maxAirDashes": 0,
-  "weight": 150,
-  "dlcCharacter": true,
-  "releaseDate": "2024-10-01",
+  "weight": 120,
+  "dlcCharacter": false,
+  "releaseDate": "2024-08-05",
   "balancePatch": "1.0.0",
   "animations": {
     "idle": "zangief_idle",
@@ -38,7 +40,10 @@
     "block": "zangief_block",
     "crouchBlock": "zangief_crouch_block",
     "hit": "zangief_hit",
-    "knockdown": "zangief_knockdown"
+    "knockdown": "zangief_knockdown",
+    "dash": "zangief_dash",
+    "airDash": "zangief_air_dash",
+    "wakeup": "zangief_wakeup"
   },
   "moves": {
     "normals": {
@@ -46,10 +51,10 @@
         "name": "Jab",
         "damage": 60,
         "startupFrames": 5,
-        "activeFrames": 3,
-        "recoveryFrames": 7,
-        "blockAdvantage": 1,
-        "hitAdvantage": 4,
+        "activeFrames": 4,
+        "recoveryFrames": 8,
+        "blockAdvantage": -1,
+        "hitAdvantage": 2,
         "comboType": "opener",
         "properties": [
           "cancelable"
@@ -57,29 +62,23 @@
         "hitboxes": [
           {
             "startFrame": 5,
-            "endFrame": 7,
-            "position": [
-              55,
-              0
-            ],
-            "size": [
-              45,
-              35
-            ],
+            "endFrame": 8,
+            "position": [70, 0],
+            "size": [50, 40],
             "damage": 60,
-            "hitstun": 11,
-            "blockstun": 8
+            "hitstun": 14,
+            "blockstun": 10
           }
         ]
       },
       "mediumPunch": {
-        "name": "Body Blow",
-        "damage": 90,
+        "name": "Cross",
+        "damage": 100,
         "startupFrames": 8,
-        "activeFrames": 4,
-        "recoveryFrames": 10,
-        "blockAdvantage": -1,
-        "hitAdvantage": 3,
+        "activeFrames": 5,
+        "recoveryFrames": 12,
+        "blockAdvantage": -3,
+        "hitAdvantage": 1,
         "comboType": "linker",
         "properties": [
           "cancelable"
@@ -87,46 +86,177 @@
         "hitboxes": [
           {
             "startFrame": 8,
-            "endFrame": 11,
-            "position": [
-              65,
-              10
-            ],
-            "size": [
-              50,
-              40
-            ],
-            "damage": 90,
-            "hitstun": 14,
-            "blockstun": 10
+            "endFrame": 12,
+            "position": [80, 0],
+            "size": [60, 50],
+            "damage": 100,
+            "hitstun": 18,
+            "blockstun": 12
           }
         ]
       },
       "heavyPunch": {
-        "name": "Lariat",
-        "damage": 140,
-        "startupFrames": 15,
-        "activeFrames": 8,
-        "recoveryFrames": 20,
+        "name": "Hook",
+        "damage": 150,
+        "startupFrames": 12,
+        "activeFrames": 6,
+        "recoveryFrames": 18,
         "blockAdvantage": -6,
-        "hitAdvantage": 0,
+        "hitAdvantage": -1,
         "comboType": "ender",
         "properties": [
-          "armor"
+          "launcher"
         ],
         "hitboxes": [
           {
-            "startFrame": 15,
+            "startFrame": 12,
+            "endFrame": 17,
+            "position": [90, -10],
+            "size": [70, 60],
+            "damage": 150,
+            "hitstun": 25,
+            "blockstun": 15,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Low Kick",
+        "damage": 70,
+        "startupFrames": 6,
+        "activeFrames": 4,
+        "recoveryFrames": 10,
+        "blockAdvantage": -2,
+        "hitAdvantage": 1,
+        "comboType": "opener",
+        "properties": [
+          "low",
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 6,
+            "endFrame": 9,
+            "position": [60, 50],
+            "size": [55, 30],
+            "damage": 70,
+            "hitstun": 15,
+            "blockstun": 11
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "Mid Kick",
+        "damage": 110,
+        "startupFrames": 10,
+        "activeFrames": 5,
+        "recoveryFrames": 14,
+        "blockAdvantage": -4,
+        "hitAdvantage": 0,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 10,
+            "endFrame": 14,
+            "position": [85, 0],
+            "size": [65, 55],
+            "damage": 110,
+            "hitstun": 20,
+            "blockstun": 13
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Roundhouse",
+        "damage": 170,
+        "startupFrames": 14,
+        "activeFrames": 8,
+        "recoveryFrames": 22,
+        "blockAdvantage": -9,
+        "hitAdvantage": -3,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 14,
+            "endFrame": 21,
+            "position": [100, -5],
+            "size": [80, 65],
+            "damage": 170,
+            "hitstun": 30,
+            "blockstun": 18,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "spinning_piledriver": {
+        "name": "Spinning Piledriver",
+        "input": "360P",
+        "description": "Full circle + Punch",
+        "damage": 200,
+        "startupFrames": 2,
+        "activeFrames": 1,
+        "recoveryFrames": 45,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "command_grab",
+          "invincible"
+        ],
+        "grab": {
+          "range": 100,
+          "damage": 200,
+          "knockdown": true
+        }
+      },
+      "banishing_flat": {
+        "name": "Banishing Flat",
+        "input": "360K",
+        "description": "Full circle + Kick",
+        "damage": 180,
+        "startupFrames": 3,
+        "activeFrames": 1,
+        "recoveryFrames": 40,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "command_grab",
+          "invincible"
+        ],
+        "grab": {
+          "range": 90,
+          "damage": 180,
+          "knockdown": true
+        }
+      },
+      "lariat": {
+        "name": "Double Lariat",
+        "input": "PPP",
+        "description": "Three punches",
+        "damage": 120,
+        "startupFrames": 8,
+        "activeFrames": 15,
+        "recoveryFrames": 25,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "armor",
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 8,
             "endFrame": 22,
-            "position": [
-              0,
-              0
-            ],
-            "size": [
-              90,
-              60
-            ],
-            "damage": 140,
+            "position": [80, 0],
+            "size": [100, 60],
+            "damage": 120,
             "hitstun": 25,
             "blockstun": 15,
             "knockdown": true
@@ -134,303 +264,224 @@
         ]
       }
     },
-    "specials": {
-      "spd": {
-        "name": "Screw Piledriver",
-        "input": "360P",
-        "description": "360 motion + Punch",
-        "damage": 200,
-        "startupFrames": 2,
-        "activeFrames": 3,
-        "recoveryFrames": 35,
-        "meterCost": 0,
-        "comboType": "ender",
-        "properties": [
-          "command_grab",
-          "unblockable"
-        ],
-        "hitboxes": [
-          {
-            "startFrame": 2,
-            "endFrame": 4,
-            "position": [
-              30,
-              0
-            ],
-            "size": [
-              60,
-              80
-            ],
-            "damage": 200,
-            "hitstun": 50,
-            "blockstun": 0,
-            "knockdown": true
-          }
-        ]
-      },
-      "green_hand": {
-        "name": "Green Hand",
-        "input": "236P",
-        "description": "Quarter-circle forward + Punch",
-        "damage": 100,
-        "startupFrames": 12,
-        "activeFrames": 6,
-        "recoveryFrames": 18,
-        "meterCost": 0,
-        "comboType": "linker",
-        "properties": [
-          "armor"
-        ],
-        "hitboxes": [
-          {
-            "startFrame": 12,
-            "endFrame": 17,
-            "position": [
-              70,
-              0
-            ],
-            "size": [
-              55,
-              50
-            ],
-            "damage": 100,
-            "hitstun": 18,
-            "blockstun": 12
-          }
-        ]
-      },
-      "banish_flat": {
-        "name": "Banishing Flat",
-        "input": "41236P",
-        "description": "Half-circle forward + Punch",
-        "damage": 80,
-        "startupFrames": 8,
-        "activeFrames": 4,
-        "recoveryFrames": 15,
-        "meterCost": 0,
-        "comboType": "linker",
-        "properties": [
-          "overhead"
-        ],
-        "hitboxes": [
-          {
-            "startFrame": 8,
-            "endFrame": 11,
-            "position": [
-              60,
-              -20
-            ],
-            "size": [
-              60,
-              30
-            ],
-            "damage": 80,
-            "hitstun": 16,
-            "blockstun": 10
-          }
-        ]
-      }
-    },
     "supers": {
       "final_atomic_buster": {
         "name": "Final Atomic Buster",
-        "input": "720P",
-        "description": "720 motion + Punch",
+        "input": "360360P",
+        "description": "Full circle x2 + Punch",
         "damage": 400,
         "startupFrames": 1,
-        "activeFrames": 5,
-        "recoveryFrames": 50,
+        "activeFrames": 1,
+        "recoveryFrames": 60,
         "meterCost": 100,
         "comboType": "ender",
         "properties": [
           "super",
           "command_grab",
-          "unblockable"
+          "invincible"
         ],
-        "hitboxes": [
-          {
-            "startFrame": 1,
-            "endFrame": 5,
-            "position": [
-              40,
-              0
-            ],
-            "size": [
-              80,
-              100
-            ],
-            "damage": 400,
-            "hitstun": 60,
-            "blockstun": 0,
-            "knockdown": true
-          }
-        ]
+        "grab": {
+          "range": 120,
+          "damage": 400,
+          "knockdown": true
+        }
       }
     }
   },
   "comboRoutes": [
     {
-      "name": "Basic Grab",
+      "name": "Basic Combo",
       "inputs": [
         "lightPunch",
-        "spd"
+        "mediumPunch",
+        "heavyPunch"
       ],
-      "damage": 260,
+      "damage": 310,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Lariat Combo",
+      "inputs": [
+        "mediumKick",
+        "lariat"
+      ],
+      "damage": 230,
       "difficulty": "medium"
     },
     {
-      "name": "Green Hand Combo",
+      "name": "Grab Combo",
       "inputs": [
-        "green_hand",
-        "spd"
+        "spinning_piledriver"
       ],
-      "damage": 300,
+      "damage": 200,
       "difficulty": "hard"
-    },
-    {
-      "name": "Atomic Devastation",
-      "inputs": [
-        "banish_flat",
-        "final_atomic_buster"
-      ],
-      "damage": 480,
-      "difficulty": "expert"
     }
   ],
-  "subArchetypes": [
+  "variants": [
     {
-      "subArchetypeId": "pure",
-      "name": "Pure Grappler",
-      "description": "Maximum grappling power with enhanced command grabs and damage.",
+      "variantId": "traditional",
+      "name": "Traditional Grappler",
+      "description": "The classic grappler approach. High damage throws and command grabs with slow movement but devastating close-range power.",
       "isDefault": true,
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
         "runSpeedMultiplier": 1.0,
         "jumpHeightMultiplier": 1.0,
-        "weightMultiplier": 1.0
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
       },
       "moveModifiers": {},
       "uniqueMechanicChanges": [],
-      "additionalMoves": {}
+      "additionalMoves": {},
+      "playstyle": "grappler",
+      "difficulty": "medium",
+      "strengths": ["high_damage", "throws", "armor"],
+      "weaknesses": ["slow_movement", "range"]
     },
     {
-      "subArchetypeId": "strike",
-      "name": "Strike Grappler",
-      "description": "Enhanced normal attacks and strike-grab mixups with better footsies.",
+      "variantId": "aggressive",
+      "name": "Aggressive Grappler",
+      "description": "Faster movement and more aggressive approach. Enhanced mobility but reduced damage and health.",
       "isDefault": false,
       "statModifiers": {
-        "healthMultiplier": 0.95,
-        "walkSpeedMultiplier": 1.1,
-        "runSpeedMultiplier": 1.15,
-        "jumpHeightMultiplier": 1.0,
-        "weightMultiplier": 0.95
+        "healthMultiplier": 0.9,
+        "walkSpeedMultiplier": 1.3,
+        "runSpeedMultiplier": 1.4,
+        "jumpHeightMultiplier": 1.2,
+        "weightMultiplier": 0.85,
+        "damageMultiplier": 0.9
       },
       "moveModifiers": {
-        "heavyPunch": {
-          "damageMultiplier": 1.2,
-          "startupFrameBonus": -2,
-          "addedProperties": [
-            "enhanced_range"
-          ],
-          "removedProperties": []
+        "spinning_piledriver": {
+          "startupFrameBonus": -1,
+          "damageMultiplier": 0.9
         },
-        "mediumKick": {
-          "damageMultiplier": 1.1,
-          "blockAdvantageBonus": 2,
-          "addedProperties": [
-            "strike_mixup"
-          ],
-          "removedProperties": []
+        "lariat": {
+          "startupFrameBonus": -2,
+          "recoveryFrameBonus": -3
         }
       },
       "uniqueMechanicChanges": [
-        "+enhanced_normals",
-        "+strike_mixups"
+        "+enhanced_mobility",
+        "+faster_grabs",
+        "+pressure_tools"
       ],
       "additionalMoves": {
-        "special_muscle_bomber": {
-          "name": "Muscle Bomber",
-          "input": "41236K",
-          "description": "Striking command grab with forward momentum",
-          "damage": 180,
+        "quick_grab": {
+          "name": "Quick Grab",
+          "input": "236P",
+          "description": "Fast command grab for pressure",
+          "damage": 120,
+          "startupFrames": 5,
+          "activeFrames": 1,
+          "recoveryFrames": 25,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": [
+            "command_grab"
+          ],
+          "grab": {
+            "range": 60,
+            "damage": 120,
+            "knockdown": false
+          }
+        },
+        "dash_grab": {
+          "name": "Dash Grab",
+          "input": "66P",
+          "description": "Running command grab",
+          "damage": 140,
           "startupFrames": 8,
-          "activeFrames": 6,
-          "recoveryFrames": 22,
+          "activeFrames": 1,
+          "recoveryFrames": 30,
           "meterCost": 0,
           "comboType": "ender",
           "properties": [
             "command_grab",
-            "strike_grab",
-            "armor"
+            "dash"
           ],
-          "hitboxes": [
-            {
-              "startFrame": 8,
-              "endFrame": 13,
-              "position": [
-                60,
-                0
-              ],
-              "size": [
-                70,
-                50
-              ],
-              "damage": 180,
-              "hitstun": 0,
-              "blockstun": 0,
-              "knockdown": true
-            }
-          ]
+          "grab": {
+            "range": 80,
+            "damage": 140,
+            "knockdown": true
+          }
         }
-      }
+      },
+      "playstyle": "rushdown_grappler",
+      "difficulty": "medium",
+      "strengths": ["mobility", "pressure", "speed"],
+      "weaknesses": ["lower_damage", "health"]
     },
     {
-      "subArchetypeId": "technical",
-      "name": "Technical Grappler",
-      "description": "Complex command grab setups and mix-up options with stance transitions.",
+      "variantId": "defensive",
+      "name": "Defensive Grappler",
+      "description": "Tank-like approach with enhanced armor, health, and defensive options. Slower but extremely durable.",
       "isDefault": false,
       "statModifiers": {
-        "healthMultiplier": 1.05,
-        "walkSpeedMultiplier": 0.9,
-        "runSpeedMultiplier": 0.85,
-        "jumpHeightMultiplier": 0.95,
-        "weightMultiplier": 1.1
+        "healthMultiplier": 1.3,
+        "walkSpeedMultiplier": 0.8,
+        "runSpeedMultiplier": 0.7,
+        "jumpHeightMultiplier": 0.9,
+        "weightMultiplier": 1.2,
+        "damageMultiplier": 1.2
       },
       "moveModifiers": {
-        "spd": {
-          "damageMultiplier": 1.15,
-          "addedProperties": [
-            "technical_grab",
-            "meter_gain"
-          ],
-          "removedProperties": []
+        "spinning_piledriver": {
+          "damageMultiplier": 1.3,
+          "startupFrameBonus": 2
+        },
+        "lariat": {
+          "damageMultiplier": 1.2,
+          "addedProperties": ["enhanced_armor"]
         }
       },
       "uniqueMechanicChanges": [
-        "+grab_mixups",
-        "+stance_transitions",
-        "+technical_setups"
+        "+enhanced_armor",
+        "+damage_reduction",
+        "+defensive_options"
       ],
       "additionalMoves": {
-        "special_grab_feint": {
-          "name": "Grab Feint",
-          "input": "63214P~K",
-          "description": "Fake command grab that leads into mix-up options",
+        "iron_body": {
+          "name": "Iron Body",
+          "input": "214P",
+          "description": "Defensive stance with damage reduction",
           "damage": 0,
           "startupFrames": 5,
-          "activeFrames": 3,
-          "recoveryFrames": 8,
+          "activeFrames": 30,
+          "recoveryFrames": 10,
           "meterCost": 0,
-          "comboType": "opener",
+          "comboType": "utility",
           "properties": [
-            "feint",
-            "mixup",
-            "cancelable"
+            "armor",
+            "damage_reduction"
+          ]
+        },
+        "counter_grab": {
+          "name": "Counter Grab",
+          "input": "214K",
+          "description": "Counter-attack command grab",
+          "damage": 180,
+          "startupFrames": 3,
+          "activeFrames": 1,
+          "recoveryFrames": 35,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "command_grab",
+            "counter"
           ],
-          "hitboxes": []
+          "grab": {
+            "range": 70,
+            "damage": 180,
+            "knockdown": true
+          }
         }
-      }
+      },
+      "playstyle": "defensive_grappler",
+      "difficulty": "easy",
+      "strengths": ["high_health", "armor", "damage"],
+      "weaknesses": ["slow_movement", "mobility"]
     }
   ],
   "sprites": {
@@ -440,23 +491,7 @@
         "file_name": "street_fighter_6_zangief_character_sprites",
         "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
         "is_hd": true,
-        "file_size": 1024000,
-        "resolution": "1920x1080"
-      },
-      {
-        "name": "Zangief - Victory Sprites",
-        "file_name": "street_fighter_6_zangief_victory_sprites",
-        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
-        "is_hd": true,
-        "file_size": 1024000,
-        "resolution": "1920x1080"
-      },
-      {
-        "name": "Zangief - Special Move Effects",
-        "file_name": "street_fighter_6_zangief_special_move_effects",
-        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
-        "is_hd": true,
-        "file_size": 1024000,
+        "file_size": 1200000,
         "resolution": "1920x1080"
       }
     ],
@@ -466,7 +501,7 @@
         "file_name": "street_fighter_6_zangief_portrait",
         "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/zangief/",
         "is_hd": true,
-        "file_size": 1024000,
+        "file_size": 1200000,
         "resolution": "1920x1080"
       }
     ],

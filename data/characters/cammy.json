@@ -2,7 +2,7 @@
   "characterId": "cammy",
   "name": "Cammy",
   "displayName": "Cammy",
-  "description": "A former Shadaloo assassin turned Delta Red operative with incredible speed and agility.",
+  "description": "A former Shadaloo assassin turned Delta Red operative with incredible speed and agility for aggressive rushdown combat.",
   "archetype": "rushdown",
   "complexity": "medium",
   "counterplayTags": [
@@ -296,34 +296,6 @@
           "blockstun": 18,
           "hits": 2
         }
-      },
-      "delta_red_assault": {
-        "name": "Delta Red Assault",
-        "input": "623623K",
-        "description": "Dragon punch motion x2 + Kick",
-        "damage": 320,
-        "startupFrames": 3,
-        "activeFrames": 8,
-        "recoveryFrames": 40,
-        "meterCost": 100,
-        "comboType": "ender",
-        "properties": [
-          "super",
-          "invincible",
-          "launcher"
-        ],
-        "hitboxes": [
-          {
-            "startFrame": 3,
-            "endFrame": 10,
-            "position": [35, -25],
-            "size": [50, 80],
-            "damage": 320,
-            "hitstun": 35,
-            "blockstun": 20,
-            "knockdown": true
-          }
-        ]
       }
     }
   },
@@ -348,45 +320,50 @@
       "difficulty": "medium"
     },
     {
-      "name": "Delta Red Combo",
+      "name": "Air Combo",
       "inputs": [
-        "lightPunch",
-        "mediumPunch",
-        "heavyPunch",
-        "delta_red_assault"
+        "jump",
+        "mediumKick",
+        "spiral_arrow"
       ],
-      "damage": 540,
+      "damage": 190,
       "difficulty": "hard"
     }
   ],
-  "subArchetypes": [
+  "variants": [
     {
-      "subArchetypeId": "traditional",
-      "name": "Traditional Cammy",
-      "description": "Balanced rushdown with good mobility and mixup options.",
+      "variantId": "traditional",
+      "name": "Traditional Rushdown",
+      "description": "Classic rushdown with balanced offense and mobility. Good mix of speed and power with solid fundamentals.",
       "isDefault": true,
       "statModifiers": {
         "healthMultiplier": 1.0,
         "walkSpeedMultiplier": 1.0,
         "runSpeedMultiplier": 1.0,
         "jumpHeightMultiplier": 1.0,
-        "weightMultiplier": 1.0
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
       },
       "moveModifiers": {},
       "uniqueMechanicChanges": [],
-      "additionalMoves": {}
+      "additionalMoves": {},
+      "playstyle": "rushdown",
+      "difficulty": "medium",
+      "strengths": ["mobility", "mixup", "pressure"],
+      "weaknesses": ["range", "health"]
     },
     {
-      "subArchetypeId": "aggressive",
-      "name": "Aggressive Cammy",
-      "description": "Enhanced rushdown with faster movement but reduced health.",
+      "variantId": "aggressive",
+      "name": "Aggressive Rushdown",
+      "description": "Maximum aggression with enhanced speed and pressure tools. Lower health but overwhelming offense.",
       "isDefault": false,
       "statModifiers": {
-        "healthMultiplier": 0.9,
-        "walkSpeedMultiplier": 1.15,
-        "runSpeedMultiplier": 1.25,
-        "jumpHeightMultiplier": 1.1,
-        "weightMultiplier": 0.95
+        "healthMultiplier": 0.8,
+        "walkSpeedMultiplier": 1.2,
+        "runSpeedMultiplier": 1.3,
+        "jumpHeightMultiplier": 1.15,
+        "weightMultiplier": 0.9,
+        "damageMultiplier": 1.1
       },
       "moveModifiers": {
         "spiral_arrow": {
@@ -396,16 +373,162 @@
         },
         "cannon_spike": {
           "startupFrameBonus": -1,
-          "damageMultiplier": 1.1,
-          "addedProperties": ["enhanced_damage"]
+          "damageMultiplier": 1.1
+        },
+        "hooligan_combination": {
+          "startupFrameBonus": -3,
+          "recoveryFrameBonus": -2
         }
       },
       "uniqueMechanicChanges": [
         "+enhanced_mobility",
         "+faster_specials",
-        "+damage_boost"
+        "+pressure_tools"
       ],
-      "additionalMoves": {}
+      "additionalMoves": {
+        "dive_kick": {
+          "name": "Dive Kick",
+          "input": "jump_down_K",
+          "description": "Fast overhead attack from air",
+          "damage": 80,
+          "startupFrames": 4,
+          "activeFrames": 3,
+          "recoveryFrames": 8,
+          "meterCost": 0,
+          "comboType": "opener",
+          "properties": [
+            "overhead",
+            "air_ok"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 4,
+              "endFrame": 6,
+              "position": [60, -20],
+              "size": [50, 25],
+              "damage": 80,
+              "hitstun": 15,
+              "blockstun": 10,
+              "knockdown": false
+            }
+          ]
+        },
+        "pressure_arrow": {
+          "name": "Pressure Arrow",
+          "input": "236K",
+          "description": "Fast, short-range arrow for pressure",
+          "damage": 90,
+          "startupFrames": 5,
+          "activeFrames": 6,
+          "recoveryFrames": 10,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": [
+            "pressure",
+            "air_ok"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 5,
+              "endFrame": 10,
+              "position": [50, 0],
+              "size": [60, 20],
+              "damage": 90,
+              "hitstun": 15,
+              "blockstun": 9,
+              "knockdown": false
+            }
+          ]
+        }
+      },
+      "playstyle": "aggressive_rushdown",
+      "difficulty": "hard",
+      "strengths": ["speed", "pressure", "mixup"],
+      "weaknesses": ["low_health", "execution"]
+    },
+    {
+      "variantId": "technical",
+      "name": "Technical Rushdown",
+      "description": "Complex execution with advanced techniques. Higher damage potential for skilled players with precise timing.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.1,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.85,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05,
+        "damageMultiplier": 1.2
+      },
+      "moveModifiers": {
+        "cannon_spike": {
+          "damageMultiplier": 1.3,
+          "startupFrameBonus": 1,
+          "addedProperties": ["just_frame_bonus"]
+        },
+        "killer_bee_arrow": {
+          "damageMultiplier": 1.4,
+          "addedProperties": ["technical_input"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+advanced_cancels",
+        "+just_frame_timing",
+        "+technical_execution"
+      ],
+      "additionalMoves": {
+        "delta_red_assault": {
+          "name": "Delta Red Assault",
+          "input": "623623K",
+          "description": "Technical multi-hit super",
+          "damage": 350,
+          "startupFrames": 3,
+          "activeFrames": 8,
+          "recoveryFrames": 40,
+          "meterCost": 100,
+          "comboType": "ender",
+          "properties": [
+            "super",
+            "invincible",
+            "launcher"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 3,
+              "endFrame": 10,
+              "position": [35, -25],
+              "size": [50, 80],
+              "damage": 350,
+              "hitstun": 35,
+              "blockstun": 20,
+              "knockdown": true
+            }
+          ]
+        },
+        "technical_combination": {
+          "name": "Technical Combination",
+          "input": "214214P",
+          "description": "Complex hooligan follow-up",
+          "damage": 150,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "grab",
+            "technical"
+          ],
+          "grab": {
+            "range": 100,
+            "damage": 150,
+            "knockdown": true
+          }
+        }
+      },
+      "playstyle": "technical_rushdown",
+      "difficulty": "expert",
+      "strengths": ["high_damage", "advanced_tech", "execution"],
+      "weaknesses": ["complexity", "slow_movement"]
     }
   ],
   "sprites": {

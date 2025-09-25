@@ -1,0 +1,568 @@
+{
+  "characterId": "ibuki",
+  "name": "Ibuki",
+  "displayName": "Ibuki",
+  "description": "A ninja assassin with incredible mix-up potential and tricky movement options. Master of deception and unpredictable attacks.",
+  "archetype": "mixup",
+  "complexity": "hard",
+  "counterplayTags": [
+    "mixup",
+    "tricky",
+    "ninja"
+  ],
+  "meterInteractions": [
+    "ex_specials",
+    "super_meter"
+  ],
+  "uniqueMechanics": [
+    "kunai",
+    "raida",
+    "kazekiri"
+  ],
+  "health": 900,
+  "meter": 100,
+  "walkSpeed": 160,
+  "runSpeed": 280,
+  "jumpHeight": 320,
+  "airDashSpeed": 300,
+  "dashDistance": 140,
+  "maxAirDashes": 2,
+  "weight": 80,
+  "dlcCharacter": false,
+  "releaseDate": "2024-08-05",
+  "balancePatch": "1.0.0",
+  "animations": {
+    "idle": "ibuki_idle",
+    "walkForward": "ibuki_walk_forward",
+    "walkBackward": "ibuki_walk_backward",
+    "jump": "ibuki_jump",
+    "crouch": "ibuki_crouch",
+    "block": "ibuki_block",
+    "crouchBlock": "ibuki_crouch_block",
+    "hit": "ibuki_hit",
+    "knockdown": "ibuki_knockdown",
+    "dash": "ibuki_dash",
+    "airDash": "ibuki_air_dash",
+    "wakeup": "ibuki_wakeup"
+  },
+  "moves": {
+    "normals": {
+      "lightPunch": {
+        "name": "Jab",
+        "damage": 35,
+        "startupFrames": 3,
+        "activeFrames": 2,
+        "recoveryFrames": 5,
+        "blockAdvantage": 2,
+        "hitAdvantage": 5,
+        "comboType": "opener",
+        "properties": [
+          "cancelable",
+          "dash_cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 3,
+            "endFrame": 4,
+            "position": [45, 0],
+            "size": [25, 18],
+            "damage": 35,
+            "hitstun": 7,
+            "blockstun": 4
+          }
+        ]
+      },
+      "mediumPunch": {
+        "name": "Cross",
+        "damage": 65,
+        "startupFrames": 5,
+        "activeFrames": 3,
+        "recoveryFrames": 7,
+        "blockAdvantage": 0,
+        "hitAdvantage": 4,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 7,
+            "position": [55, 0],
+            "size": [35, 22],
+            "damage": 65,
+            "hitstun": 11,
+            "blockstun": 7
+          }
+        ]
+      },
+      "heavyPunch": {
+        "name": "Hook",
+        "damage": 95,
+        "startupFrames": 8,
+        "activeFrames": 4,
+        "recoveryFrames": 12,
+        "blockAdvantage": -3,
+        "hitAdvantage": 1,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 11,
+            "position": [65, -3],
+            "size": [45, 28],
+            "damage": 95,
+            "hitstun": 15,
+            "blockstun": 9,
+            "knockdown": true
+          }
+        ]
+      },
+      "lightKick": {
+        "name": "Low Kick",
+        "damage": 40,
+        "startupFrames": 4,
+        "activeFrames": 2,
+        "recoveryFrames": 6,
+        "blockAdvantage": 1,
+        "hitAdvantage": 4,
+        "comboType": "opener",
+        "properties": [
+          "low",
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 4,
+            "endFrame": 5,
+            "position": [35, 25],
+            "size": [30, 12],
+            "damage": 40,
+            "hitstun": 8,
+            "blockstun": 5
+          }
+        ]
+      },
+      "mediumKick": {
+        "name": "Mid Kick",
+        "damage": 75,
+        "startupFrames": 7,
+        "activeFrames": 3,
+        "recoveryFrames": 9,
+        "blockAdvantage": -1,
+        "hitAdvantage": 3,
+        "comboType": "linker",
+        "properties": [
+          "cancelable"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 7,
+            "endFrame": 9,
+            "position": [60, 0],
+            "size": [40, 25],
+            "damage": 75,
+            "hitstun": 12,
+            "blockstun": 8
+          }
+        ]
+      },
+      "heavyKick": {
+        "name": "Roundhouse",
+        "damage": 115,
+        "startupFrames": 11,
+        "activeFrames": 5,
+        "recoveryFrames": 15,
+        "blockAdvantage": -5,
+        "hitAdvantage": -1,
+        "comboType": "ender",
+        "properties": [
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 11,
+            "endFrame": 15,
+            "position": [75, -2],
+            "size": [55, 32],
+            "damage": 115,
+            "hitstun": 18,
+            "blockstun": 11,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "specials": {
+      "kunai": {
+        "name": "Kunai",
+        "input": "236P",
+        "description": "Quarter-circle forward + Punch",
+        "damage": 80,
+        "startupFrames": 10,
+        "activeFrames": 0,
+        "recoveryFrames": 20,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 350,
+          "lifetime": 120,
+          "size": [25, 15],
+          "damage": 80,
+          "hitstun": 16,
+          "blockstun": 10
+        }
+      },
+      "raida": {
+        "name": "Raida",
+        "input": "623P",
+        "description": "Dragon punch motion + Punch",
+        "damage": 120,
+        "startupFrames": 5,
+        "activeFrames": 6,
+        "recoveryFrames": 20,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "invincible",
+          "launcher"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 5,
+            "endFrame": 10,
+            "position": [35, -15],
+            "size": [35, 50],
+            "damage": 120,
+            "hitstun": 20,
+            "blockstun": 12,
+            "knockdown": true
+          }
+        ]
+      },
+      "kazekiri": {
+        "name": "Kazekiri",
+        "input": "214K",
+        "description": "Quarter-circle back + Kick",
+        "damage": 100,
+        "startupFrames": 8,
+        "activeFrames": 10,
+        "recoveryFrames": 15,
+        "meterCost": 0,
+        "comboType": "ender",
+        "properties": [
+          "launcher",
+          "air_ok"
+        ],
+        "hitboxes": [
+          {
+            "startFrame": 8,
+            "endFrame": 17,
+            "position": [50, 0],
+            "size": [60, 25],
+            "damage": 100,
+            "hitstun": 18,
+            "blockstun": 11,
+            "knockdown": true
+          }
+        ]
+      }
+    },
+    "supers": {
+      "kasumi_suzaku": {
+        "name": "Kasumi Suzaku",
+        "input": "236236P",
+        "description": "Quarter-circle forward x2 + Punch",
+        "damage": 280,
+        "startupFrames": 6,
+        "activeFrames": 0,
+        "recoveryFrames": 40,
+        "meterCost": 100,
+        "comboType": "ender",
+        "properties": [
+          "super",
+          "projectile"
+        ],
+        "projectile": {
+          "speed": 400,
+          "lifetime": 150,
+          "size": [70, 40],
+          "damage": 280,
+          "hitstun": 35,
+          "blockstun": 20,
+          "hits": 4
+        }
+      }
+    }
+  },
+  "comboRoutes": [
+    {
+      "name": "Basic Combo",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "kunai"
+      ],
+      "damage": 180,
+      "difficulty": "easy"
+    },
+    {
+      "name": "Mixup Combo",
+      "inputs": [
+        "raida",
+        "kazekiri"
+      ],
+      "damage": 220,
+      "difficulty": "medium"
+    },
+    {
+      "name": "Super Combo",
+      "inputs": [
+        "lightPunch",
+        "mediumPunch",
+        "kasumi_suzaku"
+      ],
+      "damage": 380,
+      "difficulty": "hard"
+    }
+  ],
+  "variants": [
+    {
+      "variantId": "traditional",
+      "name": "Traditional Mixup",
+      "description": "Classic mix-up character with balanced tricky options. Good mix of offense and defense with solid fundamentals.",
+      "isDefault": true,
+      "statModifiers": {
+        "healthMultiplier": 1.0,
+        "walkSpeedMultiplier": 1.0,
+        "runSpeedMultiplier": 1.0,
+        "jumpHeightMultiplier": 1.0,
+        "weightMultiplier": 1.0,
+        "damageMultiplier": 1.0
+      },
+      "moveModifiers": {},
+      "uniqueMechanicChanges": [],
+      "additionalMoves": {},
+      "playstyle": "mixup",
+      "difficulty": "hard",
+      "strengths": ["mixup", "mobility", "projectiles"],
+      "weaknesses": ["health", "range"]
+    },
+    {
+      "variantId": "aggressive",
+      "name": "Aggressive Mixup",
+      "description": "Maximum aggression with enhanced speed and pressure tools. Lower health but overwhelming mix-up potential.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 0.85,
+        "walkSpeedMultiplier": 1.2,
+        "runSpeedMultiplier": 1.3,
+        "jumpHeightMultiplier": 1.15,
+        "weightMultiplier": 0.9,
+        "damageMultiplier": 1.1
+      },
+      "moveModifiers": {
+        "kunai": {
+          "startupFrameBonus": -2,
+          "damageMultiplier": 1.1,
+          "addedProperties": ["enhanced_speed"]
+        },
+        "raida": {
+          "startupFrameBonus": -1,
+          "damageMultiplier": 1.1
+        },
+        "kazekiri": {
+          "startupFrameBonus": -2,
+          "recoveryFrameBonus": -2
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+enhanced_mobility",
+        "+faster_specials",
+        "+pressure_tools"
+      ],
+      "additionalMoves": {
+        "ninja_strike": {
+          "name": "Ninja Strike",
+          "input": "236K",
+          "description": "Fast overhead attack for mix-up",
+          "damage": 70,
+          "startupFrames": 6,
+          "activeFrames": 3,
+          "recoveryFrames": 8,
+          "meterCost": 0,
+          "comboType": "opener",
+          "properties": [
+            "overhead",
+            "air_ok"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 6,
+              "endFrame": 8,
+              "position": [55, -10],
+              "size": [40, 20],
+              "damage": 70,
+              "hitstun": 14,
+              "blockstun": 9,
+              "knockdown": false
+            }
+          ]
+        },
+        "pressure_kunai": {
+          "name": "Pressure Kunai",
+          "input": "214P",
+          "description": "Fast, short-range kunai for pressure",
+          "damage": 60,
+          "startupFrames": 6,
+          "activeFrames": 0,
+          "recoveryFrames": 15,
+          "meterCost": 0,
+          "comboType": "linker",
+          "properties": [
+            "projectile",
+            "pressure"
+          ],
+          "projectile": {
+            "speed": 450,
+            "lifetime": 80,
+            "size": [20, 12],
+            "damage": 60,
+            "hitstun": 12,
+            "blockstun": 7
+          }
+        }
+      },
+      "playstyle": "aggressive_mixup",
+      "difficulty": "hard",
+      "strengths": ["pressure", "speed", "mixup"],
+      "weaknesses": ["low_health", "execution"]
+    },
+    {
+      "variantId": "technical",
+      "name": "Technical Mixup",
+      "description": "Complex execution with advanced mix-up techniques. Higher damage potential for skilled players with precise timing.",
+      "isDefault": false,
+      "statModifiers": {
+        "healthMultiplier": 1.1,
+        "walkSpeedMultiplier": 0.9,
+        "runSpeedMultiplier": 0.85,
+        "jumpHeightMultiplier": 0.95,
+        "weightMultiplier": 1.05,
+        "damageMultiplier": 1.2
+      },
+      "moveModifiers": {
+        "raida": {
+          "damageMultiplier": 1.3,
+          "startupFrameBonus": 1,
+          "addedProperties": ["just_frame_bonus"]
+        },
+        "kasumi_suzaku": {
+          "damageMultiplier": 1.4,
+          "addedProperties": ["technical_input"]
+        }
+      },
+      "uniqueMechanicChanges": [
+        "+advanced_mixups",
+        "+just_frame_timing",
+        "+technical_execution"
+      ],
+      "additionalMoves": {
+        "ninja_mastery": {
+          "name": "Ninja Mastery",
+          "input": "623623P",
+          "description": "Technical multi-hit super",
+          "damage": 320,
+          "startupFrames": 4,
+          "activeFrames": 8,
+          "recoveryFrames": 35,
+          "meterCost": 100,
+          "comboType": "ender",
+          "properties": [
+            "super",
+            "invincible",
+            "launcher"
+          ],
+          "hitboxes": [
+            {
+              "startFrame": 4,
+              "endFrame": 11,
+              "position": [30, -20],
+              "size": [40, 60],
+              "damage": 320,
+              "hitstun": 30,
+              "blockstun": 18,
+              "knockdown": true
+            }
+          ]
+        },
+        "technical_kunai": {
+          "name": "Technical Kunai",
+          "input": "214214P",
+          "description": "Complex kunai with multiple hits",
+          "damage": 120,
+          "startupFrames": 8,
+          "activeFrames": 0,
+          "recoveryFrames": 25,
+          "meterCost": 0,
+          "comboType": "ender",
+          "properties": [
+            "projectile",
+            "technical"
+          ],
+          "projectile": {
+            "speed": 300,
+            "lifetime": 150,
+            "size": [35, 20],
+            "damage": 120,
+            "hitstun": 20,
+            "blockstun": 12,
+            "hits": 2
+          }
+        }
+      },
+      "playstyle": "technical_mixup",
+      "difficulty": "expert",
+      "strengths": ["high_damage", "advanced_tech", "execution"],
+      "weaknesses": ["complexity", "slow_movement"]
+    }
+  ],
+  "sprites": {
+    "sprite_sheets": [
+      {
+        "name": "Ibuki - Character Sprites",
+        "file_name": "street_fighter_6_ibuki_character_sprites",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ibuki/",
+        "is_hd": true,
+        "file_size": 1050000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "portraits": [
+      {
+        "name": "Ibuki - Portrait",
+        "file_name": "street_fighter_6_ibuki_portrait",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ibuki/",
+        "is_hd": true,
+        "file_size": 1050000,
+        "resolution": "1920x1080"
+      }
+    ],
+    "icons": [
+      {
+        "name": "Ibuki - Character Select Icon",
+        "file_name": "street_fighter_6_ibuki_character_select_icon",
+        "url": "https://www.spriters-resource.com/pc_computer/streetfighter6/sheet/ibuki/",
+        "is_hd": false,
+        "file_size": 256000,
+        "resolution": "640x480"
+      }
+    ]
+  }
+}
