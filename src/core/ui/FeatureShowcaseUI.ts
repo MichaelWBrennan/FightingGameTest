@@ -34,113 +34,151 @@ export class FeatureShowcaseUI {
     }
 
     private initializeFeatures(): void {
-        // PLAY Section - Core gameplay modes
+        // STORY MODE - Single player campaign with advanced features
         this.addSection({
-            id: 'play',
-            title: 'PLAY',
-            icon: '🎮',
+            id: 'story_mode',
+            title: 'STORY MODE',
+            icon: '📖',
             color: new pc.Color(1, 0.4, 0.2, 1),
             features: [
                 {
-                    id: 'quick_play',
-                    title: 'Quick Play',
-                    description: 'Jump into a casual match instantly',
-                    icon: '⚡',
+                    id: 'character_campaigns',
+                    title: 'Character Campaigns',
+                    description: 'Experience each character\'s story',
+                    icon: '🎭',
                     category: 'play',
-                    features: ['Instant Matchmaking', 'Casual Play', 'No Ranking Impact'],
-                    action: 'quickPlay'
+                    features: ['Cinematic Cutscenes', 'Character Development', 'Unlock Rewards', 'Multiple Endings'],
+                    action: 'characterCampaigns'
                 },
                 {
-                    id: 'story_mode',
-                    title: 'Story Mode',
-                    description: 'Experience the epic narrative',
-                    icon: '📖',
+                    id: 'story_customization',
+                    title: 'Story Customization',
+                    description: 'Personalize your narrative experience',
+                    icon: '🎨',
                     category: 'play',
-                    features: ['Character Campaigns', 'Cinematic Cutscenes', 'Unlock Rewards'],
-                    action: 'storyMode'
-                },
-                {
-                    id: 'arcade_mode',
-                    title: 'Arcade Mode',
-                    description: 'Classic arcade experience',
-                    icon: '🕹️',
-                    category: 'play',
-                    features: ['AI Opponents', 'Progressive Difficulty', 'High Scores'],
-                    action: 'arcadeMode'
-                },
-                {
-                    id: 'versus_mode',
-                    title: 'Versus Mode',
-                    description: 'Local and online multiplayer',
-                    icon: '👥',
-                    category: 'play',
-                    features: ['Local Multiplayer', 'Online Matches', 'Custom Rules'],
-                    action: 'versusMode'
+                    features: ['Difficulty Settings', 'Skip Options', 'Accessibility Features', 'Language Selection'],
+                    action: 'storyCustomization'
                 }
             ]
         });
 
-        // TRAINING Section - Learning and improvement
+        // ARCADE MODE - Classic arcade with modern features
         this.addSection({
-            id: 'training',
-            title: 'TRAINING',
-            icon: '🎯',
+            id: 'arcade_mode',
+            title: 'ARCADE MODE',
+            icon: '🕹️',
             color: new pc.Color(0.2, 0.8, 0.4, 1),
             features: [
                 {
-                    id: 'training_mode',
-                    title: 'Training Mode',
-                    description: 'Master the game with advanced tools',
-                    icon: '🎯',
-                    category: 'training',
-                    features: ['Frame Data Display', 'Hitbox Visualization', 'Combo Trials', 'AI Coaching'],
-                    action: 'trainingMode'
+                    id: 'classic_arcade',
+                    title: 'Classic Arcade',
+                    description: 'Traditional arcade experience',
+                    icon: '🎮',
+                    category: 'play',
+                    features: ['AI Opponents', 'Progressive Difficulty', 'High Scores', 'Continue System'],
+                    action: 'classicArcade'
                 },
                 {
-                    id: 'tutorial',
-                    title: 'Tutorial',
-                    description: 'Learn the basics and advanced techniques',
-                    icon: '📚',
-                    category: 'training',
-                    features: ['Interactive Lessons', 'Step-by-Step Guides', 'Practice Drills'],
-                    action: 'tutorial'
-                },
-                {
-                    id: 'replay_system',
-                    title: 'Replay System',
-                    description: 'Analyze your matches and improve',
-                    icon: '📹',
-                    category: 'training',
-                    features: ['Match Recording', 'Frame-by-Frame Analysis', 'AI Feedback'],
-                    action: 'replaySystem'
+                    id: 'arcade_plus',
+                    title: 'Arcade Plus',
+                    description: 'Enhanced arcade with modern features',
+                    icon: '⚡',
+                    category: 'play',
+                    features: ['AI Coaching', 'Performance Analysis', 'Replay Recording', 'Achievement Tracking'],
+                    action: 'arcadePlus'
                 }
             ]
         });
 
-        // ONLINE Section - Competitive and social features
+        // VERSUS MODE - Local and online multiplayer
         this.addSection({
-            id: 'online',
-            title: 'ONLINE',
-            icon: '🌐',
+            id: 'versus_mode',
+            title: 'VERSUS MODE',
+            icon: '👥',
             color: new pc.Color(0.2, 0.4, 1, 1),
             features: [
                 {
-                    id: 'ranked_match',
-                    title: 'Ranked Match',
-                    description: 'Compete in ranked matches',
-                    icon: '🏆',
-                    category: 'online',
-                    features: ['Bayesian Ranking System', '9 Competitive Tiers', 'LP System'],
-                    action: 'rankedMatch'
+                    id: 'local_versus',
+                    title: 'Local Versus',
+                    description: 'Play with friends locally',
+                    icon: '🏠',
+                    category: 'play',
+                    features: ['Split Screen', 'Custom Rules', 'Tournament Mode', 'Spectator Mode'],
+                    action: 'localVersus'
                 },
                 {
-                    id: 'lobby',
-                    title: 'Lobby',
-                    description: 'Join or create custom rooms',
-                    icon: '🏠',
+                    id: 'online_versus',
+                    title: 'Online Versus',
+                    description: 'Compete with players worldwide',
+                    icon: '🌐',
+                    category: 'play',
+                    features: ['Quick Match', 'Custom Rooms', 'Ranked Matches', 'Social Features'],
+                    action: 'onlineVersus'
+                }
+            ]
+        });
+
+        // TRAINING MODE - Learning and improvement with advanced tools
+        this.addSection({
+            id: 'training_mode',
+            title: 'TRAINING MODE',
+            icon: '🎯',
+            color: new pc.Color(0.8, 0.2, 1, 1),
+            features: [
+                {
+                    id: 'basic_training',
+                    title: 'Basic Training',
+                    description: 'Learn the fundamentals',
+                    icon: '📚',
+                    category: 'training',
+                    features: ['Tutorial Lessons', 'Combo Trials', 'Frame Data Display', 'Hitbox Visualization'],
+                    action: 'basicTraining'
+                },
+                {
+                    id: 'advanced_training',
+                    title: 'Advanced Training',
+                    description: 'Master advanced techniques',
+                    icon: '🧠',
+                    category: 'training',
+                    features: ['AI Coaching', 'Match Analysis', 'Replay System', 'Performance Feedback'],
+                    action: 'advancedTraining'
+                }
+            ]
+        });
+
+        // ONLINE MODE - Competitive play with social features
+        this.addSection({
+            id: 'online_mode',
+            title: 'ONLINE MODE',
+            icon: '🏆',
+            color: new pc.Color(1, 0.8, 0.2, 1),
+            features: [
+                {
+                    id: 'ranked_play',
+                    title: 'Ranked Play',
+                    description: 'Compete in ranked matches',
+                    icon: '🥇',
                     category: 'online',
-                    features: ['Custom Rooms', 'Tournament Brackets', 'Spectator Mode'],
-                    action: 'lobby'
+                    features: ['Bayesian Ranking System', '9 Competitive Tiers', 'LP System', 'Anti-Toxic Measures'],
+                    action: 'rankedPlay'
+                },
+                {
+                    id: 'casual_play',
+                    title: 'Casual Play',
+                    description: 'Play without ranking pressure',
+                    icon: '😊',
+                    category: 'online',
+                    features: ['Quick Match', 'Custom Rooms', 'Social Features', 'Spectator Mode'],
+                    action: 'casualPlay'
+                },
+                {
+                    id: 'tournament_mode',
+                    title: 'Tournament Mode',
+                    description: 'Compete in organized tournaments',
+                    icon: '🏅',
+                    category: 'online',
+                    features: ['Automated Brackets', 'Prize Pools', 'Live Streaming', 'Community Events'],
+                    action: 'tournamentMode'
                 },
                 {
                     id: 'social_hub',
@@ -150,25 +188,16 @@ export class FeatureShowcaseUI {
                     category: 'online',
                     features: ['Guilds', 'Coaching System', 'Voice Chat', 'Leaderboards'],
                     action: 'socialHub'
-                },
-                {
-                    id: 'tournament',
-                    title: 'Tournament',
-                    description: 'Compete in organized tournaments',
-                    icon: '🏅',
-                    category: 'online',
-                    features: ['Automated Brackets', 'Prize Pools', 'Live Streaming'],
-                    action: 'tournament'
                 }
             ]
         });
 
-        // COLLECTION Section - Characters, customization, and progress
+        // COLLECTION - Characters, customization, and progress
         this.addSection({
             id: 'collection',
             title: 'COLLECTION',
             icon: '📦',
-            color: new pc.Color(0.8, 0.2, 1, 1),
+            color: new pc.Color(0.5, 0.5, 0.5, 1),
             features: [
                 {
                     id: 'character_select',
@@ -176,7 +205,7 @@ export class FeatureShowcaseUI {
                     description: 'Choose from 30 unique archetypes',
                     icon: '🥋',
                     category: 'collection',
-                    features: ['6 Characters × 5 Variants', 'Unique Playstyles', 'Customization'],
+                    features: ['6 Characters × 5 Variants', 'Unique Playstyles', 'Character Customization', 'Move Lists'],
                     action: 'characterSelect'
                 },
                 {
@@ -185,7 +214,7 @@ export class FeatureShowcaseUI {
                     description: 'Personalize your experience',
                     icon: '🎨',
                     category: 'collection',
-                    features: ['Character Skins', 'UI Themes', 'Control Schemes'],
+                    features: ['Character Skins', 'UI Themes', 'Control Schemes', 'Accessibility Options'],
                     action: 'customization'
                 },
                 {
@@ -194,7 +223,7 @@ export class FeatureShowcaseUI {
                     description: 'Track your progress and milestones',
                     icon: '🏆',
                     category: 'collection',
-                    features: ['Personal Achievements', 'Social Achievements', 'Rare Rewards'],
+                    features: ['Personal Achievements', 'Social Achievements', 'Rare Rewards', 'Progress Tracking'],
                     action: 'achievements'
                 },
                 {
@@ -203,18 +232,18 @@ export class FeatureShowcaseUI {
                     description: 'Save and share your best moments',
                     icon: '📁',
                     category: 'collection',
-                    features: ['Match Replays', 'Combo Videos', 'Community Sharing'],
+                    features: ['Match Replays', 'Combo Videos', 'Community Sharing', 'AI Analysis'],
                     action: 'replayGallery'
                 }
             ]
         });
 
-        // SETTINGS Section - Configuration and accessibility
+        // SETTINGS - Configuration and accessibility
         this.addSection({
             id: 'settings',
             title: 'SETTINGS',
             icon: '⚙️',
-            color: new pc.Color(0.5, 0.5, 0.5, 1),
+            color: new pc.Color(0.3, 0.3, 0.3, 1),
             features: [
                 {
                     id: 'game_settings',
@@ -222,7 +251,7 @@ export class FeatureShowcaseUI {
                     description: 'Configure gameplay options',
                     icon: '🎮',
                     category: 'settings',
-                    features: ['Graphics', 'Audio', 'Controls', 'Network'],
+                    features: ['Graphics', 'Audio', 'Controls', 'Network', 'Performance'],
                     action: 'gameSettings'
                 },
                 {
@@ -231,26 +260,8 @@ export class FeatureShowcaseUI {
                     description: 'Make the game accessible to everyone',
                     icon: '♿',
                     category: 'settings',
-                    features: ['Colorblind Support', 'Text Scaling', 'Voice Control', 'Screen Reader'],
+                    features: ['Colorblind Support', 'Text Scaling', 'Voice Control', 'Screen Reader', 'Custom Controls'],
                     action: 'accessibility'
-                },
-                {
-                    id: 'ai_features',
-                    title: 'AI Features',
-                    description: 'Configure AI assistance and coaching',
-                    icon: '🤖',
-                    category: 'settings',
-                    features: ['AI Coaching', 'Smart Matchmaking', 'Cheat Detection', 'Performance Analysis'],
-                    action: 'aiFeatures'
-                },
-                {
-                    id: 'performance',
-                    title: 'Performance',
-                    description: 'Monitor and optimize game performance',
-                    icon: '⚡',
-                    category: 'settings',
-                    features: ['Real-time Stats', 'Quality Scaling', 'Network Optimization', 'Battery Mode'],
-                    action: 'performance'
                 }
             ]
         });
