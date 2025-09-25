@@ -82,6 +82,8 @@ import { AccessibilityManager } from './accessibility/AccessibilityManager';
 import { AdvancedAccessibilityManager } from './accessibility/AdvancedAccessibilityManager';
 import { AdvancedAudioSystem } from './audio/AdvancedAudioSystem';
 import { QuantumRollbackNetcode } from './netcode/QuantumRollbackNetcode';
+import { AdvancedAntiCheatSystem } from './security/AdvancedAntiCheatSystem';
+import { AdvancedMobileOptimizer } from './mobile/AdvancedMobileOptimizer';
 
 export class GameEngine {
   private app: pc.Application;
@@ -155,6 +157,8 @@ export class GameEngine {
   private advancedAccessibilityManager: AdvancedAccessibilityManager | null = null;
   private advancedAudioSystem: AdvancedAudioSystem | null = null;
   private quantumNetcode: QuantumRollbackNetcode | null = null;
+  private advancedAntiCheat: AdvancedAntiCheatSystem | null = null;
+  private advancedMobileOptimizer: AdvancedMobileOptimizer | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -613,6 +617,14 @@ export class GameEngine {
       try { 
         this.quantumNetcode = new QuantumRollbackNetcode(this.app);
         this.services.register('quantumNetcode', this.quantumNetcode);
+      } catch {}
+      try { 
+        this.advancedAntiCheat = new AdvancedAntiCheatSystem(this.app);
+        this.services.register('advancedAntiCheat', this.advancedAntiCheat);
+      } catch {}
+      try { 
+        this.advancedMobileOptimizer = new AdvancedMobileOptimizer(this.app);
+        this.services.register('advancedMobileOptimizer', this.advancedMobileOptimizer);
       } catch {}
       try {
         const loader = new ConfigLoader();
