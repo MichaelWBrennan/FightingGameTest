@@ -5,15 +5,25 @@ export interface FeatureInfo {
     title: string;
     description: string;
     icon: string;
-    category: 'training' | 'competitive' | 'social' | 'accessibility' | 'ai' | 'performance';
+    category: 'play' | 'training' | 'online' | 'collection' | 'settings';
     features: string[];
+    action: string;
+}
+
+export interface UISection {
+    id: string;
+    title: string;
+    icon: string;
+    color: pc.Color;
+    features: FeatureInfo[];
 }
 
 export class FeatureShowcaseUI {
     private app: pc.Application;
     private uiContainer: pc.Entity;
     private currentPanel: pc.Entity | null = null;
-    private features: Map<string, FeatureInfo> = new Map();
+    private sections: Map<string, UISection> = new Map();
+    private currentSection: string | null = null;
     private isVisible: boolean = false;
 
     constructor(app: pc.Application) {
@@ -24,105 +34,230 @@ export class FeatureShowcaseUI {
     }
 
     private initializeFeatures(): void {
-        // Training Mode Features
-        this.addFeature({
-            id: 'training_mode',
-            title: 'Advanced Training Mode',
-            description: 'Master the game with cutting-edge training tools designed for serious players.',
+        // PLAY Section - Core gameplay modes
+        this.addSection({
+            id: 'play',
+            title: 'PLAY',
+            icon: '🎮',
+            color: new pc.Color(1, 0.4, 0.2, 1),
+            features: [
+                {
+                    id: 'quick_play',
+                    title: 'Quick Play',
+                    description: 'Jump into a casual match instantly',
+                    icon: '⚡',
+                    category: 'play',
+                    features: ['Instant Matchmaking', 'Casual Play', 'No Ranking Impact'],
+                    action: 'quickPlay'
+                },
+                {
+                    id: 'story_mode',
+                    title: 'Story Mode',
+                    description: 'Experience the epic narrative',
+                    icon: '📖',
+                    category: 'play',
+                    features: ['Character Campaigns', 'Cinematic Cutscenes', 'Unlock Rewards'],
+                    action: 'storyMode'
+                },
+                {
+                    id: 'arcade_mode',
+                    title: 'Arcade Mode',
+                    description: 'Classic arcade experience',
+                    icon: '🕹️',
+                    category: 'play',
+                    features: ['AI Opponents', 'Progressive Difficulty', 'High Scores'],
+                    action: 'arcadeMode'
+                },
+                {
+                    id: 'versus_mode',
+                    title: 'Versus Mode',
+                    description: 'Local and online multiplayer',
+                    icon: '👥',
+                    category: 'play',
+                    features: ['Local Multiplayer', 'Online Matches', 'Custom Rules'],
+                    action: 'versusMode'
+                }
+            ]
+        });
+
+        // TRAINING Section - Learning and improvement
+        this.addSection({
+            id: 'training',
+            title: 'TRAINING',
             icon: '🎯',
-            category: 'training',
+            color: new pc.Color(0.2, 0.8, 0.4, 1),
             features: [
-                'Real-time Frame Data Display',
-                'Hitbox Visualization System',
-                'Combo Trials with AI Hints',
-                'Recording & Analysis Tools',
-                'AI-Powered Performance Feedback'
+                {
+                    id: 'training_mode',
+                    title: 'Training Mode',
+                    description: 'Master the game with advanced tools',
+                    icon: '🎯',
+                    category: 'training',
+                    features: ['Frame Data Display', 'Hitbox Visualization', 'Combo Trials', 'AI Coaching'],
+                    action: 'trainingMode'
+                },
+                {
+                    id: 'tutorial',
+                    title: 'Tutorial',
+                    description: 'Learn the basics and advanced techniques',
+                    icon: '📚',
+                    category: 'training',
+                    features: ['Interactive Lessons', 'Step-by-Step Guides', 'Practice Drills'],
+                    action: 'tutorial'
+                },
+                {
+                    id: 'replay_system',
+                    title: 'Replay System',
+                    description: 'Analyze your matches and improve',
+                    icon: '📹',
+                    category: 'training',
+                    features: ['Match Recording', 'Frame-by-Frame Analysis', 'AI Feedback'],
+                    action: 'replaySystem'
+                }
             ]
         });
 
-        // Bayesian Ranking Features
-        this.addFeature({
-            id: 'bayesian_ranking',
-            title: 'Bayesian Anti-Toxic Ranking',
-            description: 'Revolutionary ranking system that rewards good behavior and creates fair matches.',
-            icon: '🧠',
-            category: 'competitive',
+        // ONLINE Section - Competitive and social features
+        this.addSection({
+            id: 'online',
+            title: 'ONLINE',
+            icon: '🌐',
+            color: new pc.Color(0.2, 0.4, 1, 1),
             features: [
-                'Multi-Algorithm System (Beta-Binomial, TrueSkill, Glicko-2)',
-                'Reliability Weighting & Confidence-Based Matchmaking',
-                'Anti-Toxic Measures & Behavior Analysis',
-                'Consistency Rewards & Skill Decay Protection',
-                '9 Competitive Tiers (Iron to Challenger)'
+                {
+                    id: 'ranked_match',
+                    title: 'Ranked Match',
+                    description: 'Compete in ranked matches',
+                    icon: '🏆',
+                    category: 'online',
+                    features: ['Bayesian Ranking System', '9 Competitive Tiers', 'LP System'],
+                    action: 'rankedMatch'
+                },
+                {
+                    id: 'lobby',
+                    title: 'Lobby',
+                    description: 'Join or create custom rooms',
+                    icon: '🏠',
+                    category: 'online',
+                    features: ['Custom Rooms', 'Tournament Brackets', 'Spectator Mode'],
+                    action: 'lobby'
+                },
+                {
+                    id: 'social_hub',
+                    title: 'Social Hub',
+                    description: 'Connect with the community',
+                    icon: '👥',
+                    category: 'online',
+                    features: ['Guilds', 'Coaching System', 'Voice Chat', 'Leaderboards'],
+                    action: 'socialHub'
+                },
+                {
+                    id: 'tournament',
+                    title: 'Tournament',
+                    description: 'Compete in organized tournaments',
+                    icon: '🏅',
+                    category: 'online',
+                    features: ['Automated Brackets', 'Prize Pools', 'Live Streaming'],
+                    action: 'tournament'
+                }
             ]
         });
 
-        // Social Features
-        this.addFeature({
-            id: 'social_features',
-            title: 'Social & Community',
-            description: 'Connect with players, learn from coaches, and build lasting friendships.',
-            icon: '👥',
-            category: 'social',
+        // COLLECTION Section - Characters, customization, and progress
+        this.addSection({
+            id: 'collection',
+            title: 'COLLECTION',
+            icon: '📦',
+            color: new pc.Color(0.8, 0.2, 1, 1),
             features: [
-                'Live Spectating with Real-time Commentary',
-                'Coaching System & Mentor Matching',
-                'Guilds & Tournament Management',
-                'Voice & Text Chat Integration',
-                'Leaderboards & Achievement System'
+                {
+                    id: 'character_select',
+                    title: 'Character Select',
+                    description: 'Choose from 30 unique archetypes',
+                    icon: '🥋',
+                    category: 'collection',
+                    features: ['6 Characters × 5 Variants', 'Unique Playstyles', 'Customization'],
+                    action: 'characterSelect'
+                },
+                {
+                    id: 'customization',
+                    title: 'Customization',
+                    description: 'Personalize your experience',
+                    icon: '🎨',
+                    category: 'collection',
+                    features: ['Character Skins', 'UI Themes', 'Control Schemes'],
+                    action: 'customization'
+                },
+                {
+                    id: 'achievements',
+                    title: 'Achievements',
+                    description: 'Track your progress and milestones',
+                    icon: '🏆',
+                    category: 'collection',
+                    features: ['Personal Achievements', 'Social Achievements', 'Rare Rewards'],
+                    action: 'achievements'
+                },
+                {
+                    id: 'replay_gallery',
+                    title: 'Replay Gallery',
+                    description: 'Save and share your best moments',
+                    icon: '📁',
+                    category: 'collection',
+                    features: ['Match Replays', 'Combo Videos', 'Community Sharing'],
+                    action: 'replayGallery'
+                }
             ]
         });
 
-        // Accessibility Features
-        this.addFeature({
-            id: 'accessibility',
-            title: 'Practical Accessibility',
-            description: 'Play regardless of ability with comprehensive accessibility features.',
-            icon: '♿',
-            category: 'accessibility',
+        // SETTINGS Section - Configuration and accessibility
+        this.addSection({
+            id: 'settings',
+            title: 'SETTINGS',
+            icon: '⚙️',
+            color: new pc.Color(0.5, 0.5, 0.5, 1),
             features: [
-                'Colorblind Support (Protanopia, Deuteranopia, Tritanopia)',
-                'Customizable Controls & Key Remapping',
-                'Text Scaling & High Contrast Modes',
-                'Audio Descriptions & Screen Reader Support',
-                'Voice Control & Gesture Recognition'
-            ]
-        });
-
-        // AI Features
-        this.addFeature({
-            id: 'ai_features',
-            title: 'AI-Powered Features',
-            description: 'Advanced AI systems that enhance your gameplay and learning experience.',
-            icon: '🤖',
-            category: 'ai',
-            features: [
-                '24-Layer Transformer Neural Network Coaching',
-                'Adaptive AI Difficulty & Learning',
-                'Smart Matchmaking with Quality Prediction',
-                'Neural Network Input Prediction',
-                'Machine Learning Cheat Detection'
-            ]
-        });
-
-        // Performance Features
-        this.addFeature({
-            id: 'performance',
-            title: 'Performance Optimization',
-            description: 'Smooth gameplay on any device with advanced optimization systems.',
-            icon: '⚡',
-            category: 'performance',
-            features: [
-                'Real-time Performance Monitoring',
-                'Adaptive Quality Scaling',
-                'Network Optimization & Lag Reduction',
-                'Memory Management & Crash Prevention',
-                'Battery Optimization for Mobile'
+                {
+                    id: 'game_settings',
+                    title: 'Game Settings',
+                    description: 'Configure gameplay options',
+                    icon: '🎮',
+                    category: 'settings',
+                    features: ['Graphics', 'Audio', 'Controls', 'Network'],
+                    action: 'gameSettings'
+                },
+                {
+                    id: 'accessibility',
+                    title: 'Accessibility',
+                    description: 'Make the game accessible to everyone',
+                    icon: '♿',
+                    category: 'settings',
+                    features: ['Colorblind Support', 'Text Scaling', 'Voice Control', 'Screen Reader'],
+                    action: 'accessibility'
+                },
+                {
+                    id: 'ai_features',
+                    title: 'AI Features',
+                    description: 'Configure AI assistance and coaching',
+                    icon: '🤖',
+                    category: 'settings',
+                    features: ['AI Coaching', 'Smart Matchmaking', 'Cheat Detection', 'Performance Analysis'],
+                    action: 'aiFeatures'
+                },
+                {
+                    id: 'performance',
+                    title: 'Performance',
+                    description: 'Monitor and optimize game performance',
+                    icon: '⚡',
+                    category: 'settings',
+                    features: ['Real-time Stats', 'Quality Scaling', 'Network Optimization', 'Battery Mode'],
+                    action: 'performance'
+                }
             ]
         });
     }
 
-    private addFeature(feature: FeatureInfo): void {
-        this.features.set(feature.id, feature);
+    private addSection(section: UISection): void {
+        this.sections.set(section.id, section);
     }
 
     private createUIContainer(): void {
@@ -163,26 +298,157 @@ export class FeatureShowcaseUI {
         const menuContainer = new pc.Entity('MainMenu');
         menuContainer.addComponent('element', {
             type: pc.ELEMENTTYPE_GROUP,
-            anchor: [0.1, 0.1, 0.9, 0.9],
-            pivot: [0.5, 0.5, 0.5, 0.5],
+            anchor: [0, 0, 1, 1],
+            pivot: [0, 0, 0, 0],
             margin: [0, 0, 0, 0]
         });
         this.uiContainer.addChild(menuContainer);
 
-        // Create title
-        this.createTitle(menuContainer);
+        // Create GG Strive-style layout
+        this.createGGStriveLayout(menuContainer);
+    }
 
-        // Create feature grid
-        this.createFeatureGrid(menuContainer);
-
-        // Create character showcase
-        this.createCharacterShowcase(menuContainer);
-
-        // Create stats section
-        this.createStatsSection(menuContainer);
-
+    private createGGStriveLayout(container: pc.Entity): void {
+        // Create main sections (like GG Strive's main menu)
+        this.createMainSections(container);
+        
+        // Create character showcase (prominent display)
+        this.createCharacterShowcase(container);
+        
+        // Create stats bar at bottom
+        this.createStatsBar(container);
+        
         // Create close button
-        this.createCloseButton(menuContainer);
+        this.createCloseButton(container);
+    }
+
+    private createMainSections(container: pc.Entity): void {
+        const sectionsContainer = new pc.Entity('MainSections');
+        sectionsContainer.addComponent('element', {
+            type: pc.ELEMENTTYPE_GROUP,
+            anchor: [0.1, 0.2, 0.9, 0.8],
+            pivot: [0, 0, 0, 0],
+            margin: [0, 0, 0, 0]
+        });
+        container.addChild(sectionsContainer);
+
+        const sections = Array.from(this.sections.values());
+        const cols = 2;
+        const rows = 3;
+
+        sections.forEach((section, index) => {
+            const row = Math.floor(index / cols);
+            const col = index % cols;
+            
+            const x = (col + 0.5) / cols;
+            const y = 1 - (row + 0.5) / rows;
+
+            this.createSectionCard(sectionsContainer, section, x, y);
+        });
+    }
+
+    private createSectionCard(container: pc.Entity, section: UISection, x: number, y: number): void {
+        const card = new pc.Entity(`SectionCard_${section.id}`);
+        card.addComponent('element', {
+            type: pc.ELEMENTTYPE_GROUP,
+            anchor: [x - 0.4, y - 0.4, x + 0.4, y + 0.4],
+            pivot: [0.5, 0.5, 0.5, 0.5],
+            margin: [0, 0, 0, 0]
+        });
+        container.addChild(card);
+
+        // Section background
+        const background = new pc.Entity('Background');
+        background.addComponent('element', {
+            type: pc.ELEMENTTYPE_IMAGE,
+            anchor: [0, 0, 1, 1],
+            pivot: [0.5, 0.5, 0.5, 0.5],
+            margin: [0, 0, 0, 0],
+            color: new pc.Color(section.color.r, section.color.g, section.color.b, 0.2)
+        });
+        card.addChild(background);
+
+        // Section border
+        const border = new pc.Entity('Border');
+        border.addComponent('element', {
+            type: pc.ELEMENTTYPE_IMAGE,
+            anchor: [0, 0, 1, 1],
+            pivot: [0.5, 0.5, 0.5, 0.5],
+            margin: [0, 0, 0, 0],
+            color: new pc.Color(section.color.r, section.color.g, section.color.b, 0.8)
+        });
+        card.addChild(border);
+
+        // Section icon
+        const icon = new pc.Entity('Icon');
+        icon.addComponent('element', {
+            type: pc.ELEMENTTYPE_TEXT,
+            anchor: [0.1, 0.7, 0.3, 0.9],
+            pivot: [0.5, 0.5, 0.5, 0.5],
+            margin: [0, 0, 0, 0],
+            text: section.icon,
+            fontSize: 32,
+            color: section.color,
+            fontAsset: this.app.assets.find('arial') || null,
+            textAlign: pc.TEXTALIGN_CENTER
+        });
+        card.addChild(icon);
+
+        // Section title
+        const title = new pc.Entity('Title');
+        title.addComponent('element', {
+            type: pc.ELEMENTTYPE_TEXT,
+            anchor: [0.35, 0.7, 0.9, 0.9],
+            pivot: [0, 0.5, 0, 0.5],
+            margin: [0, 0, 0, 0],
+            text: section.title,
+            fontSize: 24,
+            color: section.color,
+            fontAsset: this.app.assets.find('arial') || null,
+            textAlign: pc.TEXTALIGN_LEFT
+        });
+        card.addChild(title);
+
+        // Feature count
+        const featureCount = new pc.Entity('FeatureCount');
+        featureCount.addComponent('element', {
+            type: pc.ELEMENTTYPE_TEXT,
+            anchor: [0.1, 0.5, 0.9, 0.7],
+            pivot: [0, 0.5, 0, 0.5],
+            margin: [0, 0, 0, 0],
+            text: `${section.features.length} Features`,
+            fontSize: 14,
+            color: new pc.Color(1, 1, 1, 0.8),
+            fontAsset: this.app.assets.find('arial') || null,
+            textAlign: pc.TEXTALIGN_LEFT
+        });
+        card.addChild(featureCount);
+
+        // Quick feature preview
+        const preview = new pc.Entity('Preview');
+        preview.addComponent('element', {
+            type: pc.ELEMENTTYPE_TEXT,
+            anchor: [0.1, 0.2, 0.9, 0.5],
+            pivot: [0, 0.5, 0, 0.5],
+            margin: [0, 0, 0, 0],
+            text: section.features.slice(0, 2).map(f => f.title).join(' • '),
+            fontSize: 12,
+            color: new pc.Color(1, 1, 1, 0.6),
+            fontAsset: this.app.assets.find('arial') || null,
+            textAlign: pc.TEXTALIGN_LEFT
+        });
+        card.addChild(preview);
+
+        // Add click handler
+        card.addComponent('script');
+        card.script.create('buttonHandler', {
+            attributes: {
+                sectionId: section.id
+            }
+        });
+
+        // Add hover effects
+        this.addHoverEffects(card);
     }
 
     private createTitle(container: pc.Entity): void {
@@ -347,28 +613,39 @@ export class FeatureShowcaseUI {
         const characterContainer = new pc.Entity('CharacterShowcase');
         characterContainer.addComponent('element', {
             type: pc.ELEMENTTYPE_GROUP,
-            anchor: [0, 0.1, 1, 0.35],
-            pivot: [0.5, 0.5, 0.5, 0.5],
+            anchor: [0.05, 0.05, 0.95, 0.2],
+            pivot: [0, 0, 0, 0],
             margin: [0, 0, 0, 0]
         });
         container.addChild(characterContainer);
+
+        // Character showcase background
+        const background = new pc.Entity('CharacterBackground');
+        background.addComponent('element', {
+            type: pc.ELEMENTTYPE_IMAGE,
+            anchor: [0, 0, 1, 1],
+            pivot: [0, 0, 0, 0],
+            margin: [0, 0, 0, 0],
+            color: new pc.Color(0.1, 0.1, 0.2, 0.8)
+        });
+        characterContainer.addChild(background);
 
         // Character showcase title
         const title = new pc.Entity('CharacterTitle');
         title.addComponent('element', {
             type: pc.ELEMENTTYPE_TEXT,
-            anchor: [0, 0.8, 1, 1],
+            anchor: [0, 0.7, 1, 1],
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0],
-            text: '30 Unique Character Archetypes',
-            fontSize: 24,
+            text: '30 UNIQUE CHARACTER ARCHETYPES',
+            fontSize: 20,
             color: new pc.Color(1, 0.4, 0.2, 1),
             fontAsset: this.app.assets.find('arial') || null,
             textAlign: pc.TEXTALIGN_CENTER
         });
         characterContainer.addChild(title);
 
-        // Character grid
+        // Character grid (compact)
         this.createCharacterGrid(characterContainer);
     }
 
@@ -387,7 +664,7 @@ export class FeatureShowcaseUI {
 
         characters.forEach((char, index) => {
             const x = (index + 0.5) / cols;
-            const y = 0.5;
+            const y = 0.3;
 
             this.createCharacterCard(container, char, x, y);
         });
@@ -397,7 +674,7 @@ export class FeatureShowcaseUI {
         const card = new pc.Entity(`CharacterCard_${character.name}`);
         card.addComponent('element', {
             type: pc.ELEMENTTYPE_GROUP,
-            anchor: [x - 0.08, y - 0.3, x + 0.08, y + 0.3],
+            anchor: [x - 0.08, y - 0.2, x + 0.08, y + 0.2],
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0]
         });
@@ -411,7 +688,7 @@ export class FeatureShowcaseUI {
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0],
             text: character.icon,
-            fontSize: 24,
+            fontSize: 20,
             color: new pc.Color(1, 0.4, 0.2, 1),
             fontAsset: this.app.assets.find('arial') || null,
             textAlign: pc.TEXTALIGN_CENTER
@@ -422,11 +699,11 @@ export class FeatureShowcaseUI {
         const name = new pc.Entity('Name');
         name.addComponent('element', {
             type: pc.ELEMENTTYPE_TEXT,
-            anchor: [0, 0.4, 1, 0.6],
+            anchor: [0, 0.3, 1, 0.6],
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0],
             text: character.name,
-            fontSize: 14,
+            fontSize: 12,
             color: new pc.Color(1, 0.4, 0.2, 1),
             fontAsset: this.app.assets.find('arial') || null,
             textAlign: pc.TEXTALIGN_CENTER
@@ -437,11 +714,11 @@ export class FeatureShowcaseUI {
         const archetypeCount = new pc.Entity('ArchetypeCount');
         archetypeCount.addComponent('element', {
             type: pc.ELEMENTTYPE_TEXT,
-            anchor: [0, 0.2, 1, 0.4],
+            anchor: [0, 0, 1, 0.3],
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0],
             text: `${character.archetypes.length} Variants`,
-            fontSize: 10,
+            fontSize: 8,
             color: new pc.Color(1, 1, 1, 0.7),
             fontAsset: this.app.assets.find('arial') || null,
             textAlign: pc.TEXTALIGN_CENTER
