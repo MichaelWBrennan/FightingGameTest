@@ -52,31 +52,50 @@ export class NextGenRenderer {
       layout(location = 0) in vec3 position;
       layout(location = 1) in vec3 normal;
       layout(location = 2) in vec2 texCoord;
+      layout(location = 3) in vec3 tangent;
+      layout(location = 4) in vec3 bitangent;
       
       uniform mat4 modelMatrix;
       uniform mat4 viewMatrix;
       uniform mat4 projectionMatrix;
       uniform vec3 cameraPosition;
+      uniform float time;
       
       out vec3 worldPosition;
       out vec3 worldNormal;
+      out vec3 worldTangent;
+      out vec3 worldBitangent;
       out vec2 uv;
+      out vec3 viewDirection;
       
       void main() {
         worldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
         worldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+        worldTangent = normalize((modelMatrix * vec4(tangent, 0.0)).xyz);
+        worldBitangent = normalize((modelMatrix * vec4(bitangent, 0.0)).xyz);
         uv = texCoord;
+        viewDirection = normalize(cameraPosition - worldPosition);
         
         gl_Position = projectionMatrix * viewMatrix * vec4(worldPosition, 1.0);
       }
     `;
     
-    // Ray Tracing Pipeline
+    // Advanced Ray Tracing Pipeline
     this.renderPipeline = {
       rayTracing: true,
-      maxBounces: 8,
-      samplesPerPixel: 64,
-      denoising: true
+      maxBounces: 16,
+      samplesPerPixel: 128,
+      denoising: true,
+      temporalAccumulation: true,
+      adaptiveSampling: true,
+      globalIllumination: true,
+      caustics: true,
+      subsurfaceScattering: true,
+      volumetricLighting: true,
+      hairRendering: true,
+      clothRendering: true,
+      skinRendering: true,
+      eyeRendering: true
     };
   }
 

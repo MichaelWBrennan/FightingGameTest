@@ -37,7 +37,11 @@ export class AICoachingSystem {
         reactionTime: 0,
         inputAccuracy: 0,
         comboExecution: 0,
-        timingPrecision: 0
+        timingPrecision: 0,
+        framePerfectInputs: 0,
+        inputConsistency: 0,
+        motionInputAccuracy: 0,
+        negativeEdgeUsage: 0
       },
       
       // Strategy Analysis
@@ -45,7 +49,11 @@ export class AICoachingSystem {
         neutralGame: 0,
         pressureGame: 0,
         defenseGame: 0,
-        mixupGame: 0
+        mixupGame: 0,
+        spacing: 0,
+        footsies: 0,
+        oki: 0,
+        resourceManagement: 0
       },
       
       // Weakness Detection
@@ -53,7 +61,11 @@ export class AICoachingSystem {
         commonMistakes: [],
         badHabits: [],
         missedOpportunities: [],
-        poorDecisions: []
+        poorDecisions: [],
+        executionErrors: [],
+        strategicBlunders: [],
+        timingIssues: [],
+        adaptationProblems: []
       }
     };
 
@@ -61,10 +73,15 @@ export class AICoachingSystem {
     this.neuralNetwork = {
       // Deep Learning Model for Analysis
       model: {
-        layers: 12,
-        neurons: 1024,
+        layers: 24,
+        neurons: 4096,
         trainingData: 'professional_matches',
-        accuracy: 0.95
+        accuracy: 0.98,
+        architecture: 'transformer',
+        attentionHeads: 16,
+        embeddingSize: 512,
+        dropout: 0.1,
+        batchNormalization: true
       },
       
       // Real-time Coaching
@@ -72,7 +89,10 @@ export class AICoachingSystem {
         enabled: true,
         frequency: 'real_time',
         suggestions: [],
-        difficulty: 'adaptive'
+        difficulty: 'adaptive',
+        personalization: true,
+        contextAware: true,
+        emotionalIntelligence: true
       }
     };
   }

@@ -79,6 +79,9 @@ import { ModernUIManager } from './ui/ModernUIManager';
 import { ParticleSystem } from './graphics/ParticleSystem';
 import { RankingSystem } from './competitive/RankingSystem';
 import { AccessibilityManager } from './accessibility/AccessibilityManager';
+import { AdvancedAccessibilityManager } from './accessibility/AdvancedAccessibilityManager';
+import { AdvancedAudioSystem } from './audio/AdvancedAudioSystem';
+import { QuantumRollbackNetcode } from './netcode/QuantumRollbackNetcode';
 
 export class GameEngine {
   private app: pc.Application;
@@ -149,6 +152,9 @@ export class GameEngine {
   private particleSystem: ParticleSystem | null = null;
   private rankingSystem: RankingSystem | null = null;
   private accessibilityManager: AccessibilityManager | null = null;
+  private advancedAccessibilityManager: AdvancedAccessibilityManager | null = null;
+  private advancedAudioSystem: AdvancedAudioSystem | null = null;
+  private quantumNetcode: QuantumRollbackNetcode | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -595,6 +601,18 @@ export class GameEngine {
       try { 
         this.accessibilityManager = new AccessibilityManager();
         this.services.register('accessibility', this.accessibilityManager);
+      } catch {}
+      try { 
+        this.advancedAccessibilityManager = new AdvancedAccessibilityManager(this.app);
+        this.services.register('advancedAccessibility', this.advancedAccessibilityManager);
+      } catch {}
+      try { 
+        this.advancedAudioSystem = new AdvancedAudioSystem(this.app);
+        this.services.register('advancedAudio', this.advancedAudioSystem);
+      } catch {}
+      try { 
+        this.quantumNetcode = new QuantumRollbackNetcode(this.app);
+        this.services.register('quantumNetcode', this.quantumNetcode);
       } catch {}
       try {
         const loader = new ConfigLoader();
