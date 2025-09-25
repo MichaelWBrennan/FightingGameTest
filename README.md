@@ -1,17 +1,76 @@
-# 🥊 Next-Generation Fighting Game Engine
+# 🥊 Street Fighter III: 3rd Strike PlayCanvas Edition
+## Browser-Based League of Legends for Fighting Games
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/your-repo/fighting-game)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-repo/fighting-game)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Web%20%7C%20PC%20%7C%20Mobile%20%7C%20Console-lightgrey.svg)](https://github.com/your-repo/fighting-game)
+[![Platform](https://img.shields.io/badge/platform-Browser%20%7C%20Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)](https://github.com/your-repo/fighting-game)
 [![Engine](https://img.shields.io/badge/engine-PlayCanvas-orange.svg)](https://playcanvas.com/)
+[![Ranking](https://img.shields.io/badge/ranking-Bayesian%20Anti--Toxic-green.svg)](https://github.com/your-repo/fighting-game)
 
-> **The most advanced fighting game engine ever created - setting the new industry standard for competitive gaming.**
+> **The most advanced browser-based fighting game ever created - combining League of Legends competitive features with cutting-edge fighting game technology.**
 
 ## 🌟 Overview
 
-This is a revolutionary fighting game engine that combines cutting-edge technology with industry-leading features to create the most comprehensive and advanced fighting game experience ever built. Built with PlayCanvas and TypeScript, it features next-generation graphics, AI-powered systems, blockchain integration, and cloud gaming capabilities.
+This is a revolutionary **browser-based fighting game** that combines the competitive depth of League of Legends with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads.
+
+### 🎯 **Key Innovations:**
+- **🌐 Browser-Based**: Play instantly in any modern browser - no downloads required
+- **👤 User Accounts**: Full account system with profiles, progress tracking, and cloud sync
+- **🧠 Bayesian Ranking**: Anti-toxic ranking system that replaces archaic MMR
+- **🏆 League-Style Competition**: 9-tier ranking system with seasons and rewards
+- **🎮 Advanced Training**: Frame data, hitbox visualization, and AI coaching
+- **📱 Cross-Platform**: Works on desktop, mobile, and tablet seamlessly
 
 ## ✨ Key Features
+
+### 🌐 **Browser-Based Gaming**
+- **Instant Play** - No downloads required, play in any modern browser
+- **Cross-Platform** - Works on desktop, mobile, and tablet seamlessly
+- **Progressive Loading** - Game loads in stages with progress indicators
+- **Cloud Sync** - Settings and progress sync across all devices
+- **Responsive Design** - UI adapts to any screen size automatically
+
+### 👤 **User Account System**
+- **Account Registration** - Email, social login, and guest accounts
+- **User Profiles** - Customizable avatars, bios, and statistics
+- **Progress Tracking** - Level, rank, achievements, and match history
+- **Settings Management** - Gameplay, graphics, audio, and accessibility
+- **Cloud Storage** - All data saved and synced automatically
+
+### 🧠 **Bayesian Anti-Toxic Ranking**
+- **Multi-Algorithm System** - Beta-Binomial, TrueSkill, and Glicko-2 working together
+- **Reliability Weighting** - Network quality, opponent strength, and match quality
+- **Anti-Toxic Measures** - Penalties for rage quitting, AFK, and toxic behavior
+- **Consistency Rewards** - Bonuses for consistent, positive play
+- **Confidence-Based Matchmaking** - Better matches through skill confidence
+
+### 🏆 **League-Style Competition**
+- **9 Competitive Tiers** - Iron, Bronze, Silver, Gold, Platinum, Diamond, Master, Grandmaster, Challenger
+- **LP System** - League Points with win/loss bonuses and streaks
+- **Promotion Series** - Best of 3 matches to rank up
+- **Seasonal System** - 6-month seasons with exclusive rewards
+- **Skill-Based Matchmaking** - Matched with similar skill and confidence players
+
+### 🎮 **Advanced Training Mode**
+- **Frame Data Display** - Real-time startup, active, and recovery frames
+- **Hitbox Visualization** - Visual hitboxes, hurtboxes, and throwboxes
+- **Combo Trials** - Beginner to advanced combo challenges with hints
+- **Recording System** - Record and analyze your gameplay
+- **AI Analysis** - Get detailed feedback on your performance
+
+### 📹 **Smart Replay System**
+- **Replay Recording** - Record matches with full input data
+- **Playback Controls** - Slow motion, frame step, reverse playback
+- **AI Analysis** - Get detailed feedback on your gameplay mistakes
+- **Sharing System** - Share replays with friends and community
+- **Learning Recommendations** - Personalized improvement tips
+
+### 👥 **Social Features**
+- **Live Spectating** - Watch other players' matches in real-time
+- **Coaching System** - Get coached by better players
+- **Guilds & Tournaments** - Join communities and compete
+- **Voice & Text Chat** - Communicate with other players
+- **Leaderboards** - See how you rank against others
 
 ### 🎮 **Core Gameplay**
 - **30 Unique Character Archetypes** with zero overlap across variants
@@ -55,12 +114,19 @@ This is a revolutionary fighting game engine that combines cutting-edge technolo
 - **Brain-Computer Interface** for thought-based control
 - **Adaptive UI** that learns user preferences and adapts to context
 
-### 🔗 **Blockchain Integration**
-- **Character & Cosmetic NFTs** with true ownership and trading
-- **Token Economy** with FightCoin and FightPower currencies
-- **Marketplace** for trading NFTs, tokens, and in-game assets
-- **Tournament Contracts** with automated prize distribution
-- **DeFi Integration** including yield farming and governance
+### ⚡ **Performance Optimization**
+- **Real-Time Monitoring** - See FPS, CPU, GPU usage in real-time
+- **Adaptive Quality** - Automatically adjusts graphics for smooth gameplay
+- **Network Optimization** - Reduces lag and improves connection
+- **Memory Management** - Prevents crashes and stuttering
+- **Battery Optimization** - Mobile-friendly power management
+
+### ♿ **Practical Accessibility**
+- **Colorblind Support** - Filters for different types of colorblindness
+- **Customizable Controls** - Remap any key or button
+- **Text Scaling** - Make text bigger and easier to read
+- **High Contrast** - Better visibility for low vision
+- **Audio Descriptions** - Audio cues for visual elements
 
 ### ☁️ **Cloud Gaming**
 - **Instant Play** with 1-second load times and progressive loading
@@ -92,12 +158,20 @@ This is a revolutionary fighting game engine that combines cutting-edge technolo
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 🌐 **Browser Play (Recommended)**
+1. **Visit the Website** - Go to [play.fightinggame.com](https://play.fightinggame.com)
+2. **Create Account** - Sign up with email or social login
+3. **Start Playing** - Click "Play Now" and begin your journey
+4. **No Download Required** - Everything runs in your browser!
+
+### 💻 **Development Setup**
+
+#### Prerequisites
 - Node.js 18+ 
 - npm or yarn
 - Modern web browser with WebGL 2.0 support
 
-### Installation
+#### Installation
 
 ```bash
 # Clone the repository
@@ -114,7 +188,7 @@ npm run dev
 npm run build
 ```
 
-### Basic Usage
+#### Basic Usage
 
 ```typescript
 import { GameEngine } from './src/core/GameEngine';
@@ -136,14 +210,21 @@ gameEngine.initialize().then(() => {
 ```
 src/core/
 ├── GameEngine.ts           # Main game engine orchestrator
+├── accounts/               # User account system
+├── competitive/            # Bayesian ranking and League-style competition
+├── training/               # Advanced training mode with frame data
+├── replay/                 # Smart replay system with AI analysis
+├── social/                 # Social features and community tools
+├── ui/                     # Browser-optimized UI system
+├── launcher/               # Browser game launcher
+├── performance/            # Performance optimization
+├── accessibility/          # Practical accessibility features
 ├── combat/                 # Combat system and mechanics
 ├── netcode/                # Quantum rollback netcode
 ├── graphics/               # Next-gen rendering pipeline
 ├── audio/                  # 3D spatial audio system
-├── ui/                     # Revolutionary UI/UX
 ├── ai/                     # AI coaching and matchmaking
 ├── physics/                # Advanced physics simulation
-├── blockchain/             # NFT and token integration
 ├── cloud/                  # Cloud gaming infrastructure
 ├── esports/                # Tournament and streaming platform
 ├── security/               # Anti-cheat and security
@@ -228,45 +309,62 @@ This project uses:
 
 ## 🎮 Game Modes
 
-### Core Modes
+### 🌐 **Browser Modes**
+- **Quick Play** - Jump into ranked, casual, or training instantly
+- **Account System** - Create account, track progress, sync across devices
+- **Social Features** - Friends, guilds, chat, and spectating
+- **Training Mode** - Frame data, hitbox visualization, and AI coaching
+- **Replay System** - Record, analyze, and share your matches
+
+### 🏆 **Competitive Modes**
+- **Ranked Match** - Bayesian anti-toxic ranking system
+- **Casual Match** - Unranked online play with skill-based matching
+- **Tournament** - League-style tournaments with automated brackets
+- **Lobby** - Private rooms with friends and custom rules
+- **Spectator** - Watch live matches with real-time commentary
+
+### 🎯 **Training Modes**
+- **Frame Data Training** - Learn exact frame data for every move
+- **Combo Trials** - Beginner to advanced combo challenges
+- **Hitbox Visualization** - See hitboxes, hurtboxes, and throwboxes
+- **AI Coaching** - Get personalized feedback and improvement tips
+- **Replay Analysis** - Analyze your matches with AI insights
+
+### 🎮 **Classic Modes**
 - **Story Mode** - Character campaigns with cutscenes
 - **Arcade Mode** - Classic arcade experience
 - **Versus Mode** - Local and online multiplayer
-- **Training Mode** - Practice with frame data and hitbox visualization
 - **Survival Mode** - Endless battles with increasing difficulty
-
-### Online Modes
-- **Ranked Match** - Competitive ranked play
-- **Casual Match** - Unranked online play
-- **Tournament** - Custom and official tournaments
-- **Lobby** - Private rooms with friends
-- **Spectator** - Watch live matches
-
-### Special Modes
-- **AI Training** - Practice against AI with customizable difficulty
-- **Replay Theater** - Watch and analyze recorded matches
-- **Combo Creator** - Design and share custom combos
-- **Character Creator** - Create custom character variants
 
 ## 🏆 Competitive Features
 
-### Ranking System
-- **8 Tiers**: Bronze, Silver, Gold, Platinum, Diamond, Master, Grandmaster, Legendary
-- **MMR System**: ELO-based rating with seasonal resets
+### 🧠 **Bayesian Anti-Toxic Ranking System**
+- **9 Tiers**: Iron, Bronze, Silver, Gold, Platinum, Diamond, Master, Grandmaster, Challenger
+- **Multi-Algorithm**: Beta-Binomial, TrueSkill, and Glicko-2 working together
+- **Reliability Weighting**: Network quality, opponent strength, match quality
+- **Anti-Toxic Measures**: Penalties for rage quitting, AFK, toxic behavior
+- **Confidence-Based Matchmaking**: Better matches through skill confidence
+
+### 🏆 **League-Style Competition**
+- **LP System**: League Points with win/loss bonuses and streaks
+- **Promotion Series**: Best of 3 matches to rank up
+- **Seasonal System**: 6-month seasons with exclusive rewards
 - **Regional Rankings**: Separate leaderboards by region
 - **Character Rankings**: Individual character performance tracking
 
-### Tournament System
-- **Tournament Types**: Single/Double Elimination, Round Robin, Swiss, Battle Royale
-- **Prize Pools**: Automated distribution with escrow
-- **Streaming Integration**: Multi-platform broadcasting
-- **Spectator Mode**: Watch live tournaments
-
-### Anti-Cheat
+### 🛡️ **Advanced Anti-Cheat**
 - **Behavioral Analysis**: ML-based cheat detection
 - **Statistical Analysis**: Performance pattern analysis
 - **Client Validation**: Memory and process monitoring
 - **Server Validation**: Physics and input validation
+- **Real-Time Monitoring**: Continuous behavior analysis
+
+### 🏅 **Tournament System**
+- **Tournament Types**: Single/Double Elimination, Round Robin, Swiss, Battle Royale
+- **Prize Pools**: Automated distribution with escrow
+- **Streaming Integration**: Multi-platform broadcasting
+- **Spectator Mode**: Watch live tournaments
+- **AI Tournament Management**: Automated bracket generation and management
 
 ## 🔧 Configuration
 
@@ -326,28 +424,31 @@ const inputSettings = {
 
 ## 🌍 Platform Support
 
-### Web Browsers
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
+### 🌐 **Web Browsers (Primary)**
+- **Chrome 90+** - Full feature support
+- **Firefox 88+** - Full feature support
+- **Safari 14+** - Full feature support
+- **Edge 90+** - Full feature support
+- **Mobile Browsers** - iOS Safari, Android Chrome
 
-### Mobile Devices
-- iOS 14+ (Safari)
-- Android 8+ (Chrome)
-- Responsive touch controls
-- Battery optimization
+### 📱 **Mobile Devices**
+- **iOS 14+** - Safari with touch controls
+- **Android 8+** - Chrome with touch controls
+- **Responsive Design** - UI adapts to any screen size
+- **Battery Optimization** - Mobile-friendly power management
+- **Touch Controls** - Gesture-based input system
 
-### Desktop Platforms
-- Windows 10+
-- macOS 10.15+
-- Linux (Ubuntu 20.04+)
+### 💻 **Desktop Platforms**
+- **Windows 10+** - Full desktop support
+- **macOS 10.15+** - Full desktop support
+- **Linux (Ubuntu 20.04+)** - Full desktop support
+- **Cross-Platform** - Play on any device, sync everywhere
 
-### Cloud Gaming
-- AWS GameLift
-- Microsoft Azure
-- Google Cloud Platform
-- Custom cloud providers
+### ☁️ **Cloud Gaming**
+- **AWS GameLift** - Scalable game hosting
+- **Microsoft Azure** - Global edge computing
+- **Google Cloud Platform** - Multi-region support
+- **Edge Computing** - Ultra-low latency processing
 
 ## 🤝 Contributing
 
@@ -387,26 +488,61 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🗺️ Roadmap
 
-### Version 1.1 (Q2 2024)
-- [ ] Additional character archetypes
-- [ ] New game modes
-- [ ] Enhanced AI features
-- [ ] Mobile app release
+### Version 2.1 (Q2 2024)
+- [x] **Bayesian Anti-Toxic Ranking System** - Replaces archaic MMR
+- [x] **User Account System** - Full account management and cloud sync
+- [x] **Browser-Based Gaming** - Instant play in any modern browser
+- [x] **League-Style Competition** - 9-tier ranking with seasons
+- [x] **Advanced Training Mode** - Frame data and hitbox visualization
+- [x] **Smart Replay System** - AI-powered match analysis
+- [x] **Social Features** - Friends, guilds, spectating, and coaching
+- [x] **Performance Optimization** - Real-time monitoring and adaptive quality
+- [x] **Practical Accessibility** - Colorblind support, customizable controls
 
-### Version 1.2 (Q3 2024)
-- [ ] VR/AR support
-- [ ] Advanced customization
-- [ ] Social features
-- [ ] Mod support
+### Version 2.2 (Q3 2024)
+- [ ] **Additional Character Archetypes** - Expand roster to 50+ characters
+- [ ] **Enhanced AI Coaching** - More detailed performance analysis
+- [ ] **Advanced Tournament System** - Automated brackets and prize distribution
+- [ ] **Mobile App** - Native mobile app with full feature parity
+- [ ] **Voice Chat Integration** - In-game voice communication
 
-### Version 2.0 (Q4 2024)
-- [ ] New engine features
-- [ ] Expanded roster
-- [ ] Advanced tournaments
-- [ ] Console releases
+### Version 3.0 (Q4 2024)
+- [ ] **VR/AR Support** - Virtual reality fighting game experience
+- [ ] **Advanced Customization** - Character creator and mod support
+- [ ] **Cross-Platform Play** - Play with friends on any device
+- [ ] **Console Releases** - PlayStation, Xbox, and Nintendo Switch
+- [ ] **Esports Platform** - Professional tournament management system
+
+---
+
+## 🎉 **What Makes This Special?**
+
+### **🌐 Browser-First Design**
+- **No Downloads** - Play instantly in any modern browser
+- **Cross-Platform** - Same experience on desktop, mobile, and tablet
+- **Cloud Sync** - Your progress follows you everywhere
+- **Instant Updates** - New features appear automatically
+
+### **🧠 Revolutionary Ranking System**
+- **Anti-Toxic** - Rewards good behavior, penalizes toxic play
+- **Confidence-Based** - Better matches through skill confidence
+- **Multi-Algorithm** - Uses 3 different algorithms for accuracy
+- **Fair & Balanced** - No more unfair MMR swings
+
+### **🏆 League of Legends for Fighting Games**
+- **9 Competitive Tiers** - From Iron to Challenger
+- **Seasonal Rewards** - Exclusive skins, titles, and rewards
+- **Promotion Series** - Earn your rank through skill
+- **LP System** - League Points with win/loss bonuses
+
+### **🎮 Advanced Training Tools**
+- **Frame Data** - Learn exact timing for every move
+- **Hitbox Visualization** - See exactly where attacks hit
+- **AI Coaching** - Get personalized improvement tips
+- **Replay Analysis** - Study your matches with AI insights
 
 ---
 
 **Built with ❤️ by the Fighting Game Team**
 
-*Setting the new standard for competitive gaming.*
+*The future of competitive fighting games is here - and it's in your browser!* 🌐🥊✨

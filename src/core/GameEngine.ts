@@ -79,6 +79,23 @@ import { ModernUIManager } from './ui/ModernUIManager';
 import { ParticleSystem } from './graphics/ParticleSystem';
 import { RankingSystem } from './competitive/RankingSystem';
 import { AccessibilityManager } from './accessibility/AccessibilityManager';
+import { AdvancedAccessibilityManager } from './accessibility/AdvancedAccessibilityManager';
+import { AdvancedAudioSystem } from './audio/AdvancedAudioSystem';
+import { QuantumRollbackNetcode } from './netcode/QuantumRollbackNetcode';
+import { AdvancedAntiCheatSystem } from './security/AdvancedAntiCheatSystem';
+import { AdvancedMobileOptimizer } from './mobile/AdvancedMobileOptimizer';
+import { AdvancedEsportsPlatform } from './esports/AdvancedEsportsPlatform';
+import { NeuralInterfaceSystem } from './neural/NeuralInterfaceSystem';
+import { AdvancedTrainingMode } from './training/AdvancedTrainingMode';
+import { SmartReplaySystem } from './replay/SmartReplaySystem';
+import { SocialFeatures } from './social/SocialFeatures';
+import { PerformanceOptimizer } from './performance/PerformanceOptimizer';
+import { PracticalAccessibility } from './accessibility/PracticalAccessibility';
+import { UserAccountSystem } from './accounts/UserAccountSystem';
+import { LeagueRankingSystem } from './competitive/LeagueRankingSystem';
+import { BayesianRankingSystem } from './competitive/BayesianRankingSystem';
+import { BrowserUISystem } from './ui/BrowserUISystem';
+import { BrowserGameLauncher } from '../launcher/BrowserGameLauncher';
 
 export class GameEngine {
   private app: pc.Application;
@@ -149,6 +166,23 @@ export class GameEngine {
   private particleSystem: ParticleSystem | null = null;
   private rankingSystem: RankingSystem | null = null;
   private accessibilityManager: AccessibilityManager | null = null;
+  private advancedAccessibilityManager: AdvancedAccessibilityManager | null = null;
+  private advancedAudioSystem: AdvancedAudioSystem | null = null;
+  private quantumNetcode: QuantumRollbackNetcode | null = null;
+  private advancedAntiCheat: AdvancedAntiCheatSystem | null = null;
+  private advancedMobileOptimizer: AdvancedMobileOptimizer | null = null;
+  private advancedEsportsPlatform: AdvancedEsportsPlatform | null = null;
+  private neuralInterfaceSystem: NeuralInterfaceSystem | null = null;
+  private advancedTrainingMode: AdvancedTrainingMode | null = null;
+  private smartReplaySystem: SmartReplaySystem | null = null;
+  private socialFeatures: SocialFeatures | null = null;
+  private performanceOptimizer: PerformanceOptimizer | null = null;
+  private practicalAccessibility: PracticalAccessibility | null = null;
+  private userAccountSystem: UserAccountSystem | null = null;
+  private leagueRankingSystem: LeagueRankingSystem | null = null;
+  private bayesianRankingSystem: BayesianRankingSystem | null = null;
+  private browserUISystem: BrowserUISystem | null = null;
+  private browserGameLauncher: BrowserGameLauncher | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -595,6 +629,74 @@ export class GameEngine {
       try { 
         this.accessibilityManager = new AccessibilityManager();
         this.services.register('accessibility', this.accessibilityManager);
+      } catch {}
+      try { 
+        this.advancedAccessibilityManager = new AdvancedAccessibilityManager(this.app);
+        this.services.register('advancedAccessibility', this.advancedAccessibilityManager);
+      } catch {}
+      try { 
+        this.advancedAudioSystem = new AdvancedAudioSystem(this.app);
+        this.services.register('advancedAudio', this.advancedAudioSystem);
+      } catch {}
+      try { 
+        this.quantumNetcode = new QuantumRollbackNetcode(this.app);
+        this.services.register('quantumNetcode', this.quantumNetcode);
+      } catch {}
+      try { 
+        this.advancedAntiCheat = new AdvancedAntiCheatSystem(this.app);
+        this.services.register('advancedAntiCheat', this.advancedAntiCheat);
+      } catch {}
+      try { 
+        this.advancedMobileOptimizer = new AdvancedMobileOptimizer(this.app);
+        this.services.register('advancedMobileOptimizer', this.advancedMobileOptimizer);
+      } catch {}
+      try { 
+        this.advancedEsportsPlatform = new AdvancedEsportsPlatform(this.app);
+        this.services.register('advancedEsportsPlatform', this.advancedEsportsPlatform);
+      } catch {}
+      try { 
+        this.neuralInterfaceSystem = new NeuralInterfaceSystem(this.app);
+        this.services.register('neuralInterfaceSystem', this.neuralInterfaceSystem);
+      } catch {}
+      try { 
+        this.advancedTrainingMode = new AdvancedTrainingMode(this.app);
+        this.services.register('advancedTrainingMode', this.advancedTrainingMode);
+      } catch {}
+      try { 
+        this.smartReplaySystem = new SmartReplaySystem(this.app);
+        this.services.register('smartReplaySystem', this.smartReplaySystem);
+      } catch {}
+      try { 
+        this.socialFeatures = new SocialFeatures(this.app);
+        this.services.register('socialFeatures', this.socialFeatures);
+      } catch {}
+      try { 
+        this.performanceOptimizer = new PerformanceOptimizer(this.app);
+        this.services.register('performanceOptimizer', this.performanceOptimizer);
+      } catch {}
+      try { 
+        this.practicalAccessibility = new PracticalAccessibility(this.app);
+        this.services.register('practicalAccessibility', this.practicalAccessibility);
+      } catch {}
+      try { 
+        this.userAccountSystem = new UserAccountSystem(this.app);
+        this.services.register('userAccountSystem', this.userAccountSystem);
+      } catch {}
+      try { 
+        this.leagueRankingSystem = new LeagueRankingSystem(this.app);
+        this.services.register('leagueRankingSystem', this.leagueRankingSystem);
+      } catch {}
+      try { 
+        this.bayesianRankingSystem = new BayesianRankingSystem(this.app);
+        this.services.register('bayesianRankingSystem', this.bayesianRankingSystem);
+      } catch {}
+      try { 
+        this.browserUISystem = new BrowserUISystem(this.app);
+        this.services.register('browserUISystem', this.browserUISystem);
+      } catch {}
+      try { 
+        this.browserGameLauncher = new BrowserGameLauncher(this.app);
+        this.services.register('browserGameLauncher', this.browserGameLauncher);
       } catch {}
       try {
         const loader = new ConfigLoader();

@@ -85,16 +85,26 @@ export class CloudGamingSystem {
       // Video Streaming
       videoStreaming: {
         codec: 'H.265/HEVC',
-        resolution: '4K',
-        framerate: 60,
-        bitrate: 50000, // kbps
-        latency: 16, // ms
+        resolution: '8K',
+        framerate: 120,
+        bitrate: 100000, // kbps
+        latency: 8, // ms
         adaptiveBitrate: true,
         qualityLevels: [
-          { resolution: '1080p', bitrate: 15000, latency: 20 },
-          { resolution: '1440p', bitrate: 25000, latency: 18 },
-          { resolution: '4K', bitrate: 50000, latency: 16 }
-        ]
+          { resolution: '720p', bitrate: 8000, latency: 12, fps: 60 },
+          { resolution: '1080p', bitrate: 15000, latency: 10, fps: 60 },
+          { resolution: '1440p', bitrate: 25000, latency: 8, fps: 90 },
+          { resolution: '4K', bitrate: 50000, latency: 6, fps: 120 },
+          { resolution: '8K', bitrate: 100000, latency: 4, fps: 120 }
+        ],
+        advancedFeatures: {
+          vp9: true,
+          av1: true,
+          dlss: true,
+          fsr: true,
+          temporalUpscaling: true,
+          neuralUpscaling: true
+        }
       },
       
       // Audio Streaming
