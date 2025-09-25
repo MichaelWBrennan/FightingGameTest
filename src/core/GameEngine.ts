@@ -96,6 +96,8 @@ import { LeagueRankingSystem } from './competitive/LeagueRankingSystem';
 import { BayesianRankingSystem } from './competitive/BayesianRankingSystem';
 import { BrowserUISystem } from './ui/BrowserUISystem';
 import { BrowserGameLauncher } from '../launcher/BrowserGameLauncher';
+import { MainMenuUI } from './ui/MainMenuUI';
+import { FeatureShowcaseUI } from './ui/FeatureShowcaseUI';
 
 export class GameEngine {
   private app: pc.Application;
@@ -183,6 +185,8 @@ export class GameEngine {
   private bayesianRankingSystem: BayesianRankingSystem | null = null;
   private browserUISystem: BrowserUISystem | null = null;
   private browserGameLauncher: BrowserGameLauncher | null = null;
+  private mainMenuUI: MainMenuUI | null = null;
+  private featureShowcaseUI: FeatureShowcaseUI | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -481,6 +485,13 @@ export class GameEngine {
       LoadingOverlay.beginTask('boot_state', 'Booting', 1);
       await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
       LoadingOverlay.endTask('boot_state', true);
+
+      // Show main menu after boot
+      setTimeout(() => {
+        if (this.mainMenuUI) {
+          this.mainMenuUI.show();
+        }
+      }, 1000);
       LoadingOverlay.beginTask('finalize', 'Finalizing', 1);
 
       // Wire main update loop
@@ -697,6 +708,14 @@ export class GameEngine {
       try { 
         this.browserGameLauncher = new BrowserGameLauncher(this.app);
         this.services.register('browserGameLauncher', this.browserGameLauncher);
+      } catch {}
+      try { 
+        this.mainMenuUI = new MainMenuUI(this.app);
+        this.services.register('mainMenuUI', this.mainMenuUI);
+      } catch {}
+      try { 
+        this.featureShowcaseUI = new FeatureShowcaseUI(this.app);
+        this.services.register('featureShowcaseUI', this.featureShowcaseUI);
       } catch {}
       try {
         const loader = new ConfigLoader();
