@@ -7,12 +7,12 @@
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import type { DatabaseManager } from '../database/DatabaseManager';
-import { Logger } from '../utils/Logger';
+import type { DatabaseManager } from '../../progression/src/database/DatabaseManager';
+import { Logger } from '../../../core/utils/Logger';
 import type { User, CreateUserData, LoginCredentials } from '../types/User';
 import type { AuthToken, TokenPayload } from '../types/Auth';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 export class AuthService {
   private db: DatabaseManager;

@@ -39,12 +39,12 @@ import { masteryRoutes } from './routes/mastery';
 import { objectiveRoutes } from './routes/objectives';
 import { rewardRoutes } from './routes/rewards';
 import { DatabaseManager } from './database/DatabaseManager';
-import { Logger } from './utils/Logger';
+import { Logger } from '../../core/utils/Logger';
 import { ProgressionEngine } from './services/ProgressionEngine';
 import { ObjectiveManager } from './services/ObjectiveManager';
 import { RewardManager } from './services/RewardManager';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 // Environment configuration
 const config = {
@@ -182,7 +182,7 @@ async function buildServer() {
         request.user = user;
 
       } catch (error) {
-        logger.error('Auth validation failed:', error);
+        Logger.error('Auth validation failed:', error);
         reply.status(401).send({ error: 'Authentication failed' });
         return;
       }
@@ -225,7 +225,7 @@ async function buildServer() {
 
     // Global error handler
     fastify.setErrorHandler(async (error, request, reply) => {
-      logger.error('Request error:', {
+      Logger.error('Request error:', {
         error: error.message,
         stack: error.stack,
         url: request.url,
@@ -248,15 +248,15 @@ async function buildServer() {
 
     // Graceful shutdown
     const gracefulShutdown = async (signal: string) => {
-      logger.info(`Received ${signal}, shutting down gracefully`);
+      Logger.info(`Received ${signal}, shutting down gracefully`);
       
       try {
         await fastify.close();
         await db.close();
-        logger.info('Server closed successfully');
+        Logger.info('Server closed successfully');
         process.exit(0);
       } catch (error) {
-        logger.error('Error during shutdown:', error);
+        Logger.error('Error during shutdown:', error);
         process.exit(1);
       }
     };
@@ -267,7 +267,7 @@ async function buildServer() {
     return fastify;
 
   } catch (error) {
-    logger.error('Failed to build server:', error);
+    Logger.error('Failed to build server:', error);
     throw error;
   }
 }
@@ -281,12 +281,12 @@ async function start() {
       host: config.host
     });
 
-    logger.info(`Progression service started on ${config.host}:${config.port}`);
-    logger.info(`API documentation available at http://${config.host}:${config.port}/docs`);
-    logger.info(`Health check available at http://${config.host}:${config.port}/health`);
+    Logger.info(`Progression service started on ${config.host}:${config.port}`);
+    Logger.info(`API documentation available at http://${config.host}:${config.port}/docs`);
+    Logger.info(`Health check available at http://${config.host}:${config.port}/health`);
 
   } catch (error) {
-    logger.error('Failed to start server:', error);
+    Logger.error('Failed to start server:', error);
     process.exit(1);
   }
 }

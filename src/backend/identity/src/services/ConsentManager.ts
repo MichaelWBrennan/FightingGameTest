@@ -5,12 +5,12 @@
  * Implements data minimization and opt-in telemetry by design.
  */
 
-import type { DatabaseManager } from '../database/DatabaseManager';
-import { Logger } from '../utils/Logger';
+import type { DatabaseManager } from '../../progression/src/database/DatabaseManager';
+import { Logger } from '../../../core/utils/Logger';
 import type { ConsentRecord, ConsentType, ConsentStatus } from '../types/Consent';
 import type { CommunicationPreferences } from '../types/User';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 export class ConsentManager {
   private db: DatabaseManager;

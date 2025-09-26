@@ -6,11 +6,11 @@
  * Provides transparent risk explanations and respectful intervention strategies.
  */
 
-import type { DatabaseManager } from '../database/DatabaseManager';
+import type { DatabaseManager } from '../../progression/src/database/DatabaseManager';
 import type { ClickHouseManager } from '../database/ClickHouseManager';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../../../core/utils/Logger';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 export interface ChurnRiskScore {
   userId: string;

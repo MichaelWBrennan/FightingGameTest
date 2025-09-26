@@ -4,9 +4,9 @@
 
 import type { PoolClient, QueryResult } from 'pg';
 import { Pool } from 'pg';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../../../core/utils/Logger';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 export interface DatabaseConfig {
   host: string;
@@ -47,10 +47,10 @@ export class DatabaseManager {
       await client.query('SELECT NOW()');
       client.release();
 
-      logger.info('Database connected successfully');
+      Logger.info('Database connected successfully');
 
     } catch (error) {
-      logger.error('Database connection failed:', error);
+      Logger.error('Database connection failed:', error);
       throw error;
     }
   }
@@ -105,7 +105,7 @@ export class DatabaseManager {
     if (this.pool) {
       await this.pool.end();
       this.pool = null;
-      logger.info('Database connection closed');
+      Logger.info('Database connection closed');
     }
   }
 }

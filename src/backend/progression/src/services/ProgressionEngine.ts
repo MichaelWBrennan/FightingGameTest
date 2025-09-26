@@ -6,11 +6,11 @@
  */
 
 import type { DatabaseManager } from '../database/DatabaseManager';
-import { Logger } from '../utils/Logger';
+import { Logger } from '../../../core/utils/Logger';
 import type { XPGrantRequest, MasteryState, XPSource, PerformanceTier } from '../types/Progression';
 import type { RewardGrant } from '../types/Rewards';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 export class ProgressionEngine {
   private db: DatabaseManager;

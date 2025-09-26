@@ -37,13 +37,13 @@ import swaggerUi from '@fastify/swagger-ui';
 import { authRoutes } from './routes/auth';
 import { userRoutes } from './routes/users';
 import { consentRoutes } from './routes/consent';
-import { DatabaseManager } from './database/DatabaseManager';
-import { Logger } from './utils/Logger';
+import { DatabaseManager } from '../progression/src/database/DatabaseManager';
+import { Logger } from '../../core/utils/Logger';
 import { ConsentManager } from './services/ConsentManager';
 import { AuthService } from './services/AuthService';
 import { UserService } from './services/UserService';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 // Environment configuration
 const config = {
