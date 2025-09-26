@@ -72,13 +72,24 @@ This is a revolutionary **dark fantasy fighting game** that combines magical com
 - **Voice & Text Chat** - Communicate with other players
 - **Leaderboards** - See how you rank against others
 
-### 🎮 **Core Gameplay**
+### 🎮 **EVO-Level Core Gameplay**
 - **12 Unique Fantasy Warriors** with distinct magical fighting styles
 - **Frame-Perfect Combat System** with 60 FPS deterministic gameplay
-- **Advanced Input System** supporting motion inputs, charge moves, and negative edge
+- **Advanced Input System** with frame-perfect precision, input buffering, and sequence detection
+- **Sophisticated Combo System** with damage scaling, proration, and reset mechanics
+- **Advanced Defense System** with parries, perfect blocks, and counter-attacks
 - **Precise Hitbox/Hurtbox Collision** with data-driven combo systems
 - **Real-Time Destruction Physics** with fracture patterns and debris simulation
 - **Magical Combat System** with spell casting, elemental effects, and mystical abilities
+
+### ⚡ **EVO-Level Advanced Mechanics**
+- **Roman Cancel System** - Red, Blue, Yellow, and Purple cancels with unique effects
+- **Burst System** - Combo-breaking escapes with punishment mechanics
+- **Advanced Movement** - Wave dashing, kara cancels, momentum transfer, wall techs
+- **Input Precision Tracking** - Real-time input quality analysis and consistency scoring
+- **Meter Management** - Multiple resource types with strategic decision-making
+- **Frame Data Visualization** - Hitbox/hurtbox display with startup, active, recovery frames
+- **Rollback Netcode** - Quantum rollback with AI prediction and sub-millisecond precision
 
 ### 🤖 **AI-Powered Features**
 - **AI Coaching System** with real-time performance analysis and personalized recommendations
