@@ -1,19 +1,19 @@
 {
-  "name": "sf3-3rd-strike-playcanvas",
+  "name": "fightforge-browser-fighting-game",
   "version": "2.0.0",
-  "description": "Street Fighter III: 3rd Strike - PlayCanvas Edition",
+  "description": "FightForge - Browser-Based Fighting Game",
   "main": "src/index.ts",
   "scripts": {
-    "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate",
-    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=SF3App --outfile=public/bundle.js --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate --minify --sourcemap=false --legal-comments=none --tree-shaking=true --drop:console --drop:debugger",
-    "build": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client",
-    "build:prod": "node -e \"require('ts-node/register');require('./tools/import_sf3_char_data.ts')\" && npm run build:client:prod",
+    "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=FightForgeApp --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate",
+    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=FightForgeApp --outfile=public/bundle.js --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate --minify --sourcemap=false --legal-comments=none --tree-shaking=true --drop:console --drop:debugger",
+    "build": "node -e \"require('ts-node/register');require('./tools/import_character_data.ts')\" && npm run build:client",
+    "build:prod": "node -e \"require('ts-node/register');require('./tools/import_character_data.ts')\" && npm run build:client:prod",
     "postbuild": "mkdir -p public/data public/assets && node -e \"require('ts-node/register');require('./tools/encrypt_assets.ts')\" && node -e \"require('ts-node/register');require('./tools/generate_manifest.ts')\"",
     "dev": "npm run build:client -- --watch",
     "start": "npm run build && npm run serve",
     "preview": "node -e \"require('ts-node/register');require('./tools/dev_server.ts')\"",
     "ci:check": "npm run lint && npm run typecheck && npm run build",
-    "import:sf3": "node ./tools/import_sf3_char_data.js && npm run build",
+    "import:characters": "node ./tools/import_character_data.js && npm run build",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
     "test": "jest",
     "lint": "eslint .",
@@ -67,13 +67,14 @@
     "prettier": "^3.3.3"
   },
   "keywords": [
-    "street-fighter",
     "fighting-game",
+    "browser-game",
     "playcanvas",
     "typescript",
-    "game-development"
+    "game-development",
+    "competitive-gaming"
   ],
-  "author": "SF3 Development Team",
+  "author": "FightForge Development Team",
   "license": "MIT",
   "engines": {
     "node": ">=20",

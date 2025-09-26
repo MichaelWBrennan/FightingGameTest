@@ -100,7 +100,7 @@ function main() {
   const moves = assignToMockMoveNames(triplets);
 
   // For now emit one synthesized character file from global table; later we could map per-character offsets.
-  const characterId = 'sf3_ground_truth_seed';
+  const characterId = 'fightforge_ground_truth_seed';
   const json = buildCharacterJson(characterId, moves);
   const outFile = path.join(outDir, `${characterId}.json`);
   fs.writeFileSync(outFile, JSON.stringify(json, null, 2));

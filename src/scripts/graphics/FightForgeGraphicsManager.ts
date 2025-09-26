@@ -1,5 +1,5 @@
 /**
- * SF3GraphicsManager - HD-2D Fighting Game Graphics System
+ * FightForgeGraphicsManager - HD-2D Fighting Game Graphics System
  * Implements fluid animation and visual style for 2D fighting games
  * Features: Hand-drawn animation feel, atmospheric palettes, fluid motion
  */
@@ -21,7 +21,7 @@ import {
 } from '../../../types/graphics';
 import { ShaderUtils } from '../../core/graphics/ShaderUtils';
 
-interface SF3GraphicsManagerState {
+interface FightForgeGraphicsManagerState {
     initialized: boolean;
     visualStyle: VisualStyle;
     animationSystem: AnimationSystem;
@@ -36,9 +36,9 @@ interface SF3GraphicsManagerState {
     frameBlendSpeed?: number;
 }
 
-export class SF3GraphicsManager implements ISystem {
+export class FightForgeGraphicsManager implements ISystem {
     private app: pc.Application;
-    private state: SF3GraphicsManagerState;
+    private state: FightForgeGraphicsManagerState;
 
     constructor(app: pc.Application) {
         this.app = app;
@@ -631,6 +631,6 @@ export class SF3GraphicsManager implements ISystem {
             });
         });
         
-        console.log('SF3GraphicsManager destroyed');
+        console.log('FightForgeGraphicsManager destroyed');
     }
 }

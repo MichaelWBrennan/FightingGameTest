@@ -1,23 +1,23 @@
-# 🥊 Street Fighter III: 3rd Strike PlayCanvas Edition
-## Browser-Based League of Legends for Fighting Games
+# 🥊 FightForge
+## Browser-Based Competitive Fighting Game
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-repo/fighting-game)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-repo/fightforge)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Browser%20%7C%20Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)](https://github.com/your-repo/fighting-game)
+[![Platform](https://img.shields.io/badge/platform-Browser%20%7C%20Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)](https://github.com/your-repo/fightforge)
 [![Engine](https://img.shields.io/badge/engine-PlayCanvas-orange.svg)](https://playcanvas.com/)
-[![Ranking](https://img.shields.io/badge/ranking-Bayesian%20Anti--Toxic-green.svg)](https://github.com/your-repo/fighting-game)
+[![Ranking](https://img.shields.io/badge/ranking-Bayesian%20Anti--Toxic-green.svg)](https://github.com/your-repo/fightforge)
 
-> **The most advanced browser-based fighting game ever created - combining League of Legends competitive features with cutting-edge fighting game technology.**
+> **The most advanced browser-based fighting game ever created - combining competitive features with cutting-edge fighting game technology.**
 
 ## 🌟 Overview
 
-This is a revolutionary **browser-based fighting game** that combines the competitive depth of League of Legends with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads.
+This is a revolutionary **browser-based fighting game** that combines competitive depth with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads.
 
 ### 🎯 **Key Innovations:**
 - **🌐 Browser-Based**: Play instantly in any modern browser - no downloads required
 - **👤 User Accounts**: Full account system with profiles, progress tracking, and cloud sync
 - **🧠 Bayesian Ranking**: Anti-toxic ranking system that replaces archaic MMR
-- **🏆 League-Style Competition**: 9-tier ranking system with seasons and rewards
+- **🏆 Competitive Ranking**: 9-tier ranking system with seasons and rewards
 - **🎮 Advanced Training**: Frame data, hitbox visualization, and AI coaching
 - **📱 Cross-Platform**: Works on desktop, mobile, and tablet seamlessly
 
@@ -44,7 +44,7 @@ This is a revolutionary **browser-based fighting game** that combines the compet
 - **Consistency Rewards** - Bonuses for consistent, positive play
 - **Confidence-Based Matchmaking** - Better matches through skill confidence
 
-### 🏆 **League-Style Competition**
+### 🏆 **Competitive Ranking System**
 - **9 Competitive Tiers** - Iron, Bronze, Silver, Gold, Platinum, Diamond, Master, Grandmaster, Challenger
 - **LP System** - League Points with win/loss bonuses and streaks
 - **Promotion Series** - Best of 3 matches to rank up
@@ -73,7 +73,7 @@ This is a revolutionary **browser-based fighting game** that combines the compet
 - **Leaderboards** - See how you rank against others
 
 ### 🎮 **Core Gameplay**
-- **30 Unique Character Archetypes** with zero overlap across variants
+- **12 Unique Character Archetypes** with distinct fighting styles
 - **Frame-Perfect Combat System** with 60 FPS deterministic gameplay
 - **Advanced Input System** supporting motion inputs, charge moves, and negative edge
 - **Precise Hitbox/Hurtbox Collision** with data-driven combo systems
@@ -233,27 +233,39 @@ src/core/
 
 ### Character System
 ```
-data/characters/
-├── ryu.json               # Shoto archetype with 5 variants
-├── zangief.json           # Grappler archetype with 5 variants
-├── cammy.json             # Rushdown archetype with 5 variants
-├── dhalsim.json           # Zoner archetype with 5 variants
-├── ibuki.json             # Mix-up archetype with 5 variants
-└── akuma.json             # Power archetype with 5 variants
+assets/data/characters/
+├── blitz.base.json        # Rushdown archetype
+├── chain.base.json        # Grappler archetype
+├── crusher.base.json      # Power archetype
+├── maestro.base.json      # Technical archetype
+├── ranger.base.json       # Zoner archetype
+├── shifter.base.json      # Mix-up archetype
+├── sky.base.json          # Aerial archetype
+├── titan.base.json        # Defensive archetype
+├── vanguard.base.json     # All-rounder archetype
+├── volt.base.json         # Electric archetype
+├── weaver.base.json       # Puppet archetype
+└── zephyr.base.json       # Speed archetype
 ```
 
 ## 🎯 Character Roster
 
-### 6 Characters × 5 Variants = 30 Unique Archetypes
+### 12 Unique Fighting Archetypes
 
-| Character | Variant 1 | Variant 2 | Variant 3 | Variant 4 | Variant 5 |
-|-----------|-----------|-----------|-----------|-----------|-----------|
-| **Ryu** | Shoto | Grappler | Zoner | Setplay | Vortex |
-| **Zangief** | Rushdown | Power | Defensive | Puppet | Turtle |
-| **Cammy** | Mix-up | Technical | Speed | Install | Pressure |
-| **Dhalsim** | Projectile | Teleport | Area Control | Stance | Counter |
-| **Ibuki** | Ninja | Glass Cannon | Execution | Resource | Rekka |
-| **Akuma** | Charge | Vortex | Turtle | Poke | Reset |
+| Character | Archetype | Fighting Style | Speciality |
+|-----------|-----------|----------------|------------|
+| **Blitz** | Rushdown | Lightning-fast strikes | Speed and pressure |
+| **Chain** | Grappler | Throws and holds | Close-range dominance |
+| **Crusher** | Power | Heavy-hitting attacks | Raw damage output |
+| **Maestro** | Technical | Precision-based combat | Frame-perfect execution |
+| **Ranger** | Zoner | Long-range control | Distance management |
+| **Shifter** | Mix-up | Unpredictable patterns | Mind games and setups |
+| **Sky** | Aerial | Air-based combat | Vertical mobility |
+| **Titan** | Defensive | Tank-style fighting | Damage absorption |
+| **Vanguard** | All-rounder | Balanced approach | Versatile toolkit |
+| **Volt** | Electric | Energy-based attacks | Electric effects |
+| **Weaver** | Puppet | Control-based combat | Multi-character control |
+| **Zephyr** | Speed | Wind-based movement | Agility and evasion |
 
 ## 🛠️ Development
 
@@ -345,7 +357,7 @@ This project uses:
 - **Anti-Toxic Measures**: Penalties for rage quitting, AFK, toxic behavior
 - **Confidence-Based Matchmaking**: Better matches through skill confidence
 
-### 🏆 **League-Style Competition**
+### 🏆 **Competitive Ranking System**
 - **LP System**: League Points with win/loss bonuses and streaks
 - **Promotion Series**: Best of 3 matches to rank up
 - **Seasonal System**: 6-month seasons with exclusive rewards
@@ -492,7 +504,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [x] **Bayesian Anti-Toxic Ranking System** - Replaces archaic MMR
 - [x] **User Account System** - Full account management and cloud sync
 - [x] **Browser-Based Gaming** - Instant play in any modern browser
-- [x] **League-Style Competition** - 9-tier ranking with seasons
+- [x] **Competitive Ranking System** - 9-tier ranking with seasons
 - [x] **Advanced Training Mode** - Frame data and hitbox visualization
 - [x] **Smart Replay System** - AI-powered match analysis
 - [x] **Social Features** - Friends, guilds, spectating, and coaching
@@ -529,7 +541,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Multi-Algorithm** - Uses 3 different algorithms for accuracy
 - **Fair & Balanced** - No more unfair MMR swings
 
-### **🏆 League of Legends for Fighting Games**
+### **🏆 Competitive Fighting Game Platform**
 - **9 Competitive Tiers** - From Iron to Challenger
 - **Seasonal Rewards** - Exclusive skins, titles, and rewards
 - **Promotion Series** - Earn your rank through skill
