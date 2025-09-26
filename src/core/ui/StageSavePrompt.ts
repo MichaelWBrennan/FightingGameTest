@@ -63,16 +63,27 @@ export class StageSavePrompt {
     });
     this.container.addChild(background);
 
-    // Create main panel
+    // Create main panel - unified dark theme
     const panel = new pc.Entity('Panel');
     panel.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0.5, 0.5, 0.5, 0.5],
       pivot: [0.5, 0.5],
       margin: [-300, -200, 300, 200],
-      color: new pc.Color(0.1, 0.1, 0.1, 0.95)
+      color: new pc.Color(0.2, 0.2, 0.2, 0.95)
     });
     this.container.addChild(panel);
+
+    // Panel border - subtle dark border
+    const panelBorder = new pc.Entity('PanelBorder');
+    panelBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.4, 0.4, 0.4, 0.8)
+    });
+    panel.addChild(panelBorder);
 
     // Create title
     const title = new pc.Entity('Title');
@@ -183,9 +194,20 @@ export class StageSavePrompt {
       anchor: [0.3, 0, 1, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.2, 0.2, 0.2, 1)
+      color: new pc.Color(0.15, 0.15, 0.15, 1)
     });
     input.addChild(inputField);
+
+    // Input field border
+    const inputBorder = new pc.Entity('InputBorder');
+    inputBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.3, 0.3, 0.3, 0.8)
+    });
+    inputField.addChild(inputBorder);
 
     const inputText = new pc.Entity('NameText');
     inputText.addComponent('element', {
@@ -231,9 +253,20 @@ export class StageSavePrompt {
       anchor: [0.3, 0, 1, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.2, 0.2, 0.2, 1)
+      color: new pc.Color(0.15, 0.15, 0.15, 1)
     });
     input.addChild(inputField);
+
+    // Input field border
+    const inputBorder = new pc.Entity('InputBorder');
+    inputBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.3, 0.3, 0.3, 0.8)
+    });
+    inputField.addChild(inputBorder);
 
     const inputText = new pc.Entity('DescriptionText');
     inputText.addComponent('element', {
@@ -279,9 +312,20 @@ export class StageSavePrompt {
       anchor: [0.3, 0, 1, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.2, 0.2, 0.2, 1)
+      color: new pc.Color(0.15, 0.15, 0.15, 1)
     });
     input.addChild(inputField);
+
+    // Input field border
+    const inputBorder = new pc.Entity('InputBorder');
+    inputBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.3, 0.3, 0.3, 0.8)
+    });
+    inputField.addChild(inputBorder);
 
     const inputText = new pc.Entity('TagsText');
     inputText.addComponent('element', {
@@ -308,16 +352,27 @@ export class StageSavePrompt {
       margin: [-250, -150, 250, -100]
     });
 
-    // Save button
+    // Save button - unified dark theme
     const saveButton = new pc.Entity('SaveButton');
     saveButton.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0, 0, 0.4, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.2, 0.6, 0.2, 1)
+      color: new pc.Color(0.2, 0.2, 0.2, 0.9)
     });
     buttons.addChild(saveButton);
+
+    // Save button border
+    const saveBorder = new pc.Entity('SaveBorder');
+    saveBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.2, 0.6, 0.2, 0.8)
+    });
+    saveButton.addChild(saveBorder);
 
     const saveText = new pc.Entity('SaveText');
     saveText.addComponent('element', {
@@ -332,16 +387,27 @@ export class StageSavePrompt {
     });
     saveButton.addChild(saveText);
 
-    // Cancel button
+    // Cancel button - unified dark theme
     const cancelButton = new pc.Entity('CancelButton');
     cancelButton.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0.6, 0, 1, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.6, 0.2, 0.2, 1)
+      color: new pc.Color(0.2, 0.2, 0.2, 0.9)
     });
     buttons.addChild(cancelButton);
+
+    // Cancel button border
+    const cancelBorder = new pc.Entity('CancelBorder');
+    cancelBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.6, 0.2, 0.2, 0.8)
+    });
+    cancelButton.addChild(cancelBorder);
 
     const cancelText = new pc.Entity('CancelText');
     cancelText.addComponent('element', {

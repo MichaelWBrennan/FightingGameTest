@@ -142,24 +142,35 @@ export class StageSelector {
       margin: [x - width/2, y - height/2, x + width/2, y + height/2]
     });
 
-    // Background
+    // Background - unified dark theme
     const background = new pc.Entity('Background');
     background.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0, 0, 1, 1],
       pivot: [0.5, 0.5],
-      margin: [5, 5, -5, -5],
-      color: new pc.Color(0.2, 0.2, 0.2, 1)
+      margin: [2, 2, -2, -2],
+      color: new pc.Color(0.2, 0.2, 0.2, 0.9)
     });
     item.addChild(background);
 
-    // Stage name
+    // Border - subtle dark border
+    const border = new pc.Entity('Border');
+    border.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.4, 0.4, 0.4, 0.8)
+    });
+    item.addChild(border);
+
+    // Stage name - prominent white text
     const nameText = new pc.Entity('Name');
     nameText.addComponent('element', {
       type: pc.ELEMENTTYPE_TEXT,
       anchor: [0, 0.7, 1, 1],
       pivot: [0.5, 0.5],
-      margin: [10, 0, -10, 0],
+      margin: [8, 0, -8, 0],
       text: stage.name,
       fontSize: 14,
       color: new pc.Color(1, 1, 1, 1),
@@ -167,59 +178,59 @@ export class StageSelector {
     });
     item.addChild(nameText);
 
-    // Stage description
+    // Stage description - smaller gray text
     const descText = new pc.Entity('Description');
     descText.addComponent('element', {
       type: pc.ELEMENTTYPE_TEXT,
       anchor: [0, 0.4, 1, 0.7],
       pivot: [0.5, 0.5],
-      margin: [10, 0, -10, 0],
-      text: stage.description.substring(0, 50) + '...',
+      margin: [8, 0, -8, 0],
+      text: stage.description.substring(0, 40) + '...',
       fontSize: 10,
-      color: new pc.Color(0.8, 0.8, 0.8, 1),
+      color: new pc.Color(0.7, 0.7, 0.7, 1),
       fontAsset: this.getFontAsset()
     });
     item.addChild(descText);
 
-    // Tags
+    // Tags - small info text
     const tagsText = new pc.Entity('Tags');
     tagsText.addComponent('element', {
       type: pc.ELEMENTTYPE_TEXT,
       anchor: [0, 0.1, 1, 0.4],
       pivot: [0.5, 0.5],
-      margin: [10, 0, -10, 0],
+      margin: [8, 0, -8, 0],
       text: stage.tags.slice(0, 3).join(', '),
       fontSize: 8,
-      color: new pc.Color(0.6, 0.6, 0.6, 1),
+      color: new pc.Color(0.5, 0.5, 0.5, 1),
       fontAsset: this.getFontAsset()
     });
     item.addChild(tagsText);
 
-    // Play count
+    // Play count - small info text
     const playCountText = new pc.Entity('PlayCount');
     playCountText.addComponent('element', {
       type: pc.ELEMENTTYPE_TEXT,
       anchor: [0, 0, 0.5, 0.1],
       pivot: [0, 0.5],
-      margin: [10, 0, 0, 0],
-      text: `Plays: ${stage.playCount}`,
+      margin: [8, 0, 0, 0],
+      text: `${stage.playCount} plays`,
       fontSize: 8,
-      color: new pc.Color(0.5, 0.5, 0.5, 1),
+      color: new pc.Color(0.4, 0.4, 0.4, 1),
       fontAsset: this.getFontAsset()
     });
     item.addChild(playCountText);
 
-    // Favorite indicator
+    // Favorite indicator - subtle star
     if (stage.isFavorite) {
       const favoriteIcon = new pc.Entity('Favorite');
       favoriteIcon.addComponent('element', {
         type: pc.ELEMENTTYPE_TEXT,
         anchor: [0.5, 0, 1, 0.1],
-        pivot: [0.5, 0.5],
-        margin: [0, 0, -10, 0],
+        pivot: [1, 0.5],
+        margin: [0, 0, -8, 0],
         text: '★',
-        fontSize: 12,
-        color: new pc.Color(1, 1, 0, 1),
+        fontSize: 10,
+        color: new pc.Color(1, 0.8, 0, 1),
         fontAsset: this.getFontAsset()
       });
       item.addChild(favoriteIcon);
@@ -258,16 +269,27 @@ export class StageSelector {
       margin: [-350, -250, 350, -200]
     });
 
-    // Select button
+    // Select button - unified dark theme
     const selectButton = new pc.Entity('SelectButton');
     selectButton.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0, 0, 0.3, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.2, 0.6, 0.2, 1)
+      color: new pc.Color(0.2, 0.2, 0.2, 0.9)
     });
     buttons.addChild(selectButton);
+
+    // Select button border
+    const selectBorder = new pc.Entity('SelectBorder');
+    selectBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.2, 0.6, 0.2, 0.8)
+    });
+    selectButton.addChild(selectBorder);
 
     const selectText = new pc.Entity('SelectText');
     selectText.addComponent('element', {
@@ -282,16 +304,27 @@ export class StageSelector {
     });
     selectButton.addChild(selectText);
 
-    // Random button
+    // Random button - unified dark theme
     const randomButton = new pc.Entity('RandomButton');
     randomButton.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0.35, 0, 0.65, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.2, 0.2, 0.6, 1)
+      color: new pc.Color(0.2, 0.2, 0.2, 0.9)
     });
     buttons.addChild(randomButton);
+
+    // Random button border
+    const randomBorder = new pc.Entity('RandomBorder');
+    randomBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.2, 0.2, 0.6, 0.8)
+    });
+    randomButton.addChild(randomBorder);
 
     const randomText = new pc.Entity('RandomText');
     randomText.addComponent('element', {

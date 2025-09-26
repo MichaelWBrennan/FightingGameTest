@@ -100,92 +100,25 @@ export class ModeSelector {
   private createModeCategories(): void {
     if (!this.selectorData) return;
 
-    const categories = this.groupModesByCategory();
-    let yOffset = 300;
-
-    for (const [categoryName, modes] of Object.entries(categories)) {
-      const category = this.createModeCategory(categoryName, modes, yOffset);
-      this.container!.addChild(category);
-      yOffset -= 200;
-    }
-  }
-
-  private groupModesByCategory(): Record<string, GameMode[]> {
-    if (!this.selectorData) return {};
-
-    const categories: Record<string, GameMode[]> = {
-      'Single Player': [],
-      'Multiplayer': [],
-      'Training': [],
-      'Online': [],
-      'Special': []
-    };
-
-    for (const mode of this.selectorData.availableModes) {
-      switch (mode.type) {
-        case 'single':
-          categories['Single Player'].push(mode);
-          break;
-        case 'multiplayer':
-          categories['Multiplayer'].push(mode);
-          break;
-        case 'training':
-          categories['Training'].push(mode);
-          break;
-        case 'online':
-          categories['Online'].push(mode);
-          break;
-        default:
-          categories['Special'].push(mode);
-      }
-    }
-
-    // Remove empty categories
-    Object.keys(categories).forEach(key => {
-      if (categories[key].length === 0) {
-        delete categories[key];
-      }
-    });
-
-    return categories;
-  }
-
-  private createModeCategory(categoryName: string, modes: GameMode[], yOffset: number): pc.Entity {
-    const category = new pc.Entity(`Category_${categoryName}`);
-    category.addComponent('element', {
-      type: pc.ELEMENTTYPE_GROUP,
-      anchor: [0.5, 0.5, 0.5, 0.5],
-      pivot: [0.5, 0.5],
-      margin: [-450, yOffset - 100, 450, yOffset + 100]
-    });
-
-    // Category title
-    const title = new pc.Entity('CategoryTitle');
-    title.addComponent('element', {
-      type: pc.ELEMENTTYPE_TEXT,
-      anchor: [0, 0, 1, 0.2],
-      pivot: [0.5, 0.5],
-      margin: [0, 0, 0, 0],
-      text: categoryName,
-      fontSize: 20,
-      color: new pc.Color(0.8, 0.8, 0.8, 1),
-      fontAsset: this.getFontAsset()
-    });
-    category.addChild(title);
-
-    // Mode buttons
-    const buttonWidth = 200;
-    const buttonHeight = 60;
-    const spacing = 20;
-    const startX = -(modes.length * (buttonWidth + spacing)) / 2 + buttonWidth / 2;
+    // Create a unified grid layout for all modes
+    const modes = this.selectorData.availableModes;
+    const itemsPerRow = 4;
+    const buttonWidth = 180;
+    const buttonHeight = 80;
+    const spacing = 15;
+    const startY = 250;
+    const startX = -((itemsPerRow - 1) * (buttonWidth + spacing)) / 2;
 
     modes.forEach((mode, index) => {
-      const x = startX + index * (buttonWidth + spacing);
-      const modeButton = this.createModeButton(mode, x, -20, buttonWidth, buttonHeight);
-      category.addChild(modeButton);
-    });
+      const row = Math.floor(index / itemsPerRow);
+      const col = index % itemsPerRow;
+      
+      const x = startX + col * (buttonWidth + spacing);
+      const y = startY - row * (buttonHeight + spacing);
 
-    return category;
+      const modeButton = this.createModeButton(mode, x, y, buttonWidth, buttonHeight);
+      this.container!.addChild(modeButton);
+    });
   }
 
   private createModeButton(mode: GameMode, x: number, y: number, width: number, height: number): pc.Entity {
@@ -197,86 +130,97 @@ export class ModeSelector {
       margin: [x - width/2, y - height/2, x + width/2, y + height/2]
     });
 
-    // Button background
+    // Button background - unified dark theme
     const background = new pc.Entity('Background');
     background.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0, 0, 1, 1],
       pivot: [0.5, 0.5],
       margin: [2, 2, -2, -2],
-      color: this.getModeColor(mode.type)
+      color: new pc.Color(0.2, 0.2, 0.2, 0.9)
     });
     button.addChild(background);
 
-    // Mode name
+    // Button border - subtle dark border
+    const border = new pc.Entity('Border');
+    border.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.4, 0.4, 0.4, 0.8)
+    });
+    button.addChild(border);
+
+    // Mode name - prominent white text
     const nameText = new pc.Entity('Name');
     nameText.addComponent('element', {
       type: pc.ELEMENTTYPE_TEXT,
-      anchor: [0, 0.6, 1, 1],
+      anchor: [0, 0.7, 1, 1],
       pivot: [0.5, 0.5],
-      margin: [5, 0, -5, 0],
+      margin: [8, 0, -8, 0],
       text: mode.name,
-      fontSize: 14,
+      fontSize: 16,
       color: new pc.Color(1, 1, 1, 1),
       fontAsset: this.getFontAsset()
     });
     button.addChild(nameText);
 
-    // Mode description
+    // Mode description - smaller gray text
     const descText = new pc.Entity('Description');
     descText.addComponent('element', {
       type: pc.ELEMENTTYPE_TEXT,
-      anchor: [0, 0.2, 1, 0.6],
+      anchor: [0, 0.4, 1, 0.7],
       pivot: [0.5, 0.5],
-      margin: [5, 0, -5, 0],
-      text: mode.description.substring(0, 30) + '...',
-      fontSize: 10,
-      color: new pc.Color(0.8, 0.8, 0.8, 1),
+      margin: [8, 0, -8, 0],
+      text: mode.description.substring(0, 40) + '...',
+      fontSize: 11,
+      color: new pc.Color(0.7, 0.7, 0.7, 1),
       fontAsset: this.getFontAsset()
     });
     button.addChild(descText);
 
-    // Player count
+    // Player count - small info text
     const playerText = new pc.Entity('PlayerCount');
     playerText.addComponent('element', {
       type: pc.ELEMENTTYPE_TEXT,
-      anchor: [0, 0, 1, 0.2],
-      pivot: [0.5, 0.5],
-      margin: [5, 0, -5, 0],
-      text: `${mode.minPlayers}-${mode.maxPlayers} Players`,
-      fontSize: 8,
-      color: new pc.Color(0.6, 0.6, 0.6, 1),
+      anchor: [0, 0.1, 0.6, 0.4],
+      pivot: [0, 0.5],
+      margin: [8, 0, 0, 0],
+      text: `${mode.minPlayers}-${mode.maxPlayers}P`,
+      fontSize: 9,
+      color: new pc.Color(0.5, 0.5, 0.5, 1),
       fontAsset: this.getFontAsset()
     });
     button.addChild(playerText);
 
-    // Level requirement
+    // Level requirement - yellow indicator
     if (mode.unlockRequirements?.level) {
       const levelText = new pc.Entity('LevelReq');
       levelText.addComponent('element', {
         type: pc.ELEMENTTYPE_TEXT,
-        anchor: [0.7, 0, 1, 0.2],
-        pivot: [0.5, 0.5],
-        margin: [0, 0, -5, 0],
+        anchor: [0.6, 0.1, 1, 0.4],
+        pivot: [1, 0.5],
+        margin: [0, 0, -8, 0],
         text: `Lv.${mode.unlockRequirements.level}`,
-        fontSize: 8,
-        color: new pc.Color(1, 1, 0, 1),
+        fontSize: 9,
+        color: new pc.Color(1, 0.8, 0, 1),
         fontAsset: this.getFontAsset()
       });
       button.addChild(levelText);
     }
 
-    // Stage selector indicator
+    // Stage selector indicator - subtle icon
     if (this.canModeSelectStage(mode)) {
       const stageIcon = new pc.Entity('StageIcon');
       stageIcon.addComponent('element', {
         type: pc.ELEMENTTYPE_TEXT,
-        anchor: [0.8, 0.6, 1, 1],
-        pivot: [0.5, 0.5],
-        margin: [0, 0, -5, 0],
+        anchor: [0.8, 0.7, 1, 1],
+        pivot: [1, 0.5],
+        margin: [0, 0, -8, 0],
         text: '🏰',
-        fontSize: 12,
-        color: new pc.Color(1, 1, 1, 1),
+        fontSize: 14,
+        color: new pc.Color(0.8, 0.8, 0.8, 1),
         fontAsset: this.getFontAsset()
       });
       button.addChild(stageIcon);
@@ -302,16 +246,6 @@ export class ModeSelector {
     return offlineModes.includes(mode.id) && this.selectorData.canSelectStage;
   }
 
-  private getModeColor(type: string): pc.Color {
-    const colors: Record<string, pc.Color> = {
-      'single': new pc.Color(0.2, 0.4, 0.8, 0.8),      // Blue
-      'multiplayer': new pc.Color(0.8, 0.4, 0.2, 0.8), // Orange
-      'training': new pc.Color(0.2, 0.8, 0.4, 0.8),    // Green
-      'online': new pc.Color(0.8, 0.2, 0.8, 0.8),      // Purple
-      'special': new pc.Color(0.6, 0.6, 0.6, 0.8)      // Gray
-    };
-    return colors[type] || colors['special'];
-  }
 
   private addModeButtonClickHandler(button: pc.Entity, modeId: string): void {
     button.addComponent('script', {
