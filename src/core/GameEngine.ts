@@ -749,6 +749,47 @@ export class GameEngine {
         this.stateStack.push(new CharacterSelectState());
       });
 
+      this.app.on('ui:playerProfile', () => {
+        Logger.info('Opening Player Profile');
+        // Player profile would be handled by a profile overlay
+        // For now, show a placeholder message
+        console.log('Player Profile: Stats, progress, and personal data');
+      });
+
+      this.app.on('ui:rankings', () => {
+        Logger.info('Opening Rankings');
+        // Rankings would be handled by the ranked overlay
+        if (this.ranked) {
+          this.ranked.show();
+        }
+      });
+
+      this.app.on('ui:achievements', () => {
+        Logger.info('Opening Achievements');
+        // Achievements would be handled by an achievements overlay
+        console.log('Achievements: Personal and social accomplishments');
+      });
+
+      this.app.on('ui:replayGallery', () => {
+        Logger.info('Opening Replay Gallery');
+        // Replay gallery would be handled by the replay service
+        if (this.replay) {
+          console.log('Replay Gallery: Saved matches and combo videos');
+        }
+      });
+
+      this.app.on('ui:socialHub', () => {
+        Logger.info('Opening Social Hub');
+        // Social hub would be handled by social features
+        console.log('Social Hub: Guilds, coaching, voice chat, leaderboards');
+      });
+
+      this.app.on('ui:customization', () => {
+        Logger.info('Opening Customization');
+        // Customization would be handled by customization overlay
+        console.log('Customization: Character skins, UI themes, control schemes');
+      });
+
       this.app.on('ui:settings', () => {
         Logger.info('Opening Settings');
         // Settings would be handled by the options overlay

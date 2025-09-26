@@ -25,12 +25,23 @@ The fighting game UI is now fully integrated and ready to run immediately. No te
 
 The UI automatically shows after boot with these core fighting game modes:
 
+### **Core Gameplay**
 - **📖 STORY MODE** - Single player campaign
 - **🕹️ ARCADE MODE** - Classic arcade experience  
 - **👥 VERSUS MODE** - Local and online multiplayer
 - **🎯 TRAINING MODE** - Practice and skill improvement
 - **🏆 ONLINE MODE** - Competitive online play
 - **🥋 CHARACTER SELECT** - Choose your fighter
+
+### **Profile & Progression**
+- **👤 PLAYER PROFILE** - View your stats and progress
+- **🏆 RANKINGS** - Check your competitive standing
+- **🏅 ACHIEVEMENTS** - View your accomplishments
+- **📁 REPLAY GALLERY** - Your saved matches and combos
+- **👥 SOCIAL HUB** - Connect with the community
+- **🎨 CUSTOMIZATION** - Personalize your experience
+
+### **System**
 - **⚙️ SETTINGS** - Game configuration
 
 ## **UI Features**

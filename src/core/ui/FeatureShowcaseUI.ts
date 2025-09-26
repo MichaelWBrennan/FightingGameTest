@@ -148,6 +148,70 @@ export class FeatureShowcaseUI {
             ]
         });
 
+        // PROFILE - Player profile and related features
+        this.addSection({
+            id: 'profile',
+            title: 'PROFILE',
+            icon: '👤',
+            color: new pc.Color(0.8, 0.4, 0.8, 1),
+            features: [
+                {
+                    id: 'player_profile',
+                    title: 'Player Profile',
+                    description: 'View your stats and progress',
+                    icon: '👤',
+                    category: 'profile',
+                    features: [],
+                    action: 'playerProfile'
+                },
+                {
+                    id: 'rankings',
+                    title: 'Rankings',
+                    description: 'Check your competitive standing',
+                    icon: '🏆',
+                    category: 'profile',
+                    features: [],
+                    action: 'rankings'
+                },
+                {
+                    id: 'achievements',
+                    title: 'Achievements',
+                    description: 'View your accomplishments',
+                    icon: '🏅',
+                    category: 'profile',
+                    features: [],
+                    action: 'achievements'
+                },
+                {
+                    id: 'replay_gallery',
+                    title: 'Replay Gallery',
+                    description: 'Your saved matches and combos',
+                    icon: '📁',
+                    category: 'profile',
+                    features: [],
+                    action: 'replayGallery'
+                },
+                {
+                    id: 'social_hub',
+                    title: 'Social Hub',
+                    description: 'Connect with the community',
+                    icon: '👥',
+                    category: 'profile',
+                    features: [],
+                    action: 'socialHub'
+                },
+                {
+                    id: 'customization',
+                    title: 'Customization',
+                    description: 'Personalize your experience',
+                    icon: '🎨',
+                    category: 'profile',
+                    features: [],
+                    action: 'customization'
+                }
+            ]
+        });
+
         // SETTINGS
         this.addSection({
             id: 'settings',
@@ -542,15 +606,55 @@ export class FeatureShowcaseUI {
         });
         characterContainer.addChild(background);
 
+        // Player profile section
+        const playerSection = new pc.Entity('PlayerSection');
+        playerSection.addComponent('element', {
+            type: pc.ELEMENTTYPE_GROUP,
+            anchor: [0.02, 0.7, 0.48, 1],
+            pivot: [0, 0, 0, 0],
+            margin: [0, 0, 0, 0]
+        });
+        characterContainer.addChild(playerSection);
+
+        // Player name
+        const playerName = new pc.Entity('PlayerName');
+        playerName.addComponent('element', {
+            type: pc.ELEMENTTYPE_TEXT,
+            anchor: [0, 0.6, 1, 1],
+            pivot: [0, 0, 0, 0],
+            margin: [0, 0, 0, 0],
+            text: 'PLAYER',
+            fontSize: 16,
+            color: new pc.Color(1, 1, 1, 1),
+            fontAsset: this.app.assets.find('arial') || null,
+            textAlign: pc.TEXTALIGN_LEFT
+        });
+        playerSection.addChild(playerName);
+
+        // Player rank
+        const playerRank = new pc.Entity('PlayerRank');
+        playerRank.addComponent('element', {
+            type: pc.ELEMENTTYPE_TEXT,
+            anchor: [0, 0.2, 1, 0.6],
+            pivot: [0, 0, 0, 0],
+            margin: [0, 0, 0, 0],
+            text: 'RANK: BRONZE',
+            fontSize: 12,
+            color: new pc.Color(0.8, 0.6, 0.2, 1),
+            fontAsset: this.app.assets.find('arial') || null,
+            textAlign: pc.TEXTALIGN_LEFT
+        });
+        playerSection.addChild(playerRank);
+
         // Character showcase title
         const title = new pc.Entity('CharacterTitle');
         title.addComponent('element', {
             type: pc.ELEMENTTYPE_TEXT,
-            anchor: [0, 0.7, 1, 1],
+            anchor: [0.5, 0.7, 1, 1],
             pivot: [0.5, 0.5, 0.5, 0.5],
             margin: [0, 0, 0, 0],
             text: '30 UNIQUE CHARACTER ARCHETYPES',
-            fontSize: 20,
+            fontSize: 18,
             color: new pc.Color(1, 0.4, 0.2, 1),
             fontAsset: this.app.assets.find('arial') || null,
             textAlign: pc.TEXTALIGN_CENTER
@@ -804,6 +908,30 @@ export class FeatureShowcaseUI {
                 break;
             case 'characterSelect':
                 this.app.fire('ui:characterSelect');
+                this.hide();
+                break;
+            case 'playerProfile':
+                this.app.fire('ui:playerProfile');
+                this.hide();
+                break;
+            case 'rankings':
+                this.app.fire('ui:rankings');
+                this.hide();
+                break;
+            case 'achievements':
+                this.app.fire('ui:achievements');
+                this.hide();
+                break;
+            case 'replayGallery':
+                this.app.fire('ui:replayGallery');
+                this.hide();
+                break;
+            case 'socialHub':
+                this.app.fire('ui:socialHub');
+                this.hide();
+                break;
+            case 'customization':
+                this.app.fire('ui:customization');
                 this.hide();
                 break;
             case 'settings':
