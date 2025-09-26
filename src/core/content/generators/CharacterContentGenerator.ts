@@ -1,6 +1,6 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../../utils/Logger';
-import { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
+import type { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
 
 export interface CharacterGenerationOptions {
   archetype?: 'rushdown' | 'grappler' | 'zoner' | 'all_rounder' | 'technical' | 'power' | 'speed' | 'defensive';

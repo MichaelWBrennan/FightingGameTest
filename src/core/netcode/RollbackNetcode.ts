@@ -1,5 +1,6 @@
-import { DeterministicAdapter } from './DeterministicAdapter';
-import { bitsToInputs, FrameNumber, GameStateSnapshot } from './types';
+import type { DeterministicAdapter } from './DeterministicAdapter';
+import type { FrameNumber, GameStateSnapshot } from './types';
+import { bitsToInputs } from './types';
 
 export interface Transport {
   connect(): void;

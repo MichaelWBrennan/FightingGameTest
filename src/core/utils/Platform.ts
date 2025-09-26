@@ -4,7 +4,7 @@ export const Platform = {
   isTouchDevice(): boolean {
     try {
       // Use multiple signals to detect touch capability
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const navAny: any = typeof navigator !== 'undefined' ? navigator : {};
       const hasTouchPoints = Number(navAny.maxTouchPoints || navAny.msMaxTouchPoints || 0) > 0;
       const hasTouchEvents = typeof window !== 'undefined' && ('ontouchstart' in window || 'ontouchend' in window);

@@ -2,7 +2,8 @@
  * DatabaseManager - PostgreSQL connection and query management
  */
 
-import { Pool, PoolClient, QueryResult } from 'pg';
+import type { PoolClient, QueryResult } from 'pg';
+import { Pool } from 'pg';
 import { Logger } from '../utils/Logger';
 
 const logger = Logger.getInstance();

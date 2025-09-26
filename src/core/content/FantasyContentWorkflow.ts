@@ -1,7 +1,7 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../utils/Logger';
 import { ContentWorkflow } from './ContentWorkflow';
-import { GeneratedContent } from './ContentGenerationManager';
+import type { GeneratedContent } from './ContentGenerationManager';
 
 export interface FantasyContentConfig {
   theme: 'high_fantasy' | 'dark_fantasy' | 'epic_fantasy' | 'urban_fantasy' | 'steampunk_fantasy';

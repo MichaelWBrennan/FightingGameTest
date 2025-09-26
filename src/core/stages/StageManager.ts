@@ -1,7 +1,8 @@
 import * as pc from 'playcanvas';
 import { ProceduralStageGenerator } from '../procgen/ProceduralStageGenerator';
 import { FighterCameraController } from '../camera/FighterCameraController';
-import { EnvironmentManager, EnvironmentTheme } from './EnvironmentManager';
+import type { EnvironmentTheme } from './EnvironmentManager';
+import { EnvironmentManager } from './EnvironmentManager';
 
 export class StageManager {
   private app: pc.Application;

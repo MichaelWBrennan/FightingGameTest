@@ -21,7 +21,7 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import { RetentionClient } from './RetentionClient';
+import type { RetentionClient } from './RetentionClient';
 
 export interface MasteryConfig {
   retentionClient: RetentionClient;

@@ -1,9 +1,9 @@
 
 import * as pc from 'playcanvas';
-import { Character, CharacterConfig } from '../../../types/character';
+import type { Character, CharacterConfig } from '../../../types/character';
 import { Logger } from '../utils/Logger';
-import { PreloadManager } from '../utils/PreloadManager';
-import { DecompDataService } from '../utils/DecompDataService';
+import type { PreloadManager } from '../utils/PreloadManager';
+import type { DecompDataService } from '../utils/DecompDataService';
 import { ProceduralFrameGenerator } from '../procgen/ProceduralFrameGenerator';
 import { MoveValidator } from '../utils/MoveValidator';
 
@@ -24,7 +24,7 @@ export class CharacterManager {
   public async initialize(): Promise<void> {
     try {
       // Attempt to resolve preloader from global services if present
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+       
       // @ts-ignore
       const services = (this.app as any)._services as any;
       if (services && services.resolve) {

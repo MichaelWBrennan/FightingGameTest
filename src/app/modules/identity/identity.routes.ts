@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { IdentityController } from './identity.controller';
 
 export const identityRoutes = async (fastify: FastifyInstance): Promise<void> => {

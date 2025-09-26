@@ -6,8 +6,8 @@
  * Provides transparent risk explanations and respectful intervention strategies.
  */
 
-import { DatabaseManager } from '../database/DatabaseManager';
-import { ClickHouseManager } from '../database/ClickHouseManager';
+import type { DatabaseManager } from '../database/DatabaseManager';
+import type { ClickHouseManager } from '../database/ClickHouseManager';
 import { Logger } from '../utils/Logger';
 
 const logger = Logger.getInstance();

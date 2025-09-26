@@ -1,5 +1,5 @@
-import { InputManager, PlayerInputs } from '../input/InputManager';
-import { CombatSystem } from '../combat/CombatSystem';
+import type { InputManager, PlayerInputs } from '../input/InputManager';
+import type { CombatSystem } from '../combat/CombatSystem';
 
 interface ReplayFrame { f: number; p0: PlayerInputs; p1: PlayerInputs }
 interface ReplayData { version: number; frames: ReplayFrame[]; meta: { date: string; winner?: string; duration?: number; characters?: string[] } }
@@ -60,7 +60,7 @@ export class ReplayService {
       // Determinism check: optional lightweight checksum via combat adapter payload if exposed in future
       const after = (this.combat as any).getCurrentFrame?.() || 0;
       if (after !== before + 1) {
-        // eslint-disable-next-line no-console
+         
         console.warn('[replay] non-monotonic frame during playback');
       }
     }

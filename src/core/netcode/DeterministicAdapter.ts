@@ -1,7 +1,8 @@
-import { PlayerInputs } from '../input/InputManager';
-import { GameStateSnapshot, FrameNumber, checksum32FromObject } from './types';
-import { CombatSystem } from '../combat/CombatSystem';
-import { CharacterManager } from '../characters/CharacterManager';
+import type { PlayerInputs } from '../input/InputManager';
+import type { GameStateSnapshot, FrameNumber} from './types';
+import { checksum32FromObject } from './types';
+import type { CombatSystem } from '../combat/CombatSystem';
+import type { CharacterManager } from '../characters/CharacterManager';
 import * as pc from 'playcanvas';
 
 export interface DeterministicAdapter {

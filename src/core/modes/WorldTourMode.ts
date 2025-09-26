@@ -1,4 +1,4 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Character } from '../../../types/character';
 import { Logger } from '../utils/Logger';
 

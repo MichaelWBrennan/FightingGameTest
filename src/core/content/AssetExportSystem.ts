@@ -1,6 +1,6 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../utils/Logger';
-import { GeneratedContent } from './ContentGenerationManager';
+import type { GeneratedContent } from './ContentGenerationManager';
 
 export interface ExportOptions {
   format: 'png' | 'jpg' | 'gif' | 'svg' | 'webp' | 'obj' | 'fbx' | 'gltf' | 'glb' | 'dae' | 'blend';

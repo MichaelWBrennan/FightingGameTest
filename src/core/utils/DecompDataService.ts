@@ -1,4 +1,4 @@
-import { CharacterData } from '../../../types/character';
+import type { CharacterData } from '../../../types/character';
 
 export class DecompDataService {
   public async loadGroundTruthCharacter(): Promise<CharacterData | null> {

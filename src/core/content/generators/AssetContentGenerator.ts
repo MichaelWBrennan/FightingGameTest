@@ -1,6 +1,6 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../../utils/Logger';
-import { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
+import type { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
 
 export interface AssetGenerationOptions {
   type?: 'sprite' | 'animation' | 'sound' | 'effect' | 'ui' | 'background' | 'character' | 'stage' | 'model' | 'texture' | 'material' | 'shader' | 'all';

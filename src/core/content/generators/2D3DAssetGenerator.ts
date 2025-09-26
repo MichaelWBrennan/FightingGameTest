@@ -1,6 +1,6 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../../utils/Logger';
-import { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
+import type { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
 
 export interface Asset2D3DOptions {
   dimensions: '2d' | '3d' | '2.5d';

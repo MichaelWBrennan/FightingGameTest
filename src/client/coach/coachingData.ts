@@ -1,4 +1,4 @@
-import { CoachingData } from './CoachOverlay';
+import type { CoachingData } from './CoachOverlay';
 
 export const dummyCoachingData: CoachingData = {
   matchupDatabase: new Map([

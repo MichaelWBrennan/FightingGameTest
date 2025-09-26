@@ -1,4 +1,4 @@
-import { Mastery, Objective, XPGrant } from './progression.types';
+import type { Mastery, Objective, XPGrant } from './progression.types';
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class ProgressionService {

@@ -1,6 +1,6 @@
-import * as pc from 'playcanvas';
-import { Character } from '../../../types/character';
-import { CharacterManager } from '../characters/CharacterManager';
+import type * as pc from 'playcanvas';
+import type { Character } from '../../../types/character';
+import type { CharacterManager } from '../characters/CharacterManager';
 
 type Projectile = { x: number; y: number; dir: number; ownerId: string; speed: number; w: number; h: number; life: number };
 

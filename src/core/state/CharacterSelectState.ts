@@ -1,8 +1,8 @@
 import * as pc from 'playcanvas';
-import { GameState } from './GameStateStack';
-import { UIManager } from '../ui/UIManager';
-import { CharacterManager } from '../characters/CharacterManager';
-import { StageManager } from '../stages/StageManager';
+import type { GameState } from './GameStateStack';
+import type { UIManager } from '../ui/UIManager';
+import type { CharacterManager } from '../characters/CharacterManager';
+import type { StageManager } from '../stages/StageManager';
 
 export class CharacterSelectState implements GameState {
 	public name = 'characterselect';

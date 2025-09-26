@@ -1,8 +1,8 @@
-import { pc } from 'playcanvas';
-import { Character } from '../../../types/character';
-import { CharacterManager } from '../characters/CharacterManager';
-import { CombatSystem } from './CombatSystem';
-import { InputManager } from '../input/InputManager';
+import type { pc } from 'playcanvas';
+import type { Character } from '../../../types/character';
+import type { CharacterManager } from '../characters/CharacterManager';
+import type { CombatSystem } from './CombatSystem';
+import type { InputManager } from '../input/InputManager';
 import { Logger } from '../utils/Logger';
 
 export interface AssistMove {

@@ -1,4 +1,4 @@
-import { AudioManager, AudioClip } from './AudioManager';
+import type { AudioManager, AudioClip } from './AudioManager';
 
 export interface MusicTrack {
   name: string;

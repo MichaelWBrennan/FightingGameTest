@@ -1,7 +1,9 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../utils/Logger';
-import { GeneratedContent, ContentGenerationManager } from './ContentGenerationManager';
-import { ContentValidator, ValidationResult } from './ContentValidator';
+import type { GeneratedContent} from './ContentGenerationManager';
+import { ContentGenerationManager } from './ContentGenerationManager';
+import type { ValidationResult } from './ContentValidator';
+import { ContentValidator } from './ContentValidator';
 
 export interface ContentFilter {
   type?: string;

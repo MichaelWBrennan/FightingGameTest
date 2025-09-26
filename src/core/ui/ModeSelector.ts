@@ -264,7 +264,7 @@ export class ModeSelector {
               });
             }
           }
-        `)]
+        `)
       }]
     });
   }
@@ -305,7 +305,7 @@ export class ModeSelector {
               });
             }
           }
-        `)]
+        `)
       }]
     });
 

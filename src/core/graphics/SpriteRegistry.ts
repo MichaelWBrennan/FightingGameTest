@@ -1,4 +1,4 @@
-import * as pc from 'playcanvas';
+import type * as pc from 'playcanvas';
 
 export class SpriteRegistry {
 	private app: pc.Application;

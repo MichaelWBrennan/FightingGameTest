@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { CommerceController } from './commerce.controller';
 
 export const commerceRoutes = async (fastify: FastifyInstance): Promise<void> => {

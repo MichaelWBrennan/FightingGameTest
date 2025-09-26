@@ -1,4 +1,4 @@
-import { PlayerAction } from './input';
+import type { PlayerAction } from './input';
 
 export interface ComboStep {
   action: PlayerAction;

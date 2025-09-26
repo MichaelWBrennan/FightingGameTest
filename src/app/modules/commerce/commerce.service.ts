@@ -1,4 +1,4 @@
-import { Catalog, Payment } from './commerce.types';
+import type { Catalog, Payment } from './commerce.types';
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class CommerceService {

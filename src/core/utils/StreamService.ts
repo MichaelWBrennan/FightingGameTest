@@ -1,5 +1,5 @@
 // Simple spectator stream via BroadcastChannel: publisher posts replay frames; spectators play
-import { CombatSystem } from '../combat/CombatSystem';
+import type { CombatSystem } from '../combat/CombatSystem';
 
 interface StreamFrame { f: number; p0: any; p1: any }
 

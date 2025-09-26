@@ -1,4 +1,4 @@
-import { AnalyticsEvent, Experiment, ChurnPrediction, Cohort, KpiMetric } from './analytics.types';
+import type { AnalyticsEvent, Experiment, ChurnPrediction, Cohort, KpiMetric } from './analytics.types';
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class AnalyticsService {

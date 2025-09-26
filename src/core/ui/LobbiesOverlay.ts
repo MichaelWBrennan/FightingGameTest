@@ -1,4 +1,5 @@
-import { MatchmakingService, Lobby, PlayerProfile, Region } from '../online/MatchmakingService';
+import type { MatchmakingService, PlayerProfile, Region } from '../online/MatchmakingService';
+import { Lobby } from '../online/MatchmakingService';
 
 export class LobbiesOverlay {
   private container: HTMLDivElement;

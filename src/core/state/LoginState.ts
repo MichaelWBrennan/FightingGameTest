@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import { GameState } from './GameStateStack';
+import type { GameState } from './GameStateStack';
 
 export class LoginState implements GameState {
 	public name = 'login';

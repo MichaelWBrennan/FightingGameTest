@@ -1,6 +1,6 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../../utils/Logger';
-import { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
+import type { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
 
 export interface StageGenerationOptions {
   theme?: 'urban' | 'nature' | 'cyber' | 'fantasy' | 'space' | 'underwater' | 'volcanic' | 'arctic' | 'desert' | 'jungle';

@@ -1,7 +1,7 @@
-import * as pc from 'playcanvas';
-import { GameState } from './GameStateStack';
-import { ConfigService } from '../utils/ConfigService';
-import { MonetizationService } from '../monetization/MonetizationService';
+import type * as pc from 'playcanvas';
+import type { GameState } from './GameStateStack';
+import type { ConfigService } from '../utils/ConfigService';
+import type { MonetizationService } from '../monetization/MonetizationService';
 
 export class BootState implements GameState {
 	public name = 'boot';

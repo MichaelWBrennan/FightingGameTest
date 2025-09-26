@@ -1,7 +1,7 @@
 import * as pc from 'playcanvas';
-import { GameState } from './GameStateStack';
-import { UIManager } from '../ui/UIManager';
-import { CharacterManager } from '../characters/CharacterManager';
+import type { GameState } from './GameStateStack';
+import type { UIManager } from '../ui/UIManager';
+import type { CharacterManager } from '../characters/CharacterManager';
 
 export class MatchState implements GameState {
 	public name = 'match';
