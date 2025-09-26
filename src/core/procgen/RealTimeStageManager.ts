@@ -110,12 +110,12 @@ export class RealTimeStageManager {
   }
 
   private async createSkybox(skyboxData: any): Promise<void> {
-    const skyboxEntity = new pc.Entity('Skybox');
+    const skyboxEntity = new pc.Entity('GothicSkybox');
     
-    // Create skybox material
+    // Create gothic skybox material
     const skyboxMaterial = new pc.StandardMaterial();
-    skyboxMaterial.diffuse = new pc.Color(0.3, 0.3, 0.3);
-    skyboxMaterial.emissive = new pc.Color(0.2, 0.2, 0.2);
+    skyboxMaterial.diffuse = new pc.Color(0.2, 0.2, 0.2); // Dark gothic sky
+    skyboxMaterial.emissive = new pc.Color(0.1, 0.1, 0.1);
     skyboxMaterial.update();
     
     // Create skybox mesh
@@ -324,22 +324,33 @@ export class RealTimeStageManager {
   }
 
   private async createLighting(lightingData: any): Promise<void> {
-    const lightEntity = new pc.Entity('StageLight');
+    const lightEntity = new pc.Entity('GothicLight');
     
-    // Create directional light
+    // Create gothic directional light
     lightEntity.addComponent('light', {
       type: 'directional',
-      color: this.hexToColor(lightingData.color || '#FFFFFF'),
-      intensity: lightingData.intensity || 1.0,
-      castShadows: lightingData.shadows || false
+      color: this.hexToColor(lightingData.color || '#8B0000'),
+      intensity: lightingData.intensity || 0.5,
+      castShadows: lightingData.shadows || true
     });
     
-    // Set light direction
-    lightEntity.setEulerAngles(45, 45, 0);
+    // Set gothic light direction (more dramatic angle)
+    lightEntity.setEulerAngles(60, 45, 0);
     
     // Add to scene
     this.app.root.addChild(lightEntity);
     this.stageEntities.push(lightEntity);
+    
+    // Add ambient light for gothic atmosphere
+    const ambientEntity = new pc.Entity('GothicAmbient');
+    ambientEntity.addComponent('light', {
+      type: 'ambient',
+      color: this.hexToColor(lightingData.ambient || '#2F2F2F'),
+      intensity: 0.3
+    });
+    
+    this.app.root.addChild(ambientEntity);
+    this.stageEntities.push(ambientEntity);
   }
 
   private async createParticles(particlesData: any): Promise<void> {

@@ -92,6 +92,9 @@ export class ProceduralStageGenerator {
 		// Apply size scaling
 		stage = this.applySizeScaling(stage, size);
 
+		// Apply gothic transformation to all stages
+		stage = this.applyGothicTransformation(stage, theme);
+
 		// Apply atmosphere effects
 		stage = this.applyAtmosphere(stage, atmosphere);
 
@@ -121,13 +124,35 @@ export class ProceduralStageGenerator {
 
 	private training(): any {
 		return {
-			name: 'Training (Procedural)',
+			name: 'Gothic Training Grounds (Procedural)',
 			layers: {
-				skybox: { type: 'gradient', elements: [] },
-				farBackground: { type: 'mountains', elements: this.mountains(3) },
-				midBackground: { type: 'buildings', elements: this.buildings(4) },
-				nearBackground: { type: 'trees', elements: this.trees(3) },
-				playground: { type: 'stage_floor', elements: [{ type: 'platform', x: 0, y: -5, width: 40, height: 2 }] }
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
+				midBackground: { type: 'gothic_architecture', elements: this.gothicArchitecture(4) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(3) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#8B0000',
+				intensity: 0.5,
+				shadows: true,
+				fog: true,
+				ambient: '#2F2F2F'
+			},
+			particles: {
+				ash: this.generateAsh(20),
+				embers: this.generateEmbers(15),
+				mist: this.generateGothicMist(10),
+				batSwarm: this.generateBatSwarm(5)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.6 },
+					{ type: 'dramatic_lighting', intensity: 0.7 },
+					{ type: 'gothic_ambience', intensity: 0.5 }
+				]
 			}
 		};
 	}
@@ -169,13 +194,36 @@ export class ProceduralStageGenerator {
 
 	private urban(): any {
 		return {
-			name: 'Urban (Procedural)',
+			name: 'Gothic Urban Ruins (Procedural)',
 			layers: {
-				skybox: { type: 'cityscape', elements: [] },
-				farBackground: { type: 'cityscape', elements: this.buildings(5) },
-				midBackground: { type: 'street', elements: this.buildings(3) },
-				nearBackground: { type: 'crowd', elements: this.buildings(2) },
-				playground: { type: 'street_stage', elements: [{ type: 'asphalt', x: 0, y: -5, width: 50, height: 3 }] }
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
+				midBackground: { type: 'gothic_architecture', elements: this.gothicArchitecture(5) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(4) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#4B0082',
+				intensity: 0.4,
+				shadows: true,
+				fog: true,
+				ambient: '#1A1A1A'
+			},
+			particles: {
+				ash: this.generateAsh(35),
+				embers: this.generateEmbers(25),
+				mist: this.generateGothicMist(20),
+				batSwarm: this.generateBatSwarm(8),
+				steam: this.generateSteam(15)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.8 },
+					{ type: 'dramatic_lighting', intensity: 0.6 },
+					{ type: 'gothic_ambience', intensity: 0.7 }
+				]
 			}
 		};
 	}
@@ -444,6 +492,175 @@ export class ProceduralStageGenerator {
 				]
 			}
 		};
+	}
+
+	// Gothic Transformation Method
+	private applyGothicTransformation(stage: any, theme: string): any {
+		// Apply gothic lighting to all stages
+		if (!stage.lighting) {
+			stage.lighting = {};
+		}
+		
+		stage.lighting = {
+			...stage.lighting,
+			type: 'gothic',
+			color: this.getGothicColorForTheme(theme),
+			intensity: this.getGothicIntensityForTheme(theme),
+			shadows: true,
+			fog: true,
+			ambient: this.getGothicAmbientForTheme(theme)
+		};
+
+		// Apply gothic particles to all stages
+		if (!stage.particles) {
+			stage.particles = {};
+		}
+		
+		stage.particles = {
+			...stage.particles,
+			ash: this.generateAsh(25),
+			embers: this.generateEmbers(20),
+			mist: this.generateGothicMist(15),
+			batSwarm: this.generateBatSwarm(6)
+		};
+
+		// Apply gothic atmosphere to all stages
+		if (!stage.atmosphere) {
+			stage.atmosphere = {};
+		}
+		
+		stage.atmosphere = {
+			...stage.atmosphere,
+			type: 'gothic',
+			effects: [
+				{ type: 'gothic_fog', intensity: 0.7 },
+				{ type: 'dramatic_lighting', intensity: 0.8 },
+				{ type: 'gothic_ambience', intensity: 0.6 }
+			]
+		};
+
+		// Transform skybox to gothic
+		if (stage.layers && stage.layers.skybox) {
+			stage.layers.skybox = {
+				type: 'gothic_sky',
+				elements: this.gothicSky()
+			};
+		}
+
+		// Transform background layers to gothic
+		if (stage.layers && stage.layers.farBackground) {
+			stage.layers.farBackground = {
+				type: 'gothic_landscape',
+				elements: this.gothicLandscape(3)
+			};
+		}
+
+		if (stage.layers && stage.layers.midBackground) {
+			stage.layers.midBackground = {
+				type: 'gothic_architecture',
+				elements: this.gothicArchitecture(4)
+			};
+		}
+
+		if (stage.layers && stage.layers.nearBackground) {
+			stage.layers.nearBackground = {
+				type: 'gothic_details',
+				elements: this.gothicDetails(5)
+			};
+		}
+
+		// Transform playground to gothic
+		if (stage.layers && stage.layers.playground) {
+			stage.layers.playground = {
+				type: 'gothic_platform',
+				elements: this.gothicPlatform()
+			};
+		}
+
+		// Update stage name to reflect gothic theme
+		if (stage.name && !stage.name.includes('Gothic')) {
+			stage.name = `Gothic ${stage.name}`;
+		}
+
+		return stage;
+	}
+
+	private getGothicColorForTheme(theme: string): string {
+		const colors: Record<string, string> = {
+			arcane_tower: '#8A2BE2',
+			divine_cathedral: '#FFD700',
+			elemental_realm: '#00BFFF',
+			shadow_keep: '#4B0082',
+			nature_sanctuary: '#32CD32',
+			crystal_cavern: '#FF69B4',
+			void_dimension: '#000000',
+			celestial_plane: '#87CEEB',
+			infernal_abyss: '#FF4500',
+			primal_forest: '#8B4513',
+			training: '#8B0000',
+			urban: '#4B0082',
+			gothic: '#8B0000',
+			gothic_cathedral: '#8B0000',
+			gothic_graveyard: '#4B0082',
+			gothic_castle: '#8B0000',
+			gothic_ruins: '#8B0000',
+			gothic_forest: '#4B0082',
+			gothic_laboratory: '#8B0000',
+			gothic_clocktower: '#8B0000'
+		};
+		return colors[theme] || '#8B0000';
+	}
+
+	private getGothicIntensityForTheme(theme: string): number {
+		const intensities: Record<string, number> = {
+			arcane_tower: 0.6,
+			divine_cathedral: 0.7,
+			elemental_realm: 0.5,
+			shadow_keep: 0.3,
+			nature_sanctuary: 0.4,
+			crystal_cavern: 0.6,
+			void_dimension: 0.2,
+			celestial_plane: 0.8,
+			infernal_abyss: 0.9,
+			primal_forest: 0.4,
+			training: 0.5,
+			urban: 0.4,
+			gothic: 0.4,
+			gothic_cathedral: 0.4,
+			gothic_graveyard: 0.3,
+			gothic_castle: 0.5,
+			gothic_ruins: 0.4,
+			gothic_forest: 0.3,
+			gothic_laboratory: 0.6,
+			gothic_clocktower: 0.5
+		};
+		return intensities[theme] || 0.5;
+	}
+
+	private getGothicAmbientForTheme(theme: string): string {
+		const ambients: Record<string, string> = {
+			arcane_tower: '#2F2F2F',
+			divine_cathedral: '#2F2F2F',
+			elemental_realm: '#2F2F2F',
+			shadow_keep: '#1A1A1A',
+			nature_sanctuary: '#1A1A1A',
+			crystal_cavern: '#2F2F2F',
+			void_dimension: '#000000',
+			celestial_plane: '#2F2F2F',
+			infernal_abyss: '#2F2F2F',
+			primal_forest: '#1A1A1A',
+			training: '#2F2F2F',
+			urban: '#1A1A1A',
+			gothic: '#2F2F2F',
+			gothic_cathedral: '#2F2F2F',
+			gothic_graveyard: '#1A1A1A',
+			gothic_castle: '#2F2F2F',
+			gothic_ruins: '#2F2F2F',
+			gothic_forest: '#1A1A1A',
+			gothic_laboratory: '#2F2F2F',
+			gothic_clocktower: '#2F2F2F'
+		};
+		return ambients[theme] || '#2F2F2F';
 	}
 
 	// Fantasy Stage Generators
