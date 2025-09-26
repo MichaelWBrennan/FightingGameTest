@@ -4,8 +4,8 @@
   "description": "FightForge - Browser-Based Fighting Game",
   "main": "src/index.ts",
   "scripts": {
-    "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=FightForgeApp --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate",
-    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=FightForgeApp --outfile=public/bundle.js --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate --minify --sourcemap=false --legal-comments=none --tree-shaking=true --drop:console --drop:debugger",
+    "build:client": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=FightForgeApp --outfile=public/bundle.js --sourcemap --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate --banner:js=\"(function() { var FightForgeApp = \" --footer:js=\"; window.FightForgeApp = FightForgeApp; })();\"",
+    "build:client:prod": "esbuild src/index.ts --bundle --platform=browser --format=iife --global-name=FightForgeApp --outfile=public/bundle.js --target=es2020 --alias:playcanvas/*=playcanvas/* --alias:playcanvas=src/vendor/pc.cts --external:fflate --minify --sourcemap=false --legal-comments=none --tree-shaking=true --drop:console --drop:debugger --banner:js=\"(function() { var FightForgeApp = \" --footer:js=\"; window.FightForgeApp = FightForgeApp; })();\"",
     "build": "node -e \"require('ts-node/register');require('./tools/import_character_data.ts')\" && npm run build:client",
     "build:prod": "node -e \"require('ts-node/register');require('./tools/import_character_data.ts')\" && npm run build:client:prod",
     "postbuild": "mkdir -p public/data public/assets && node -e \"require('ts-node/register');require('./tools/encrypt_assets.ts')\" && node -e \"require('ts-node/register');require('./tools/generate_manifest.ts')\"",

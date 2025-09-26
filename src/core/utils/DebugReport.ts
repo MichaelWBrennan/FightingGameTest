@@ -81,6 +81,7 @@ export type DebugReport = {
     resourcesSample: Array<{ name: string; initiatorType?: string; duration?: number; transferSize?: number; decodedBodySize?: number; encodedBodySize?: number }>;
   };
   errors?: Array<{ message: string; filename?: string; lineno?: number; colno?: number }>; // reserved
+  consoleLogs?: Array<{ timestamp: number; level: string; message: string; args?: any[] }>;
 };
 
 function safeWindow(): any {
@@ -93,6 +94,42 @@ function safeDocument(): any {
 
 function safeNavigator(): any {
   try { return navigator as any; } catch { return null; }
+}
+
+// Console log capture
+let capturedLogs: Array<{ timestamp: number; level: string; message: string; args?: any[] }> = [];
+
+function captureConsoleLog(level: string, originalMethod: Function) {
+  return function(...args: any[]) {
+    try {
+      capturedLogs.push({
+        timestamp: Date.now(),
+        level,
+        message: args.map(arg => typeof arg === 'string' ? arg : JSON.stringify(arg)).join(' '),
+        args: args.length > 1 ? args.slice(1) : undefined
+      });
+    } catch {}
+    return originalMethod.apply(console, args);
+  };
+}
+
+function setupConsoleCapture(): void {
+  try {
+    if ((safeWindow() as any).__CONSOLE_CAPTURE_SETUP__) return;
+    (safeWindow() as any).__CONSOLE_CAPTURE_SETUP__ = true;
+    
+    const originalLog = console.log;
+    const originalWarn = console.warn;
+    const originalError = console.error;
+    const originalInfo = console.info;
+    const originalDebug = console.debug;
+    
+    console.log = captureConsoleLog('log', originalLog);
+    console.warn = captureConsoleLog('warn', originalWarn);
+    console.error = captureConsoleLog('error', originalError);
+    console.info = captureConsoleLog('info', originalInfo);
+    console.debug = captureConsoleLog('debug', originalDebug);
+  } catch {}
 }
 
 function collectStorage(prefixFilter?: RegExp): { localStorage: Record<string, string>; sessionStorage: Record<string, string> } {
@@ -343,6 +380,9 @@ function collectMeta(): DebugReport['meta'] {
 }
 
 export async function collectDebugReport(): Promise<DebugReport> {
+  // Set up console capture if not already done
+  setupConsoleCapture();
+  
   const meta = collectMeta();
   const overlay = (LoadingOverlay as any).getDebugState?.() ?? { error: 'no_overlay' };
   const storageBasic = collectStorage();
@@ -365,7 +405,8 @@ export async function collectDebugReport(): Promise<DebugReport> {
       __BUILD_VERSION__: w.__BUILD_VERSION__,
       __ASSET_KEY__: w.__ASSET_KEY__,
       __DEBUG_REPORT_DOWNLOADED__: w.__DEBUG_REPORT_DOWNLOADED__,
-      __DEBUG_REPORT_SCHEDULED__: w.__DEBUG_REPORT_SCHEDULED__
+      __DEBUG_REPORT_SCHEDULED__: w.__DEBUG_REPORT_SCHEDULED__,
+      __FORCE_DEBUG_DOWNLOAD__: w.__FORCE_DEBUG_DOWNLOAD__
     };
   } catch {}
   const report: DebugReport = {
@@ -377,7 +418,8 @@ export async function collectDebugReport(): Promise<DebugReport> {
     overlay,
     storage: { ...storageBasic, cookies, indexedDB: indexedDbSummary },
     network: networkInfo,
-    performance: performanceInfo
+    performance: performanceInfo,
+    consoleLogs: capturedLogs.slice() // Include captured console logs
   };
   return report;
 }
@@ -399,8 +441,12 @@ function downloadBlob(filename: string, blob: Blob): void {
 
 export async function downloadDebugReport(trigger: 'auto' | 'manual' = 'auto'): Promise<void> {
   try {
+    // For manual triggers, always download. For auto triggers, check if we should skip
     const already = (safeWindow() as any).__DEBUG_REPORT_DOWNLOADED__;
-    if (trigger === 'auto' && already) return;
+    const forceDownload = (safeWindow() as any).__FORCE_DEBUG_DOWNLOAD__;
+    
+    if (trigger === 'auto' && already && !forceDownload) return;
+    
     const report = await collectDebugReport();
     const pretty = JSON.stringify(report, null, 2);
     const blob = new Blob([pretty], { type: 'application/json' });
@@ -408,8 +454,16 @@ export async function downloadDebugReport(trigger: 'auto' | 'manual' = 'auto'): 
     const ts = new Date(report.meta.generatedAtEpochMs).toISOString().replace(/[:.]/g, '-');
     const filename = `sf3-debug-${version}-${ts}.json`;
     downloadBlob(filename, blob);
-    (safeWindow() as any).__DEBUG_REPORT_DOWNLOADED__ = true;
-  } catch {}
+    
+    // Only set the flag if we're not forcing downloads
+    if (!forceDownload) {
+      (safeWindow() as any).__DEBUG_REPORT_DOWNLOADED__ = true;
+    }
+    
+    console.log(`Debug report downloaded: ${filename}`);
+  } catch (error) {
+    console.error('Failed to download debug report:', error);
+  }
 }
 
 export function scheduleAutoDebugReportDownload(delayMs: number = 250): void {
@@ -418,5 +472,42 @@ export function scheduleAutoDebugReportDownload(delayMs: number = 250): void {
     (safeWindow() as any).__DEBUG_REPORT_SCHEDULED__ = true;
     setTimeout(() => { downloadDebugReport('auto'); }, Math.max(0, delayMs));
   } catch {}
+}
+
+export function enableForcedDebugDownloads(): void {
+  try {
+    (safeWindow() as any).__FORCE_DEBUG_DOWNLOAD__ = true;
+    console.log('Forced debug downloads enabled - logs will download on every page load');
+  } catch {}
+}
+
+export function disableForcedDebugDownloads(): void {
+  try {
+    (safeWindow() as any).__FORCE_DEBUG_DOWNLOAD__ = false;
+    console.log('Forced debug downloads disabled - logs will only download once per session');
+  } catch {}
+}
+
+export function isForcedDebugDownloadsEnabled(): boolean {
+  try {
+    return !!(safeWindow() as any).__FORCE_DEBUG_DOWNLOAD__;
+  } catch {
+    return false;
+  }
+}
+
+export function clearCapturedLogs(): void {
+  try {
+    capturedLogs = [];
+    console.log('Captured logs cleared');
+  } catch {}
+}
+
+export function getCapturedLogsCount(): number {
+  try {
+    return capturedLogs.length;
+  } catch {
+    return 0;
+  }
 }
 

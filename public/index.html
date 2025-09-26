@@ -54,12 +54,24 @@
             el.textContent = 'Unhandled Rejection: ' + msg;
           } catch {}
         });
-        if (window.SF3App && typeof window.SF3App.defaultStart === 'function') {
-          Promise.resolve(window.SF3App.defaultStart(null)).catch(function(err){
-            try{ console.error('Game failed to start:', err); }catch{}
-          });
+        
+        function tryStartGame() {
+          if (window.FightForgeApp && typeof window.FightForgeApp.defaultStart === 'function') {
+            Promise.resolve(window.FightForgeApp.defaultStart(null)).catch(function(err){
+              try{ console.error('Game failed to start:', err); }catch{}
+            });
+          } else {
+            // Wait a bit more and try again
+            setTimeout(tryStartGame, 100);
+          }
+        }
+        
+        // Wait for the page to load before trying to start the game
+        if (document.readyState === 'loading') {
+          window.addEventListener('load', tryStartGame);
         } else {
-          document.body.innerHTML = '<div style="color:#fff;padding:16px">Failed to load game bundle</div>';
+          // Page is already loaded, try immediately
+          tryStartGame();
         }
       })();
     </script>

@@ -1,8 +1,9 @@
 
 import { GameEngine } from './core/GameEngine';
 import { LoadingOverlay } from './core/ui/LoadingOverlay';
-import { Logger, LogLevel, LogSink } from './core/utils/Logger';
-import { downloadDebugReport, scheduleAutoDebugReportDownload } from './core/utils/DebugReport';
+import type { LogSink } from './core/utils/Logger';
+import { Logger, LogLevel } from './core/utils/Logger';
+import { downloadDebugReport, scheduleAutoDebugReportDownload, enableForcedDebugDownloads, disableForcedDebugDownloads, isForcedDebugDownloadsEnabled, clearCapturedLogs, getCapturedLogsCount } from './core/utils/DebugReport';
 import * as pc from 'playcanvas';
 
 // Wire LoadingOverlay as a sink for real-time, user-facing logs
@@ -76,7 +77,11 @@ async function defaultStart(canvas: HTMLCanvasElement | null): Promise<void> {
   LoadingOverlay.initialize();
   try { (LoadingOverlay as any).enableConsoleCapture?.(); } catch {}
   try { LoadingOverlay.enableNetworkTracking(); } catch {}
-  try { scheduleAutoDebugReportDownload(250); } catch {}
+  try { 
+    enableForcedDebugDownloads(); // Enable downloads on every page load
+    console.log('Debug logging enabled - logs will be downloaded on every page load');
+    scheduleAutoDebugReportDownload(250); 
+  } catch {}
   // iOS Safari and users with reduced-motion often prefer immediate UI; force-hide overlay early
   try {
     const ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '';
@@ -199,4 +204,4 @@ async function ensurePlayCanvasLoaded(timeoutMs: number = 15000): Promise<void> 
 }
 
 export { defaultStart };
-export { downloadDebugReport };
+export { downloadDebugReport, enableForcedDebugDownloads, disableForcedDebugDownloads, isForcedDebugDownloadsEnabled, clearCapturedLogs, getCapturedLogsCount };
