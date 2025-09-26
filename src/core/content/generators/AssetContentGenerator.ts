@@ -3,14 +3,17 @@ import { Logger } from '../../utils/Logger';
 import { ContentGenerationConfig, GeneratedContent } from '../ContentGenerationManager';
 
 export interface AssetGenerationOptions {
-  type?: 'sprite' | 'animation' | 'sound' | 'effect' | 'ui' | 'background' | 'character' | 'stage' | 'all';
-  style?: 'pixel' | 'hand_drawn' | '3d' | 'vector' | 'realistic' | 'stylized' | 'anime' | 'cartoon';
-  theme?: 'fire' | 'ice' | 'electric' | 'wind' | 'earth' | 'water' | 'dark' | 'light' | 'cyber' | 'nature';
+  type?: 'sprite' | 'animation' | 'sound' | 'effect' | 'ui' | 'background' | 'character' | 'stage' | 'model' | 'texture' | 'material' | 'shader' | 'all';
+  style?: 'pixel' | 'hand_drawn' | '3d' | 'vector' | 'realistic' | 'stylized' | 'anime' | 'cartoon' | 'low_poly' | 'high_poly' | 'procedural';
+  theme?: 'arcane' | 'divine' | 'elemental' | 'shadow' | 'nature' | 'crystal' | 'void' | 'celestial' | 'infernal' | 'primal';
   size?: 'small' | 'medium' | 'large' | 'huge';
   quality?: 'low' | 'medium' | 'high' | 'ultra';
   animated?: boolean;
   interactive?: boolean;
   audio?: boolean;
+  dimensions?: '2d' | '3d' | '2.5d';
+  platform?: 'web' | 'mobile' | 'desktop' | 'console';
+  format?: 'png' | 'jpg' | 'gif' | 'svg' | 'webp' | 'obj' | 'fbx' | 'gltf' | 'glb' | 'dae' | 'blend';
 }
 
 export interface AssetData {
