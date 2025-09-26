@@ -110,11 +110,11 @@ export class RealTimeStageManager {
   }
 
   private async createSkybox(skyboxData: any): Promise<void> {
-    const skyboxEntity = new pc.Entity('GothicSkybox');
+    const skyboxEntity = new pc.Entity('DarkSkybox');
     
-    // Create gothic skybox material
+    // Create dark skybox material
     const skyboxMaterial = new pc.StandardMaterial();
-    skyboxMaterial.diffuse = new pc.Color(0.2, 0.2, 0.2); // Dark gothic sky
+    skyboxMaterial.diffuse = new pc.Color(0.2, 0.2, 0.2); // Dark atmospheric sky
     skyboxMaterial.emissive = new pc.Color(0.1, 0.1, 0.1);
     skyboxMaterial.update();
     
@@ -324,9 +324,9 @@ export class RealTimeStageManager {
   }
 
   private async createLighting(lightingData: any): Promise<void> {
-    const lightEntity = new pc.Entity('GothicLight');
+    const lightEntity = new pc.Entity('DarkLight');
     
-    // Create gothic directional light
+    // Create dark directional light
     lightEntity.addComponent('light', {
       type: 'directional',
       color: this.hexToColor(lightingData.color || '#8B0000'),
@@ -334,15 +334,15 @@ export class RealTimeStageManager {
       castShadows: lightingData.shadows || true
     });
     
-    // Set gothic light direction (more dramatic angle)
+    // Set dramatic light direction
     lightEntity.setEulerAngles(60, 45, 0);
     
     // Add to scene
     this.app.root.addChild(lightEntity);
     this.stageEntities.push(lightEntity);
     
-    // Add ambient light for gothic atmosphere
-    const ambientEntity = new pc.Entity('GothicAmbient');
+    // Add ambient light for dark atmosphere
+    const ambientEntity = new pc.Entity('DarkAmbient');
     ambientEntity.addComponent('light', {
       type: 'ambient',
       color: this.hexToColor(lightingData.ambient || '#2F2F2F'),

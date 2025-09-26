@@ -1,5 +1,5 @@
 # ⚔️ FightForge
-## High Fantasy Fighting Game - Where Magic Meets Combat
+## Dark Fantasy Fighting Game - Where Magic Meets Combat
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-repo/fightforge)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -7,11 +7,11 @@
 [![Engine](https://img.shields.io/badge/engine-PlayCanvas-orange.svg)](https://playcanvas.com/)
 [![Ranking](https://img.shields.io/badge/ranking-Bayesian%20Anti--Toxic-green.svg)](https://github.com/your-repo/fightforge)
 
-> **The most advanced high fantasy fighting game ever created - where magical warriors clash in epic battles of skill, strategy, and sorcery.**
+> **The most advanced dark fantasy fighting game ever created - where magical warriors clash in epic battles of skill, strategy, and sorcery.**
 
 ## 🌟 Overview
 
-This is a revolutionary **high fantasy fighting game** that combines magical combat with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads. Enter a world where warriors wield both steel and sorcery in epic battles of skill and magic.
+This is a revolutionary **dark fantasy fighting game** that combines magical combat with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads. Enter a world where warriors wield both steel and sorcery in epic battles of skill and magic.
 
 ### 🎯 **Key Innovations:**
 - **🌐 Browser-Based**: Play instantly in any modern browser - no downloads required
@@ -93,6 +93,14 @@ This is a revolutionary **high fantasy fighting game** that combines magical com
 - **Advanced Post-Processing** including TAA, SSR, SSAO, Bloom, and Depth of Field
 - **Dynamic Lighting System** with volumetric effects and subsurface scattering
 - **GPU Particle System** supporting 1M+ particles with compute shaders
+
+### 🏰 **Unified Dark Stage Generation**
+- **All Stages Dark Themed** - Every stage automatically has dark, atmospheric aesthetics
+- **Real-Time Procedural Generation** - Stages generated dynamically on match launch
+- **Dark Fantasy Architecture** - Cathedrals, castles, ruins, and mystical structures
+- **Atmospheric Lighting** - Dramatic shadows, fog, and moody lighting effects
+- **Dark Particle Systems** - Ash, embers, mist, bat swarms, and ghostly effects
+- **Unified Aesthetic** - Consistent dark fantasy theme across all stage types
 
 ### 🌐 **Revolutionary Netcode**
 - **Quantum Rollback System** with AI prediction and quantum correction

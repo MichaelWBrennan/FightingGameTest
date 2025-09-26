@@ -124,7 +124,7 @@ export class ProceduralStageGenerator {
 
 	private training(): any {
 		return {
-			name: 'Gothic Training Grounds (Procedural)',
+			name: 'Dark Training Grounds (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
@@ -194,7 +194,7 @@ export class ProceduralStageGenerator {
 
 	private urban(): any {
 		return {
-			name: 'Gothic Urban Ruins (Procedural)',
+			name: 'Shadow City Ruins (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
@@ -246,7 +246,7 @@ export class ProceduralStageGenerator {
 	// Gothic Stage Generators
 	private gothicCathedral(): any {
 		return {
-			name: 'Gothic Cathedral (Procedural)',
+			name: 'Dark Cathedral (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
@@ -281,7 +281,7 @@ export class ProceduralStageGenerator {
 
 	private gothicGraveyard(): any {
 		return {
-			name: 'Gothic Graveyard (Procedural)',
+			name: 'Shadow Cemetery (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(2) },
@@ -317,7 +317,7 @@ export class ProceduralStageGenerator {
 
 	private gothicCastle(): any {
 		return {
-			name: 'Gothic Castle (Procedural)',
+			name: 'Dark Fortress (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
@@ -352,7 +352,7 @@ export class ProceduralStageGenerator {
 
 	private gothicRuins(): any {
 		return {
-			name: 'Gothic Ruins (Procedural)',
+			name: 'Ancient Ruins (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(2) },
@@ -388,7 +388,7 @@ export class ProceduralStageGenerator {
 
 	private gothicForest(): any {
 		return {
-			name: 'Gothic Forest (Procedural)',
+			name: 'Shadow Woods (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
@@ -424,7 +424,7 @@ export class ProceduralStageGenerator {
 
 	private gothicLaboratory(): any {
 		return {
-			name: 'Gothic Laboratory (Procedural)',
+			name: 'Dark Laboratory (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(2) },
@@ -460,7 +460,7 @@ export class ProceduralStageGenerator {
 
 	private gothicClocktower(): any {
 		return {
-			name: 'Gothic Clocktower (Procedural)',
+			name: 'Shadow Tower (Procedural)',
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
@@ -577,9 +577,9 @@ export class ProceduralStageGenerator {
 			};
 		}
 
-		// Update stage name to reflect gothic theme
-		if (stage.name && !stage.name.includes('Gothic')) {
-			stage.name = `Gothic ${stage.name}`;
+		// Update stage name to reflect dark theme
+		if (stage.name && !stage.name.includes('Dark') && !stage.name.includes('Shadow') && !stage.name.includes('Ancient')) {
+			stage.name = `Dark ${stage.name}`;
 		}
 
 		return stage;
@@ -666,7 +666,7 @@ export class ProceduralStageGenerator {
 	// Fantasy Stage Generators
 	private arcaneTower(): any {
 		return {
-			name: 'Arcane Tower (Procedural)',
+			name: 'Mystic Spire (Procedural)',
 			layers: {
 				skybox: { type: 'mystical_sky', elements: this.mysticalSky() },
 				farBackground: { type: 'floating_islands', elements: this.floatingIslands(3) },
@@ -689,7 +689,7 @@ export class ProceduralStageGenerator {
 
 	private divineCathedral(): any {
 		return {
-			name: 'Divine Cathedral (Procedural)',
+			name: 'Sacred Sanctuary (Procedural)',
 			layers: {
 				skybox: { type: 'heavenly_sky', elements: this.heavenlySky() },
 				farBackground: { type: 'celestial_clouds', elements: this.celestialClouds(4) },
@@ -712,7 +712,7 @@ export class ProceduralStageGenerator {
 
 	private elementalRealm(): any {
 		return {
-			name: 'Elemental Realm (Procedural)',
+			name: 'Elemental Nexus (Procedural)',
 			layers: {
 				skybox: { type: 'elemental_sky', elements: this.elementalSky() },
 				farBackground: { type: 'elemental_mountains', elements: this.elementalMountains(4) },
@@ -735,7 +735,7 @@ export class ProceduralStageGenerator {
 
 	private shadowKeep(): any {
 		return {
-			name: 'Shadow Keep (Procedural)',
+			name: 'Shadow Citadel (Procedural)',
 			layers: {
 				skybox: { type: 'shadowy_sky', elements: this.shadowySky() },
 				farBackground: { type: 'dark_mountains', elements: this.darkMountains(3) },
@@ -758,7 +758,7 @@ export class ProceduralStageGenerator {
 
 	private natureSanctuary(): any {
 		return {
-			name: 'Nature Sanctuary (Procedural)',
+			name: 'Wild Grove (Procedural)',
 			layers: {
 				skybox: { type: 'natural_sky', elements: this.naturalSky() },
 				farBackground: { type: 'forest_hills', elements: this.forestHills(4) },
@@ -781,7 +781,7 @@ export class ProceduralStageGenerator {
 
 	private crystalCavern(): any {
 		return {
-			name: 'Crystal Cavern (Procedural)',
+			name: 'Crystal Depths (Procedural)',
 			layers: {
 				skybox: { type: 'cavern_ceiling', elements: this.cavernCeiling() },
 				farBackground: { type: 'crystal_formations', elements: this.crystalFormations(6) },
@@ -804,7 +804,7 @@ export class ProceduralStageGenerator {
 
 	private voidDimension(): any {
 		return {
-			name: 'Void Dimension (Procedural)',
+			name: 'Void Realm (Procedural)',
 			layers: {
 				skybox: { type: 'void_space', elements: this.voidSpace() },
 				farBackground: { type: 'void_structures', elements: this.voidStructures(3) },
@@ -827,7 +827,7 @@ export class ProceduralStageGenerator {
 
 	private celestialPlane(): any {
 		return {
-			name: 'Celestial Plane (Procedural)',
+			name: 'Heavenly Realm (Procedural)',
 			layers: {
 				skybox: { type: 'starry_sky', elements: this.starrySky() },
 				farBackground: { type: 'celestial_bodies', elements: this.celestialBodies(5) },
@@ -850,7 +850,7 @@ export class ProceduralStageGenerator {
 
 	private infernalAbyss(): any {
 		return {
-			name: 'Infernal Abyss (Procedural)',
+			name: 'Hellish Depths (Procedural)',
 			layers: {
 				skybox: { type: 'hellish_sky', elements: this.hellishSky() },
 				farBackground: { type: 'volcanic_mountains', elements: this.volcanicMountains(4) },
@@ -873,7 +873,7 @@ export class ProceduralStageGenerator {
 
 	private primalForest(): any {
 		return {
-			name: 'Primal Forest (Procedural)',
+			name: 'Ancient Wilds (Procedural)',
 			layers: {
 				skybox: { type: 'wild_sky', elements: this.wildSky() },
 				farBackground: { type: 'primal_mountains', elements: this.primalMountains(3) },
