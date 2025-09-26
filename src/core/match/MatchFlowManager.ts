@@ -12,6 +12,8 @@ export interface MatchResult {
   generationParams: any;
   matchId: string;
   timestamp: Date;
+  gameMode: string;
+  isOnline: boolean;
 }
 
 export interface StageSavePrompt {
@@ -29,6 +31,8 @@ export class MatchFlowManager {
   private currentStageData: any = null;
   private currentGenerationParams: any = null;
   private currentMatchId: string = '';
+  private currentGameMode: string = '';
+  private currentIsOnline: boolean = false;
   private savePrompt: StageSavePrompt | null = null;
 
   constructor(app: pc.Application) {
@@ -53,8 +57,10 @@ export class MatchFlowManager {
   }
 
   private onMatchStart(event: any): void {
-    const { matchId, players } = event;
+    const { matchId, players, gameMode, isOnline } = event;
     this.currentMatchId = matchId;
+    this.currentGameMode = gameMode;
+    this.currentIsOnline = isOnline;
     
     // Auto-generate a random stage for the match
     this.generateRandomStage();
@@ -71,11 +77,15 @@ export class MatchFlowManager {
       stageData: this.currentStageData,
       generationParams: this.currentGenerationParams,
       matchId: this.currentMatchId,
-      timestamp: new Date()
+      timestamp: new Date(),
+      gameMode: this.currentGameMode,
+      isOnline: this.currentIsOnline
     };
 
-    // Show stage save prompt after match
-    this.showStageSavePrompt(matchResult);
+    // Only show stage save prompt for offline modes and lobby training
+    if (this.canSaveStage(this.currentGameMode, this.currentIsOnline)) {
+      this.showStageSavePrompt(matchResult);
+    }
   }
 
   private generateRandomStage(): void {
@@ -219,6 +229,59 @@ export class MatchFlowManager {
 
   public getAvailableTimesOfDay(): string[] {
     return ['dawn', 'day', 'dusk', 'night', 'eternal'];
+  }
+
+  private canSaveStage(gameMode: string, isOnline: boolean): boolean {
+    // Online matches always use procedural generation, no saving allowed
+    if (isOnline) return false;
+    
+    // Offline modes that allow stage saving
+    const allowedOfflineModes = [
+      'story', 'arcade', 'versus', 'training', 'survival', 
+      'time_attack', 'team_battle', 'tournament'
+    ];
+    
+    return allowedOfflineModes.includes(gameMode);
+  }
+
+  public canSelectStage(): boolean {
+    // Only show stage selector if player has 2+ saved stages
+    return this.stageSaveSystem.getAllSavedStages().length >= 2;
+  }
+
+  public getSavedStagesForMode(gameMode: string, isOnline: boolean): SavedStage[] {
+    // Online matches always use procedural generation
+    if (isOnline) return [];
+    
+    // Return saved stages for offline modes
+    if (this.canSaveStage(gameMode, isOnline)) {
+      return this.stageSaveSystem.getAllSavedStages();
+    }
+    
+    return [];
+  }
+
+  public loadSavedStage(stageId: string): boolean {
+    const stage = this.stageSaveSystem.getSavedStage(stageId);
+    if (!stage) return false;
+
+    // Load the saved stage
+    this.currentStageData = stage.stageData;
+    this.currentGenerationParams = stage.generationParams;
+    
+    // Load the stage in real-time
+    this.realTimeStageManager.generateStage(stage.generationParams);
+    
+    // Update play count
+    this.stageSaveSystem.playStage(stageId);
+    
+    this.app.fire('stage:loaded', { 
+      stageData: this.currentStageData, 
+      generationParams: this.currentGenerationParams,
+      stageId 
+    });
+    
+    return true;
   }
 
   public destroy(): void {

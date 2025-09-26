@@ -326,7 +326,7 @@ export class GameModeManager {
     return true;
   }
 
-  public startMode(modeId: string, players: string[] = []): boolean {
+  public startMode(modeId: string, players: string[] = [], isOnline: boolean = false): boolean {
     const mode = this.getMode(modeId);
     if (!mode) return false;
 
@@ -339,65 +339,65 @@ export class GameModeManager {
     this.modeHistory.push(modeId);
 
     // Initialize mode-specific logic
-    this.initializeMode(mode);
+    this.initializeMode(mode, isOnline);
 
     return true;
   }
 
-  private initializeMode(mode: GameMode): void {
+  private initializeMode(mode: GameMode, isOnline: boolean = false): void {
     switch (mode.type) {
       case 'single':
-        this.initializeSinglePlayerMode(mode);
+        this.initializeSinglePlayerMode(mode, isOnline);
         break;
       case 'multiplayer':
-        this.initializeMultiplayerMode(mode);
+        this.initializeMultiplayerMode(mode, isOnline);
         break;
       case 'online':
         this.initializeOnlineMode(mode);
         break;
       case 'training':
-        this.initializeTrainingMode(mode);
+        this.initializeTrainingMode(mode, isOnline);
         break;
     }
   }
 
-  private initializeSinglePlayerMode(mode: GameMode): void {
+  private initializeSinglePlayerMode(mode: GameMode, isOnline: boolean): void {
     if (mode.id === 'arcade') {
-      this.initializeArcadeMode(mode as ArcadeMode);
+      this.initializeArcadeMode(mode as ArcadeMode, isOnline);
     } else if (mode.id === 'survival') {
-      this.initializeSurvivalMode(mode as SurvivalMode);
+      this.initializeSurvivalMode(mode as SurvivalMode, isOnline);
     }
   }
 
-  private initializeArcadeMode(mode: ArcadeMode): void {
+  private initializeArcadeMode(mode: ArcadeMode, isOnline: boolean): void {
     // Arcade mode specific initialization
-    console.log('Initializing Arcade Mode');
+    console.log('Initializing Arcade Mode', isOnline ? '(Online)' : '(Offline)');
   }
 
-  private initializeSurvivalMode(mode: SurvivalMode): void {
+  private initializeSurvivalMode(mode: SurvivalMode, isOnline: boolean): void {
     // Survival mode specific initialization
-    console.log('Initializing Survival Mode');
+    console.log('Initializing Survival Mode', isOnline ? '(Online)' : '(Offline)');
   }
 
-  private initializeMultiplayerMode(mode: GameMode): void {
+  private initializeMultiplayerMode(mode: GameMode, isOnline: boolean): void {
     if (mode.id === 'tournament') {
-      this.initializeTournamentMode(mode as TournamentMode);
+      this.initializeTournamentMode(mode as TournamentMode, isOnline);
     }
   }
 
-  private initializeTournamentMode(mode: TournamentMode): void {
+  private initializeTournamentMode(mode: TournamentMode, isOnline: boolean): void {
     // Tournament mode specific initialization
-    console.log('Initializing Tournament Mode');
+    console.log('Initializing Tournament Mode', isOnline ? '(Online)' : '(Offline)');
   }
 
   private initializeOnlineMode(mode: GameMode): void {
-    // Online mode specific initialization
-    console.log('Initializing Online Mode');
+    // Online mode specific initialization - always procedural stages
+    console.log('Initializing Online Mode - Procedural stages only');
   }
 
-  private initializeTrainingMode(mode: GameMode): void {
+  private initializeTrainingMode(mode: GameMode, isOnline: boolean): void {
     // Training mode specific initialization
-    console.log('Initializing Training Mode');
+    console.log('Initializing Training Mode', isOnline ? '(Online)' : '(Offline)');
   }
 
   public endMode(): void {
