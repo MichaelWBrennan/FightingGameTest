@@ -436,56 +436,6 @@ export class GameModeManager {
       }
     });
 
-    // Replay Theater
-    this.addMode({
-      id: 'replay_theater',
-      name: 'Replay Theater',
-      description: 'Watch and analyze saved replays',
-      type: 'single',
-      maxPlayers: 1,
-      minPlayers: 1,
-      rounds: 1,
-      unlockRequirements: {
-        level: 2
-      },
-      rewards: {
-        experience: 10,
-        currency: 5,
-        unlocks: ['replay_theater_unlock']
-      }
-    });
-
-    // Gallery Mode
-    this.addMode({
-      id: 'gallery',
-      name: 'Gallery Mode',
-      description: 'View unlocked artwork, music, and collectibles',
-      type: 'single',
-      maxPlayers: 1,
-      minPlayers: 1,
-      rounds: 1,
-      rewards: {
-        experience: 0,
-        currency: 0,
-        unlocks: []
-      }
-    });
-
-    // Settings
-    this.addMode({
-      id: 'settings',
-      name: 'Settings',
-      description: 'Configure game options and preferences',
-      type: 'single',
-      maxPlayers: 1,
-      minPlayers: 1,
-      rounds: 1,
-      rewards: {
-        experience: 0,
-        currency: 0,
-        unlocks: []
-      }
-    });
   }
 
   public addMode(mode: GameMode): void {
@@ -575,12 +525,6 @@ export class GameModeManager {
       this.initializeBossRushMode(mode, isOnline);
     } else if (mode.id === 'endless') {
       this.initializeEndlessMode(mode, isOnline);
-    } else if (mode.id === 'replay_theater') {
-      this.initializeReplayTheaterMode(mode, isOnline);
-    } else if (mode.id === 'gallery') {
-      this.initializeGalleryMode(mode, isOnline);
-    } else if (mode.id === 'settings') {
-      this.initializeSettingsMode(mode, isOnline);
     }
   }
 
@@ -640,17 +584,6 @@ export class GameModeManager {
     console.log('Initializing Endless Mode', isOnline ? '(Online)' : '(Offline)');
   }
 
-  private initializeReplayTheaterMode(mode: GameMode, isOnline: boolean): void {
-    console.log('Initializing Replay Theater Mode', isOnline ? '(Online)' : '(Offline)');
-  }
-
-  private initializeGalleryMode(mode: GameMode, isOnline: boolean): void {
-    console.log('Initializing Gallery Mode', isOnline ? '(Online)' : '(Offline)');
-  }
-
-  private initializeSettingsMode(mode: GameMode, isOnline: boolean): void {
-    console.log('Initializing Settings Mode', isOnline ? '(Online)' : '(Offline)');
-  }
 
   private initializeTagTeamMode(mode: GameMode, isOnline: boolean): void {
     console.log('Initializing Tag Team Mode', isOnline ? '(Online)' : '(Offline)');

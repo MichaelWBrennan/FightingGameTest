@@ -100,8 +100,12 @@ export class ModeSelector {
   private createModeCategories(): void {
     if (!this.selectorData) return;
 
-    // Create a unified grid layout for all modes
-    const modes = this.selectorData.availableModes;
+    // Filter out non-game modes (replay_theater, gallery, settings)
+    const gameModes = this.selectorData.availableModes.filter(mode => 
+      !['replay_theater', 'gallery', 'settings'].includes(mode.id)
+    );
+
+    // Create a unified grid layout for game modes only
     const itemsPerRow = 4;
     const buttonWidth = 180;
     const buttonHeight = 80;
@@ -109,7 +113,7 @@ export class ModeSelector {
     const startY = 250;
     const startX = -((itemsPerRow - 1) * (buttonWidth + spacing)) / 2;
 
-    modes.forEach((mode, index) => {
+    gameModes.forEach((mode, index) => {
       const row = Math.floor(index / itemsPerRow);
       const col = index % itemsPerRow;
       

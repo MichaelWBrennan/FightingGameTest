@@ -239,7 +239,7 @@ export class MatchFlowManager {
     const allowedOfflineModes = [
       // Single Player Modes
       'story', 'arcade', 'survival', 'time_attack', 'mission', 
-      'boss_rush', 'endless', 'replay_theater', 'gallery', 'settings',
+      'boss_rush', 'endless',
       
       // Multiplayer Modes
       'versus', 'tournament', 'team_battle', 'tag_team', 

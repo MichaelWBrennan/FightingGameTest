@@ -339,16 +339,27 @@ export class StageSelector {
     });
     randomButton.addChild(randomText);
 
-    // Cancel button
+    // Cancel button - unified dark theme
     const cancelButton = new pc.Entity('CancelButton');
     cancelButton.addComponent('element', {
       type: pc.ELEMENTTYPE_IMAGE,
       anchor: [0.7, 0, 1, 1],
       pivot: [0, 0.5],
       margin: [10, 5, -10, -5],
-      color: new pc.Color(0.6, 0.2, 0.2, 1)
+      color: new pc.Color(0.2, 0.2, 0.2, 0.9)
     });
     buttons.addChild(cancelButton);
+
+    // Cancel button border
+    const cancelBorder = new pc.Entity('CancelBorder');
+    cancelBorder.addComponent('element', {
+      type: pc.ELEMENTTYPE_IMAGE,
+      anchor: [0, 0, 1, 1],
+      pivot: [0.5, 0.5],
+      margin: [0, 0, 0, 0],
+      color: new pc.Color(0.6, 0.2, 0.2, 0.8)
+    });
+    cancelButton.addChild(cancelBorder);
 
     const cancelText = new pc.Entity('CancelText');
     cancelText.addComponent('element', {

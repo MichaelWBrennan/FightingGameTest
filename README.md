@@ -107,8 +107,12 @@ This is a revolutionary **dark fantasy fighting game** that combines magical com
 - **Multiplayer Modes** - Versus, Tournament, Team Battle, Tag Team, King of the Hill, Custom Match
 - **Training Modes** - Training, Practice, Combo Challenge
 - **Online Modes** - Ranked and Casual online matches
-- **Special Modes** - Replay Theater, Gallery, Settings
 - **Stage Selection** - Save and select custom stages (offline modes only)
+
+### 🎛️ **Menu System**
+- **Menu Bar** - Quick access to Replay Theater, Gallery, Settings, Achievements, Profile
+- **Pause Menu** - Resume, Save Replay, access to all menu features during gameplay
+- **Unified Design** - Consistent dark theme across all UI elements
 
 ### 🌐 **Revolutionary Netcode**
 - **Quantum Rollback System** with AI prediction and quantum correction
