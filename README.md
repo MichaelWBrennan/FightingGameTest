@@ -105,6 +105,15 @@ This is a revolutionary **dark fantasy fighting game** that combines magical com
 - **Dynamic Lighting System** with volumetric effects and subsurface scattering
 - **GPU Particle System** supporting 1M+ particles with compute shaders
 
+### 🎭 **Procedural 3D Character Generation**
+- **12 Unique Fantasy Warriors** with procedurally generated 3D models
+- **Dynamic Character Creation** with themes, fighting styles, and visual customization
+- **Advanced 3D Modeling** with body geometry, facial features, and clothing systems
+- **Material System** with realistic skin, hair, clothing, armor, and weapon materials
+- **Animation Framework** with idle, walk, attack, special, and super move animations
+- **Hitbox/Hurtbox System** with precise collision detection and frame data
+- **Character Customization** with accessories, weapons, and visual details
+
 ### 🏰 **Unified Dark Stage Generation**
 - **All Stages Dark Themed** - Every stage automatically has dark, atmospheric aesthetics
 - **Real-Time Procedural Generation** - Stages generated dynamically on match launch
