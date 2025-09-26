@@ -717,6 +717,45 @@ export class GameEngine {
         this.featureShowcaseUI = new FeatureShowcaseUI(this.app);
         this.services.register('featureShowcaseUI', this.featureShowcaseUI);
       } catch {}
+
+      // Game mode event handlers
+      this.app.on('game:storyMode', () => {
+        Logger.info('Starting Story Mode');
+        this.stateStack.push(new MenuState());
+      });
+
+      this.app.on('game:arcadeMode', () => {
+        Logger.info('Starting Arcade Mode');
+        this.stateStack.push(new MenuState());
+      });
+
+      this.app.on('game:versusMode', () => {
+        Logger.info('Starting Versus Mode');
+        this.stateStack.push(new CharacterSelectState());
+      });
+
+      this.app.on('game:trainingMode', () => {
+        Logger.info('Starting Training Mode');
+        this.stateStack.push(new MatchState());
+      });
+
+      this.app.on('game:onlineMode', () => {
+        Logger.info('Starting Online Mode');
+        this.stateStack.push(new MenuState());
+      });
+
+      this.app.on('ui:characterSelect', () => {
+        Logger.info('Opening Character Select');
+        this.stateStack.push(new CharacterSelectState());
+      });
+
+      this.app.on('ui:settings', () => {
+        Logger.info('Opening Settings');
+        // Settings would be handled by the options overlay
+        if (this.options) {
+          this.options.show();
+        }
+      });
       try {
         const loader = new ConfigLoader();
         loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
