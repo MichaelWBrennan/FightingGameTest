@@ -303,7 +303,7 @@ export class SocialFeatures {
   async startLiveCoaching(coachId: string): Promise<void> {
     try {
       await this.establishConnection(coachId);
-      await this.startVoiceChat(coachId);
+      await this.startCoachingVoiceChat(coachId);
       await this.enableScreenSharing();
       await this.startAnnotationSystem();
     } catch (error) {
@@ -317,7 +317,7 @@ export class SocialFeatures {
     // This would setup the connection
   }
 
-  private async startVoiceChat(coachId: string): Promise<void> {
+  private async startCoachingVoiceChat(coachId: string): Promise<void> {
     // Start voice chat with coach
     // This would enable voice communication
   }
