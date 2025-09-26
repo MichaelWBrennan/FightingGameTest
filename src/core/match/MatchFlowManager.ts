@@ -237,8 +237,16 @@ export class MatchFlowManager {
     
     // Offline modes that allow stage saving
     const allowedOfflineModes = [
-      'story', 'arcade', 'versus', 'training', 'survival', 
-      'time_attack', 'team_battle', 'tournament'
+      // Single Player Modes
+      'story', 'arcade', 'survival', 'time_attack', 'mission', 
+      'boss_rush', 'endless', 'replay_theater', 'gallery', 'settings',
+      
+      // Multiplayer Modes
+      'versus', 'tournament', 'team_battle', 'tag_team', 
+      'king_of_hill', 'custom_match',
+      
+      // Training Modes
+      'training', 'practice', 'combo_challenge'
     ];
     
     return allowedOfflineModes.includes(gameMode);

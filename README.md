@@ -102,6 +102,14 @@ This is a revolutionary **dark fantasy fighting game** that combines magical com
 - **Dark Particle Systems** - Ash, embers, mist, bat swarms, and ghostly effects
 - **Unified Aesthetic** - Consistent dark fantasy theme across all stage types
 
+### 🎮 **Comprehensive Game Modes**
+- **Single Player Modes** - Story, Arcade, Survival, Time Attack, Mission, Boss Rush, Endless
+- **Multiplayer Modes** - Versus, Tournament, Team Battle, Tag Team, King of the Hill, Custom Match
+- **Training Modes** - Training, Practice, Combo Challenge
+- **Online Modes** - Ranked and Casual online matches
+- **Special Modes** - Replay Theater, Gallery, Settings
+- **Stage Selection** - Save and select custom stages (offline modes only)
+
 ### 🌐 **Revolutionary Netcode**
 - **Quantum Rollback System** with AI prediction and quantum correction
 - **Advanced Compression** using quantum compression and delta compression

@@ -283,6 +283,209 @@ export class GameModeManager {
         unlocks: ['team_battle_unlock']
       }
     });
+
+    // Practice Mode
+    this.addMode({
+      id: 'practice',
+      name: 'Practice Mode',
+      description: 'Free practice with customizable settings',
+      type: 'training',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      rewards: {
+        experience: 5,
+        currency: 2,
+        unlocks: []
+      }
+    });
+
+    // Mission Mode
+    this.addMode({
+      id: 'mission',
+      name: 'Mission Mode',
+      description: 'Complete specific challenges and objectives',
+      type: 'single',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      unlockRequirements: {
+        level: 3
+      },
+      rewards: {
+        experience: 80,
+        currency: 40,
+        unlocks: ['mission_unlock']
+      }
+    });
+
+    // Boss Rush
+    this.addMode({
+      id: 'boss_rush',
+      name: 'Boss Rush',
+      description: 'Face all bosses in sequence',
+      type: 'single',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      unlockRequirements: {
+        level: 8
+      },
+      rewards: {
+        experience: 300,
+        currency: 150,
+        unlocks: ['boss_rush_unlock']
+      }
+    });
+
+    // Endless Mode
+    this.addMode({
+      id: 'endless',
+      name: 'Endless Mode',
+      description: 'Fight until you lose - how long can you last?',
+      type: 'single',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      unlockRequirements: {
+        level: 6
+      },
+      rewards: {
+        experience: 200,
+        currency: 100,
+        unlocks: ['endless_unlock']
+      }
+    });
+
+    // Combo Challenge
+    this.addMode({
+      id: 'combo_challenge',
+      name: 'Combo Challenge',
+      description: 'Master complex combo sequences',
+      type: 'training',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      unlockRequirements: {
+        level: 4
+      },
+      rewards: {
+        experience: 60,
+        currency: 30,
+        unlocks: ['combo_challenge_unlock']
+      }
+    });
+
+    // Tag Team
+    this.addMode({
+      id: 'tag_team',
+      name: 'Tag Team',
+      description: '2v2 tag team battles with character switching',
+      type: 'multiplayer',
+      maxPlayers: 4,
+      minPlayers: 4,
+      rounds: 3,
+      timeLimit: 99,
+      unlockRequirements: {
+        level: 12
+      },
+      rewards: {
+        experience: 180,
+        currency: 90,
+        unlocks: ['tag_team_unlock']
+      }
+    });
+
+    // King of the Hill
+    this.addMode({
+      id: 'king_of_hill',
+      name: 'King of the Hill',
+      description: 'Winner stays, loser goes - last fighter standing wins',
+      type: 'multiplayer',
+      maxPlayers: 8,
+      minPlayers: 3,
+      rounds: 1,
+      timeLimit: 99,
+      unlockRequirements: {
+        level: 7
+      },
+      rewards: {
+        experience: 120,
+        currency: 60,
+        unlocks: ['king_of_hill_unlock']
+      }
+    });
+
+    // Custom Match
+    this.addMode({
+      id: 'custom_match',
+      name: 'Custom Match',
+      description: 'Create your own match with custom rules',
+      type: 'multiplayer',
+      maxPlayers: 8,
+      minPlayers: 2,
+      rounds: 1,
+      timeLimit: 99,
+      unlockRequirements: {
+        level: 5
+      },
+      rewards: {
+        experience: 40,
+        currency: 20,
+        unlocks: []
+      }
+    });
+
+    // Replay Theater
+    this.addMode({
+      id: 'replay_theater',
+      name: 'Replay Theater',
+      description: 'Watch and analyze saved replays',
+      type: 'single',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      unlockRequirements: {
+        level: 2
+      },
+      rewards: {
+        experience: 10,
+        currency: 5,
+        unlocks: ['replay_theater_unlock']
+      }
+    });
+
+    // Gallery Mode
+    this.addMode({
+      id: 'gallery',
+      name: 'Gallery Mode',
+      description: 'View unlocked artwork, music, and collectibles',
+      type: 'single',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      rewards: {
+        experience: 0,
+        currency: 0,
+        unlocks: []
+      }
+    });
+
+    // Settings
+    this.addMode({
+      id: 'settings',
+      name: 'Settings',
+      description: 'Configure game options and preferences',
+      type: 'single',
+      maxPlayers: 1,
+      minPlayers: 1,
+      rounds: 1,
+      rewards: {
+        experience: 0,
+        currency: 0,
+        unlocks: []
+      }
+    });
   }
 
   public addMode(mode: GameMode): void {
@@ -366,6 +569,18 @@ export class GameModeManager {
       this.initializeArcadeMode(mode as ArcadeMode, isOnline);
     } else if (mode.id === 'survival') {
       this.initializeSurvivalMode(mode as SurvivalMode, isOnline);
+    } else if (mode.id === 'mission') {
+      this.initializeMissionMode(mode, isOnline);
+    } else if (mode.id === 'boss_rush') {
+      this.initializeBossRushMode(mode, isOnline);
+    } else if (mode.id === 'endless') {
+      this.initializeEndlessMode(mode, isOnline);
+    } else if (mode.id === 'replay_theater') {
+      this.initializeReplayTheaterMode(mode, isOnline);
+    } else if (mode.id === 'gallery') {
+      this.initializeGalleryMode(mode, isOnline);
+    } else if (mode.id === 'settings') {
+      this.initializeSettingsMode(mode, isOnline);
     }
   }
 
@@ -382,6 +597,12 @@ export class GameModeManager {
   private initializeMultiplayerMode(mode: GameMode, isOnline: boolean): void {
     if (mode.id === 'tournament') {
       this.initializeTournamentMode(mode as TournamentMode, isOnline);
+    } else if (mode.id === 'tag_team') {
+      this.initializeTagTeamMode(mode, isOnline);
+    } else if (mode.id === 'king_of_hill') {
+      this.initializeKingOfHillMode(mode, isOnline);
+    } else if (mode.id === 'custom_match') {
+      this.initializeCustomMatchMode(mode, isOnline);
     }
   }
 
@@ -396,8 +617,59 @@ export class GameModeManager {
   }
 
   private initializeTrainingMode(mode: GameMode, isOnline: boolean): void {
-    // Training mode specific initialization
-    console.log('Initializing Training Mode', isOnline ? '(Online)' : '(Offline)');
+    if (mode.id === 'practice') {
+      this.initializePracticeMode(mode, isOnline);
+    } else if (mode.id === 'combo_challenge') {
+      this.initializeComboChallengeMode(mode, isOnline);
+    } else {
+      // Default training mode
+      console.log('Initializing Training Mode', isOnline ? '(Online)' : '(Offline)');
+    }
+  }
+
+  // New mode initialization methods
+  private initializeMissionMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Mission Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeBossRushMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Boss Rush Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeEndlessMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Endless Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeReplayTheaterMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Replay Theater Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeGalleryMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Gallery Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeSettingsMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Settings Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeTagTeamMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Tag Team Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeKingOfHillMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing King of the Hill Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeCustomMatchMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Custom Match Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializePracticeMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Practice Mode', isOnline ? '(Online)' : '(Offline)');
+  }
+
+  private initializeComboChallengeMode(mode: GameMode, isOnline: boolean): void {
+    console.log('Initializing Combo Challenge Mode', isOnline ? '(Online)' : '(Offline)');
   }
 
   public endMode(): void {
