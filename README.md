@@ -1,23 +1,23 @@
-# 🥊 Street Fighter III: 3rd Strike PlayCanvas Edition
-## Browser-Based League of Legends for Fighting Games
+# ⚔️ FightForge
+## Dark Fantasy Fighting Game - Where Magic Meets Combat
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-repo/fighting-game)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-repo/fightforge)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Browser%20%7C%20Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)](https://github.com/your-repo/fighting-game)
+[![Platform](https://img.shields.io/badge/platform-Browser%20%7C%20Web%20%7C%20Mobile%20%7C%20Desktop-lightgrey.svg)](https://github.com/your-repo/fightforge)
 [![Engine](https://img.shields.io/badge/engine-PlayCanvas-orange.svg)](https://playcanvas.com/)
-[![Ranking](https://img.shields.io/badge/ranking-Bayesian%20Anti--Toxic-green.svg)](https://github.com/your-repo/fighting-game)
+[![Ranking](https://img.shields.io/badge/ranking-Bayesian%20Anti--Toxic-green.svg)](https://github.com/your-repo/fightforge)
 
-> **The most advanced browser-based fighting game ever created - combining League of Legends competitive features with cutting-edge fighting game technology.**
+> **The most advanced dark fantasy fighting game ever created - where magical warriors clash in epic battles of skill, strategy, and sorcery.**
 
 ## 🌟 Overview
 
-This is a revolutionary **browser-based fighting game** that combines the competitive depth of League of Legends with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads.
+This is a revolutionary **dark fantasy fighting game** that combines magical combat with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads. Enter a world where warriors wield both steel and sorcery in epic battles of skill and magic.
 
 ### 🎯 **Key Innovations:**
 - **🌐 Browser-Based**: Play instantly in any modern browser - no downloads required
 - **👤 User Accounts**: Full account system with profiles, progress tracking, and cloud sync
 - **🧠 Bayesian Ranking**: Anti-toxic ranking system that replaces archaic MMR
-- **🏆 League-Style Competition**: 9-tier ranking system with seasons and rewards
+- **🏆 Competitive Ranking**: 9-tier ranking system with seasons and rewards
 - **🎮 Advanced Training**: Frame data, hitbox visualization, and AI coaching
 - **📱 Cross-Platform**: Works on desktop, mobile, and tablet seamlessly
 
@@ -44,7 +44,7 @@ This is a revolutionary **browser-based fighting game** that combines the compet
 - **Consistency Rewards** - Bonuses for consistent, positive play
 - **Confidence-Based Matchmaking** - Better matches through skill confidence
 
-### 🏆 **League-Style Competition**
+### 🏆 **Competitive Ranking System**
 - **9 Competitive Tiers** - Iron, Bronze, Silver, Gold, Platinum, Diamond, Master, Grandmaster, Challenger
 - **LP System** - League Points with win/loss bonuses and streaks
 - **Promotion Series** - Best of 3 matches to rank up
@@ -72,12 +72,24 @@ This is a revolutionary **browser-based fighting game** that combines the compet
 - **Voice & Text Chat** - Communicate with other players
 - **Leaderboards** - See how you rank against others
 
-### 🎮 **Core Gameplay**
-- **30 Unique Character Archetypes** with zero overlap across variants
+### 🎮 **EVO-Level Core Gameplay**
+- **12 Unique Fantasy Warriors** with distinct magical fighting styles
 - **Frame-Perfect Combat System** with 60 FPS deterministic gameplay
-- **Advanced Input System** supporting motion inputs, charge moves, and negative edge
+- **Advanced Input System** with frame-perfect precision, input buffering, and sequence detection
+- **Sophisticated Combo System** with damage scaling, proration, and reset mechanics
+- **Advanced Defense System** with parries, perfect blocks, and counter-attacks
 - **Precise Hitbox/Hurtbox Collision** with data-driven combo systems
 - **Real-Time Destruction Physics** with fracture patterns and debris simulation
+- **Magical Combat System** with spell casting, elemental effects, and mystical abilities
+
+### ⚡ **EVO-Level Advanced Mechanics**
+- **Roman Cancel System** - Red, Blue, Yellow, and Purple cancels with unique effects
+- **Burst System** - Combo-breaking escapes with punishment mechanics
+- **Advanced Movement** - Wave dashing, kara cancels, momentum transfer, wall techs
+- **Input Precision Tracking** - Real-time input quality analysis and consistency scoring
+- **Meter Management** - Multiple resource types with strategic decision-making
+- **Frame Data Visualization** - Hitbox/hurtbox display with startup, active, recovery frames
+- **Rollback Netcode** - Quantum rollback with AI prediction and sub-millisecond precision
 
 ### 🤖 **AI-Powered Features**
 - **AI Coaching System** with real-time performance analysis and personalized recommendations
@@ -92,6 +104,35 @@ This is a revolutionary **browser-based fighting game** that combines the compet
 - **Advanced Post-Processing** including TAA, SSR, SSAO, Bloom, and Depth of Field
 - **Dynamic Lighting System** with volumetric effects and subsurface scattering
 - **GPU Particle System** supporting 1M+ particles with compute shaders
+
+### 🎭 **Procedural 3D Character Generation**
+- **12 Unique Fantasy Warriors** with procedurally generated 3D models
+- **Dynamic Character Creation** with themes, fighting styles, and visual customization
+- **Advanced 3D Modeling** with body geometry, facial features, and clothing systems
+- **Material System** with realistic skin, hair, clothing, armor, and weapon materials
+- **Animation Framework** with idle, walk, attack, special, and super move animations
+- **Hitbox/Hurtbox System** with precise collision detection and frame data
+- **Character Customization** with accessories, weapons, and visual details
+
+### 🏰 **Unified Dark Stage Generation**
+- **All Stages Dark Themed** - Every stage automatically has dark, atmospheric aesthetics
+- **Real-Time Procedural Generation** - Stages generated dynamically on match launch
+- **Dark Fantasy Architecture** - Cathedrals, castles, ruins, and mystical structures
+- **Atmospheric Lighting** - Dramatic shadows, fog, and moody lighting effects
+- **Dark Particle Systems** - Ash, embers, mist, bat swarms, and ghostly effects
+- **Unified Aesthetic** - Consistent dark fantasy theme across all stage types
+
+### 🎮 **Comprehensive Game Modes**
+- **Single Player Modes** - Story, Arcade, Survival, Time Attack, Mission, Boss Rush, Endless
+- **Multiplayer Modes** - Versus, Tournament, Team Battle, Tag Team, King of the Hill, Custom Match
+- **Training Modes** - Training, Practice, Combo Challenge
+- **Online Modes** - Ranked and Casual online matches
+- **Stage Selection** - Save and select custom stages (offline modes only)
+
+### 🎛️ **Menu System**
+- **Menu Bar** - Quick access to Replay Theater, Gallery, Settings, Achievements, Profile
+- **Pause Menu** - Resume, Save Replay, access to all menu features during gameplay
+- **Unified Design** - Consistent dark theme across all UI elements
 
 ### 🌐 **Revolutionary Netcode**
 - **Quantum Rollback System** with AI prediction and quantum correction
@@ -233,27 +274,39 @@ src/core/
 
 ### Character System
 ```
-data/characters/
-├── ryu.json               # Shoto archetype with 5 variants
-├── zangief.json           # Grappler archetype with 5 variants
-├── cammy.json             # Rushdown archetype with 5 variants
-├── dhalsim.json           # Zoner archetype with 5 variants
-├── ibuki.json             # Mix-up archetype with 5 variants
-└── akuma.json             # Power archetype with 5 variants
+assets/data/characters/
+├── blitz.base.json        # Rushdown archetype
+├── chain.base.json        # Grappler archetype
+├── crusher.base.json      # Power archetype
+├── maestro.base.json      # Technical archetype
+├── ranger.base.json       # Zoner archetype
+├── shifter.base.json      # Mix-up archetype
+├── sky.base.json          # Aerial archetype
+├── titan.base.json        # Defensive archetype
+├── vanguard.base.json     # All-rounder archetype
+├── volt.base.json         # Electric archetype
+├── weaver.base.json       # Puppet archetype
+└── zephyr.base.json       # Speed archetype
 ```
 
-## 🎯 Character Roster
+## 🎯 Fantasy Warrior Roster
 
-### 6 Characters × 5 Variants = 30 Unique Archetypes
+### 12 Unique Magical Fighting Archetypes
 
-| Character | Variant 1 | Variant 2 | Variant 3 | Variant 4 | Variant 5 |
-|-----------|-----------|-----------|-----------|-----------|-----------|
-| **Ryu** | Shoto | Grappler | Zoner | Setplay | Vortex |
-| **Zangief** | Rushdown | Power | Defensive | Puppet | Turtle |
-| **Cammy** | Mix-up | Technical | Speed | Install | Pressure |
-| **Dhalsim** | Projectile | Teleport | Area Control | Stance | Counter |
-| **Ibuki** | Ninja | Glass Cannon | Execution | Resource | Rekka |
-| **Akuma** | Charge | Vortex | Turtle | Poke | Reset |
+| Warrior | Archetype | Fighting Style | Magical Speciality |
+|---------|-----------|----------------|-------------------|
+| **Aethon Stormweaver** | Rushdown | Lightning-fast strikes | Arcane Speed Magic |
+| **Baelor Bladeheart** | Grappler | Throws and holds | Divine Strength Blessing |
+| **Caelum Elemental** | Zoner | Long-range control | Elemental Mastery |
+| **Draven Shadowbane** | Power | Heavy-hitting attacks | Shadow Magic |
+| **Eldric Natureguard** | Technical | Precision-based combat | Nature's Precision |
+| **Fiona Crystalborn** | Mix-up | Unpredictable patterns | Crystal Magic |
+| **Gareth Voidwalker** | Aerial | Air-based combat | Void Manipulation |
+| **Helena Celestial** | Defensive | Tank-style fighting | Divine Protection |
+| **Ithil Primal** | All-rounder | Balanced approach | Primal Instincts |
+| **Jareth Infernal** | Speed | Electric-fast movement | Infernal Agility |
+| **Kira Arcane** | Complex | Multi-layered strategies | Arcane Mastery |
+| **Luna Mystic** | Evasive | Wind-like movement | Mystical Evasion |
 
 ## 🛠️ Development
 
@@ -345,7 +398,7 @@ This project uses:
 - **Anti-Toxic Measures**: Penalties for rage quitting, AFK, toxic behavior
 - **Confidence-Based Matchmaking**: Better matches through skill confidence
 
-### 🏆 **League-Style Competition**
+### 🏆 **Competitive Ranking System**
 - **LP System**: League Points with win/loss bonuses and streaks
 - **Promotion Series**: Best of 3 matches to rank up
 - **Seasonal System**: 6-month seasons with exclusive rewards
@@ -492,7 +545,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [x] **Bayesian Anti-Toxic Ranking System** - Replaces archaic MMR
 - [x] **User Account System** - Full account management and cloud sync
 - [x] **Browser-Based Gaming** - Instant play in any modern browser
-- [x] **League-Style Competition** - 9-tier ranking with seasons
+- [x] **Competitive Ranking System** - 9-tier ranking with seasons
 - [x] **Advanced Training Mode** - Frame data and hitbox visualization
 - [x] **Smart Replay System** - AI-powered match analysis
 - [x] **Social Features** - Friends, guilds, spectating, and coaching
@@ -529,7 +582,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Multi-Algorithm** - Uses 3 different algorithms for accuracy
 - **Fair & Balanced** - No more unfair MMR swings
 
-### **🏆 League of Legends for Fighting Games**
+### **🏆 Competitive Fighting Game Platform**
 - **9 Competitive Tiers** - From Iron to Challenger
 - **Seasonal Rewards** - Exclusive skins, titles, and rewards
 - **Promotion Series** - Earn your rank through skill
