@@ -96,6 +96,8 @@ import { LeagueRankingSystem } from './competitive/LeagueRankingSystem';
 import { BayesianRankingSystem } from './competitive/BayesianRankingSystem';
 import { BrowserUISystem } from './ui/BrowserUISystem';
 import { BrowserGameLauncher } from '../launcher/BrowserGameLauncher';
+import { MainMenuUI } from './ui/MainMenuUI';
+import { FeatureShowcaseUI } from './ui/FeatureShowcaseUI';
 
 export class GameEngine {
   private app: pc.Application;
@@ -183,6 +185,8 @@ export class GameEngine {
   private bayesianRankingSystem: BayesianRankingSystem | null = null;
   private browserUISystem: BrowserUISystem | null = null;
   private browserGameLauncher: BrowserGameLauncher | null = null;
+  private mainMenuUI: MainMenuUI | null = null;
+  private featureShowcaseUI: FeatureShowcaseUI | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.app = new pc.Application(canvas, {
@@ -481,6 +485,13 @@ export class GameEngine {
       LoadingOverlay.beginTask('boot_state', 'Booting', 1);
       await this.stateStack.push(new BootState(this.app, this.services, this.eventBus));
       LoadingOverlay.endTask('boot_state', true);
+
+      // Show main menu after boot
+      setTimeout(() => {
+        if (this.mainMenuUI) {
+          this.mainMenuUI.show();
+        }
+      }, 1000);
       LoadingOverlay.beginTask('finalize', 'Finalizing', 1);
 
       // Wire main update loop
@@ -698,6 +709,94 @@ export class GameEngine {
         this.browserGameLauncher = new BrowserGameLauncher(this.app);
         this.services.register('browserGameLauncher', this.browserGameLauncher);
       } catch {}
+      try { 
+        this.mainMenuUI = new MainMenuUI(this.app);
+        this.services.register('mainMenuUI', this.mainMenuUI);
+      } catch {}
+      try { 
+        this.featureShowcaseUI = new FeatureShowcaseUI(this.app);
+        this.services.register('featureShowcaseUI', this.featureShowcaseUI);
+      } catch {}
+
+      // Game mode event handlers
+      this.app.on('game:storyMode', () => {
+        Logger.info('Starting Story Mode');
+        this.stateStack.push(new MenuState());
+      });
+
+      this.app.on('game:arcadeMode', () => {
+        Logger.info('Starting Arcade Mode');
+        this.stateStack.push(new MenuState());
+      });
+
+      this.app.on('game:versusMode', () => {
+        Logger.info('Starting Versus Mode');
+        this.stateStack.push(new CharacterSelectState());
+      });
+
+      this.app.on('game:trainingMode', () => {
+        Logger.info('Starting Training Mode');
+        this.stateStack.push(new MatchState());
+      });
+
+      this.app.on('game:onlineMode', () => {
+        Logger.info('Starting Online Mode');
+        this.stateStack.push(new MenuState());
+      });
+
+      this.app.on('ui:characterSelect', () => {
+        Logger.info('Opening Character Select');
+        this.stateStack.push(new CharacterSelectState());
+      });
+
+      this.app.on('ui:playerProfile', () => {
+        Logger.info('Opening Player Profile');
+        // Player profile would be handled by a profile overlay
+        // For now, show a placeholder message
+        console.log('Player Profile: Stats, progress, and personal data');
+      });
+
+      this.app.on('ui:rankings', () => {
+        Logger.info('Opening Rankings');
+        // Rankings would be handled by the ranked overlay
+        if (this.ranked) {
+          this.ranked.show();
+        }
+      });
+
+      this.app.on('ui:achievements', () => {
+        Logger.info('Opening Achievements');
+        // Achievements would be handled by an achievements overlay
+        console.log('Achievements: Personal and social accomplishments');
+      });
+
+      this.app.on('ui:replayGallery', () => {
+        Logger.info('Opening Replay Gallery');
+        // Replay gallery would be handled by the replay service
+        if (this.replay) {
+          console.log('Replay Gallery: Saved matches and combo videos');
+        }
+      });
+
+      this.app.on('ui:socialHub', () => {
+        Logger.info('Opening Social Hub');
+        // Social hub would be handled by social features
+        console.log('Social Hub: Guilds, coaching, voice chat, leaderboards');
+      });
+
+      this.app.on('ui:customization', () => {
+        Logger.info('Opening Customization');
+        // Customization would be handled by customization overlay
+        console.log('Customization: Character skins, UI themes, control schemes');
+      });
+
+      this.app.on('ui:settings', () => {
+        Logger.info('Opening Settings');
+        // Settings would be handled by the options overlay
+        if (this.options) {
+          this.options.show();
+        }
+      });
       try {
         const loader = new ConfigLoader();
         loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
