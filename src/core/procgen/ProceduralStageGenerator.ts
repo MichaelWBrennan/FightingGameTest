@@ -1,6 +1,6 @@
 export interface ProcStageOptions {
 	seed?: number;
-	theme?: 'training' | 'gothic' | 'urban' | 'arcane_tower' | 'divine_cathedral' | 'elemental_realm' | 'shadow_keep' | 'nature_sanctuary' | 'crystal_cavern' | 'void_dimension' | 'celestial_plane' | 'infernal_abyss' | 'primal_forest';
+	theme?: 'training' | 'gothic' | 'gothic_cathedral' | 'gothic_graveyard' | 'gothic_castle' | 'gothic_ruins' | 'gothic_forest' | 'gothic_laboratory' | 'gothic_clocktower' | 'urban' | 'arcane_tower' | 'divine_cathedral' | 'elemental_realm' | 'shadow_keep' | 'nature_sanctuary' | 'crystal_cavern' | 'void_dimension' | 'celestial_plane' | 'infernal_abyss' | 'primal_forest';
 	size?: 'small' | 'medium' | 'large' | 'huge';
 	atmosphere?: 'peaceful' | 'tense' | 'mysterious' | 'epic' | 'intimate';
 	hazards?: boolean;
@@ -33,6 +33,27 @@ export class ProceduralStageGenerator {
 				break;
 			case 'gothic':
 				stage = this.gothic();
+				break;
+			case 'gothic_cathedral':
+				stage = this.gothicCathedral();
+				break;
+			case 'gothic_graveyard':
+				stage = this.gothicGraveyard();
+				break;
+			case 'gothic_castle':
+				stage = this.gothicCastle();
+				break;
+			case 'gothic_ruins':
+				stage = this.gothicRuins();
+				break;
+			case 'gothic_forest':
+				stage = this.gothicForest();
+				break;
+			case 'gothic_laboratory':
+				stage = this.gothicLaboratory();
+				break;
+			case 'gothic_clocktower':
+				stage = this.gothicClocktower();
 				break;
 			case 'arcane_tower':
 				stage = this.arcaneTower();
@@ -113,13 +134,35 @@ export class ProceduralStageGenerator {
 
 	private gothic(): any {
 		return {
-			name: 'Gothic (Procedural)',
+			name: 'Gothic Cathedral (Procedural)',
 			layers: {
-				skybox: { type: 'stormy_sky', elements: [{ type: 'plane', name: 'stormy_sky' }] },
-				farBackground: { type: 'mountains', elements: this.mountains(2) },
-				midBackground: { type: 'castle', elements: this.buildings(3) },
-				nearBackground: { type: 'gargoyles', elements: this.trees(2) },
-				playground: { type: 'cobblestone', elements: [{ type: 'platform', x: 0, y: -5, width: 40, height: 2 }] }
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
+				midBackground: { type: 'gothic_architecture', elements: this.gothicArchitecture(4) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(6) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#8B0000',
+				intensity: 0.4,
+				shadows: true,
+				fog: true,
+				ambient: '#2F2F2F'
+			},
+			particles: {
+				ash: this.generateAsh(30),
+				embers: this.generateEmbers(20),
+				mist: this.generateGothicMist(15),
+				batSwarm: this.generateBatSwarm(8)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.7 },
+					{ type: 'dramatic_lighting', intensity: 0.8 },
+					{ type: 'gothic_ambience', intensity: 0.6 }
+				]
 			}
 		};
 	}
@@ -152,6 +195,257 @@ export class ProceduralStageGenerator {
 		for (let i = 0; i < n; i++) arr.push({ type: 'tree', x: (i - n/2) * 60, y: -6, scale: this.rand(1.0, 2.0), sway: true });
 		return arr;
 	}
+	// Gothic Stage Generators
+	private gothicCathedral(): any {
+		return {
+			name: 'Gothic Cathedral (Procedural)',
+			layers: {
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
+				midBackground: { type: 'gothic_architecture', elements: this.gothicArchitecture(4) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(6) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#8B0000',
+				intensity: 0.4,
+				shadows: true,
+				fog: true,
+				ambient: '#2F2F2F'
+			},
+			particles: {
+				ash: this.generateAsh(30),
+				embers: this.generateEmbers(20),
+				mist: this.generateGothicMist(15),
+				batSwarm: this.generateBatSwarm(8)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.7 },
+					{ type: 'dramatic_lighting', intensity: 0.8 },
+					{ type: 'gothic_ambience', intensity: 0.6 }
+				]
+			}
+		};
+	}
+
+	private gothicGraveyard(): any {
+		return {
+			name: 'Gothic Graveyard (Procedural)',
+			layers: {
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(2) },
+				midBackground: { type: 'gothic_tombstones', elements: this.gothicTombstones(8) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(4) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#4B0082',
+				intensity: 0.3,
+				shadows: true,
+				fog: true,
+				ambient: '#1A1A1A'
+			},
+			particles: {
+				ash: this.generateAsh(25),
+				embers: this.generateEmbers(15),
+				mist: this.generateGothicMist(20),
+				batSwarm: this.generateBatSwarm(6),
+				ghostlyWisp: this.generateGhostlyWisp(10)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.8 },
+					{ type: 'dramatic_lighting', intensity: 0.6 },
+					{ type: 'gothic_ambience', intensity: 0.7 }
+				]
+			}
+		};
+	}
+
+	private gothicCastle(): any {
+		return {
+			name: 'Gothic Castle (Procedural)',
+			layers: {
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
+				midBackground: { type: 'gothic_architecture', elements: this.gothicArchitecture(5) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(6) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#8B0000',
+				intensity: 0.5,
+				shadows: true,
+				fog: true,
+				ambient: '#2F2F2F'
+			},
+			particles: {
+				ash: this.generateAsh(35),
+				embers: this.generateEmbers(25),
+				mist: this.generateGothicMist(18),
+				batSwarm: this.generateBatSwarm(10)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.6 },
+					{ type: 'dramatic_lighting', intensity: 0.9 },
+					{ type: 'gothic_ambience', intensity: 0.8 }
+				]
+			}
+		};
+	}
+
+	private gothicRuins(): any {
+		return {
+			name: 'Gothic Ruins (Procedural)',
+			layers: {
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(2) },
+				midBackground: { type: 'gothic_ruins', elements: this.gothicRuins(6) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(5) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#8B0000',
+				intensity: 0.4,
+				shadows: true,
+				fog: true,
+				ambient: '#2F2F2F'
+			},
+			particles: {
+				ash: this.generateAsh(40),
+				embers: this.generateEmbers(30),
+				mist: this.generateGothicMist(25),
+				batSwarm: this.generateBatSwarm(12),
+				dust: this.generateDust(20)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.9 },
+					{ type: 'dramatic_lighting', intensity: 0.7 },
+					{ type: 'gothic_ambience', intensity: 0.8 }
+				]
+			}
+		};
+	}
+
+	private gothicForest(): any {
+		return {
+			name: 'Gothic Forest (Procedural)',
+			layers: {
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
+				midBackground: { type: 'gothic_trees', elements: this.gothicTrees(8) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(6) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#4B0082',
+				intensity: 0.3,
+				shadows: true,
+				fog: true,
+				ambient: '#1A1A1A'
+			},
+			particles: {
+				ash: this.generateAsh(20),
+				embers: this.generateEmbers(15),
+				mist: this.generateGothicMist(30),
+				batSwarm: this.generateBatSwarm(8),
+				leaves: this.generateGothicLeaves(25)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.8 },
+					{ type: 'dramatic_lighting', intensity: 0.5 },
+					{ type: 'gothic_ambience', intensity: 0.7 }
+				]
+			}
+		};
+	}
+
+	private gothicLaboratory(): any {
+		return {
+			name: 'Gothic Laboratory (Procedural)',
+			layers: {
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(2) },
+				midBackground: { type: 'gothic_architecture', elements: this.gothicArchitecture(3) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(8) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#8B0000',
+				intensity: 0.6,
+				shadows: true,
+				fog: true,
+				ambient: '#2F2F2F'
+			},
+			particles: {
+				ash: this.generateAsh(25),
+				embers: this.generateEmbers(20),
+				mist: this.generateGothicMist(12),
+				batSwarm: this.generateBatSwarm(6),
+				steam: this.generateSteam(15)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.5 },
+					{ type: 'dramatic_lighting', intensity: 0.8 },
+					{ type: 'gothic_ambience', intensity: 0.9 }
+				]
+			}
+		};
+	}
+
+	private gothicClocktower(): any {
+		return {
+			name: 'Gothic Clocktower (Procedural)',
+			layers: {
+				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
+				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(3) },
+				midBackground: { type: 'gothic_architecture', elements: this.gothicArchitecture(4) },
+				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(6) },
+				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
+			},
+			lighting: {
+				type: 'gothic',
+				color: '#8B0000',
+				intensity: 0.5,
+				shadows: true,
+				fog: true,
+				ambient: '#2F2F2F'
+			},
+			particles: {
+				ash: this.generateAsh(30),
+				embers: this.generateEmbers(20),
+				mist: this.generateGothicMist(15),
+				batSwarm: this.generateBatSwarm(8),
+				clockwork: this.generateClockwork(10)
+			},
+			atmosphere: {
+				type: 'gothic',
+				effects: [
+					{ type: 'gothic_fog', intensity: 0.7 },
+					{ type: 'dramatic_lighting', intensity: 0.8 },
+					{ type: 'gothic_ambience', intensity: 0.6 }
+				]
+			}
+		};
+	}
+
 	// Fantasy Stage Generators
 	private arcaneTower(): any {
 		return {
@@ -381,6 +675,280 @@ export class ProceduralStageGenerator {
 				primalSpirits: this.generatePrimalSpirits(8)
 			}
 		};
+	}
+
+	// Gothic Asset Generation Methods
+	private gothicSky(): any[] {
+		return [{ type: 'gothic_sky', x: 0, y: 0, width: 200, height: 100, color: '#2F2F2F' }];
+	}
+
+	private gothicLandscape(n: number): any[] {
+		const arr = [] as any[];
+		for (let i = 0; i < n; i++) {
+			arr.push({
+				type: 'gothic_mountain',
+				x: (i - n/2) * 120,
+				y: -30 + this.rand(-10, 10),
+				width: this.rand(60, 100),
+				height: this.rand(40, 80),
+				color: '#1A1A1A'
+			});
+		}
+		return arr;
+	}
+
+	private gothicArchitecture(n: number): any[] {
+		const arr = [] as any[];
+		for (let i = 0; i < n; i++) {
+			arr.push({
+				type: 'gothic_building',
+				x: (i - n/2) * 100,
+				y: -25,
+				width: this.rand(40, 80),
+				height: this.rand(60, 120),
+				color: '#2F2F2F',
+				architecture: this.getRandomGothicArchitecture()
+			});
+		}
+		return arr;
+	}
+
+	private gothicDetails(n: number): any[] {
+		const arr = [] as any[];
+		for (let i = 0; i < n; i++) {
+			arr.push({
+				type: 'gothic_detail',
+				x: (i - n/2) * 80,
+				y: -15 + this.rand(-5, 5),
+				scale: this.rand(0.8, 1.5),
+				detailType: this.getRandomGothicDetail()
+			});
+		}
+		return arr;
+	}
+
+	private gothicPlatform(): any[] {
+		return [{
+			type: 'gothic_platform',
+			x: 0,
+			y: -5,
+			width: 50,
+			height: 3,
+			color: '#1A1A1A',
+			pattern: 'gothic_stone'
+		}];
+	}
+
+	private gothicTombstones(n: number): any[] {
+		const arr = [] as any[];
+		for (let i = 0; i < n; i++) {
+			arr.push({
+				type: 'gothic_tombstone',
+				x: (i - n/2) * 60,
+				y: -8,
+				scale: this.rand(0.8, 1.2),
+				tombstoneType: this.getRandomTombstoneType()
+			});
+		}
+		return arr;
+	}
+
+	private gothicRuins(n: number): any[] {
+		const arr = [] as any[];
+		for (let i = 0; i < n; i++) {
+			arr.push({
+				type: 'gothic_ruin',
+				x: (i - n/2) * 80,
+				y: -20,
+				width: this.rand(30, 60),
+				height: this.rand(20, 40),
+				color: '#2F2F2F',
+				ruinType: this.getRandomRuinType()
+			});
+		}
+		return arr;
+	}
+
+	private gothicTrees(n: number): any[] {
+		const arr = [] as any[];
+		for (let i = 0; i < n; i++) {
+			arr.push({
+				type: 'gothic_tree',
+				x: (i - n/2) * 70,
+				y: -10,
+				scale: this.rand(1.0, 2.0),
+				treeType: this.getRandomGothicTreeType()
+			});
+		}
+		return arr;
+	}
+
+	// Gothic Particle Generation Methods
+	private generateAsh(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-50, 50),
+				y: this.rand(-30, 30),
+				size: this.rand(1, 3),
+				color: '#666666',
+				lifetime: this.rand(2000, 6000),
+				fallSpeed: this.rand(0.5, 1.5)
+			});
+		}
+		return particles;
+	}
+
+	private generateEmbers(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-40, 40),
+				y: this.rand(-20, 20),
+				size: this.rand(2, 5),
+				color: '#FF4500',
+				lifetime: this.rand(1000, 4000),
+				riseSpeed: this.rand(0.5, 1.5)
+			});
+		}
+		return particles;
+	}
+
+	private generateGothicMist(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-60, 60),
+				y: this.rand(-40, 40),
+				size: this.rand(20, 40),
+				color: '#4B0082',
+				opacity: this.rand(0.2, 0.6),
+				lifetime: this.rand(5000, 10000),
+				drift: true
+			});
+		}
+		return particles;
+	}
+
+	private generateBatSwarm(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-50, 50),
+				y: this.rand(-30, 30),
+				size: this.rand(3, 8),
+				color: '#000000',
+				lifetime: this.rand(3000, 8000),
+				flapSpeed: this.rand(0.5, 2.0)
+			});
+		}
+		return particles;
+	}
+
+	private generateGhostlyWisp(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-40, 40),
+				y: this.rand(-25, 25),
+				size: this.rand(5, 15),
+				color: '#8A2BE2',
+				opacity: this.rand(0.3, 0.8),
+				lifetime: this.rand(4000, 12000),
+				drift: true,
+				ghostly: true
+			});
+		}
+		return particles;
+	}
+
+	private generateDust(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-50, 50),
+				y: this.rand(-30, 30),
+				size: this.rand(1, 4),
+				color: '#8B4513',
+				lifetime: this.rand(2000, 6000),
+				drift: true
+			});
+		}
+		return particles;
+	}
+
+	private generateGothicLeaves(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-50, 50),
+				y: this.rand(-40, 40),
+				size: this.rand(2, 6),
+				color: '#8B4513',
+				lifetime: this.rand(3000, 8000),
+				fallSpeed: this.rand(0.5, 1.5),
+				rotation: this.rand(0, 360)
+			});
+		}
+		return particles;
+	}
+
+	private generateSteam(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-30, 30),
+				y: this.rand(-20, 20),
+				size: this.rand(8, 20),
+				color: '#C0C0C0',
+				opacity: this.rand(0.3, 0.7),
+				lifetime: this.rand(2000, 5000),
+				riseSpeed: this.rand(1.0, 2.0)
+			});
+		}
+		return particles;
+	}
+
+	private generateClockwork(count: number): any[] {
+		const particles: any[] = [];
+		for (let i = 0; i < count; i++) {
+			particles.push({
+				x: this.rand(-40, 40),
+				y: this.rand(-25, 25),
+				size: this.rand(3, 8),
+				color: '#C0C0C0',
+				lifetime: this.rand(1000, 3000),
+				rotation: this.rand(0, 360),
+				mechanical: true
+			});
+		}
+		return particles;
+	}
+
+	// Helper methods for gothic elements
+	private getRandomGothicArchitecture(): string {
+		const architectures = ['cathedral', 'castle', 'tower', 'spire', 'gargoyle', 'buttress'];
+		return architectures[Math.floor(this.rand(0, architectures.length))];
+	}
+
+	private getRandomGothicDetail(): string {
+		const details = ['gargoyle', 'statue', 'candle', 'cross', 'rose_window', 'flying_buttress', 'spire', 'tombstone'];
+		return details[Math.floor(this.rand(0, details.length))];
+	}
+
+	private getRandomTombstoneType(): string {
+		const types = ['cross', 'angel', 'obelisk', 'slab', 'mausoleum', 'crypt'];
+		return types[Math.floor(this.rand(0, types.length))];
+	}
+
+	private getRandomRuinType(): string {
+		const types = ['wall', 'column', 'arch', 'staircase', 'foundation', 'tower_remains'];
+		return types[Math.floor(this.rand(0, types.length))];
+	}
+
+	private getRandomGothicTreeType(): string {
+		const types = ['dead_tree', 'twisted_oak', 'cypress', 'willow', 'thorn_bush', 'withered_branch'];
+		return types[Math.floor(this.rand(0, types.length))];
 	}
 
 	// Asset Generation Methods
