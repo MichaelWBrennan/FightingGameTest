@@ -62,45 +62,72 @@ export class StageManager {
     });
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('parallax_init', true); } catch {}
 
-    // Procedural stage generation with URL-configurable seed/theme
-    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    const seedParam = params.get('seed');
-    const themeParam = params.get('theme') as 'training' | 'gothic' | 'urban' | null;
-    // Prefer match-seeded RNG from services; fallback to URL param; final fallback: 1
-    let seed = 1;
-    try { const net: any = (this.app as any)._services?.resolve?.('netcode'); const st = net?.getStats?.(); if (st && typeof (st as any).cur === 'number') seed = (st as any).cur | 0; } catch {}
-    if (seedParam) { const s = parseInt(seedParam, 10); if (isFinite(s)) seed = s; }
-    const theme = (themeParam || 'training') as EnvironmentTheme;
+    // Auto-generate a random stage for the match
+    const themes = [
+      'training', 'urban', 'arcane_tower', 'divine_cathedral', 'elemental_realm',
+      'shadow_keep', 'nature_sanctuary', 'crystal_cavern', 'void_dimension',
+      'celestial_plane', 'infernal_abyss', 'primal_forest', 'gothic_cathedral',
+      'gothic_graveyard', 'gothic_castle', 'gothic_ruins', 'gothic_forest',
+      'gothic_laboratory', 'gothic_clocktower'
+    ];
+    
+    const sizes = ['small', 'medium', 'large', 'huge'];
+    const atmospheres = ['peaceful', 'tense', 'mysterious', 'epic', 'intimate'];
+    const weathers = ['none', 'rain', 'snow', 'fog', 'storm', 'magical'];
+    const timesOfDay = ['dawn', 'day', 'dusk', 'night', 'eternal'];
+    
+    const generationParams = {
+      seed: Math.floor(Math.random() * 1000000),
+      theme: themes[Math.floor(Math.random() * themes.length)],
+      size: sizes[Math.floor(Math.random() * sizes.length)],
+      atmosphere: atmospheres[Math.floor(Math.random() * atmospheres.length)],
+      hazards: Math.random() > 0.5,
+      interactiveElements: Math.floor(Math.random() * 6),
+      weather: weathers[Math.floor(Math.random() * weathers.length)],
+      timeOfDay: timesOfDay[Math.floor(Math.random() * timesOfDay.length)]
+    };
 
     // Build 3D environment first to replace generic gray
-    this.env.buildEnvironment(theme);
-    const gen = new ProceduralStageGenerator(seed);
-    const stageData = gen.generate({ theme });
-    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_load', `Generating ${theme} stage`, 1); } catch {}
+    this.env.buildEnvironment(generationParams.theme as EnvironmentTheme);
+    const gen = new ProceduralStageGenerator(generationParams.seed);
+    const stageData = gen.generate(generationParams);
+    try { (await import('../ui/LoadingOverlay')).LoadingOverlay.beginTask('stage_load', `Generating ${generationParams.theme} stage`, 1); } catch {}
     // Load stage layout synchronously (procedural, no network) to be playable instantly
     await this.parallax.loadStageData(stageData, (p: number, label?: string) => {
       (async () => {
-        try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('stage_load', Math.max(0, Math.min(1, p)), label || `Generating ${theme} stage`); } catch {}
+        try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('stage_load', Math.max(0, Math.min(1, p)), label || `Generating ${generationParams.theme} stage`); } catch {}
       })();
     });
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('stage_load', true); } catch {}
 
-    // Hot-regenerate with keyboard: R to reseed, T to cycle theme
+    // Store stage data for saving after match
+    (this.app as any)._currentStageData = stageData;
+    (this.app as any)._currentGenerationParams = generationParams;
+
+    // Hot-regenerate with keyboard: R to reseed
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', (e: KeyboardEvent) => {
         if (!this.parallax) return;
         if (e.key === 'r' || e.key === 'R') {
-          const newSeed = (seed * 1664525 + 1013904223) >>> 0;
-          const g = new ProceduralStageGenerator(newSeed);
-          const d = g.generate({ theme });
+          // Regenerate with new random parameters
+          const newGenerationParams = {
+            seed: Math.floor(Math.random() * 1000000),
+            theme: themes[Math.floor(Math.random() * themes.length)],
+            size: sizes[Math.floor(Math.random() * sizes.length)],
+            atmosphere: atmospheres[Math.floor(Math.random() * atmospheres.length)],
+            hazards: Math.random() > 0.5,
+            interactiveElements: Math.floor(Math.random() * 6),
+            weather: weathers[Math.floor(Math.random() * weathers.length)],
+            timeOfDay: timesOfDay[Math.floor(Math.random() * timesOfDay.length)]
+          };
+          
+          const g = new ProceduralStageGenerator(newGenerationParams.seed);
+          const d = g.generate(newGenerationParams);
           this.parallax!.loadStageData(d);
-        } else if (e.key === 't' || e.key === 'T') {
-          const themes: ('training' | 'gothic' | 'urban')[] = ['training', 'gothic', 'urban'];
-          const idx = Math.max(0, themes.indexOf(theme));
-          const next = themes[(idx + 1) % themes.length];
-          const g = new ProceduralStageGenerator(seed);
-          const d = g.generate({ theme: next });
-          this.parallax!.loadStageData(d);
+          
+          // Update stored data
+          (this.app as any)._currentStageData = d;
+          (this.app as any)._currentGenerationParams = newGenerationParams;
         }
       });
     }
