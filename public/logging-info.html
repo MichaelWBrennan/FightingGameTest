@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logging System Information</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .code { background: #f4f4f4; padding: 10px; border-radius: 4px; font-family: monospace; }
+        .highlight { background: #fff3cd; padding: 2px 4px; border-radius: 2px; }
+        button { padding: 8px 16px; margin: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>FightForge Logging System</h1>
+    
+    <h2>Overview</h2>
+    <p>The FightForge application now automatically downloads comprehensive debug logs every time you load the page. This helps with debugging and monitoring the application's behavior.</p>
+    
+    <h2>What Gets Logged</h2>
+    <ul>
+        <li><strong>Console Logs:</strong> All console.log, console.warn, console.error, console.info, and console.debug messages</li>
+        <li><strong>System Information:</strong> Browser details, device capabilities, screen resolution, etc.</li>
+        <li><strong>Performance Data:</strong> Memory usage, resource loading times, navigation timing</li>
+        <li><strong>Graphics Information:</strong> WebGL capabilities, supported extensions, renderer details</li>
+        <li><strong>Network Status:</strong> Connection type, online status, service workers</li>
+        <li><strong>Storage Data:</strong> Local storage, session storage, cookies, IndexedDB</li>
+        <li><strong>PlayCanvas Engine:</strong> Version, availability, graphics device status</li>
+        <li><strong>Application State:</strong> Loading overlay state, document state, errors</li>
+    </ul>
+    
+    <h2>Automatic Behavior</h2>
+    <p>By default, the system is configured to:</p>
+    <ul>
+        <li>Download logs automatically on every page load</li>
+        <li>Capture all console output in real-time</li>
+        <li>Generate detailed debug reports in JSON format</li>
+        <li>Save files with timestamps for easy organization</li>
+    </ul>
+    
+    <h2>Manual Control</h2>
+    <p>You can control the logging system using the browser console:</p>
+    
+    <div class="code">
+        // Check if forced downloads are enabled
+        window.FightForgeApp.isForcedDebugDownloadsEnabled()
+        
+        // Enable forced downloads (download on every page load)
+        window.FightForgeApp.enableForcedDebugDownloads()
+        
+        // Disable forced downloads (download only once per session)
+        window.FightForgeApp.disableForcedDebugDownloads()
+        
+        // Download logs immediately
+        window.FightForgeApp.downloadDebugReport('manual')
+        
+        // Clear captured console logs
+        window.FightForgeApp.clearCapturedLogs()
+        
+        // Get count of captured logs
+        window.FightForgeApp.getCapturedLogsCount()
+    </div>
+    
+    <h2>File Naming</h2>
+    <p>Debug reports are saved with the following naming convention:</p>
+    <div class="code">sf3-debug-{version}-{timestamp}.json</div>
+    <p>Example: <span class="highlight">sf3-debug-dev-2025-09-26T03-54-10-123Z.json</span></p>
+    
+    <h2>Test the System</h2>
+    <p>Use the buttons below to test the logging system:</p>
+    <button onclick="testSystem()">Test Logging System</button>
+    <button onclick="downloadNow()">Download Logs Now</button>
+    <button onclick="checkStatus()">Check Status</button>
+    
+    <div id="testOutput"></div>
+    
+    <script>
+        function log(msg) {
+            const div = document.createElement('div');
+            div.textContent = new Date().toISOString() + ': ' + msg;
+            div.style.margin = '4px 0';
+            div.style.padding = '4px';
+            div.style.backgroundColor = '#f8f9fa';
+            div.style.border = '1px solid #dee2e6';
+            div.style.borderRadius = '4px';
+            div.style.fontFamily = 'monospace';
+            div.style.fontSize = '12px';
+            document.getElementById('testOutput').appendChild(div);
+        }
+        
+        function testSystem() {
+            log('Testing logging system...');
+            console.log('Test log message');
+            console.warn('Test warning message');
+            console.error('Test error message');
+            log('Console messages sent - check if they appear in downloaded logs');
+        }
+        
+        function downloadNow() {
+            if (window.FightForgeApp && window.FightForgeApp.downloadDebugReport) {
+                log('Downloading debug report...');
+                window.FightForgeApp.downloadDebugReport('manual');
+            } else {
+                log('ERROR: FightForgeApp not available');
+            }
+        }
+        
+        function checkStatus() {
+            if (window.FightForgeApp) {
+                const enabled = window.FightForgeApp.isForcedDebugDownloadsEnabled ? window.FightForgeApp.isForcedDebugDownloadsEnabled() : 'unknown';
+                const count = window.FightForgeApp.getCapturedLogsCount ? window.FightForgeApp.getCapturedLogsCount() : 'unknown';
+                log(`Forced downloads enabled: ${enabled}`);
+                log(`Captured logs count: ${count}`);
+            } else {
+                log('ERROR: FightForgeApp not available');
+            }
+        }
+        
+        window.addEventListener('load', function() {
+            log('Page loaded - logging system should be active');
+            checkStatus();
+        });
+    </script>
+    
+    <script src="/bundle.js"></script>
+</body>
+</html>
