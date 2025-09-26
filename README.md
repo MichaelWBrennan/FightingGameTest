@@ -1,5 +1,5 @@
-# 🥊 FightForge
-## Browser-Based Competitive Fighting Game
+# ⚔️ FightForge
+## High Fantasy Fighting Game - Where Magic Meets Combat
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/your-repo/fightforge)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -7,11 +7,11 @@
 [![Engine](https://img.shields.io/badge/engine-PlayCanvas-orange.svg)](https://playcanvas.com/)
 [![Ranking](https://img.shields.io/badge/ranking-Bayesian%20Anti--Toxic-green.svg)](https://github.com/your-repo/fightforge)
 
-> **The most advanced browser-based fighting game ever created - combining competitive features with cutting-edge fighting game technology.**
+> **The most advanced high fantasy fighting game ever created - where magical warriors clash in epic battles of skill, strategy, and sorcery.**
 
 ## 🌟 Overview
 
-This is a revolutionary **browser-based fighting game** that combines competitive depth with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads.
+This is a revolutionary **high fantasy fighting game** that combines magical combat with cutting-edge fighting game technology. Built with PlayCanvas and TypeScript, it features **Bayesian anti-toxic ranking**, **user accounts**, **instant browser play**, and **advanced training tools** - all accessible through any modern web browser without downloads. Enter a world where warriors wield both steel and sorcery in epic battles of skill and magic.
 
 ### 🎯 **Key Innovations:**
 - **🌐 Browser-Based**: Play instantly in any modern browser - no downloads required
@@ -73,11 +73,12 @@ This is a revolutionary **browser-based fighting game** that combines competitiv
 - **Leaderboards** - See how you rank against others
 
 ### 🎮 **Core Gameplay**
-- **12 Unique Character Archetypes** with distinct fighting styles
+- **12 Unique Fantasy Warriors** with distinct magical fighting styles
 - **Frame-Perfect Combat System** with 60 FPS deterministic gameplay
 - **Advanced Input System** supporting motion inputs, charge moves, and negative edge
 - **Precise Hitbox/Hurtbox Collision** with data-driven combo systems
 - **Real-Time Destruction Physics** with fracture patterns and debris simulation
+- **Magical Combat System** with spell casting, elemental effects, and mystical abilities
 
 ### 🤖 **AI-Powered Features**
 - **AI Coaching System** with real-time performance analysis and personalized recommendations
@@ -248,24 +249,24 @@ assets/data/characters/
 └── zephyr.base.json       # Speed archetype
 ```
 
-## 🎯 Character Roster
+## 🎯 Fantasy Warrior Roster
 
-### 12 Unique Fighting Archetypes
+### 12 Unique Magical Fighting Archetypes
 
-| Character | Archetype | Fighting Style | Speciality |
-|-----------|-----------|----------------|------------|
-| **Blitz** | Rushdown | Lightning-fast strikes | Speed and pressure |
-| **Chain** | Grappler | Throws and holds | Close-range dominance |
-| **Crusher** | Power | Heavy-hitting attacks | Raw damage output |
-| **Maestro** | Technical | Precision-based combat | Frame-perfect execution |
-| **Ranger** | Zoner | Long-range control | Distance management |
-| **Shifter** | Mix-up | Unpredictable patterns | Mind games and setups |
-| **Sky** | Aerial | Air-based combat | Vertical mobility |
-| **Titan** | Defensive | Tank-style fighting | Damage absorption |
-| **Vanguard** | All-rounder | Balanced approach | Versatile toolkit |
-| **Volt** | Electric | Energy-based attacks | Electric effects |
-| **Weaver** | Puppet | Control-based combat | Multi-character control |
-| **Zephyr** | Speed | Wind-based movement | Agility and evasion |
+| Warrior | Archetype | Fighting Style | Magical Speciality |
+|---------|-----------|----------------|-------------------|
+| **Aethon Stormweaver** | Rushdown | Lightning-fast strikes | Arcane Speed Magic |
+| **Baelor Bladeheart** | Grappler | Throws and holds | Divine Strength Blessing |
+| **Caelum Elemental** | Zoner | Long-range control | Elemental Mastery |
+| **Draven Shadowbane** | Power | Heavy-hitting attacks | Shadow Magic |
+| **Eldric Natureguard** | Technical | Precision-based combat | Nature's Precision |
+| **Fiona Crystalborn** | Mix-up | Unpredictable patterns | Crystal Magic |
+| **Gareth Voidwalker** | Aerial | Air-based combat | Void Manipulation |
+| **Helena Celestial** | Defensive | Tank-style fighting | Divine Protection |
+| **Ithil Primal** | All-rounder | Balanced approach | Primal Instincts |
+| **Jareth Infernal** | Speed | Electric-fast movement | Infernal Agility |
+| **Kira Arcane** | Complex | Multi-layered strategies | Arcane Mastery |
+| **Luna Mystic** | Evasive | Wind-like movement | Mystical Evasion |
 
 ## 🛠️ Development
 

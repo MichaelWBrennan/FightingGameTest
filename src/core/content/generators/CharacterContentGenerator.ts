@@ -179,7 +179,7 @@ export class CharacterContentGenerator {
   }
 
   private selectRandomTheme(): string {
-    const themes = ['fire', 'ice', 'electric', 'wind', 'earth', 'water', 'dark', 'light', 'cyber', 'nature'];
+    const themes = ['arcane', 'divine', 'elemental', 'shadow', 'nature', 'crystal', 'void', 'celestial', 'infernal', 'primal'];
     return themes[Math.floor(Math.random() * themes.length)];
   }
 
@@ -200,17 +200,17 @@ export class CharacterContentGenerator {
 
   private selectRandomFightingStyle(archetype: string): string {
     const styleMap: Record<string, string[]> = {
-      'rushdown': ['boxing', 'kickboxing', 'mixed'],
-      'grappler': ['wrestling', 'judo', 'mixed'],
-      'zoner': ['karate', 'kung_fu', 'taekwondo'],
-      'all_rounder': ['mixed', 'martial_arts'],
-      'technical': ['karate', 'kung_fu', 'martial_arts'],
-      'power': ['boxing', 'wrestling', 'mixed'],
-      'speed': ['kickboxing', 'taekwondo', 'mixed'],
-      'defensive': ['karate', 'judo', 'martial_arts']
+      'rushdown': ['sword_mastery', 'berserker_rage', 'blade_dance'],
+      'grappler': ['wrestling', 'grappling', 'martial_arts'],
+      'zoner': ['archery', 'magic_arts', 'ranged_combat'],
+      'all_rounder': ['versatile_combat', 'adaptive_fighting'],
+      'technical': ['precision_strikes', 'martial_arts', 'technique_mastery'],
+      'power': ['heavy_weapons', 'brute_force', 'overwhelming_strength'],
+      'speed': ['agility_fighting', 'quick_strikes', 'evasive_combat'],
+      'defensive': ['shield_combat', 'defensive_arts', 'guardian_style']
     };
     
-    const styles = styleMap[archetype] || ['mixed'];
+    const styles = styleMap[archetype] || ['versatile_combat'];
     return styles[Math.floor(Math.random() * styles.length)];
   }
 
@@ -457,12 +457,12 @@ export class CharacterContentGenerator {
 // Helper classes
 class NameGenerator {
   private firstNames: Record<string, string[]> = {
-    male: ['Alex', 'Blake', 'Carter', 'Drew', 'Eli', 'Finn', 'Gage', 'Hugo', 'Ivan', 'Jax', 'Kai', 'Leo', 'Max', 'Nate', 'Owen', 'Pax', 'Quinn', 'Rex', 'Sam', 'Troy', 'Uri', 'Vic', 'Wade', 'Xander', 'Yuki', 'Zane'],
-    female: ['Aria', 'Bella', 'Cora', 'Dana', 'Eva', 'Faye', 'Gia', 'Hana', 'Iris', 'Jade', 'Kira', 'Luna', 'Maya', 'Nova', 'Opal', 'Pia', 'Quinn', 'Raya', 'Sage', 'Tara', 'Uma', 'Vera', 'Wren', 'Xara', 'Yara', 'Zara'],
-    neutral: ['Ace', 'Blaze', 'Cruz', 'Dell', 'Echo', 'Flame', 'Gale', 'Haze', 'Iris', 'Jazz', 'Koda', 'Lux', 'Maze', 'Nyx', 'Onyx', 'Pax', 'Quill', 'Raven', 'Sky', 'Tide', 'Unity', 'Vale', 'Wren', 'Xen', 'Yale', 'Zion']
+    male: ['Aethon', 'Baelor', 'Caelum', 'Draven', 'Eldric', 'Fenris', 'Gareth', 'Haldor', 'Ithil', 'Jareth', 'Kael', 'Lucian', 'Magnus', 'Nyx', 'Orion', 'Percival', 'Quinn', 'Ragnar', 'Soren', 'Thorin', 'Ulrich', 'Valdris', 'Wulfric', 'Xander', 'Yorick', 'Zephyr'],
+    female: ['Aria', 'Brielle', 'Celeste', 'Diana', 'Elena', 'Fiona', 'Gwen', 'Helena', 'Iris', 'Jade', 'Kira', 'Luna', 'Mira', 'Nyx', 'Ophelia', 'Pandora', 'Quinn', 'Raven', 'Seraphina', 'Thalia', 'Ursula', 'Vera', 'Wren', 'Xara', 'Yara', 'Zara'],
+    neutral: ['Aether', 'Blaze', 'Crystal', 'Dragon', 'Echo', 'Flame', 'Gale', 'Haze', 'Iris', 'Jazz', 'Koda', 'Lux', 'Maze', 'Nyx', 'Onyx', 'Pax', 'Quill', 'Raven', 'Sky', 'Tide', 'Unity', 'Vale', 'Wren', 'Xen', 'Yale', 'Zion']
   };
 
-  private lastNames: string[] = ['Storm', 'Blade', 'Fist', 'Flame', 'Ice', 'Wind', 'Earth', 'Shadow', 'Light', 'Thunder', 'Frost', 'Fire', 'Stone', 'Steel', 'Gold', 'Silver', 'Crystal', 'Diamond', 'Phoenix', 'Dragon', 'Wolf', 'Tiger', 'Lion', 'Eagle', 'Hawk', 'Falcon'];
+  private lastNames: string[] = ['Stormweaver', 'Bladeheart', 'Fist of Thunder', 'Flameborn', 'Icewind', 'Windrider', 'Earthshaker', 'Shadowbane', 'Lightbringer', 'Thunderstrike', 'Frostweaver', 'Firebrand', 'Stoneheart', 'Steelguard', 'Goldleaf', 'Silvermoon', 'Crystalborn', 'Diamondforge', 'Phoenixwing', 'Dragonslayer', 'Wolfbane', 'Tigerclaw', 'Lionheart', 'Eagleeye', 'Hawkwing', 'Falconflight'];
 
   generate(options: CharacterGenerationOptions): string {
     const gender = options.gender || 'neutral';
@@ -476,16 +476,16 @@ class NameGenerator {
 class TraitGenerator {
   private traits: Record<string, Record<string, any>> = {
     'rushdown': {
-      'lightning_speed': { name: 'Lightning Speed', description: 'Enhanced frame advantage and dash canceling capabilities', params: { frameAdvantageBonus: 2, dashCancelWindow: 8, speedMultiplier: 1.2 } },
-      'pressure_master': { name: 'Pressure Master', description: 'Improved pressure and mix-up capabilities', params: { pressureBonus: 1.15, mixupWindow: 3, cancelReduction: 2 } }
+      'berserker_rage': { name: 'Berserker Rage', description: 'Enhanced aggression and damage when low on health', params: { damageBonus: 1.3, speedMultiplier: 1.2, healthThreshold: 0.3 } },
+      'blade_dance': { name: 'Blade Dance', description: 'Improved combo potential and frame advantage', params: { comboDamage: 1.2, frameAdvantage: 2, cancelWindow: 8 } }
     },
     'grappler': {
-      'wrestling_master': { name: 'Wrestling Master', description: 'Enhanced throw range and damage', params: { throwRange: 1.3, throwDamage: 1.2, commandGrabWindow: 2 } },
-      'iron_grip': { name: 'Iron Grip', description: 'Improved grab priority and break resistance', params: { grabPriority: 1, breakResistance: 1.2, grabSpeed: 1.1 } }
+      'titan_grip': { name: 'Titan Grip', description: 'Enhanced grappling power and throw range', params: { throwRange: 1.4, throwDamage: 1.3, grabPriority: 2 } },
+      'earth_shaker': { name: 'Earth Shaker', description: 'Devastating ground-based attacks and throws', params: { groundDamage: 1.25, throwDamage: 1.2, areaEffect: 1.1 } }
     },
     'zoner': {
-      'projectile_master': { name: 'Projectile Master', description: 'Enhanced projectile speed and damage', params: { projectileSpeed: 1.2, projectileDamage: 1.15, projectileSize: 1.1 } },
-      'range_control': { name: 'Range Control', description: 'Improved spacing and control tools', params: { rangeBonus: 1.2, controlWindow: 2, spacingTools: 1.1 } }
+      'arcane_marksman': { name: 'Arcane Marksman', description: 'Enhanced magical projectiles and ranged attacks', params: { projectileSpeed: 1.3, projectileDamage: 1.2, magicRange: 1.4 } },
+      'elemental_mastery': { name: 'Elemental Mastery', description: 'Control over multiple elements for versatile zoning', params: { elementVariety: 3, elementDamage: 1.15, elementRange: 1.2 } }
     }
   };
 
@@ -602,19 +602,19 @@ class MoveGenerator {
 
   private getSpecialMoveName(name: string, archetype: string, theme: string): string {
     const themeNames: Record<string, string[]> = {
-      fire: ['Fireball', 'Flame Strike', 'Burning Fist', 'Inferno'],
-      ice: ['Ice Shard', 'Frost Strike', 'Freezing Blast', 'Glacier'],
-      electric: ['Lightning Bolt', 'Thunder Strike', 'Electric Shock', 'Volt'],
-      wind: ['Wind Slash', 'Gale Force', 'Tornado', 'Cyclone'],
-      earth: ['Rock Throw', 'Earth Spike', 'Stone Fist', 'Quake'],
-      water: ['Water Blast', 'Tidal Wave', 'Aqua Strike', 'Tsunami'],
-      dark: ['Shadow Ball', 'Dark Strike', 'Void Blast', 'Shadow'],
-      light: ['Light Beam', 'Radiant Strike', 'Holy Blast', 'Divine'],
-      cyber: ['Data Stream', 'Code Strike', 'Digital Blast', 'System'],
-      nature: ['Vine Whip', 'Nature Strike', 'Plant Blast', 'Growth']
+      arcane: ['Arcane Blast', 'Mystic Strike', 'Eldritch Bolt', 'Spellweaver'],
+      divine: ['Divine Smite', 'Holy Strike', 'Radiant Blast', 'Celestial Wrath'],
+      elemental: ['Elemental Burst', 'Primal Strike', 'Nature\'s Wrath', 'Elemental Storm'],
+      shadow: ['Shadow Strike', 'Void Blast', 'Dark Tendrils', 'Shadow Dance'],
+      nature: ['Thorn Whip', 'Nature\'s Call', 'Vine Strike', 'Wild Growth'],
+      crystal: ['Crystal Shard', 'Gem Strike', 'Crystalline Blast', 'Diamond Edge'],
+      void: ['Void Rift', 'Abyssal Strike', 'Null Blast', 'Void Walker'],
+      celestial: ['Stellar Strike', 'Cosmic Blast', 'Heavenly Wrath', 'Starfall'],
+      infernal: ['Hellfire', 'Infernal Strike', 'Demonic Blast', 'Soul Burn'],
+      primal: ['Primal Roar', 'Beast Strike', 'Wild Fury', 'Savage Blow']
     };
     
-    const names = themeNames[theme] || ['Energy Blast', 'Power Strike', 'Special Move', 'Technique'];
+    const names = themeNames[theme] || ['Mystic Blast', 'Arcane Strike', 'Magical Technique', 'Spell'];
     return names[Math.floor(Math.random() * names.length)];
   }
 
@@ -622,19 +622,19 @@ class MoveGenerator {
     const level = parseInt(name.replace('lvl', ''));
     const levelNames = ['Ultimate', 'Super', 'Mega', 'Ultra'];
     const themeNames = {
-      fire: 'Inferno',
-      ice: 'Blizzard',
-      electric: 'Thunderstorm',
-      wind: 'Hurricane',
-      earth: 'Earthquake',
-      water: 'Tsunami',
-      dark: 'Void',
-      light: 'Divine',
-      cyber: 'System Overload',
-      nature: 'Nature\'s Wrath'
+      arcane: 'Eldritch Devastation',
+      divine: 'Divine Judgment',
+      elemental: 'Elemental Apocalypse',
+      shadow: 'Shadow of Death',
+      nature: 'Nature\'s Wrath',
+      crystal: 'Crystalline Cataclysm',
+      void: 'Void Annihilation',
+      celestial: 'Celestial Wrath',
+      infernal: 'Infernal Destruction',
+      primal: 'Primal Awakening'
     };
     
-    return `${levelNames[level - 1]} ${themeNames[theme] || 'Technique'}`;
+    return `${levelNames[level - 1]} ${themeNames[theme] || 'Mystic Technique'}`;
   }
 
   private getInputNotation(name: string): string {

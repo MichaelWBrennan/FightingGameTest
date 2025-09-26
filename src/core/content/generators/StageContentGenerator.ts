@@ -165,7 +165,7 @@ export class StageContentGenerator {
   }
 
   private selectRandomTheme(): string {
-    const themes = ['urban', 'nature', 'cyber', 'fantasy', 'space', 'underwater', 'volcanic', 'arctic', 'desert', 'jungle'];
+    const themes = ['arcane_tower', 'divine_cathedral', 'elemental_realm', 'shadow_keep', 'nature_sanctuary', 'crystal_cavern', 'void_dimension', 'celestial_plane', 'infernal_abyss', 'primal_forest'];
     return themes[Math.floor(Math.random() * themes.length)];
   }
 
@@ -235,16 +235,16 @@ export class StageContentGenerator {
 
   private generateStageName(theme: string, size: string): string {
     const themeNames: Record<string, string[]> = {
-      urban: ['Metro City', 'Downtown District', 'Urban Plaza', 'City Streets', 'Metropolitan Arena'],
-      nature: ['Forest Clearing', 'Mountain Peak', 'River Valley', 'Garden Sanctuary', 'Natural Arena'],
-      cyber: ['Neo Tokyo', 'Cyber City', 'Digital District', 'Virtual Arena', 'Tech Hub'],
-      fantasy: ['Mystic Realm', 'Enchanted Forest', 'Crystal Cavern', 'Magic Arena', 'Fantasy World'],
-      space: ['Space Station', 'Lunar Base', 'Asteroid Field', 'Cosmic Arena', 'Orbital Platform'],
-      underwater: ['Coral Reef', 'Deep Sea', 'Underwater City', 'Aquatic Arena', 'Ocean Depths'],
-      volcanic: ['Volcano Peak', 'Lava Fields', 'Fire Mountain', 'Volcanic Arena', 'Molten Cavern'],
-      arctic: ['Ice Peak', 'Frozen Tundra', 'Glacier', 'Arctic Arena', 'Snow Fields'],
-      desert: ['Oasis', 'Sand Dunes', 'Desert Ruins', 'Arid Arena', 'Dust Bowl'],
-      jungle: ['Jungle Temple', 'Rainforest', 'Ancient Ruins', 'Tropical Arena', 'Wild Jungle']
+      arcane_tower: ['Tower of Mysteries', 'Arcane Spire', 'Mage\'s Sanctum', 'Eldritch Tower', 'Mystic Observatory'],
+      divine_cathedral: ['Cathedral of Light', 'Divine Sanctuary', 'Holy Basilica', 'Sacred Hall', 'Celestial Temple'],
+      elemental_realm: ['Elemental Nexus', 'Primal Sanctum', 'Elemental Convergence', 'Nature\'s Heart', 'Elemental Arena'],
+      shadow_keep: ['Shadow Fortress', 'Dark Keep', 'Void Citadel', 'Shadow Bastion', 'Darkness Stronghold'],
+      nature_sanctuary: ['Grove of Eternity', 'Nature\'s Sanctuary', 'Ancient Grove', 'Wild Sanctuary', 'Primal Grove'],
+      crystal_cavern: ['Crystal Depths', 'Gem Cavern', 'Crystalline Hall', 'Crystal Sanctum', 'Diamond Cavern'],
+      void_dimension: ['Void Nexus', 'Abyssal Plane', 'Null Dimension', 'Void Chamber', 'Empty Realm'],
+      celestial_plane: ['Heavenly Realm', 'Celestial Court', 'Stellar Palace', 'Divine Plane', 'Cosmic Arena'],
+      infernal_abyss: ['Hell\'s Gate', 'Infernal Pit', 'Demon\'s Lair', 'Abyssal Depths', 'Infernal Arena'],
+      primal_forest: ['Ancient Forest', 'Primal Woods', 'Wild Grove', 'Beast\'s Domain', 'Savage Forest']
     };
 
     const sizeModifiers: Record<string, string[]> = {
@@ -265,16 +265,16 @@ export class StageContentGenerator {
 
   private generateStageDescription(theme: string, size: string, atmosphere: string): string {
     const descriptions: Record<string, string> = {
-      urban: `A ${size} urban environment with towering buildings and neon lights, perfect for intense street fighting.`,
-      nature: `A ${size} natural setting surrounded by lush vegetation and natural beauty, offering a peaceful yet challenging battleground.`,
-      cyber: `A ${size} futuristic cyberpunk environment with advanced technology and digital aesthetics, ideal for high-tech combat.`,
-      fantasy: `A ${size} magical realm filled with mystical elements and enchanted surroundings, perfect for epic fantasy battles.`,
-      space: `A ${size} space environment with zero gravity effects and cosmic scenery, offering a unique fighting experience.`,
-      underwater: `A ${size} underwater setting with aquatic life and flowing water, creating a serene yet challenging atmosphere.`,
-      volcanic: `A ${size} volcanic environment with lava flows and intense heat, perfect for fiery combat encounters.`,
-      arctic: `A ${size} frozen landscape with ice formations and snow, offering a cold and challenging fighting environment.`,
-      desert: `A ${size} desert setting with sand dunes and ancient ruins, perfect for hot and dry combat scenarios.`,
-      jungle: `A ${size} jungle environment with dense vegetation and wildlife, offering a wild and unpredictable battleground.`
+      arcane_tower: `A ${size} mystical tower filled with ancient magic and arcane energies, where wizards and sorcerers test their mystical prowess.`,
+      divine_cathedral: `A ${size} sacred cathedral bathed in divine light, where holy warriors and paladins engage in righteous combat.`,
+      elemental_realm: `A ${size} realm where the four elements converge in perfect harmony, creating a dynamic battlefield of natural forces.`,
+      shadow_keep: `A ${size} dark fortress shrouded in shadows and mystery, where assassins and dark mages practice their deadly arts.`,
+      nature_sanctuary: `A ${size} sacred grove where druids and nature guardians protect the ancient balance of the natural world.`,
+      crystal_cavern: `A ${size} underground cavern filled with glowing crystals and precious gems, where treasure hunters and miners clash.`,
+      void_dimension: `A ${size} otherworldly dimension where reality bends and twists, creating an unpredictable and surreal battleground.`,
+      celestial_plane: `A ${size} heavenly realm where angels and celestial beings engage in divine combat and spiritual warfare.`,
+      infernal_abyss: `A ${size} hellish pit where demons and devils battle for supremacy in the depths of the underworld.`,
+      primal_forest: `A ${size} ancient forest where primal forces and wild magic create a savage and untamed battleground.`
     };
 
     const baseDescription = descriptions[theme] || `A ${size} fighting arena with unique characteristics.`;

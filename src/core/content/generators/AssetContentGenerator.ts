@@ -156,7 +156,7 @@ export class AssetContentGenerator {
   }
 
   private selectRandomTheme(): string {
-    const themes = ['fire', 'ice', 'electric', 'wind', 'earth', 'water', 'dark', 'light', 'cyber', 'nature'];
+    const themes = ['arcane', 'divine', 'elemental', 'shadow', 'nature', 'crystal', 'void', 'celestial', 'infernal', 'primal'];
     return themes[Math.floor(Math.random() * themes.length)];
   }
 
@@ -194,16 +194,16 @@ export class AssetContentGenerator {
     };
 
     const themeNames: Record<string, string[]> = {
-      fire: ['Fire', 'Flame', 'Burn', 'Heat'],
-      ice: ['Ice', 'Frost', 'Cold', 'Freeze'],
-      electric: ['Electric', 'Lightning', 'Thunder', 'Volt'],
-      wind: ['Wind', 'Gale', 'Breeze', 'Air'],
-      earth: ['Earth', 'Stone', 'Rock', 'Ground'],
-      water: ['Water', 'Aqua', 'Liquid', 'Flow'],
-      dark: ['Dark', 'Shadow', 'Void', 'Night'],
-      light: ['Light', 'Bright', 'Radiant', 'Glow'],
-      cyber: ['Cyber', 'Digital', 'Tech', 'Neon'],
-      nature: ['Nature', 'Green', 'Organic', 'Wild']
+      arcane: ['Arcane', 'Mystic', 'Eldritch', 'Magical'],
+      divine: ['Divine', 'Holy', 'Sacred', 'Celestial'],
+      elemental: ['Elemental', 'Primal', 'Natural', 'Elemental'],
+      shadow: ['Shadow', 'Dark', 'Void', 'Shadowy'],
+      nature: ['Nature', 'Wild', 'Organic', 'Natural'],
+      crystal: ['Crystal', 'Gem', 'Crystalline', 'Diamond'],
+      void: ['Void', 'Abyssal', 'Null', 'Empty'],
+      celestial: ['Celestial', 'Heavenly', 'Stellar', 'Cosmic'],
+      infernal: ['Infernal', 'Hellish', 'Demonic', 'Fiery'],
+      primal: ['Primal', 'Savage', 'Wild', 'Beastly']
     };
 
     const typeOptions = typeNames[type] || ['Asset'];

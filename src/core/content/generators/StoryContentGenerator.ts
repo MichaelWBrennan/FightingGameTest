@@ -159,7 +159,7 @@ export class StoryContentGenerator {
   }
 
   private selectRandomTheme(): string {
-    const themes = ['heroic', 'tragic', 'mysterious', 'comedy', 'epic', 'personal', 'revenge', 'redemption', 'discovery', 'romance'];
+    const themes = ['heroic_quest', 'tragic_prophecy', 'mysterious_artifact', 'epic_war', 'personal_journey', 'revenge_plot', 'redemption_arc', 'discovery_adventure', 'romantic_tale', 'divine_intervention'];
     return themes[Math.floor(Math.random() * themes.length)];
   }
 
@@ -190,16 +190,16 @@ export class StoryContentGenerator {
     };
 
     const themeTitles: Record<string, string[]> = {
-      heroic: ['The Hero\'s Journey', 'Rise of a Champion', 'The Warrior\'s Path', 'Hero\'s Destiny'],
-      tragic: ['The Fallen Hero', 'Tragedy of Fate', 'The Broken Warrior', 'Fallen Dreams'],
-      mysterious: ['The Hidden Truth', 'Secrets of the Past', 'The Mysterious Quest', 'Shadow of Destiny'],
-      comedy: ['The Comedic Adventure', 'Laughs and Fights', 'The Funny Fighter', 'Comedy of Errors'],
-      epic: ['The Epic Saga', 'Legend of Legends', 'The Grand Adventure', 'Epic Destiny'],
-      personal: ['Personal Journey', 'The Inner Struggle', 'Finding Yourself', 'Personal Growth'],
-      revenge: ['The Revenge Quest', 'Vengeance is Mine', 'The Avenger\'s Path', 'Seeking Justice'],
-      redemption: ['The Redemption Arc', 'Path to Redemption', 'The Redeemer\'s Journey', 'Finding Forgiveness'],
-      discovery: ['The Discovery', 'Uncovering Truth', 'The Great Discovery', 'Secrets Revealed'],
-      romance: ['Love and Fighting', 'The Romantic Warrior', 'Hearts in Combat', 'Love\'s Battle']
+      heroic_quest: ['The Hero\'s Quest', 'Rise of the Champion', 'The Warrior\'s Destiny', 'Hero\'s Journey'],
+      tragic_prophecy: ['The Cursed Prophecy', 'Tragedy of Fate', 'The Broken Oath', 'Fallen Destiny'],
+      mysterious_artifact: ['The Lost Artifact', 'Secrets of the Ancients', 'The Mysterious Relic', 'Shadow of the Past'],
+      epic_war: ['The Great War', 'Battle for the Realm', 'The Eternal Conflict', 'War of the Ages'],
+      personal_journey: ['The Inner Quest', 'Soul\'s Journey', 'Finding One\'s Path', 'Personal Awakening'],
+      revenge_plot: ['The Vengeance Quest', 'Blood for Blood', 'The Avenger\'s Oath', 'Seeking Justice'],
+      redemption_arc: ['The Redemption Quest', 'Path to Forgiveness', 'The Redeemer\'s Journey', 'Finding Salvation'],
+      discovery_adventure: ['The Great Discovery', 'Uncovering Mysteries', 'The Explorer\'s Tale', 'Secrets Revealed'],
+      romantic_tale: ['Love\'s Battle', 'The Romantic Quest', 'Hearts in Conflict', 'Love\'s Destiny'],
+      divine_intervention: ['The Divine Call', 'Heaven\'s Will', 'The Celestial Quest', 'Divine Destiny']
     };
 
     const characterName = characterNames[character] || character;
