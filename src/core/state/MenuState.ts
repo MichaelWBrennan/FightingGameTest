@@ -1,6 +1,6 @@
-import * as pc from 'playcanvas';
-import { GameState } from './GameStateStack';
-import { UIManager } from '../ui/UIManager';
+import type * as pc from 'playcanvas';
+import type { GameState } from './GameStateStack';
+import type { UIManager } from '../ui/UIManager';
 
 export class MenuState implements GameState {
 	public name = 'menu';

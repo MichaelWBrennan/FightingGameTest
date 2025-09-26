@@ -1,6 +1,7 @@
-import * as pc from 'playcanvas';
+import type * as pc from 'playcanvas';
 import { ProceduralStageGenerator } from '../procgen/ProceduralStageGenerator';
-import { StageSaveSystem, SavedStage, StageSaveOptions } from '../stages/StageSaveSystem';
+import type { SavedStage, StageSaveOptions } from '../stages/StageSaveSystem';
+import { StageSaveSystem } from '../stages/StageSaveSystem';
 import { RealTimeStageManager } from '../procgen/RealTimeStageManager';
 
 export interface MatchResult {

@@ -1,5 +1,6 @@
 import * as pc from 'playcanvas';
-import { Character3DGenerator, Character3DData } from './Character3DGenerator';
+import type { Character3DData } from './Character3DGenerator';
+import { Character3DGenerator } from './Character3DGenerator';
 
 export interface CharacterModelConfig {
   id: string;

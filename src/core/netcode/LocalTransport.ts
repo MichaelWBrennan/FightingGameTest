@@ -1,4 +1,4 @@
-import { Transport } from './RollbackNetcode';
+import type { Transport } from './RollbackNetcode';
 
 export class LocalTransport implements Transport {
   private peer?: LocalTransport;

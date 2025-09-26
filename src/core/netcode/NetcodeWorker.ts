@@ -26,7 +26,7 @@ function postStats(): void {
   (postMessage as any)({ t: 'stats', s });
 }
 
-// eslint-disable-next-line no-restricted-globals
+ 
 function requestSave(frame: number): void { (postMessage as any)({ t: 'save', frame }); }
 function requestLoad(frame: number): void {
   const cs = snapshots.get(frame);
@@ -69,7 +69,7 @@ function advanceOne(): void {
   }
 }
 
-// eslint-disable-next-line no-restricted-globals
+ 
 self.onmessage = (e: MessageEvent<WorkerMsg>) => {
   const m = e.data;
   switch (m.t) {

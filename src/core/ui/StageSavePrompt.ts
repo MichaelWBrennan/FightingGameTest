@@ -447,7 +447,7 @@ export class StageSavePrompt {
               });
             }
           }
-        `)]
+        `)
       }]
     });
 
@@ -464,7 +464,7 @@ export class StageSavePrompt {
               });
             }
           }
-        `)]
+        `)
       }]
     });
   }

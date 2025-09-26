@@ -1,4 +1,4 @@
-import { User, Consent, CommunicationPreferences } from './identity.types';
+import type { User, Consent, CommunicationPreferences } from './identity.types';
 import { DatabaseManager } from '../../core/DatabaseManager';
 
 export class IdentityService {

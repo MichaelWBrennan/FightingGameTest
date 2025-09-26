@@ -1,4 +1,4 @@
-import * as pc from 'playcanvas';
+import type * as pc from 'playcanvas';
 
 export interface ComboHit {
   moveId: string;

@@ -255,7 +255,7 @@ export class StageSelector {
               });
             }
           }
-        `)]
+        `)
       }]
     });
   }
@@ -394,7 +394,7 @@ export class StageSelector {
               });
             }
           }
-        `)]
+        `)
       }]
     });
 
@@ -411,7 +411,7 @@ export class StageSelector {
               });
             }
           }
-        `)]
+        `)
       }]
     });
 
@@ -428,7 +428,7 @@ export class StageSelector {
               });
             }
           }
-        `)]
+        `)
       }]
     });
   }

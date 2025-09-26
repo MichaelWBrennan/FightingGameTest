@@ -1,4 +1,4 @@
-import * as pc from 'playcanvas';
+import type * as pc from 'playcanvas';
 
 export type AIPolicy = (ctx: { dt: number; app: pc.Application; state: any }) => void;
 

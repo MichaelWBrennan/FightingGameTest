@@ -55,7 +55,7 @@ export class ProceduralSpriteGenerator {
 		}
 
 		tex.lock();
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		 
 		// @ts-ignore
 		new Uint8Array(tex.lockedMipmaps[0][0].data.buffer).set(pixels);
 		tex.unlock();

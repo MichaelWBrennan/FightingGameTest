@@ -1,4 +1,4 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 
 export class CloudGamingSystem {
   private app: pc.Application;

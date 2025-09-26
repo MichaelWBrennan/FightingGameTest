@@ -7,10 +7,10 @@
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { DatabaseManager } from '../database/DatabaseManager';
+import type { DatabaseManager } from '../database/DatabaseManager';
 import { Logger } from '../utils/Logger';
-import { User, CreateUserData, LoginCredentials } from '../types/User';
-import { AuthToken, TokenPayload } from '../types/Auth';
+import type { User, CreateUserData, LoginCredentials } from '../types/User';
+import type { AuthToken, TokenPayload } from '../types/Auth';
 
 const logger = Logger.getInstance();
 

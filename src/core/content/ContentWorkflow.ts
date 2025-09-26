@@ -1,7 +1,7 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 import { Logger } from '../utils/Logger';
 import { ContentManager } from './ContentManager';
-import { GeneratedContent } from './ContentGenerationManager';
+import type { GeneratedContent } from './ContentGenerationManager';
 
 export interface WorkflowStep {
   id: string;

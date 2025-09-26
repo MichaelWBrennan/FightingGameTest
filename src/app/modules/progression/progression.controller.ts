@@ -1,6 +1,6 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 import { ProgressionService } from './progression.service';
-import { XPGrant } from './progression.types';
+import type { XPGrant } from './progression.types';
 
 export class ProgressionController {
   private progressionService: ProgressionService;

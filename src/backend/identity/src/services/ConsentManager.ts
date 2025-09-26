@@ -5,10 +5,10 @@
  * Implements data minimization and opt-in telemetry by design.
  */
 
-import { DatabaseManager } from '../database/DatabaseManager';
+import type { DatabaseManager } from '../database/DatabaseManager';
 import { Logger } from '../utils/Logger';
-import { ConsentRecord, ConsentType, ConsentStatus } from '../types/Consent';
-import { CommunicationPreferences } from '../types/User';
+import type { ConsentRecord, ConsentType, ConsentStatus } from '../types/Consent';
+import type { CommunicationPreferences } from '../types/User';
 
 const logger = Logger.getInstance();
 

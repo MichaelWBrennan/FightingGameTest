@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import { CharacterConfig, AnimationData, AnimationFrame, HitboxFrame, HurtboxFrame } from '../../../types/character';
+import type { CharacterConfig, AnimationData, AnimationFrame, HitboxFrame, HurtboxFrame } from '../../../types/character';
 
 export class ProceduralFrameGenerator {
 	generateForCharacter(config: CharacterConfig): CharacterConfig {

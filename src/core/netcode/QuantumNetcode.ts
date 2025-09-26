@@ -1,4 +1,4 @@
-import { pc } from 'playcanvas';
+import type { pc } from 'playcanvas';
 
 export class QuantumNetcode {
   private app: pc.Application;

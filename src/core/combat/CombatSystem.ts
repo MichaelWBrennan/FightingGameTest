@@ -1,9 +1,9 @@
 
-import * as pc from 'playcanvas';
-import { Character } from '../../../types/character';
-import { CharacterManager } from '../characters/CharacterManager';
+import type * as pc from 'playcanvas';
+import type { Character } from '../../../types/character';
+import type { CharacterManager } from '../characters/CharacterManager';
 import { ProjectileManager } from './ProjectileManager';
-import { InputManager, PlayerInputs } from '../input/InputManager';
+import type { InputManager, PlayerInputs } from '../input/InputManager';
 import { Logger } from '../utils/Logger';
 
 interface HitResult {

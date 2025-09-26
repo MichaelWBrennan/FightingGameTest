@@ -1,6 +1,6 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
+import type { FastifyRequest, FastifyReply } from 'fastify';
 import { AnalyticsService } from './analytics.service';
-import { AnalyticsEvent } from './analytics.types';
+import type { AnalyticsEvent } from './analytics.types';
 
 export class AnalyticsController {
   private analyticsService: AnalyticsService;

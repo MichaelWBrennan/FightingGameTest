@@ -1,5 +1,5 @@
-import { pc } from 'playcanvas';
-import { Character } from '../../../types/character';
+import type { pc } from 'playcanvas';
+import type { Character } from '../../../types/character';
 import { Logger } from '../utils/Logger';
 
 export interface CharacterMechanic {

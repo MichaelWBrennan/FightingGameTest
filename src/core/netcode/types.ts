@@ -1,4 +1,4 @@
-import { PlayerInputs } from '../../core/input/InputManager';
+import type { PlayerInputs } from '../../core/input/InputManager';
 
 export type FrameNumber = number;
 

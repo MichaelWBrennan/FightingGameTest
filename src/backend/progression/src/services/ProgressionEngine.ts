@@ -5,10 +5,10 @@
  * All progression is power-neutral and maintains competitive integrity.
  */
 
-import { DatabaseManager } from '../database/DatabaseManager';
+import type { DatabaseManager } from '../database/DatabaseManager';
 import { Logger } from '../utils/Logger';
-import { XPGrantRequest, MasteryState, XPSource, PerformanceTier } from '../types/Progression';
-import { RewardGrant } from '../types/Rewards';
+import type { XPGrantRequest, MasteryState, XPSource, PerformanceTier } from '../types/Progression';
+import type { RewardGrant } from '../types/Rewards';
 
 const logger = Logger.getInstance();
 

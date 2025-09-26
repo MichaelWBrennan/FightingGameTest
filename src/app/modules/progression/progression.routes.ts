@@ -1,4 +1,4 @@
-import { FastifyInstance } from 'fastify';
+import type { FastifyInstance } from 'fastify';
 import { ProgressionController } from './progression.controller';
 
 export const progressionRoutes = async (fastify: FastifyInstance): Promise<void> => {

@@ -139,7 +139,7 @@ export class FighterCameraController {
   private getTargetEntities(): pc.Entity[] {
     // Prefer the CharacterManager's active characters
     try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+       
       // @ts-ignore
       const services = (this.app as any)._services as any;
       const chars = services?.resolve?.('characters');

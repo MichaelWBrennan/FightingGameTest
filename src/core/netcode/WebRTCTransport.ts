@@ -1,4 +1,4 @@
-import { Transport } from './RollbackNetcode';
+import type { Transport } from './RollbackNetcode';
 
 type RTCMsg = { t: 'i'; f: number; b: number } | { t: 'p'; ts: number; echo?: boolean } | { t: 'renegotiate' };
 

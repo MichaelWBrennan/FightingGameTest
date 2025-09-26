@@ -27,7 +27,7 @@
  */
 
 import { EventEmitter } from 'eventemitter3';
-import { RetentionClient } from '../retention/RetentionClient';
+import type { RetentionClient } from '../retention/RetentionClient';
 
 export interface StorefrontConfig {
   retentionClient: RetentionClient;

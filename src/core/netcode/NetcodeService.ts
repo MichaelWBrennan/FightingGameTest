@@ -2,10 +2,12 @@ import { RollbackNetcode } from './RollbackNetcode';
 import { CombatDeterministicAdapter } from './DeterministicAdapter';
 import { LocalTransport } from './LocalTransport';
 import { WebRTCTransport } from './WebRTCTransport';
-import { InputManager, PlayerInputs } from '../input/InputManager';
-import { CharacterManager } from '../characters/CharacterManager';
-import { CombatSystem } from '../combat/CombatSystem';
-import { inputsToBits, bitsToInputs, GameStateSnapshot } from './types';
+import type { InputManager} from '../input/InputManager';
+import { PlayerInputs } from '../input/InputManager';
+import type { CharacterManager } from '../characters/CharacterManager';
+import type { CombatSystem } from '../combat/CombatSystem';
+import type { GameStateSnapshot } from './types';
+import { inputsToBits, bitsToInputs } from './types';
 
 export class NetcodeService {
   private netcode?: RollbackNetcode;

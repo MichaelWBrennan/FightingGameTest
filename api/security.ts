@@ -5,7 +5,7 @@ export default async function handler(req: any, res: any) {
       return;
     }
     // Minimal telemetry collector; in a real deployment this would persist securely
-    const body = await parseJson(req);
+    const _body = await parseJson(req);
     res.status(200).json({ ok: true });
   } catch (e: any) {
     res.status(500).json({ error: 'Security telemetry error', message: e?.message || String(e) });

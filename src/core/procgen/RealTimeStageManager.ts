@@ -1,6 +1,7 @@
 import { pc } from 'playcanvas';
 import { Logger } from '../utils/Logger';
-import { ProceduralStageGenerator, ProcStageOptions } from './ProceduralStageGenerator';
+import type { ProcStageOptions } from './ProceduralStageGenerator';
+import { ProceduralStageGenerator } from './ProceduralStageGenerator';
 
 export interface StageAsset {
   id: string;

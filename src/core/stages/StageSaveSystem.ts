@@ -1,4 +1,4 @@
-import * as pc from 'playcanvas';
+import type * as pc from 'playcanvas';
 import { ProceduralStageGenerator } from '../procgen/ProceduralStageGenerator';
 
 export interface SavedStage {
