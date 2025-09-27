@@ -8,6 +8,7 @@ import * as pc from 'playcanvas';
 import { ISystem } from '../../../types/core';
 import { ParallaxLayer, ParallaxSettings } from '../../../types/graphics';
 import { ShaderUtils } from '../../core/graphics/ShaderUtils';
+import { getHD2DAutoEnhancer } from '../../core/graphics/HD2DAutoEnhancer';
 
 interface LayerConfig {
     depth: number;
@@ -685,12 +686,49 @@ class ParallaxManager implements ISystem {
         
         // Update animated elements
         this.updateAnimatedElements(dt);
+        
+        // Auto-enhance with HD-2D features
+        this.autoEnhanceHD2D(dt);
 
         // Update shader time uniforms for animated stage materials
         this.timeMs += dt * 1000;
         for (const entry of this.shaderDrivenEntities) {
             (entry.material as any).setParameter?.('uTime', this.timeMs);
         }
+    }
+    
+    private autoEnhanceHD2D(dt: number): void {
+        // Auto-enhance parallax layers with HD-2D features
+        const autoEnhancer = getHD2DAutoEnhancer();
+        if (!autoEnhancer) return;
+        
+        // Apply atmospheric perspective to background layers
+        this.layers.forEach((layer, layerName) => {
+            if (layerName.includes('background') || layerName.includes('sky')) {
+                layer.entities.forEach(entity => {
+                    const depth = Math.abs(entity.getPosition().z);
+                    if (depth > 20) {
+                        this.applyAtmosphericPerspective(entity, depth);
+                    }
+                });
+            }
+        });
+    }
+    
+    private applyAtmosphericPerspective(entity: pc.Entity, depth: number): void {
+        const render = entity.render;
+        if (!render || !render.material) return;
+        
+        const material = render.material as pc.StandardMaterial;
+        const fogFactor = Math.min(1.0, (depth - 20) / 80);
+        
+        // Apply atmospheric tinting
+        const atmosphericColor = new pc.Color(0.7, 0.8, 0.9);
+        const originalColor = material.diffuse || new pc.Color(1, 1, 1);
+        const tintedColor = originalColor.clone().lerp(atmosphericColor, fogFactor * 0.3);
+        
+        material.diffuse = tintedColor;
+        material.opacity = Math.max(0.1, 1.0 - fogFactor * 0.5);
     }
 
     private updateCameraTracking(dt: number): void {
