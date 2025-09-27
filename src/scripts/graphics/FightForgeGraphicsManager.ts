@@ -20,7 +20,7 @@ import {
     ParryEvent
 } from '../../../types/graphics';
 import { ShaderUtils } from '../../core/graphics/ShaderUtils';
-import { initializeHD2DAutoEnhancer } from '../../core/graphics/HD2DAutoEnhancer';
+import { initializeGraphicsEngine } from '../../core/graphics/GraphicsEngineManager';
 
 interface FightForgeGraphicsManagerState {
     initialized: boolean;
@@ -128,8 +128,9 @@ export class FightForgeGraphicsManager implements ISystem {
             
             this.state.initialized = true;
             
-            // Auto-enhance with HD-2D features
-            initializeHD2DAutoEnhancer(this.app);
+            // Initialize NextGen Graphics Engine
+            const graphicsEngine = initializeGraphicsEngine(this.app);
+            await graphicsEngine.initialize();
             
             console.log('Graphics Manager initialized successfully');
             
@@ -618,11 +619,11 @@ export class FightForgeGraphicsManager implements ISystem {
     }
 
     public destroy(): void {
-        // Clean up HD-2D auto enhancer
-        const { getHD2DAutoEnhancer } = require('../../core/graphics/HD2DAutoEnhancer');
-        const autoEnhancer = getHD2DAutoEnhancer();
-        if (autoEnhancer) {
-            autoEnhancer.destroy();
+        // Clean up NextGen Graphics Engine
+        const { getGraphicsEngine } = require('../../core/graphics/GraphicsEngineManager');
+        const graphicsEngine = getGraphicsEngine();
+        if (graphicsEngine) {
+            graphicsEngine.destroy();
         }
         
         // Clean up resources
