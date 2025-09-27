@@ -20,7 +20,7 @@ import {
     ParryEvent
 } from '../../../types/graphics';
 import { ShaderUtils } from '../../core/graphics/ShaderUtils';
-import { initializeGraphicsEngine } from '../../core/graphics/GraphicsEngineManager';
+import { initializeIndustryGraphicsEngine } from '../../core/graphics/IndustryGraphicsEngine';
 
 interface FightForgeGraphicsManagerState {
     initialized: boolean;
@@ -128,8 +128,8 @@ export class FightForgeGraphicsManager implements ISystem {
             
             this.state.initialized = true;
             
-            // Initialize NextGen Graphics Engine
-            const graphicsEngine = initializeGraphicsEngine(this.app);
+            // Initialize Industry Graphics Engine
+            const graphicsEngine = initializeIndustryGraphicsEngine(this.app);
             await graphicsEngine.initialize();
             
             console.log('Graphics Manager initialized successfully');
@@ -619,9 +619,9 @@ export class FightForgeGraphicsManager implements ISystem {
     }
 
     public destroy(): void {
-        // Clean up NextGen Graphics Engine
-        const { getGraphicsEngine } = require('../../core/graphics/GraphicsEngineManager');
-        const graphicsEngine = getGraphicsEngine();
+        // Clean up Industry Graphics Engine
+        const { getIndustryGraphicsEngine } = require('../../core/graphics/IndustryGraphicsEngine');
+        const graphicsEngine = getIndustryGraphicsEngine();
         if (graphicsEngine) {
             graphicsEngine.destroy();
         }
