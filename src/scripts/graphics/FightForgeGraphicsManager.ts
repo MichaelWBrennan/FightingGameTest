@@ -20,6 +20,7 @@ import {
     ParryEvent
 } from '../../../types/graphics';
 import { ShaderUtils } from '../../core/graphics/ShaderUtils';
+import { initializeIndustryGraphicsEngine } from '../../core/graphics/IndustryGraphicsEngine';
 
 interface FightForgeGraphicsManagerState {
     initialized: boolean;
@@ -126,6 +127,11 @@ export class FightForgeGraphicsManager implements ISystem {
             this.setupStageInteraction();
             
             this.state.initialized = true;
+            
+            // Initialize Industry Graphics Engine
+            const graphicsEngine = initializeIndustryGraphicsEngine(this.app);
+            await graphicsEngine.initialize();
+            
             console.log('Graphics Manager initialized successfully');
             
         } catch (error) {
@@ -613,6 +619,13 @@ export class FightForgeGraphicsManager implements ISystem {
     }
 
     public destroy(): void {
+        // Clean up Industry Graphics Engine
+        const { getIndustryGraphicsEngine } = require('../../core/graphics/IndustryGraphicsEngine');
+        const graphicsEngine = getIndustryGraphicsEngine();
+        if (graphicsEngine) {
+            graphicsEngine.destroy();
+        }
+        
         // Clean up resources
         this.state.lightingSystem.characterLights.forEach(lights => {
             lights.keyLight.destroy();

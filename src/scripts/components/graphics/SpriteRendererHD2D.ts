@@ -1,6 +1,7 @@
 import * as pc from 'playcanvas';
 import { StageLayerManager } from './StageLayerManager';
 import { ShaderUtils } from '../../core/graphics/ShaderUtils';
+import { getHD2DAutoEnhancer } from '../../core/graphics/HD2DAutoEnhancer';
 
 const SpriteRendererHD2D = pc.createScript('spriteRendererHD2D');
 
@@ -43,6 +44,9 @@ SpriteRendererHD2D.prototype.initialize = function() {
     this.createSprite();
 
     this.on('attr:spriteAsset', this.onSpriteAssetChange, this);
+    
+    // Auto-enhance with HD-2D features
+    this.autoEnhanceHD2D();
 };
 
 SpriteRendererHD2D.prototype.createSprite = function() {
@@ -108,6 +112,55 @@ SpriteRendererHD2D.prototype.update = function(dt: number) {
             mat.setParameter('light_position_1', new Float32Array([lp1.x, lp1.y, lp1.z]));
             mat.setParameter('light_position_2', new Float32Array([lp2.x, lp2.y, lp2.z]));
         }
+    }
+};
+
+// Auto-enhancement method
+SpriteRendererHD2D.prototype.autoEnhanceHD2D = function() {
+    const autoEnhancer = getHD2DAutoEnhancer();
+    if (!autoEnhancer) return;
+    
+    // Enhance sprite with HD-2D features
+    if (this.spriteEntity && this.spriteEntity.render) {
+        const material = this.spriteEntity.render.material;
+        if (material) {
+            // Add pixel-perfect positioning
+            this.addPixelPerfectPositioning();
+            
+            // Add rim lighting enhancement
+            this.addRimLightingEnhancement();
+        }
+    }
+};
+
+SpriteRendererHD2D.prototype.addPixelPerfectPositioning = function() {
+    if (!this.spriteEntity) return;
+    
+    // Add pixel-perfect positioning to sprite
+    const originalUpdate = this.spriteEntity.update;
+    this.spriteEntity.update = (dt: number) => {
+        if (originalUpdate) originalUpdate.call(this.spriteEntity, dt);
+        
+        // Snap position to pixel boundaries
+        const position = this.spriteEntity.getPosition();
+        const pixelSize = 1.0 / 32.0; // Adjust based on your game's scale
+        
+        const snappedX = Math.round(position.x * pixelSize) / pixelSize;
+        const snappedY = Math.round(position.y * pixelSize) / pixelSize;
+        
+        this.spriteEntity.setPosition(snappedX, snappedY, position.z);
+    };
+};
+
+SpriteRendererHD2D.prototype.addRimLightingEnhancement = function() {
+    if (!this.spriteEntity || !this.spriteEntity.render) return;
+    
+    const material = this.spriteEntity.render.material;
+    if (material && material.setParameter) {
+        // Enhance rim lighting parameters
+        material.setParameter('rim_power', 2.5);
+        material.setParameter('rim_intensity', 1.2);
+        material.setParameter('rim_color', new Float32Array([0.8, 0.9, 1.0, 1.0]));
     }
 };
 
