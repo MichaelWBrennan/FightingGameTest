@@ -392,7 +392,7 @@ export class AdvancedEsportsPlatform {
       await this.setupAICommentary(tournamentId);
       
       // Setup smart broadcasting
-      await this.setupSmartBroadcasting(tournamentId);
+      await this.setupTournamentSmartBroadcasting(tournamentId);
       
       return tournamentId;
     } catch (error) {
@@ -508,7 +508,7 @@ export class AdvancedEsportsPlatform {
     // This would setup the AI commentary
   }
 
-  private async setupSmartBroadcasting(tournamentId: string): Promise<void> {
+  private async setupTournamentSmartBroadcasting(tournamentId: string): Promise<void> {
     // Setup smart broadcasting for tournament
     const broadcasting = this.smartBroadcasting;
     

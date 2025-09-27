@@ -356,7 +356,7 @@ export class ProceduralStageGenerator {
 			layers: {
 				skybox: { type: 'gothic_sky', elements: this.gothicSky() },
 				farBackground: { type: 'gothic_landscape', elements: this.gothicLandscape(2) },
-				midBackground: { type: 'gothic_ruins', elements: this.gothicRuins(6) },
+				midBackground: { type: 'gothic_ruins', elements: this.generateGothicRuins(6) },
 				nearBackground: { type: 'gothic_details', elements: this.gothicDetails(5) },
 				playground: { type: 'gothic_platform', elements: this.gothicPlatform() }
 			},
@@ -970,7 +970,7 @@ export class ProceduralStageGenerator {
 		return arr;
 	}
 
-	private gothicRuins(n: number): any[] {
+	private generateGothicRuins(n: number): any[] {
 		const arr = [] as any[];
 		for (let i = 0; i < n; i++) {
 			arr.push({

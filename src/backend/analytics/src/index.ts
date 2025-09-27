@@ -43,9 +43,9 @@ import { experimentRoutes } from './routes/experiments';
 import { churnRoutes } from './routes/churn';
 import { cohortRoutes } from './routes/cohorts';
 import { metricsRoutes } from './routes/metrics';
-import { DatabaseManager } from './database/DatabaseManager';
+import { DatabaseManager } from '../progression/src/database/DatabaseManager';
 import { ClickHouseManager } from './database/ClickHouseManager';
-import { Logger } from './utils/Logger';
+import { Logger } from '../../core/utils/Logger';
 import { EventIngestionService } from './services/EventIngestionService';
 import { SchemaRegistry } from './services/SchemaRegistry';
 import { ExperimentManager } from './services/ExperimentManager';
@@ -55,7 +55,7 @@ import { MetricsAggregator } from './services/MetricsAggregator';
 import { ConsentChecker } from './services/ConsentChecker';
 import { setupCronJobs } from './jobs/scheduler';
 
-const logger = Logger.getInstance();
+// Using static Logger methods
 
 // Environment configuration
 const config = {
