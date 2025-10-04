@@ -77,6 +77,8 @@ import { MusicManager } from './audio/MusicManager';
 import { StoryMode } from './story/StoryMode';
 import { ModernUIManager } from './ui/ModernUIManager';
 import { ParticleSystem } from './graphics/ParticleSystem';
+import { SpriteRegistry } from './graphics/SpriteRegistry';
+import { initializeHD2DAutoEnhancer } from './graphics/HD2DAutoEnhancer';
 import { RankingSystem } from './competitive/RankingSystem';
 import { AccessibilityManager } from './accessibility/AccessibilityManager';
 import { AdvancedAccessibilityManager } from './accessibility/AdvancedAccessibilityManager';
@@ -107,6 +109,7 @@ export class GameEngine {
   private inputManager: InputManager;
   private uiManager: UIManager;
   private postProcessingManager: any | null = null;
+  private _broadcastMode = false;
   private eventBus: EventBus;
   private services: ServiceContainer;
   private featureFlags: FeatureFlags;
@@ -166,6 +169,7 @@ export class GameEngine {
   private storyMode: StoryMode | null = null;
   private modernUI: ModernUIManager | null = null;
   private particleSystem: ParticleSystem | null = null;
+  private spriteRegistry: SpriteRegistry | null = null;
   private rankingSystem: RankingSystem | null = null;
   private accessibilityManager: AccessibilityManager | null = null;
   private advancedAccessibilityManager: AdvancedAccessibilityManager | null = null;
@@ -258,6 +262,9 @@ export class GameEngine {
     this.services.register('netcode', this.netcode);
     this.services.register('clock', this.clock);
     this.services.register('rng', this.rng);
+    // Initialize HD‑2D enhancer and hot‑swap sprite registry
+    try { initializeHD2DAutoEnhancer(this.app); } catch {}
+    try { this.spriteRegistry = new SpriteRegistry(this.app); this.services.register('sprites', this.spriteRegistry); } catch {}
     this.services.register('characters', this.characterManager);
     this.services.register('stages', this.stageManager);
     this.services.register('combat', this.combatSystem);
@@ -324,6 +331,7 @@ export class GameEngine {
       ]);
 
       this.postProcessingManager = new PostProcessingManager(this.app);
+      try { this.services.register('postfx', this.postProcessingManager); } catch {}
       this.entitlement = new EntitlementBridge();
       this.services.register('entitlement', this.entitlement);
 
@@ -383,6 +391,17 @@ export class GameEngine {
         } catch {}
         try { LoadingOverlay.log(`[postfx] disabled (${postfxReason})`, 'warn'); } catch {}
       }
+      // Expose a simple broadcast mode toggle via URL param and events
+      try {
+        const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+        const bc = (params.get('broadcast') || '').toLowerCase();
+        if (['1','true','on','yes','y'].includes(bc)) {
+          this.setBroadcastMode(true);
+        }
+        this.eventBus.on('graphics:broadcast', ({ enabled }: any) => {
+          this.setBroadcastMode(!!enabled);
+        });
+      } catch {}
 
       // Load manifest and then preload assets with detailed progress grouped by type
       // Background preload (non-blocking) to enhance assets progressively
@@ -477,6 +496,15 @@ export class GameEngine {
           app.on('update', (dt: number) => {
             const e = app.root.findByName('DiagCube');
             if (e) e.rotate(0, 60 * dt, 0);
+          });
+        }
+      } catch {}
+
+      // Quick hotkeys: toggle broadcast mode (F10)
+      try {
+        if (typeof window !== 'undefined') {
+          window.addEventListener('keydown', (e) => {
+            if (e.key === 'F10') this.setBroadcastMode(!this._broadcastMode);
           });
         }
       } catch {}
@@ -718,6 +746,31 @@ export class GameEngine {
         this.services.register('featureShowcaseUI', this.featureShowcaseUI);
       } catch {}
 
+      // Live‑service hot‑swap hooks for characters and stages (no rebuild)
+      try {
+        this.eventBus.on('content:setCharacterSprite', async ({ characterId, url }: any) => {
+          if (!characterId || !url) return;
+          try {
+            const sprites: any = this.services.resolve('sprites');
+            const tex = await sprites.registerFromUrl(characterId, url).catch(() => null);
+            if (!tex) return;
+            const chars: any = this.services.resolve('characters');
+            const c = chars?.getCharacter?.(characterId);
+            const ent: any = c?.entity || this.app.root.findByName(characterId);
+            const ph: any = ent?.findByName?.(`${characterId}_placeholder`) || ent;
+            if (ph && ph.render) {
+              const { ShaderUtils } = await import('./graphics/ShaderUtils');
+              const mat: any = ShaderUtils.createRimLightingMaterial(this.app);
+              mat.setParameter('texture_diffuseMap', tex);
+              ph.render.material = mat as any;
+            }
+          } catch {}
+        });
+        this.eventBus.on('content:setStageTheme', async ({ theme }: any) => {
+          try { await this.stageManager.loadTheme(theme); } catch {}
+        });
+      } catch {}
+
       // Game mode event handlers
       this.app.on('game:storyMode', () => {
         Logger.info('Starting Story Mode');
@@ -797,6 +850,13 @@ export class GameEngine {
           this.options.show();
         }
       });
+      // Camera cinematic event hookup
+      try {
+        this.app.on('camera:super', () => {
+          if (!this.cinematics) this.cinematics = new CameraCinematics(this.app);
+          this.cinematics.superCinematic();
+        });
+      } catch {}
       try {
         const loader = new ConfigLoader();
         loader.loadJson<any>('/assets/config/fx.json').then(cfg => { if (cfg && this.effects) this.effects.applyConfig(cfg); }).catch(()=>{});
@@ -854,6 +914,23 @@ export class GameEngine {
       Logger.error('Failed to initialize game engine:', error);
       throw error;
     }
+  }
+
+  private setBroadcastMode(on: boolean): void {
+    this._broadcastMode = !!on;
+    try {
+      if (this.postProcessingManager?.setBroadcastMode) this.postProcessingManager.setBroadcastMode(this._broadcastMode);
+      // Also sharpen outlines on sprites by tweaking rim/outline params globally where possible
+      const chars: any = this.services.resolve('characters');
+      const list = chars?.getActiveCharacters?.() || [];
+      for (const c of list) {
+        const mat: any = c?.entity?.render?.material || c?.entity?.children?.[0]?.render?.material;
+        if (mat?.setParameter) {
+          mat.setParameter('rim_intensity', this._broadcastMode ? 1.4 : 1.0);
+          mat.setParameter('rim_power', this._broadcastMode ? 3.0 : 2.0);
+        }
+      }
+    } catch {}
   }
 
   public getApp(): pc.Application {

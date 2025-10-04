@@ -70,9 +70,17 @@ SpriteRendererHD2D.prototype.createSprite = function() {
     if (this.specularMapAsset && this.specularMapAsset.resource) {
         material.setParameter('texture_specularMap', this.specularMapAsset.resource);
     }
-    // Enable alpha test and disable culling for sprites
+    // Enable alpha test and disable culling for sprites; preserve pixel-art filtering
     (material as any).alphaTest = 0.1;
     (material as any).cull = pc.CULLFACE_NONE;
+    try {
+        if (texture) {
+            texture.minFilter = pc.FILTER_NEAREST;
+            texture.magFilter = pc.FILTER_NEAREST;
+            texture.addressU = pc.ADDRESS_CLAMP_TO_EDGE;
+            texture.addressV = pc.ADDRESS_CLAMP_TO_EDGE;
+        }
+    } catch {}
 
     this.spriteEntity.addComponent('render', {
         type: 'plane',

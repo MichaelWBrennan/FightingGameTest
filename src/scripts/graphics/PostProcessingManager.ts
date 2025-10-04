@@ -707,6 +707,56 @@ class PostProcessingManager implements ISystem {
                         (mat as any).shader = shader;
                         this.materials.combine = mat;
                     }
+
+  /**
+   * Enable/disable broadcast mode for esports readability.
+   * - Disables bloom, DOF, film grain, vignette and other distracting effects
+   * - Neutralizes color grading
+   * - Keeps a crisp backbuffer blit for maximum clarity
+   */
+  public setBroadcastMode(enabled: boolean): void {
+    // Toggle effect flags
+    this.effects.depthOfField.enabled = !enabled;
+    this.effects.bloom.enabled = !enabled;
+    if (enabled) {
+      // Force passthrough pipeline by disabling DOF material
+      this.materials.depthOfField = null;
+    }
+    // Color grading tuned for readability
+    if (enabled) {
+      this.effects.colorGrading.enabled = true;
+      this.effects.colorGrading.contrast = 1.05;
+      this.effects.colorGrading.saturation = 1.0;
+      this.effects.colorGrading.brightness = 0.0;
+      this.effects.colorGrading.warmth = 0.0;
+      this.effects.colorGrading.vignette = 0.0;
+      this.effects.colorGrading.filmGrain = 0.0;
+      // Also drop any heavy lighting extras in broadcast
+      this.effects.lightingEffects.ambientOcclusion = false;
+      this.effects.lightingEffects.volumetricFog = false;
+      this.effects.lightingEffects.lightShafts = false;
+      this.effects.lightingEffects.screenSpaceReflections = false;
+      // Keep resolution native for sharp UI/text
+      this.setQuality('high');
+      this.resolution.scale = 1.0;
+    } else {
+      // Restore to a balanced default suitable for gameplay
+      this.setQuality('medium');
+      this.effects.colorGrading.enabled = true;
+      this.effects.colorGrading.contrast = 1.1;
+      this.effects.colorGrading.saturation = 1.15;
+      this.effects.colorGrading.brightness = 0.05;
+      this.effects.colorGrading.warmth = 0.1;
+      this.effects.colorGrading.vignette = 0.3;
+      this.effects.colorGrading.filmGrain = 0.15;
+      this.effects.lightingEffects.ambientOcclusion = true;
+      this.effects.lightingEffects.volumetricFog = true;
+      this.effects.lightingEffects.lightShafts = true;
+    }
+
+    // Recreate RTs to honor resolution/quality changes
+    try { this.createRenderTargets(); } catch {}
+  }
                     this.materials.combine.setParameter('texture_sceneColor', this.renderTargets.sceneColor.colorBuffer);
                     this.fullScreenQuad.render.material = this.materials.combine;
                 }

@@ -54,11 +54,10 @@ export class ProceduralSpriteGenerator {
 			}
 		}
 
-		tex.lock();
-		 
-		// @ts-ignore
-		new Uint8Array(tex.lockedMipmaps[0][0].data.buffer).set(pixels);
-		tex.unlock();
+    tex.lock();
+    // @ts-ignore internal surface access
+    new Uint8Array(tex.lockedMipmaps[0][0].data.buffer).set(pixels);
+    tex.unlock();
 		return tex;
 	}
 }
