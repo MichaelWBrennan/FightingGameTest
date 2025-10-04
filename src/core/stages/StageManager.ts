@@ -33,12 +33,12 @@ export class StageManager {
     (camera as any)._fighterCam = fighterCam;
     fighterCam.start();
 
-    // Light
+    // Light (kept minimal for readability; HDR eye-candy belongs to free-cam/cinematics)
     const light = new pc.Entity('DirectionalLight');
     light.addComponent('light', {
       type: pc.LIGHTTYPE_DIRECTIONAL,
       color: new pc.Color(1, 1, 1),
-      intensity: 1.0,
+      intensity: 0.9,
       castShadows: false
     });
     light.setEulerAngles(45, 30, 0);
@@ -61,6 +61,13 @@ export class StageManager {
         try { (await import('../ui/LoadingOverlay')).LoadingOverlay.updateTask('parallax_init', Math.max(0, Math.min(1, p)), label || 'Initializing parallax'); } catch {}
       })();
     });
+    // Lock gameplay camera to 2D plane; enable cinematic tilt/zoom only via Cinematics
+    try {
+      const camCtrl = (camera as any)._fighterCam as FighterCameraController;
+      // Explicitly ensure orthographic during neutral
+      if ((camera as any).camera) (camera as any).camera.projection = pc.PROJECTION_ORTHOGRAPHIC;
+      // Cinematic triggers handled by CameraCinematics from combat events
+    } catch {}
     try { (await import('../ui/LoadingOverlay')).LoadingOverlay.endTask('parallax_init', true); } catch {}
 
     // Auto-generate a random stage for the match

@@ -345,6 +345,14 @@ export class CombatSystem {
     };
 
     Logger.info(`${character.id} executing ${moveName}`);
+    // Trigger cinematic camera for supers without breaking 2D lock during neutral
+    try {
+      const tags: any[] = Array.isArray((moveData as any)?.tags) ? (moveData as any).tags : [];
+      const isSuper = tags.includes('super') || /super/i.test(moveName) || ((moveData as any)?.meterCost ?? 0) >= 200;
+      if (isSuper) {
+        this.app.fire('camera:super');
+      }
+    } catch {}
     // Spawn simple projectile on hadoken
     if (moveName === 'hadoken') this.spawnProjectile(character, Math.sign(character.facing) || 1);
   }
@@ -569,6 +577,8 @@ export class CombatSystem {
       const sfx: any = (this.app as any)._services?.resolve?.('sfx');
       const p = defender.entity.getPosition();
       effects?.spawn?.(p.x, p.y + 1.0, isCounter ? 'counter' : 'hit');
+      // Subtle post-process flash without obscuring action
+      try { const post: any = (this.app as any)._services?.resolve?.('postfx'); post?.triggerHitFlash?.([1,1,1], 0.35, 90); } catch {}
       const frame = this.getCurrentFrame();
       if (sfx?.playDeterministic) sfx.playDeterministic(`hit_${attacker.id}_${defender.id}`, frame, 'hit'); else sfx?.play?.('hit');
       sfx?.vibrate?.(25);

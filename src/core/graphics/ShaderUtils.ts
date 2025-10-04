@@ -65,6 +65,10 @@ export class ShaderUtils {
         mat.setParameter('hitFlash', 0.0);
         mat.setParameter('hitFlashColor', new Float32Array([1.0, 1.0, 1.0]));
         mat.setParameter('characterHighlight', 0.0);
+        // Reasonable default rim values for silhouette readability
+        mat.setParameter('rim_power', 2.5);
+        mat.setParameter('rim_intensity', 1.1);
+        mat.setParameter('rim_color', new Float32Array([0.85, 0.9, 1.0]));
         return mat;
     }
 

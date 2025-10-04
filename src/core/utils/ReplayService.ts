@@ -10,9 +10,25 @@ export class ReplayService {
   private buffer: ReplayFrame[] = [];
   private playIndex = 0;
   private fileInput: HTMLInputElement | null = null;
+  private overlay: HTMLDivElement | null = null;
 
   constructor(private input: InputManager, private combat: CombatSystem) {
     window.addEventListener('keydown', (e) => this.onKey(e));
+    // Minimal on-screen controls scaffold
+    try {
+      const root = document.createElement('div');
+      root.style.position = 'fixed'; root.style.right = '8px'; root.style.bottom = '8px'; root.style.zIndex = '10006';
+      root.style.background = 'rgba(0,0,0,0.5)'; root.style.padding = '6px 8px'; root.style.borderRadius = '6px'; root.style.font = '12px system-ui'; root.style.color = '#fff';
+      const rec = document.createElement('button'); rec.textContent = 'Rec (F7)';
+      const exp = document.createElement('button'); exp.textContent = 'Export (F8)'; exp.style.marginLeft = '6px';
+      const imp = document.createElement('button'); imp.textContent = 'Import (F9)'; imp.style.marginLeft = '6px';
+      rec.onclick = () => { if (this.recording) this.exportRecording(); else this.startRecording(); };
+      exp.onclick = () => this.exportRecording();
+      imp.onclick = () => this.importAndPlay();
+      root.appendChild(rec); root.appendChild(exp); root.appendChild(imp);
+      document.body.appendChild(root);
+      this.overlay = root;
+    } catch {}
   }
 
   isRecording(): boolean { return this.recording; }
