@@ -30,7 +30,7 @@
     "stripe": "^14.0.0",
     "winston": "^3.11.0",
     "cron": "^3.1.6",
-    "nodemailer": "^6.9.7"
+    "nodemailer": "^8.0.4"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
