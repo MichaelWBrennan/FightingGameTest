@@ -11,7 +11,7 @@
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
-    "uuid": "^9.0.0",
+    "uuid": "^14.0.0",
     "eventemitter3": "^5.0.1"
   },
   "devDependencies": {
